@@ -1,0 +1,91 @@
+url: https://vigliafg.github.io/rstats-commander/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#1f3a5f"
+
+reference:
+  - title: Application
+    desc: Start and embed the local application.
+    contents:
+      - run_app
+      - app
+      - AppState
+  - title: Commands
+    desc: Evaluate and capture R code.
+    contents:
+      - run_command
+  - title: Help and documentation
+    desc: Browse, search and extend the in-app help.
+    contents:
+      - help_center_ui
+      - help_server
+      - help_topic
+      - help_topics
+      - help_search
+      - help_index
+      - help_catalog
+      - help_render
+      - help_topic_html
+      - help_topic_available
+      - help_topic_for_dialog
+      - help_topics_for_dialog
+      - help_register
+      - help_unregister
+      - help_registry
+      - register_plugin_help
+  - title: Reporting
+    desc: Build reports and knit documents.
+    contents:
+      - report_rmd
+      - write_report_rmd
+      - write_report_html
+      - document_knit
+      - document_modes
+  - title: Diagnostics
+    desc: Collect a report for bug reports.
+    contents:
+      - diagnostics_report
+      - format_diagnostics
+  - title: Plugins
+    desc: Extend menus, commands and dialogs.
+    contents:
+      - RcmdrShiny.plugin
+      - plugin_dialog
+      - load_plugin
+      - load_plugin_package
+      - list_plugins
+      - unload_plugins
+      - plugin-helpers
+      - plugin-widgets
+      - menus
+      - get_dialog
+      - popOutput
+
+articles:
+  - title: Getting started
+    navbar: ~
+    contents:
+      - getting-started
+      - data-import
+  - title: Analysis
+    contents:
+      - descriptive-statistics
+      - linear-models
+      - graphs
+      - survival
+  - title: Reporting
+    contents:
+      - documents
+  - title: Specialised workflows
+    contents:
+      - design-of-experiments
+      - factominer
+      - ezr-workflow
+  - title: Extending and maintaining
+    contents:
+      - plugins
+      - help-authoring
+      - migrating
+      - troubleshooting
