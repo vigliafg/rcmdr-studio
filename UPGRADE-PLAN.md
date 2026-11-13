@@ -31,6 +31,7 @@ The detailed, sector-by-sector upgrade plan lives in
 | [`07-platform-plugins-quality.md`](docs/upgrades/07-platform-plugins-quality.md) | Project, performance, plugin SDK, QA |
 | [`CHECKLIST.md`](docs/upgrades/CHECKLIST.md) | Task tracking |
 | [`ACCESSIBILITY.md`](docs/upgrades/ACCESSIBILITY.md) | Accessibility checklist |
+| [`diary/TEMPLATE.md`](docs/upgrades/diary/TEMPLATE.md) | Handoff diary template between waves |
 
 The code in this initial commit is still RcmdrShiny 1.13.0. The rebranding and
 the upgrades begin with Onda 0.

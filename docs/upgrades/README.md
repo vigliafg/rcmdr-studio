@@ -189,17 +189,63 @@ Legenda stato:
 
 ---
 
-## 10. Come aggiornare questi documenti
+## 10. Handoff tra ondate
+
+Alla fine di ogni ondata il contesto della sessione viene compattato
+dall'utente. Il passaggio tra ondate è quindi governato da un **diario di
+handoff** che deve essere completo e autosufficiente.
+
+### Protocollo di chiusura ondata
+
+Prima della compattazione del contesto:
+
+1. Aggiornare `CHECKLIST.md` con stato, commit e note.
+2. Creare `docs/upgrades/diary/wave-XX-<slug>.md` usando
+   [`diary/TEMPLATE.md`](diary/TEMPLATE.md).
+3. Inserire nel diario almeno:
+   - obiettivo e risultato dell'ondata;
+   - commit prodotti;
+   - file creati/modificati;
+   - test eseguiti e risultato;
+   - decisioni prese e ADR aggiornati;
+   - deviazioni dal piano;
+   - problemi noti e blocchi;
+   - domande aperte;
+   - prossimi passi esatti, con ID task;
+   - comandi per verificare la baseline.
+4. Aggiornare il documento di settore se lo scope è cambiato.
+5. Committare e pushare il diario.
+6. Comunicare all'utente: “diario pronto, puoi compattare il contesto”.
+
+### Protocollo di apertura ondata
+
+All'inizio dell'ondata successiva:
+
+1. Leggere il diario più recente, `CHECKLIST.md` e il documento di settore.
+2. Eseguire i test di baseline indicati nel diario.
+3. Riprendere dai “Prossimi passi” del diario.
+4. Non assumere che il contesto precedente sia disponibile: il diario è la
+   fonte di verità.
+
+### Regola
+
+> Se non è nel diario, non è successo. Il diario è il contratto di handoff tra
+> una sessione e la successiva.
+
+---
+
+## 11. Come aggiornare questi documenti
 
 1. Una modifica di scope aggiorna il documento di settore **e** `CHECKLIST.md`.
 2. Una decisione architetturale nuova diventa un ADR in `DECISIONS.md`.
 3. Un task chiuso cita il commit o la PR nella colonna “Note” della checklist.
 4. I criteri di accettazione non si cancellano: si spostano in “Fuori
    perimetro” con una motivazione.
+5. La chiusura di ogni ondata produce un diario in `docs/upgrades/diary/`.
 
 ---
 
-## 11. Milestone
+## 12. Milestone
 
 | Milestone | Contenuto | Criterio |
 |---|---|---|
