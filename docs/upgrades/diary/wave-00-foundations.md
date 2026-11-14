@@ -225,5 +225,5 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e 'pkgload::load_all(quiet=TRUE); testth
 
 - [x] `CHECKLIST.md` aggiornata.
 - [x] Documento di settore aggiornato.
-- [ ] Diario committato e pushato.
-- [ ] Utente informato: “diario pronto, puoi compattare il contesto”.
+- [x] Diario committato e pushato.
+- [x] Utente informato: “diario pronto, puoi compattare il contesto”.
