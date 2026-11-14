@@ -1,6 +1,6 @@
 # Onda 7 — Piattaforma, progetto, plugin e qualità
 
-**Stato:** da implementare  
+**Stato:** in corso — P7.1 completato
 **Dipende da:** Onde 0–6 e Onda 6.5 (menu platform)
 **Sblocca:** RcmdrShiny Studio 2.0 stabile e manutenibile  
 **Documento padre:** [`README.md`](README.md)

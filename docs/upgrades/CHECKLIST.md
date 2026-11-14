@@ -267,7 +267,7 @@ stabili per menu e voci. I command ID del motore restano invariati.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| P7.1 | Schema progetto | [ ] | |
+| P7.1 | Schema progetto | [x] | Schema, validazione, migrazione e path helper in `R/project.R`; 88 test |
 | P7.2 | Save/load progetto | [ ] | |
 | P7.3 | Recent projects | [ ] | |
 | P7.4 | Autosave/recovery | [ ] | |
@@ -360,4 +360,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              `File > Save` unico con sotto-voci per formato, migrazione
              espansione, validazione e test golden di copertura comandi.
              Nuovo topic `menu-structure` e vignetta `menu-platform`.
+2026-11-14 — Onda 7 avviata: P7.1 schema progetto completato in
+             `R/project.R` con costruttori di voce, validazione pura,
+             migrazione v0→v1, normalizzazione e helper di path relativi
+             contenuti nel progetto. 88 test dedicati; suite 3020 pass.
 ```
