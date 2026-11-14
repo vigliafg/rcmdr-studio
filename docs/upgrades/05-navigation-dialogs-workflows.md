@@ -1,6 +1,6 @@
 # Onda 5 — Navigazione, dialoghi e workflow guidati
 
-**Stato:** da implementare  
+**Stato:** completata (vedi `diary/wave-05-navigation-dialogs-workflows.md`)
 **Dipende da:** Onde 0–4  
 **Sblocca:** un'esperienza “da prodotto” sopra il catalogo esistente  
 **Documento padre:** [`README.md`](README.md)
@@ -316,21 +316,21 @@ Suggerisce:
 
 ## 10. Checklist di chiusura
 
-- [ ] Palette evoluta.
-- [ ] Preferiti.
-- [ ] Recenti.
-- [ ] Menu search.
-- [ ] Breadcrumb.
-- [ ] Scorciatoie complete.
-- [ ] Preview comando completa.
-- [ ] Preset dialoghi.
-- [ ] Validazione inline.
-- [ ] Selector arricchiti.
-- [ ] Dialoghi responsive/accessibili.
-- [ ] Workflow model/registry.
-- [ ] Workflow UI.
-- [ ] Integrazione dialoghi/cronologia.
-- [ ] Cinque workflow.
-- [ ] Sezione report da workflow.
-- [ ] Suggerimenti variabile.
-- [ ] Test unit e E2E verdi.
+- [x] Palette evoluta.
+- [x] Preferiti.
+- [x] Recenti.
+- [x] Menu search.
+- [x] Breadcrumb.
+- [x] Scorciatoie complete.
+- [x] Preview comando completa.
+- [x] Preset dialoghi.
+- [x] Validazione inline.
+- [x] Selector arricchiti.
+- [x] Dialoghi responsive/accessibili.
+- [x] Workflow model/registry.
+- [x] Workflow UI.
+- [x] Integrazione dialoghi/cronologia.
+- [x] Cinque workflow.
+- [x] Sezione report da workflow.
+- [x] Suggerimenti variabile.
+- [x] Test unit e E2E verdi.

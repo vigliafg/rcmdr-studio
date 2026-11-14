@@ -94,13 +94,27 @@ get_dialog <- function(id) {
 
 .implemented_commands_cache <- new.env(parent = emptyenv())
 
+#' Dialog identifiers, cached per plugin revision
+#' @keywords internal
+dialog_ids <- function() {
+  revision <- tryCatch(.plugin_registry$version, error = function(e) 0L)
+  if (!identical(.implemented_commands_cache$dialog_revision, revision)) {
+    .implemented_commands_cache$dialog_ids <- unique(c(
+      names(base_dialog_catalog()),
+      names(plugin_dialogs()),
+      names(plugin_aliases())
+    ))
+    .implemented_commands_cache$dialog_revision <- revision
+  }
+  .implemented_commands_cache$dialog_ids
+}
+
 #' @keywords internal
 implemented_commands <- function() {
   if (is.null(.implemented_commands_cache$names)) {
     .implemented_commands_cache$names <- unique(c(
-      names(dialog_catalog()),
-      names(direct_commands()),
-      names(plugin_aliases())
+      dialog_ids(),
+      names(direct_commands())
     ))
   }
   .implemented_commands_cache$names
@@ -469,6 +483,7 @@ dialog_modal <- function(spec) {
   }
   modalDialog(
     title = title,
+    studio_breadcrumb(dialog_breadcrumb_parts(spec$id)),
     uiOutput("dialog_presets_ui"),
     uiOutput("dialog_body"),
     uiOutput("dialog_validation_ui"),

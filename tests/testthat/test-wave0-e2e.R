@@ -69,7 +69,7 @@ test_that("the Studio foundation flow works in a browser", {
   app$wait_for_js("document.querySelector('.rcmdr-palette-result') !== null",
                   timeout = 30000)
   app$run_js(
-    "Array.from(document.querySelectorAll('.rcmdr-palette-result')).filter(function(el){return el.getAttribute('data-palette-type') === 'menu';}).find(function(el){return el.textContent.toLowerCase().indexOf('numerical') >= 0;}).click();"
+    "Array.from(document.querySelectorAll('.rcmdr-palette-result')).find(function(el){return el.getAttribute('data-palette-id') === 'numericalSummaries';}).click();"
   )
   app$wait_for_js("document.querySelector('#numericalSummaries_x') !== null",
                   timeout = 60000)

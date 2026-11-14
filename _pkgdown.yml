@@ -73,6 +73,7 @@ articles:
       - chart-studio
       - report-studio
       - workbench
+      - navigation-workflows
   - title: Analysis
     contents:
       - descriptive-statistics

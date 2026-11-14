@@ -23,7 +23,7 @@ form_group <- function(label, input, help = NULL) {
 #' Shiny equivalent of Rcmdr's `variableListBox()`.
 #' @export
 var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
-                      size = NULL, placeholder = NULL) {
+                      size = NULL, placeholder = NULL, descriptions = NULL) {
   if (length(choices) == 0L) {
     return(form_group(
       label,
@@ -36,9 +36,18 @@ var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
     selected <- character()
   }
   selected <- intersect(selected, choices)
+  labels <- choices
+  if (!is.null(descriptions)) {
+    notes <- descriptions[choices]
+    notes[is.na(notes)] <- ""
+    note <- ifelse(nzchar(notes), paste0(" \u2014 ", notes), "")
+    labels <- stats::setNames(choices, paste0(choices, note))
+  } else {
+    labels <- stats::setNames(choices, choices)
+  }
   selectizeInput(
     id, label,
-    choices = stats::setNames(choices, choices),
+    choices = labels,
     selected = selected,
     multiple = multiple,
     width = "100%",
@@ -47,10 +56,18 @@ var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
 }
 
 #' @keywords internal
-groups_input <- function(id, label, choices, selected = NULL) {
+groups_input <- function(id, label, choices, selected = NULL,
+                         descriptions = NULL) {
+  values <- unname(choices)
+  labels <- names(choices) %||% values
+  if (!is.null(descriptions)) {
+    notes <- descriptions[values]
+    notes[is.na(notes)] <- ""
+    labels <- ifelse(nzchar(notes), paste0(labels, " \u2014 ", notes), labels)
+  }
   selectInput(
     id, label,
-    choices = choices,
+    choices = stats::setNames(values, labels),
     selected = if (is.null(selected)) choices[[1L]] else selected,
     width = "100%"
   )
@@ -238,14 +255,15 @@ button_row <- function(...) {
 model_formula_input <- function(id, variables, lhs = "", rhs = "",
                                 response_label = tr("Response variable:"),
                                 formula_label = tr("Model formula (right-hand side):"),
-                                show_operators = TRUE) {
+                                show_operators = TRUE, descriptions = NULL) {
   operator_button <- function(op, label) {
     actionButton(paste0(id, "_op_", op), label,
                  class = "btn-sm btn-outline-secondary")
   }
 
   tagList(
-    var_input(paste0(id, "_lhs"), response_label, variables, selected = lhs),
+    var_input(paste0(id, "_lhs"), response_label, variables, selected = lhs,
+              descriptions = descriptions),
     entry_input(paste0(id, "_rhs"), formula_label, rhs),
     htmltools::div(
       class = "row g-2 align-items-end mb-3",

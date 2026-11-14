@@ -55,7 +55,8 @@ histogram_dialog <- function() {
       m <- utils::modifyList(defaults, memory %||% list())
       htmltools::tagList(
         var_input(ns("variable"), tr("Variable (pick one)"),
-                  graph_vars(state), selected = m$variable),
+                  graph_vars(state), selected = m$variable,
+                  descriptions = variable_descriptions(state)),
         graph_group_input(ns("group"), state, m$group),
         radio_input(ns("scale"), tr("Scale"),
                     c("Frequency" = "frequency", "Density" = "density",
@@ -113,9 +114,11 @@ boxplot_dialog <- function() {
       m <- utils::modifyList(defaults, memory %||% list())
       htmltools::tagList(
         var_input(ns("variables"), tr("Variables (pick one or more)"),
-                  graph_vars(state), selected = m$variables, multiple = TRUE),
+                  graph_vars(state), selected = m$variables, multiple = TRUE,
+                  descriptions = variable_descriptions(state)),
         var_input(ns("response"), tr("Response (when grouping)"),
-                  graph_vars(state), selected = m$response),
+                  graph_vars(state), selected = m$response,
+                  descriptions = variable_descriptions(state)),
         graph_group_input(ns("group"), state, m$group),
         help_text(tr("Without a group, one box per selected variable. With a group, the response is plotted by group."))
       )

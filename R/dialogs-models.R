@@ -34,7 +34,8 @@ linear_model_dialog <- function() {
         entry_input(ns("model"), tr("Enter name for model:"), m$model_name),
         htmltools::tags$hr(),
         model_formula_input(
-          id, variables(state), lhs = m$lhs, rhs = m$rhs
+          id, variables(state), lhs = m$lhs, rhs = m$rhs,
+          descriptions = variable_descriptions(state)
         ),
         htmltools::tags$hr(),
         entry_input(ns("subset"), tr("Subset (optional R expression):"), m$subset),

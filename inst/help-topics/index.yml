@@ -68,6 +68,10 @@ topics:
     file: topics/workbench.md
     category: workbench
     order: 40
+  - id: navigation-workflows
+    file: topics/navigation-workflows.md
+    category: workbench
+    order: 45
   - id: exporting-results
     file: topics/exporting-results.md
     category: data

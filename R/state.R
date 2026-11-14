@@ -63,6 +63,27 @@ AppState <- function(env = globalenv()) {
 
   state$dialog_memory <- list()
   state$dialog_presets <- list()
+  state$dialog_presets_version <- 1L
+  # Inline field errors returned by a dialog `on_ok` callback as
+  # `field_errors`; the runtime renders them under the fields.
+  state$dialog_errors <- list()
+
+  # Navigation: favourites, recents and the persisted expansion of the menu
+  # tree.  They are session preferences, never commands.
+  state$menu_favorites <- character()
+  state$menu_recents <- character()
+  state$menu_expanded <- character()
+
+  # Guided workflows: the active instance plus its counter.  A workflow only
+  # orchestrates the existing dialogs and commands.
+  state$workflow <- NULL
+  state$workflow_counter <- 0L
+  state$workflow_history <- list()
+
+  # Cache for the palette index.  It is rebuilt when the state revision or the
+  # plugin registry changes.
+  state$palette_cache <- NULL
+  state$palette_cache_key <- NULL
 
   # Document authoring: the Script tab can hold a plain script or an R
   # Markdown/knitr document.  The path, mode and text live here so dialogs and
@@ -138,6 +159,10 @@ AppState <- function(env = globalenv()) {
     theme = "system",
     ui_mode = "studio",
     history_length = 200L,
+    menu_recent_length = 8L,
+    persist_preferences = TRUE,
+    preferences_file = NULL,
+    workflow_step_limit = 50L,
     features = default_features(),
     capabilities = rcmdr_capabilities()
   )

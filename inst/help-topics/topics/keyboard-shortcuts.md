@@ -32,11 +32,14 @@ addition to the ones listed here.
 
 | Action | Shortcut |
 |---|---|
-| Open the command palette | `Ctrl` + `K` (or `Cmd` + `K`) |
+| Open the command palette | `Ctrl` + `K` or `Ctrl` + `Shift` + `P` (`Cmd` on macOS) |
 | Run the selection or the current chunk | `Ctrl` + `Enter` |
 | Run the whole script | `Ctrl` + `Shift` + `Enter` |
 | Save the current document | `Ctrl` + `S` |
 | Save the document as | `Ctrl` + `Shift` + `S` |
+| Switch to the nth Studio tab | `Alt` + `1` ... `Alt` + `9` |
+| Open the Help tab | `F1` |
+| Show the shortcut list | `Ctrl` + `/` |
 | Close the palette or a modal | `Esc` |
 | Move through palette results | `ArrowUp` / `ArrowDown`, then `Enter` |
 

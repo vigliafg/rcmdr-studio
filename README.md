@@ -13,7 +13,7 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.18 Wave 4 (Workbench).** The core exposes 230 dialogs and,
+> **Status: 1.19 Wave 5 (Navigation and workflows).** The core exposes 230 dialogs and,
 > with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
 > package ships a Studio shell with a Home tab, command palette, structured
 > command history, live R-command preview in dialogs, isolated previews,
@@ -30,7 +30,11 @@ report workspaces, and a Classic mode for compatibility.
 > The Workbench adds multi-document script tabs, executable cells with run
 > above/below, an R console with recall, filterable output and message cards,
 > an object explorer with reproducible actions and a model registry with a
-> comparison dashboard. Navigation and platform waves remain. The remaining
+> comparison dashboard. The navigation layer adds an advanced command palette
+> with favourites and recents, live menu search, breadcrumbs, complete
+> shortcuts, dialog presets and inline validation, five guided workflows that
+> orchestrate the existing dialogs, and contextual variable suggestions in the
+> Data Studio inspector. The platform wave remains. The remaining
 > disabled core entries are the three lifecycle commands, the nine
 > browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
 > implement every plugin-specific entry. The package includes a searchable

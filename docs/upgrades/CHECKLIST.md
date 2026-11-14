@@ -169,32 +169,32 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| N5.1 | Palette evoluta | [ ] | |
-| N5.2 | Preferiti/recenti | [ ] | |
-| N5.3 | Menu search | [ ] | |
-| N5.4 | Breadcrumb | [ ] | |
-| N5.5 | Scorciatoie complete | [ ] | |
-| N5.6 | Preview completa | [ ] | |
-| N5.7 | Preset UI e persistenza | [ ] | |
-| N5.8 | Validazione inline | [ ] | |
-| N5.9 | Selector arricchiti | [ ] | |
-| N5.10 | Responsive e accessibilità dialogo | [ ] | |
-| N5.11 | Workflow model e registry | [ ] | |
-| N5.12 | Workflow UI | [ ] | |
-| N5.13 | Integrazione dialoghi/cronologia | [ ] | |
-| N5.14 | Cinque workflow iniziali | [ ] | |
-| N5.15 | Generazione sezione report | [ ] | |
-| N5.16 | Suggerimenti per variabile | [ ] | |
-| N5.17 | UI inspector/menu | [ ] | |
+| N5.1 | Palette evoluta | [x] | completato |
+| N5.2 | Preferiti/recenti | [x] | completato |
+| N5.3 | Menu search | [x] | completato |
+| N5.4 | Breadcrumb | [x] | completato |
+| N5.5 | Scorciatoie complete | [x] | completato |
+| N5.6 | Preview completa | [x] | completato |
+| N5.7 | Preset UI e persistenza | [x] | completato |
+| N5.8 | Validazione inline | [x] | completato |
+| N5.9 | Selector arricchiti | [x] | completato |
+| N5.10 | Responsive e accessibilità dialogo | [x] | completato |
+| N5.11 | Workflow model e registry | [x] | completato |
+| N5.12 | Workflow UI | [x] | completato |
+| N5.13 | Integrazione dialoghi/cronologia | [x] | completato |
+| N5.14 | Cinque workflow iniziali | [x] | completato |
+| N5.15 | Generazione sezione report | [x] | completato |
+| N5.16 | Suggerimenti per variabile | [x] | completato |
+| N5.17 | UI inspector/menu | [x] | completato |
 
 ### Chiusura Onda 5
 
-- [ ] Palette, preferiti, recenti, menu search.
-- [ ] Preset e validazione.
-- [ ] Cinque workflow.
-- [ ] Suggerimenti contestuali.
-- [ ] E2E verde.
-- [ ] Help topic e vignetta.
+- [x] Palette, preferiti, recenti, menu search.
+- [x] Preset e validazione.
+- [x] Cinque workflow.
+- [x] Suggerimenti contestuali.
+- [x] E2E verde.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -313,4 +313,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              autosave, console con storico, output cards e filtri, messages
              per severità, object explorer, dataset registry e models
              dashboard con reopen dialog.
+2026-11-14 — Onda 5 completata: palette evoluta con filtri e azioni,
+             preferiti/recenti persistiti, menu search con evidenziazione,
+             breadcrumb, scorciatoie complete, preview e preset dialoghi,
+             validazione inline, selector descrittivi, cinque workflow con
+             stato e sezione report, suggerimenti per variabile. Nuovo topic
+             `navigation-workflows` e vignetta.
 ```

@@ -58,12 +58,14 @@ numerical_summaries_dialog <- function() {
           tr("Data"),
           var_input(
             ns("x"), tr("Variables (pick one or more)"),
-            numeric_variables(state), selected = m$x, multiple = TRUE
+            numeric_variables(state), selected = m$x, multiple = TRUE,
+            descriptions = variable_descriptions(state)
           ),
           groups_input(
             ns("groups"), tr("Summarize by:"),
             choices = group_choices,
-            selected = if ((m$groups %||% "") %in% group_choices) m$groups else ""
+            selected = if ((m$groups %||% "") %in% group_choices) m$groups else "",
+            descriptions = variable_descriptions(state)
           )
         ),
         tabPanel(

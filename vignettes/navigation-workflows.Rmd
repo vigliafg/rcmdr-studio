@@ -1,0 +1,112 @@
+---
+title: "Navigation and guided workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Navigation and guided workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette describes the navigation layer added on top of the existing
+catalogue. Every navigation action points to a dialog or a command that was
+already part of RcmdrShiny; guided workflows only orchestrate those existing
+pieces.
+
+## Find a command
+
+```{r palette, eval=FALSE}
+# In the running application
+# Ctrl+K (or Ctrl+Shift+P) opens the palette
+palette_search("numerical", palette_index(state))
+```
+
+The palette index covers menu commands, dialogs, help topics, data sets,
+variables, structured history and workflows. `palette_index_cached()` keeps the
+index until the application state changes, so typing does not rebuild the menu
+tree.
+
+Favourites and recents are preferences, not commands:
+
+```{r favourites, eval=FALSE}
+menu_favorite_toggle(state, "numericalSummaries")
+menu_recent_add(state, "readDataSet")
+palette_search("", palette_index(state), type = "favorite")
+```
+
+The sidebar shows the same favourites and recents, a live menu search with
+highlighting, and expand/collapse controls. The expanded groups are persisted
+with the other preferences.
+
+## Presets and validation
+
+A preset stores dialog inputs under a name:
+
+```{r presets, eval=FALSE}
+dialog_preset_save(
+  state, "numericalSummaries", "Teaching default",
+  list(x = c("height", "weight"), mean = TRUE, sd = TRUE)
+)
+dialog_presets_for(state, "numericalSummaries")
+```
+
+Presets can be exported to an RDS file and imported again. Applying a preset
+only pre-fills the dialog; it never executes a command.
+
+When a dialog returns `field_errors`, the runtime keeps the modal open, renders
+the field messages and focuses the first invalid field:
+
+```{r validation, eval=FALSE}
+dialog_field_errors(list(field_errors = c(
+  x = "Pick at least one variable"
+)))
+```
+
+## Guided workflows
+
+A workflow is an ordered list of existing dialogs and commands. It does not add
+a statistical procedure and it does not validate a step itself.
+
+```{r workflow, eval=FALSE}
+workflow_start(state, "describe")
+workflow_current_step(state)
+workflow_step_open(state, "summary")   # returns the dialog and its memory
+workflow_progress(state)
+```
+
+When the dialog applies, the runtime marks the step done and records the
+commands it produced. Optional steps can be skipped; required steps cannot.
+At the end, the draft section uses exactly those commands:
+
+```{r section, eval=FALSE}
+workflow_report_section(state)
+workflow_insert_report(state)
+```
+
+The five built-in workflows are **Describe the data**, **Compare groups**,
+**Linear model**, **Survival analysis** and **Prepare the report**.
+
+## Variable suggestions
+
+Suggestions use simple rules based on the variable type:
+
+```{r suggestions, eval=FALSE}
+variable_info(state, "Species")
+variable_suggestions(state, "Species")
+suggestion_memory(state, "Species", "boxPlot")
+```
+
+A numeric variable suggests summaries, distributions, boxplots, scatterplots,
+correlations and transformations. A factor suggests frequency tables, bar
+graphs, boxplots, two-way tables, recoding and reordering. Each button opens
+the existing dialog with the variable already selected.
+
+## Reproducibility
+
+Navigation never bypasses the command engine. Running a menu command from the
+palette is the same command as clicking the menu; opening a dialog from the
+palette only opens it; a workflow step runs the dialog; and the report section
+is editable Markdown built from the recorded commands.

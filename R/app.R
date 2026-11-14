@@ -362,6 +362,73 @@ app_css <- function() {
     }
     .rcmdr-palette-path { grid-column: 1 / -1; font-size: .78rem; color: var(--rcmdr-muted); }
     .rcmdr-palette-reason { grid-column: 1 / -1; font-size: .78rem; color: var(--rcmdr-warning); }
+    .rcmdr-palette-result { cursor: pointer; }
+    .rcmdr-palette-result:focus-visible {
+      outline: 2px solid var(--rcmdr-focus, #2f5d8a); outline-offset: 2px;
+    }
+    .rcmdr-palette-main {
+      display: grid; grid-template-columns: auto minmax(0, 1fr);
+      gap: .1rem .55rem; align-items: baseline; min-width: 0;
+    }
+    .rcmdr-palette-main .rcmdr-palette-label { grid-column: 2; }
+    .rcmdr-palette-main .rcmdr-palette-path,
+    .rcmdr-palette-main .rcmdr-palette-reason { grid-column: 1 / -1; }
+    .rcmdr-palette-actions {
+      display: flex; gap: .25rem; flex-wrap: wrap; justify-content: flex-end;
+      align-items: center;
+    }
+    .rcmdr-palette-filters { margin-bottom: .35rem; }
+    .rcmdr-menu-row { display: flex; align-items: center; gap: .2rem; }
+    .rcmdr-menu-row .rcmdr-menu-item { flex: 1 1 auto; min-width: 0; }
+    .rcmdr-menu-star {
+      border: 0; background: transparent; padding: 0 .15rem;
+      color: var(--rcmdr-muted); line-height: 1;
+    }
+    .rcmdr-menu-star.active { color: #d97706; }
+    .rcmdr-menu-shortcuts { margin-bottom: .5rem; }
+    .rcmdr-menu-shortcut-group > summary { font-weight: 600; }
+    .rcmdr-menu-mark { padding: 0 .05rem; background: #fde68a; color: inherit; }
+    .rcmdr-menu-actions { margin: .25rem 0 .5rem; }
+    .rcmdr-dialog-errors { margin-bottom: .75rem; }
+    .rcmdr-dialog-errors ul { padding-left: 1.1rem; }
+    .rcmdr-dialog-errors a { color: inherit; text-decoration: underline; }
+    .rcmdr-workflow-panel { margin-bottom: var(--rcmdr-space); }
+    .rcmdr-workflow-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--rcmdr-space);
+    }
+    .rcmdr-workflow-card {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
+    }
+    .rcmdr-workflow-card h6 { margin-bottom: .35rem; }
+    .rcmdr-workflow-steps { display: flex; flex-direction: column; gap: .5rem; }
+    .rcmdr-workflow-step {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .55rem .7rem;
+    }
+    .rcmdr-workflow-step.current {
+      border-color: #2f5d8a; box-shadow: 0 0 0 2px rgba(47, 93, 138, .18);
+    }
+    .rcmdr-workflow-draft pre {
+      max-height: 16rem; overflow: auto; font-size: .82rem;
+      background: var(--rcmdr-surface-muted); padding: .6rem;
+      border-radius: var(--rcmdr-radius);
+    }
+    .rcmdr-variable-suggestions {
+      border-top: 1px dashed var(--rcmdr-border); margin-top: .65rem;
+      padding-top: .65rem;
+    }
+    .rcmdr-variable-suggestions h6 { font-size: .85rem; }
+    .modal-dialog { max-height: 94vh; }
+    .modal-body { overflow-y: auto; max-height: 72vh; }
+    .modal-footer { flex-wrap: wrap; gap: .35rem; }
+    .rcmdr-shortcuts-table td, .rcmdr-shortcuts-table th { vertical-align: middle; }
+    @media (max-width: 991.98px) {
+      .rcmdr-sidebar { max-height: 46vh; overflow-y: auto; }
+      .modal-dialog { margin: .4rem; }
+      .modal-body { max-height: 66vh; }
+    }
     .rcmdr-console-input { display: flex; gap: .5rem; align-items: flex-start; }
     .rcmdr-console-input .form-group { flex: 1; margin-bottom: 0; }
     .rcmdr-console-note { color: var(--rcmdr-muted); font-size: .8rem; margin: .5rem 0; }
@@ -555,6 +622,54 @@ app_js <- function(lang = current_language()) {
       }, {priority: 'event'});
       return false;
     };
+    window.rcmdrPaletteAction = function(button, action) {
+      if (!button || !button.closest) return false;
+      var row = button.closest('.rcmdr-palette-result');
+      if (!row) return false;
+      if (row.getAttribute('data-palette-enabled') === 'false') return false;
+      Shiny.setInputValue('palette_action', {
+        type: row.getAttribute('data-palette-type'),
+        id: row.getAttribute('data-palette-id'),
+        command: row.getAttribute('data-palette-command') || '',
+        action: action
+      }, {priority: 'event'});
+      return false;
+    };
+    window.rcmdrFocusField = function(id) {
+      var el = document.getElementById(id);
+      if (!el) el = document.querySelector('[id$=\"_' + id + '\"]');
+      if (!el) return false;
+      el.classList.add('is-invalid');
+      el.setAttribute('aria-invalid', 'true');
+      if (el.focus) el.focus();
+      if (el.scrollIntoView) el.scrollIntoView({block: 'center'});
+      return false;
+    };
+    Shiny.addCustomMessageHandler('rcmdr-field-errors', function(message) {
+      document.querySelectorAll('.is-invalid').forEach(function(el) {
+        el.classList.remove('is-invalid');
+        el.removeAttribute('aria-invalid');
+      });
+      var errors = (message && message.errors) || {};
+      var first = null;
+      Object.keys(errors).forEach(function(id) {
+        var el = document.getElementById(id) ||
+          document.querySelector('[id$=\"_' + id + '\"]');
+        if (!el) return;
+        el.classList.add('is-invalid');
+        el.setAttribute('aria-invalid', 'true');
+        if (!first) first = el;
+      });
+      if (first && first.focus) first.focus();
+    });
+    document.addEventListener('toggle', function(event) {
+      var target = event.target;
+      if (!target || !target.matches || !target.matches('details[data-menu-id]')) return;
+      Shiny.setInputValue('menu_group_toggle', {
+        id: target.getAttribute('data-menu-id'),
+        open: target.open
+      }, {priority: 'event'});
+    }, true);
     window.rcmdrHistoryClick = function(el, action) {
       if (!el) return false;
       if (action === 'copy') {
@@ -596,6 +711,42 @@ app_js <- function(lang = current_language()) {
           paletteButton.click();
         }
       }
+      if (mod && event.shiftKey && !event.altKey && key === 'p') {
+        var paletteShift = document.getElementById('palette_open');
+        if (paletteShift) {
+          event.preventDefault();
+          paletteShift.click();
+        }
+      }
+      if (mod && !event.shiftKey && !event.altKey && key === '/') {
+        var shortcuts = document.getElementById('shortcuts_open');
+        if (shortcuts) {
+          event.preventDefault();
+          shortcuts.click();
+        }
+      }
+      if (event.key === 'F1' && !mod && !event.altKey) {
+        var helpShortcut = document.getElementById('help_shortcut');
+        if (helpShortcut) {
+          event.preventDefault();
+          helpShortcut.click();
+        }
+      }
+      if (event.altKey && !mod && !event.shiftKey && /^[1-9]$/.test(event.key)) {
+        var tabs = document.querySelectorAll('#main_tabs .nav-link');
+        var index = parseInt(event.key, 10) - 1;
+        if (tabs[index]) {
+          event.preventDefault();
+          tabs[index].click();
+        }
+      }
+      if (mod && event.shiftKey && event.key === 'Enter') {
+        var runAll = document.getElementById('run_all');
+        if (runAll) {
+          event.preventDefault();
+          runAll.click();
+        }
+      }
       if (mod && !event.shiftKey && !event.altKey && key === 's') {
         var save = document.getElementById('document_save');
         if (save) {
@@ -610,7 +761,7 @@ app_js <- function(lang = current_language()) {
           saveAs.click();
         }
       }
-      if (event.key === 'Enter' && mod && !event.target.matches('#console_input, #palette_query')) {
+      if (event.key === 'Enter' && mod && !event.shiftKey && !event.target.matches('#console_input, #palette_query')) {
         var run = document.getElementById('run_selection');
         if (run) {
           event.preventDefault();
@@ -814,6 +965,8 @@ home_pane_ui <- function() {
         class = "d-flex gap-2 flex-wrap",
         actionButton("home_import", tr("Import data"), class = "btn-light btn-sm"),
         actionButton("home_report", tr("New report"), class = "btn-light btn-sm"),
+        actionButton("home_workflows", tr("Guided workflows"),
+                     class = "btn-light btn-sm"),
         actionButton("home_palette", tr("Command palette"), class = "btn-light btn-sm"),
         actionButton("home_help", tr("Getting started"), class = "btn-light btn-sm")
       )
@@ -830,8 +983,10 @@ home_pane_ui <- function() {
                           tr("Ctrl+K opens the command palette.")),
         htmltools::tags$p(class = "small text-muted mb-1",
                           tr("Ctrl+Enter runs the selection or the current chunk.")),
-        htmltools::tags$p(class = "small text-muted mb-0",
-                          tr("Ctrl+S saves the current document."))
+        htmltools::tags$p(class = "small text-muted mb-2",
+                          tr("Ctrl+S saves the current document.")),
+        actionButton("home_shortcuts", tr("All keyboard shortcuts"),
+                     class = "btn-sm btn-outline-secondary")
       )
     )
   )
@@ -864,6 +1019,7 @@ main_tabs_ui <- function(mode = "studio") {
   tabsetPanel(
     id = "main_tabs",
     tabPanel(tr("Home"), home_pane_ui()),
+    tabPanel(tr("Workflows"), uiOutput("workflow_panel")),
     tabPanel(tr("Data"), data_pane_ui("studio")),
     tabPanel(tr("Charts"), plots_pane_ui("studio")),
     tabPanel(tr("Report"), report_pane_ui("studio")),
@@ -934,7 +1090,12 @@ app_ui <- function() {
           htmltools::div(
             class = "rcmdr-menu-search",
             textInput("menu_search", NULL,
-                      placeholder = tr("Search menus..."), width = "100%")
+                      placeholder = tr("Search menus..."), width = "100%"),
+            htmltools::div(
+              class = "d-flex gap-2 align-items-center rcmdr-menu-actions",
+              actionLink("menu_expand_all", tr("Expand all")),
+              actionLink("menu_collapse_all", tr("Collapse all"))
+            )
           ),
           uiOutput("menus")
         ),
@@ -953,6 +1114,8 @@ app_ui <- function() {
     # buttons are invisible but must exist for Shiny to bind the outputs.
     htmltools::div(
       class = "visually-hidden",
+      actionButton("shortcuts_open", tr("Keyboard shortcuts")),
+      actionButton("help_shortcut", tr("Help")),
       downloadButton("download_report_rmd", tr("Download report (.Rmd)")),
       downloadButton("download_report_html", tr("Download report (.html)"))
     )
@@ -970,6 +1133,11 @@ app_server <- function(env = globalenv()) {
   function(input, output, session) {
     state <- AppState(env)
     state$session <- session
+    try(preferences_load(state), silent = TRUE)
+    persist_preferences <- function() {
+      try(preferences_save(state), silent = TRUE)
+      invisible(NULL)
+    }
     document_registry_ensure(state)
     tick <- reactiveVal(0L)
     menu_revision <- reactiveVal(0L)
@@ -1050,14 +1218,25 @@ app_server <- function(env = globalenv()) {
 
     output$menus <- renderUI({
       menu_revision()
+      tick()
       query <- trimws(input$menu_search %||% "")
+      favorites <- menu_favorite_ids(state)
       if (!nzchar(query)) {
-        return(menu_ui(tree, function(node) {
-          command_status(state, node$command, node$activation, node$install)
-        }))
+        return(htmltools::tagList(
+          menu_sections_ui(state, leaves),
+          menu_ui(
+            tree,
+            function(node) {
+              command_status(state, node$command, node$activation,
+                             node$install)
+            },
+            favorites = favorites,
+            expanded = state$menu_expanded %||% character()
+          )
+        ))
       }
       matches <- leaves[
-        grepl(query, paste(leaves$label, leaves$path),
+        grepl(query, paste(leaves$label, leaves$path, leaves$command),
               ignore.case = TRUE, fixed = TRUE),
         , drop = FALSE
       ]
@@ -1071,27 +1250,54 @@ app_server <- function(env = globalenv()) {
         row <- matches[i, , drop = FALSE]
         status <- command_status(state, row$command, row$activation, row$install)
         if (identical(status, "hidden")) return(NULL)
-        label <- htmltools::tagList(
-          menu_label(row$label),
-          htmltools::tags$span(class = "rcmdr-menu-flat-path", row$path)
-        )
-        if (identical(status, "enabled")) {
-          htmltools::tags$div(
-            actionLink(row$key, label, class = "rcmdr-menu-item")
-          )
-        } else {
-          htmltools::tags$div(
-            class = "rcmdr-menu-item disabled",
-            title = if (identical(status, "porting")) {
-              tr("In porting")
-            } else {
-              tr("Not available for the current data set")
-            },
-            label
-          )
-        }
+        menu_flat_item_ui(row, status, query,
+                          row$command[[1L]] %in% favorites)
       }))
     })
+
+    observeEvent(input$menu_favorite, {
+      action <- input$menu_favorite
+      if (is.null(action) || is.null(action$command)) return()
+      menu_favorite_toggle(state, action$command)
+      persist_preferences()
+      menu_revision(menu_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$menu_group_toggle, {
+      action <- input$menu_group_toggle
+      if (is.null(action) || is.null(action$id)) return()
+      menu_toggle_expanded(state, action$id, isTRUE(action$open))
+      persist_preferences()
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$menu_expand_all, {
+      menu_set_expanded(state, menu_group_ids(tree), expand = TRUE)
+      persist_preferences()
+      menu_revision(menu_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$menu_collapse_all, {
+      menu_set_expanded(state, menu_group_ids(tree), expand = FALSE)
+      persist_preferences()
+      menu_revision(menu_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$shortcuts_open, {
+      showModal(shortcuts_modal())
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_shortcuts, {
+      showModal(shortcuts_modal())
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$help_shortcut, {
+      if (is.function(state$help_show)) state$help_show("getting-started")
+      state$show_tab("Help")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_workflows, {
+      state$show_tab("Workflows")
+    }, ignoreInit = TRUE)
 
     observeEvent(tick(), {
       mode <- ui_mode(state)
@@ -1106,6 +1312,7 @@ app_server <- function(env = globalenv()) {
 
     open_dialog <- function(spec) {
       if (!is.null(spec$on_open)) spec$on_open(state)
+      state$dialog_errors <- list()
       state$current_dialog <- spec$id
       if (!is.null(state$help_reset_dialog)) state$help_reset_dialog()
       dialog_revision(dialog_revision() + 1L)
@@ -1137,6 +1344,9 @@ app_server <- function(env = globalenv()) {
         return(invisible(NULL))
       }
 
+      menu_recent_add(state, command)
+      persist_preferences()
+
       spec <- get_dialog_spec(command)
       if (!is.null(spec)) {
         open_dialog(spec)
@@ -1167,6 +1377,12 @@ app_server <- function(env = globalenv()) {
         observeEvent(input[[key]], launch(command), ignoreInit = TRUE)
       })
     }
+
+    observeEvent(input$menu_command, {
+      command <- input$menu_command
+      if (is.null(command) || !nzchar(command)) return()
+      launch(command)
+    }, ignoreInit = TRUE)
 
     # -- dialogs ------------------------------------------------------------
 
@@ -1232,6 +1448,12 @@ app_server <- function(env = globalenv()) {
           tr("This dialog prepares a report; no R command is generated.")
         ))
       }
+      if (!is.null(result$tab)) {
+        return(htmltools::tags$p(
+          class = "text-muted small mb-0",
+          sprintf(tr("This dialog opens the %s tab."), result$tab)
+        ))
+      }
       htmltools::tags$p(
         class = "text-muted small mb-0",
         tr("No R command is generated by this dialog.")
@@ -1239,7 +1461,8 @@ app_server <- function(env = globalenv()) {
     })
 
     output$dialog_validation_ui <- renderUI({
-      NULL
+      dialog_revision()
+      dialog_validation_ui(state$dialog_errors %||% list())
     })
 
     output$dialog_presets_ui <- renderUI({
@@ -1249,7 +1472,7 @@ app_server <- function(env = globalenv()) {
           !isTRUE(spec$presets)) {
         return(NULL)
       }
-      presets <- names(state$dialog_presets[[spec$id]] %||% list())
+      presets <- names(dialog_presets_for(state, spec$id))
       choices <- c(stats::setNames("", tr("(no preset)")),
                    stats::setNames(presets, presets))
       htmltools::tags$div(
@@ -1257,7 +1480,7 @@ app_server <- function(env = globalenv()) {
         htmltools::tags$div(
           style = "min-width: 170px;",
           selectInput("dialog_preset_select", NULL, choices = choices,
-                      width = "170px")
+                      width = "170px", selectize = FALSE)
         ),
         actionButton("dialog_preset_apply", tr("Apply"),
                      class = "btn-sm btn-outline-secondary"),
@@ -1269,7 +1492,13 @@ app_server <- function(env = globalenv()) {
                     placeholder = tr("Preset name"))
         ),
         actionButton("dialog_preset_save", tr("Save preset"),
-                     class = "btn-sm btn-outline-primary")
+                     class = "btn-sm btn-outline-primary"),
+        downloadButton("dialog_preset_export", tr("Export"),
+                       class = "btn-sm btn-outline-secondary"),
+        shiny::fileInput(
+          "dialog_preset_import", NULL, accept = ".rds", width = "150px",
+          buttonLabel = tr("Import"), placeholder = tr("Preset file")
+        )
       )
     })
 
@@ -1278,9 +1507,10 @@ app_server <- function(env = globalenv()) {
       req(id)
       name <- input$dialog_preset_select %||% ""
       if (!nzchar(name)) return()
-      preset <- (state$dialog_presets[[id]] %||% list())[[name]]
+      preset <- dialog_preset_get(state, id, name)
       if (is.null(preset)) return()
       set_dialog_memory(state, id, preset)
+      state$dialog_errors <- list()
       dialog_revision(dialog_revision() + 1L)
       showNotification(tr("Preset applied."), type = "message", duration = 2)
     }, ignoreInit = TRUE)
@@ -1288,15 +1518,16 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$dialog_preset_save, {
       id <- state$current_dialog
       req(id)
-      name <- trimws(input$dialog_preset_name %||% "")
-      if (!nzchar(name)) {
-        showNotification(tr("Enter a preset name first."),
-                         type = "message", duration = 3)
+      result <- dialog_preset_save(
+        state, id, input$dialog_preset_name %||% "",
+        capture_dialog_inputs(id)
+      )
+      if (!isTRUE(result$ok)) {
+        showNotification(result$error %||% tr("The preset could not be saved."),
+                         type = "error", duration = 4)
         return()
       }
-      presets <- state$dialog_presets[[id]] %||% list()
-      presets[[name]] <- capture_dialog_inputs(id)
-      state$dialog_presets[[id]] <- presets
+      persist_preferences()
       updateTextInput(session, "dialog_preset_name", value = "")
       dialog_revision(dialog_revision() + 1L)
       showNotification(tr("Preset saved."), type = "message", duration = 2)
@@ -1307,15 +1538,43 @@ app_server <- function(env = globalenv()) {
       req(id)
       name <- input$dialog_preset_select %||% ""
       if (!nzchar(name)) return()
-      presets <- state$dialog_presets[[id]] %||% list()
-      presets[[name]] <- NULL
-      state$dialog_presets[[id]] <- presets
+      dialog_preset_delete(state, id, name)
+      persist_preferences()
       dialog_revision(dialog_revision() + 1L)
     }, ignoreInit = TRUE)
+
+    observeEvent(input$dialog_preset_import, {
+      upload <- input$dialog_preset_import
+      if (is.null(upload) || is.null(upload$datapath)) return()
+      result <- dialog_presets_load_file(state, upload$datapath,
+                                         overwrite = TRUE)
+      if (!isTRUE(result$ok)) {
+        showNotification(result$error %||% tr("The preset file could not be read."),
+                         type = "error", duration = 5)
+        return()
+      }
+      persist_preferences()
+      dialog_revision(dialog_revision() + 1L)
+      showNotification(
+        sprintf(tr("%d presets imported."), result$imported %||% 0L),
+        type = "message", duration = 3
+      )
+    }, ignoreInit = TRUE)
+
+    output$dialog_preset_export <- downloadHandler(
+      filename = function() "rcmdrshiny-presets.rds",
+      content = function(file) {
+        saveRDS(dialog_presets_export(state), file)
+      }
+    )
 
     observeEvent(input$dialog_insert_script, {
       result <- isolate(dialog_preview_result())
       commands <- result$commands %||% character()
+      if (length(commands) == 0L && !is.null(result$script) &&
+          nzchar(result$script)) {
+        commands <- result$script
+      }
       if (length(commands) == 0L) {
         showNotification(tr("This dialog has no command to insert."),
                          type = "message", duration = 3)
@@ -1324,6 +1583,7 @@ app_server <- function(env = globalenv()) {
       insert_commands_into_script(state, commands)
       removeModal()
       state$current_dialog <- NULL
+      state$dialog_errors <- list()
       dialog_revision(dialog_revision() + 1L)
       tick(tick() + 1L)
       state$show_tab("Script")
@@ -1340,13 +1600,31 @@ app_server <- function(env = globalenv()) {
         error = function(e) list(error = conditionMessage(e))
       )
 
+      field_errors <- dialog_field_errors(result)
+      if (length(field_errors) > 0L) {
+        prefixed <- stats::setNames(
+          unlist(field_errors, use.names = FALSE),
+          ifelse(startsWith(names(field_errors), paste0(id, "_")),
+                 names(field_errors),
+                 paste0(id, "_", names(field_errors)))
+        )
+        state$dialog_errors <- as.list(prefixed)
+        dialog_revision(dialog_revision() + 1L)
+        session$sendCustomMessage("rcmdr-field-errors",
+                                  dialog_validation_payload(state$dialog_errors))
+        return(invisible(FALSE))
+      }
+
       if (!is.null(result$error)) {
         showNotification(result$error, type = "error", duration = 10)
         return(invisible(FALSE))
       }
 
+      state$dialog_errors <- list()
       if (!is.null(result$memory)) set_dialog_memory(state, id, result$memory)
 
+      before_history <- vapply(state$history %||% list(),
+                               function(entry) entry$id %||% "", character(1))
       state$busy <- TRUE
       ok <- tryCatch(
         apply_dialog_result(state, result),
@@ -1357,6 +1635,15 @@ app_server <- function(env = globalenv()) {
         }
       )
       state$busy <- FALSE
+
+      if (isTRUE(ok) && !is.null(state$workflow)) {
+        after_history <- vapply(state$history %||% list(),
+                                function(entry) entry$id %||% "", character(1))
+        workflow_mark_step(
+          state, id, result,
+          history_ids = setdiff(after_history, before_history)
+        )
+      }
 
       if (close) {
         removeModal()
@@ -1393,6 +1680,7 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$dialog_cancel, {
       removeModal()
       state$current_dialog <- NULL
+      state$dialog_errors <- list()
       if (!is.null(state$help_reset_dialog)) state$help_reset_dialog()
       dialog_revision(dialog_revision() + 1L)
     })
@@ -1402,6 +1690,7 @@ app_server <- function(env = globalenv()) {
       req(id)
       spec <- get_dialog_spec(id)
       req(spec)
+      state$dialog_errors <- list()
       clear_dialog_memory(state, id)
       if (!is.null(state$help_reset_dialog)) state$help_reset_dialog()
       if (!is.null(spec$on_open)) spec$on_open(state)
@@ -1669,17 +1958,59 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$home_palette, open_palette(), ignoreInit = TRUE)
 
     output$palette_results <- renderUI({
-      query <- input$palette_query %||% ""
-      palette_results_ui(palette_search(query, palette_index(state), 25L))
+      tick()
+      menu_revision()
+      index <- palette_index_cached(state)
+      results <- palette_search(
+        input$palette_query %||% "", index, 25L,
+        type = input$palette_type %||% "all",
+        favorites_only = isTRUE(input$palette_favorites)
+      )
+      palette_results_ui(results)
     })
 
     observeEvent(input$palette_action, {
       action <- input$palette_action
       if (is.null(action) || is.null(action$id)) return()
+      type <- action$type %||% ""
+      verb <- action$action %||% "run"
+      if (identical(type, "menu") || identical(type, "dialog")) {
+        if (identical(verb, "favorite")) {
+          menu_favorite_toggle(state, action$id)
+          persist_preferences()
+          menu_revision(menu_revision() + 1L)
+          return()
+        }
+        if (identical(verb, "copy")) {
+          tryCatch(
+            utils::writeClipboard(action$command %||% action$id),
+            error = function(e) NULL
+          )
+          showNotification(tr("Command copied."), type = "message",
+                           duration = 2)
+          return()
+        }
+        removeModal()
+        launch(action$id)
+        return()
+      }
+      if (identical(type, "workflow")) {
+        removeModal()
+        result <- workflow_start(state, action$id)
+        if (!isTRUE(result$ok)) {
+          showNotification(result$error %||% tr("Unknown workflow."),
+                           type = "error", duration = 5)
+        } else {
+          menu_recent_add(state, paste0("workflow:", action$id))
+          persist_preferences()
+          state$show_tab("Workflows")
+          tick(tick() + 1L)
+        }
+        return()
+      }
       removeModal()
       switch(
-        action$type %||% "",
-        menu = launch(action$id),
+        type,
         help = {
           if (is.function(state$help_show)) state$help_show(action$id)
           state$show_tab("Help")
@@ -1690,6 +2021,8 @@ app_server <- function(env = globalenv()) {
           menu_revision(menu_revision() + 1L)
         },
         variable = {
+          updateSelectInput(session, "data_inspector_column",
+                            selected = action$id)
           state$show_tab("Data")
           showNotification(
             sprintf(tr("Variable: %s"), action$id),
@@ -1697,8 +2030,17 @@ app_server <- function(env = globalenv()) {
           )
         },
         history = {
-          if (identical(action$action, "insert")) {
+          if (identical(verb, "insert")) {
             history_insert_script(state, action$id)
+          } else if (identical(verb, "copy")) {
+            entry <- Filter(function(item) identical(item$id, action$id),
+                            state$history %||% list())
+            if (length(entry) > 0L) {
+              tryCatch(utils::writeClipboard(entry[[1L]]$command %||% ""),
+                       error = function(e) NULL)
+              showNotification(tr("Command copied."), type = "message",
+                               duration = 2)
+            }
           } else {
             history_rerun(state, action$id)
           }
@@ -1706,6 +2048,74 @@ app_server <- function(env = globalenv()) {
           menu_revision(menu_revision() + 1L)
         }
       )
+    }, ignoreInit = TRUE)
+
+    output$workflow_panel <- renderUI({
+      tick()
+      workflow_panel_ui(state)
+    })
+
+    observeEvent(input$workflow_action, {
+      action <- input$workflow_action
+      if (is.null(action) || is.null(action$action)) return()
+      switch(
+        action$action,
+        start = {
+          result <- workflow_start(state, action$step)
+          if (!isTRUE(result$ok)) {
+            showNotification(result$error %||% tr("Unknown workflow."),
+                             type = "error", duration = 5)
+          }
+        },
+        open = {
+          result <- workflow_step_open(state, action$step %||% NULL)
+          if (!isTRUE(result$ok)) {
+            showNotification(result$error %||% tr("The step is not available."),
+                             type = "error", duration = 5)
+          } else if (!is.null(result$dialog)) {
+            open_dialog_memory(state, result$dialog, result$memory %||% list())
+          } else if (!is.null(result$message)) {
+            showNotification(result$message, type = "message", duration = 3)
+          }
+        },
+        skip = {
+          result <- workflow_skip_step(state, action$step %||% NULL)
+          if (!isTRUE(result$ok)) {
+            showNotification(result$error %||% tr("The step cannot be skipped."),
+                             type = "warning", duration = 4)
+          }
+        },
+        back = workflow_back(state),
+        cancel = {
+          workflow_cancel(state)
+          showNotification(tr("Workflow cancelled."), type = "message",
+                           duration = 2)
+        },
+        report_section = {
+          section <- workflow_report_section(state)
+          showModal(modalDialog(
+            title = tr("Draft report section"),
+            code_preview(section),
+            easyClose = TRUE,
+            footer = modalButton(tr("Close")),
+            size = "l"
+          ))
+        },
+        report_insert = {
+          result <- workflow_insert_report(state)
+          if (!isTRUE(result$ok)) {
+            showNotification(result$error %||% tr("No report section yet."),
+                             type = "warning", duration = 4)
+          } else {
+            state$show_tab("Report")
+            showNotification(tr("Workflow section inserted into the report."),
+                             type = "message", duration = 3)
+          }
+        }
+      )
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
     }, ignoreInit = TRUE)
 
     observeEvent(input$ui_mode_toggle, {
@@ -2217,9 +2627,23 @@ app_server <- function(env = globalenv()) {
           choices = stats::setNames(names(df), names(df)),
           selected = column, width = "100%"
         ),
-        data_inspector_ui(profile)
+        data_inspector_ui(profile),
+        if (!is.null(column)) variable_suggestions_ui(state, column)
       )
     })
+
+    observeEvent(input$variable_suggestion, {
+      action <- input$variable_suggestion
+      if (is.null(action) || is.null(action$variable) ||
+          is.null(action$dialog)) {
+        return()
+      }
+      if (!action$dialog %in% dialog_ids()) return()
+      open_dialog_memory(
+        state, action$dialog,
+        suggestion_memory(state, action$variable, action$dialog)
+      )
+    }, ignoreInit = TRUE)
 
     output$data_selection_columns_ui <- renderUI({
       tick()

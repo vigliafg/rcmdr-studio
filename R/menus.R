@@ -293,22 +293,30 @@ menu_leaves <- function(tree) {
 #' @param status Function taking a menu item node and returning one of
 #'   `"enabled"`, `"porting"`, `"inactive"` or `"hidden"`.
 #' @keywords internal
-menu_ui <- function(tree, status = function(node) "enabled") {
+menu_ui <- function(tree, status = function(node) "enabled",
+                    favorites = character(), expanded = NULL, query = "") {
   htmltools::tags$div(
     class = "rcmdr-menu",
-    lapply(tree, menu_node_ui, status = status)
+    lapply(tree, menu_node_ui, status = status, favorites = favorites,
+           expanded = expanded, query = query)
   )
 }
 
-menu_node_ui <- function(node, status = function(node) "enabled") {
+menu_node_ui <- function(node, status = function(node) "enabled",
+                         favorites = character(), expanded = NULL,
+                         query = "") {
   if (identical(node$type, "separator")) {
     return(htmltools::tags$hr(class = "my-1"))
   }
 
   if (identical(node$type, "menu")) {
-    children <- lapply(node$children, menu_node_ui, status = status)
+    children <- lapply(node$children, menu_node_ui, status = status,
+                       favorites = favorites, expanded = expanded,
+                       query = query)
     return(htmltools::tags$details(
       class = "rcmdr-menu-group",
+      `data-menu-id` = node$id,
+      open = if (!is.null(expanded) && node$id %in% expanded) "open" else NULL,
       htmltools::tags$summary(menu_label(node$label)),
       htmltools::tags$div(class = "rcmdr-menu-children", children)
     ))
@@ -318,17 +326,252 @@ menu_node_ui <- function(node, status = function(node) "enabled") {
   if (identical(state, "hidden")) return(NULL)
 
   if (identical(state, "enabled")) {
-    actionLink(node$key, menu_label(node$label), class = "rcmdr-menu-item")
+    htmltools::tags$div(
+      class = "rcmdr-menu-row",
+      actionLink(
+        node$key,
+        htmltools::tagList(
+          menu_highlight(menu_label(node$label), query)
+        ),
+        class = "rcmdr-menu-item"
+      ),
+      menu_star_ui(node$command, node$command %in% favorites)
+    )
   } else {
     tooltip <- if (identical(state, "porting")) {
       tr("In porting")
     } else {
       tr("Not available for the current data set")
     }
-    htmltools::tags$span(
-      class = "rcmdr-menu-item disabled",
-      title = tooltip,
-      menu_label(node$label)
+    htmltools::tags$div(
+      class = "rcmdr-menu-row",
+      htmltools::tags$span(
+        class = "rcmdr-menu-item disabled",
+        title = tooltip,
+        menu_highlight(menu_label(node$label), query)
+      )
     )
   }
+}
+
+# Navigation helpers ---------------------------------------------------------
+
+#' Path of a command in the menu tree
+#'
+#' @param command Command identifier.
+#' @param tree Optional menu tree.
+#' @return A character vector of labels, or `character()` when the command is
+#'   not part of a menu.
+#' @keywords internal
+menu_command_path <- function(command, tree = menu_tree()) {
+  if (is.null(command) || !nzchar(command)) return(character())
+  leaves <- menu_leaves(tree)
+  index <- match(command, leaves$command)
+  if (is.na(index)) return(character())
+  strsplit(leaves$path[[index]], " > ", fixed = TRUE)[[1L]]
+}
+
+#' Breadcrumb parts for a dialog
+#' @keywords internal
+dialog_breadcrumb_parts <- function(id) {
+  menu_command_path(id)
+}
+
+#' Toggle a menu favourite
+#' @keywords internal
+menu_favorite_toggle <- function(state, command) {
+  if (is.null(command) || !nzchar(command)) return(invisible(FALSE))
+  favorites <- state$menu_favorites %||% character()
+  if (command %in% favorites) {
+    state$menu_favorites <- setdiff(favorites, command)
+    value <- FALSE
+  } else {
+    state$menu_favorites <- unique(c(command, favorites))
+    value <- TRUE
+  }
+  state_touch(state)
+  invisible(value)
+}
+
+#' Favourite commands
+#' @keywords internal
+menu_favorite_ids <- function(state) state$menu_favorites %||% character()
+
+#' Record a recently used command
+#' @keywords internal
+menu_recent_add <- function(state, command) {
+  if (is.null(command) || !nzchar(command)) return(invisible(NULL))
+  limit <- max(1L, as.integer(state$options$menu_recent_length %||% 8L))
+  recents <- c(command, setdiff(state$menu_recents %||% character(), command))
+  state$menu_recents <- utils::head(recents, limit)
+  state_touch(state)
+  invisible(state$menu_recents)
+}
+
+#' Recently used commands
+#' @keywords internal
+menu_recent_ids <- function(state) state$menu_recents %||% character()
+
+#' Expand or collapse the entire menu tree
+#' @keywords internal
+menu_set_expanded <- function(state, commands = NULL, expand = TRUE) {
+  if (is.null(commands)) {
+    tree <- menu_tree()
+    commands <- unlist(lapply(tree, function(node) {
+      if (identical(node$type, "menu")) node$id else NULL
+    }), use.names = FALSE)
+  }
+  if (isTRUE(expand)) {
+    state$menu_expanded <- unique(c(state$menu_expanded %||% character(),
+                                    commands))
+  } else {
+    state$menu_expanded <- setdiff(state$menu_expanded %||% character(),
+                                   commands)
+  }
+  state_touch(state)
+  invisible(state$menu_expanded)
+}
+
+#' Toggle one menu group
+#' @keywords internal
+menu_toggle_expanded <- function(state, id, open = NULL) {
+  if (is.null(id) || !nzchar(id)) return(invisible(NULL))
+  current <- state$menu_expanded %||% character()
+  should_open <- if (is.null(open)) !(id %in% current) else isTRUE(open)
+  state$menu_expanded <- if (should_open) unique(c(id, current)) else
+    setdiff(current, id)
+  state_touch(state)
+  invisible(state$menu_expanded)
+}
+
+#' Highlight a query in a menu label
+#' @keywords internal
+menu_highlight <- function(text, query) {
+  text <- text %||% ""
+  query <- trimws(query %||% "")
+  if (!nzchar(query) || !nzchar(text)) return(text)
+  escaped <- paste0(
+    "\\Q",
+    gsub("\\\\E", "\\\\\\\\E", query, perl = TRUE),
+    "\\E"
+  )
+  hit <- regexpr(escaped, text, ignore.case = TRUE, perl = TRUE)[[1L]]
+  if (hit < 0L) return(text)
+  before <- substr(text, 1L, hit - 1L)
+  match <- substr(text, hit, hit + nchar(query) - 1L)
+  after <- substr(text, hit + nchar(query), nchar(text))
+  htmltools::tagList(
+    before,
+    htmltools::tags$mark(class = "rcmdr-menu-mark", match),
+    after
+  )
+}
+
+menu_star_ui <- function(command, favorite = FALSE) {
+  htmltools::tags$button(
+    type = "button",
+    class = paste("rcmdr-menu-star", if (isTRUE(favorite)) "active"),
+    title = if (isTRUE(favorite)) tr("Remove from favourites") else
+      tr("Add to favourites"),
+    `aria-label` = if (isTRUE(favorite)) tr("Remove from favourites") else
+      tr("Add to favourites"),
+    `aria-pressed` = if (isTRUE(favorite)) "true" else "false",
+    onclick = sprintf(
+      "event.stopPropagation(); Shiny.setInputValue('menu_favorite', {command: '%s'}, {priority: 'event'}); return false;",
+      command
+    ),
+    if (isTRUE(favorite)) "\u2605" else "\u2606"
+  )
+}
+
+menu_shortcut_link <- function(row, label) {
+  command <- row$command %||% ""
+  htmltools::tags$a(
+    class = "rcmdr-menu-item",
+    href = "#",
+    onclick = sprintf(
+      "Shiny.setInputValue('menu_command', '%s', {priority: 'event'}); return false;",
+      gsub("'", "\\\\'", command)
+    ),
+    label
+  )
+}
+
+menu_flat_item_ui <- function(row, status, query = "", favorite = FALSE) {
+  label <- htmltools::tagList(
+    menu_highlight(row$label, query),
+    htmltools::tags$span(class = "rcmdr-menu-flat-path", row$path)
+  )
+  if (identical(status, "enabled")) {
+    htmltools::tags$div(
+      class = "rcmdr-menu-row",
+      actionLink(row$key, label, class = "rcmdr-menu-item"),
+      menu_star_ui(row$command, favorite)
+    )
+  } else {
+    htmltools::tags$div(
+      class = "rcmdr-menu-row",
+      htmltools::tags$div(
+        class = "rcmdr-menu-item disabled",
+        title = if (identical(status, "porting")) {
+          tr("In porting")
+        } else {
+          tr("Not available for the current data set")
+        },
+        label
+      )
+    )
+  }
+}
+
+#' Favourites and recents sections for the sidebar
+#' @keywords internal
+menu_sections_ui <- function(state, leaves = NULL) {
+  favorites <- menu_favorite_ids(state)
+  recents <- menu_recent_ids(state)
+  if (length(favorites) == 0L && length(recents) == 0L) return(NULL)
+  if (is.null(leaves)) leaves <- menu_leaves(menu_tree())
+  section <- function(title, commands) {
+    commands <- commands[commands %in% leaves$command]
+    if (length(commands) == 0L) return(NULL)
+    htmltools::tags$details(
+      class = "rcmdr-menu-group rcmdr-menu-shortcut-group", open = "open",
+      htmltools::tags$summary(title),
+      htmltools::tags$div(
+        class = "rcmdr-menu-children",
+        lapply(commands, function(command) {
+          index <- match(command, leaves$command)
+          row <- leaves[index, , drop = FALSE]
+          htmltools::tags$div(
+            class = "rcmdr-menu-row",
+            menu_shortcut_link(row, row$label),
+            menu_star_ui(row$command, row$command %in% favorites)
+          )
+        })
+      )
+    )
+  }
+  htmltools::tagList(
+    htmltools::tags$div(
+      class = "rcmdr-menu-shortcuts",
+      section(tr("Favourites"), favorites),
+      section(tr("Recent"), setdiff(recents, favorites))
+    )
+  )
+}
+
+#' All menu groups, for expand/collapse
+#' @keywords internal
+menu_group_ids <- function(tree = menu_tree()) {
+  ids <- character()
+  walk <- function(nodes) {
+    for (node in nodes) {
+      if (identical(node$type, "menu")) {
+        ids <<- c(ids, node$id)
+        walk(node$children)
+      }
+    }
+  }
+  walk(tree)
+  ids
 }

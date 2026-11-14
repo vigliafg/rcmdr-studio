@@ -1,3 +1,28 @@
+# RcmdrShiny Studio 1.19.0
+
+## Wave 5 — Navigation, dialogs and guided workflows
+
+- **Advanced command palette**: menus and dialogs, help, data sets, variables,
+  history and workflows, with fuzzy search, type filter, favourites-first
+  ordering, disabled reasons, cached index and per-row actions.
+- **Favourites and recents**: starred menu rows, sidebar sections, recent
+  commands and a small preferences file that survives a restart.
+- **Menu search**: live filtering, match highlighting, expand/collapse all and
+  persisted expansion.
+- **Breadcrumbs**: dialogs and the palette show the menu path of the command.
+- **Complete shortcuts**: `Ctrl+Shift+P`, `Ctrl+/`, `F1`, `Alt+1..9`, run-all
+  and a shortcut modal.
+- **Dialog platform 2.0**: complete command preview, named presets with
+  export/import, inline field validation with focus and `aria-invalid`,
+  richer selectors with type/missing/unique descriptions and responsive
+  modals.
+- **Guided workflows**: five workflows (describe, compare, linear model,
+  survival, report), step statuses, skip/back/cancel, command recording and a
+  draft report section generated from exactly the commands run.
+- **Variable suggestions**: contextual actions in the Data Studio inspector,
+  based on variable type and availability, opening existing dialogs.
+- New `navigation-workflows` help topic and vignette.
+
 # RcmdrShiny Studio 1.18.0
 
 ## Wave 4 — Workbench

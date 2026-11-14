@@ -202,6 +202,8 @@ RcmdrShiny.plugin <- function(name, menus = NULL, dialogs = list(),
   .plugin_registry$plugins[[name]] <- plugin
   .plugin_registry$version <- .plugin_registry$version + 1L
   .implemented_commands_cache$names <- NULL
+  .implemented_commands_cache$dialog_ids <- NULL
+  .implemented_commands_cache$dialog_revision <- NULL
   .model_capabilities_cache$table <- NULL
 
   if (!is.null(help)) {
@@ -235,6 +237,8 @@ unload_plugins <- function() {
   .plugin_registry$plugins <- list()
   .plugin_registry$version <- .plugin_registry$version + 1L
   .implemented_commands_cache$names <- NULL
+  .implemented_commands_cache$dialog_ids <- NULL
+  .implemented_commands_cache$dialog_revision <- NULL
   .model_capabilities_cache$table <- NULL
   invisible(NULL)
 }

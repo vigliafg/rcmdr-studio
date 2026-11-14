@@ -14,7 +14,7 @@
 \title{Shiny widgets for plugin dialogs}
 \usage{
 var_input(id, label, choices, selected = NULL, multiple = FALSE,
-  size = NULL, placeholder = NULL)
+  size = NULL, placeholder = NULL, descriptions = NULL)
 
 checkbox_input(id, label, value = FALSE)
 
@@ -52,6 +52,9 @@ names, or a named vector of values and labels.}
 \item{size}{Optional widget size.}
 
 \item{placeholder}{Placeholder text.}
+
+\item{descriptions}{Optional named character vector of short notes shown
+next to each choice.}
 
 \item{value}{Initial value.}
 
