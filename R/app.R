@@ -36,6 +36,25 @@ app_css <- function() {
       border: 2px solid #dde2e8; border-radius: .3rem; cursor: pointer;
       background: #fff; }
     .rcmdr-gallery img.rcmdr-thumb.active { border-color: #0d6efd; }
+    .rcmdr-chart-grid { display: grid; gap: .75rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .rcmdr-chart-card { background: #fff; border: 1px solid #e2e6ea;
+      border-radius: .45rem; overflow: hidden; display: flex;
+      flex-direction: column; }
+    .rcmdr-chart-card.pinned { border-color: #0d6efd; }
+    .rcmdr-chart-thumb { background: #f4f6f8; cursor: pointer;
+      min-height: 130px; display: flex; align-items: center;
+      justify-content: center; }
+    .rcmdr-chart-thumb img { width: 100%; height: 130px; object-fit: cover; }
+    .rcmdr-chart-thumb-empty { color: #6c757d; font-size: .85rem; }
+    .rcmdr-chart-card-body { padding: .6rem .7rem; }
+    .rcmdr-chart-card-body h6 { margin-bottom: .25rem; }
+    .rcmdr-chart-preview-image { background: #fff; border: 1px solid #e2e6ea;
+      border-radius: .35rem; padding: .35rem; text-align: center; }
+    .rcmdr-chart-detail { margin-top: 1rem; background: #fff;
+      border: 1px solid #e2e6ea; border-radius: .45rem; padding: .9rem; }
+    .rcmdr-chart-detail-image { max-width: 100%; border: 1px solid #e2e6ea;
+      border-radius: .35rem; margin: .5rem 0; }
     .rcmdr-help-text { white-space: pre-wrap; max-height: 60vh; overflow-y: auto;
       background: #fbfbfc; border: 1px solid #e2e6ea; padding: .75rem; }
     .rcmdr-help-search { margin-bottom: .75rem; }
@@ -553,7 +572,7 @@ data_pane_ui <- function(mode = "studio") {
   }
 }
 
-plots_pane_ui <- function() {
+classic_plots_pane_ui <- function() {
   htmltools::tagList(
     htmltools::div(
       class = "d-flex gap-2 mb-2 flex-wrap",
@@ -575,6 +594,14 @@ plots_pane_ui <- function() {
     ),
     uiOutput("rgl_pane")
   )
+}
+
+plots_pane_ui <- function(mode = "studio") {
+  if (identical(mode, "classic")) {
+    classic_plots_pane_ui()
+  } else {
+    chart_studio_ui()
+  }
 }
 
 home_pane_ui <- function() {
@@ -629,7 +656,7 @@ main_tabs_ui <- function(mode = "studio") {
       tabPanel(tr("Script"), script_pane_ui()),
       tabPanel(tr("Output"), output_pane_ui()),
       tabPanel(tr("Messages"), messages_pane_ui()),
-      tabPanel(tr("Plots"), plots_pane_ui()),
+      tabPanel(tr("Plots"), plots_pane_ui("classic")),
       tabPanel(tr("Report"), report_pane_ui()),
       tabPanel(tr("Data"), data_pane_ui("classic")),
       tabPanel(tr("Environment"), uiOutput("environment_pane")),
@@ -640,7 +667,7 @@ main_tabs_ui <- function(mode = "studio") {
     id = "main_tabs",
     tabPanel(tr("Home"), home_pane_ui()),
     tabPanel(tr("Data"), data_pane_ui("studio")),
-    tabPanel(tr("Charts"), plots_pane_ui()),
+    tabPanel(tr("Charts"), plots_pane_ui("studio")),
     tabPanel(tr("Report"), report_pane_ui()),
     tabPanel(tr("Script"), script_pane_ui()),
     tabPanel(tr("Console"), console_workspace_ui()),
@@ -756,6 +783,7 @@ app_server <- function(env = globalenv()) {
     history_revision <- reactiveVal(0L)
     data_grid_revision <- reactiveVal(0L)
     data_selection_revision <- reactiveVal(0L)
+    chart_revision <- reactiveVal(0L)
     state$notify <- function() tick(tick() + 1L)
     state$script_consumed <- 0L
     state$set_script <- function(value) {
@@ -2201,6 +2229,20 @@ app_server <- function(env = globalenv()) {
         state$rgl_widget
       })
     }
+
+    # -- Chart Studio -------------------------------------------------------
+
+    chart_studio_server(
+      input, output, session, state, chart_revision,
+      tick = tick,
+      refresh = function(...) {
+        tick(tick() + 1L)
+        menu_revision(menu_revision() + 1L)
+        history_revision(history_revision() + 1L)
+        chart_revision(chart_revision() + 1L)
+        invisible(NULL)
+      }
+    )
 
     # -- downloads ----------------------------------------------------------
 

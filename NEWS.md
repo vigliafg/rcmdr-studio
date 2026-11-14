@@ -1,3 +1,33 @@
+# RcmdrShiny Studio 1.16.0
+
+## Wave 2 — Chart Studio
+
+- **Chart specification**: a typed list with data set, mapping, options,
+  theme, labels and size. The generated command delegates to the matching
+  dialog builder, so it cannot drift from the historical engine.
+- **Eleven chart types**: histogram, density, boxplot, scatterplot, line
+  graph, bar graph, dot plot, strip chart, quantile-comparison plot, plot of
+  means and XY conditioning plot.
+- **Visual builder**: the mapping and option fields follow the type; the
+  **Advanced...** button opens the full Rcmdr dialog with the current values.
+- **Isolated live preview**: debounced, cached and never logged; the preview
+  never adds a plot to the gallery.
+- **Themed commands**: colour-blind-safe, Tableau, Viridis and greys palettes,
+  base size, background, grid, legend, title and axis labels.
+- **Opt-in ggplot2 engine** for histogram, density, boxplot, scatterplot,
+  line graph and bar graph.
+- **Gallery**: search, type filter, pinned-only view, detail with metadata,
+  command and specification, pin, rename, delete, compare, copy code and
+  insert into the report.
+- **Round-trip**: the specification is attached to every applied plot and can
+  be reopened in the builder.
+- **Export**: PNG, PDF, SVG (with `svglite`) and HTML for interactive plots.
+- **Interactive selection**: select points in an ungrouped scatterplot and
+  create a reproducible subset.
+- **Data Studio integration**: chart plots use the same gallery and report
+  path as dialog plots.
+- New Chart Studio help topic and vignette.
+
 # RcmdrShiny Studio 1.15.0
 
 ## Wave 1 — Data Studio

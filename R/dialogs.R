@@ -52,6 +52,7 @@ base_dialog_catalog <- function() {
     ),
     document_dialogs(),
     data_studio_dialogs(),
+    chart_studio_dialogs(),
     phase2_dialogs(), phase3_dialogs(), phase4_dialogs(), phase5_dialogs()
   )
 }
@@ -525,6 +526,11 @@ apply_dialog_result <- function(state, result, dialog_id = state$current_dialog,
     if (!is.null(widget)) {
       state$plotly_widget <- widget
       state$plotly_title <- result$interactive_title %||% ""
+      if (length(state$plots) > 0L) {
+        index <- length(state$plots)
+        state$plots[[index]]$interactive_code <- result$interactive
+        state$plots[[index]]$interactive_title <- state$plotly_title
+      }
     }
   }
 

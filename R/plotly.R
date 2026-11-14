@@ -21,7 +21,8 @@ plotly_code_scatter <- function(dataset, x, y, group = NULL, smooth = FALSE,
   color <- if (is.null(group)) "" else sprintf(", color = ~%s", group)
   paste0(
     "plotly::plot_ly(data = ", dataset, ", x = ~", x, ", y = ~", y,
-    color, ", type = \"scatter\", mode = \"markers\")",
+    color, ", type = \"scatter\", mode = \"markers\", ",
+    "source = \"rcmdr-chart\")",
     if (isTRUE(smooth)) {
       sprintf(" |> plotly::add_lines(data = %s, x = ~%s, y = ~%s, inherit = FALSE)",
               dataset, x, y)
@@ -32,7 +33,8 @@ plotly_code_scatter <- function(dataset, x, y, group = NULL, smooth = FALSE,
            x = " |> plotly::layout(xaxis = list(type = \"log\"))",
            y = " |> plotly::layout(yaxis = list(type = \"log\"))",
            xy = " |> plotly::layout(xaxis = list(type = \"log\"), yaxis = list(type = \"log\"))",
-           "")
+           ""),
+    " |> plotly::event_register(\"plotly_selected\")"
   )
 }
 
@@ -40,7 +42,7 @@ plotly_code_histogram <- function(dataset, variable, group = NULL) {
   color <- if (is.null(group)) "" else sprintf(", color = ~%s", group)
   paste0(
     "plotly::plot_ly(data = ", dataset, ", x = ~", variable, color,
-    ", type = \"histogram\")"
+    ", type = \"histogram\", source = \"rcmdr-chart\")"
   )
 }
 
@@ -49,7 +51,8 @@ plotly_code_boxplot <- function(dataset, variables, response = NULL,
   if (!is.null(group) && nzchar(group) && !is.null(response) && nzchar(response)) {
     return(paste0(
       "plotly::plot_ly(data = ", dataset, ", y = ~", response,
-      ", color = ~", group, ", type = \"box\")"
+      ", color = ~", group, ", type = \"box\", ",
+      "source = \"rcmdr-chart\")"
     ))
   }
   variables <- variables[nzchar(variables)]
@@ -58,7 +61,8 @@ plotly_code_boxplot <- function(dataset, variables, response = NULL,
     sprintf("plotly::add_boxplot(data = %s, y = ~%s, name = \"%s\")",
             dataset, variable, variable)
   }, character(1))
-  paste0("plotly::plot_ly()", paste0(" |> ", parts, collapse = ""))
+  paste0("plotly::plot_ly(source = \"rcmdr-chart\")",
+         paste0(" |> ", parts, collapse = ""))
 }
 
 plotly_code_line <- function(dataset, x, y) {
@@ -68,7 +72,8 @@ plotly_code_line <- function(dataset, x, y) {
     sprintf("plotly::add_lines(data = %s, x = ~%s, y = ~%s, name = \"%s\")",
             dataset, x, variable, variable)
   }, character(1))
-  paste0("plotly::plot_ly()", paste0(" |> ", parts, collapse = ""))
+  paste0("plotly::plot_ly(source = \"rcmdr-chart\")",
+         paste0(" |> ", parts, collapse = ""))
 }
 
 #' Evaluate an interactive plot expression

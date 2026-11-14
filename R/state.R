@@ -62,6 +62,12 @@ AppState <- function(env = globalenv()) {
   state$sync_document <- NULL
   state$open_dialog <- NULL
   state$plots <- list()
+  state$plot_counter <- 0L
+  # Chart Studio: the last applied chart specification, the active chart
+  # selection and the gallery filter state.  Plots themselves stay in
+  # `state$plots`, which the report already consumes.
+  state$chart_last_spec <- NULL
+  state$chart_selection <- NULL
   state$rgl_scene <- NULL
   state$rgl_widget <- NULL
   state$current_dialog <- NULL
@@ -83,6 +89,9 @@ AppState <- function(env = globalenv()) {
     max_plots = 50L,
     output_stack_length = 10L,
     dt_server_threshold = 5000L,
+    chart_preview_width = 640L,
+    chart_preview_height = 420L,
+    chart_preview_cache = 12L,
     checkpoint_max = 20L,
     checkpoint_max_bytes = 50 * 1024^2,
     import_preview_rows = 20L,

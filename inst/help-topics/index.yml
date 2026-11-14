@@ -362,6 +362,10 @@ topics:
     file: topics/predictorEffectPlots.md
     category: models
     order: 1190
+  - id: chart-studio
+    file: topics/chart-studio.md
+    category: graphs
+    order: 90
   - id: histogram
     file: topics/histogram.md
     category: graphs

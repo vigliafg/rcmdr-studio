@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
 Title: A Browser-Native Statistical Workbench Inspired by the R Commander
-Version: 1.15.0
+Version: 1.16.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),
@@ -16,8 +16,10 @@ Description: A local, browser-based statistical workbench inspired by the
     the interface produces a reproducible R command.  The Studio interface
     adds a command palette, structured command history, a Data Studio with
     data set registry, column inspector, reproducible structural operations,
-    checkpoints and an import preview, plus chart and report workspaces and a
-    classic compatibility mode.
+    checkpoints and an import preview, a Chart Studio with a visual builder,
+    isolated live preview, themed commands, a searchable gallery and a
+    round-trip back to the builder, plus a report workspace and a classic
+    compatibility mode.
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
@@ -65,9 +67,11 @@ Suggests:
     pkgdown,
     commonmark,
     yaml,
-    plotly
+    plotly,
+    htmlwidgets,
+    svglite
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/vigliafg/rstats-commander
-BugReports: https://github.com/vigliafg/rstats-commander/issues
+URL: https://github.com/vigliafg/rcmdr-studio
+BugReports: https://github.com/vigliafg/rcmdr-studio/issues
 RoxygenNote: 7.3.3

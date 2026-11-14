@@ -387,6 +387,7 @@ run_plot_command <- function(state, code, echo = TRUE) {
   if (device %in% grDevices::dev.list()) grDevices::dev.off(device)
 
   index <- length(state$plots) + 1L
+  state$plot_counter <- as.integer(state$plot_counter %||% 0L) + 1L
   url <- NULL
   if (!is.null(state$plot_dir)) {
     name <- sprintf("plot-%04d.png", index)
@@ -396,13 +397,25 @@ run_plot_command <- function(state, code, echo = TRUE) {
     }
   }
 
-  state$plots <- c(state$plots, list(list(
+  entry <- list(
+    id = sprintf("plot-%04d", state$plot_counter),
+    index = index,
     file = file,
     url = url,
     code = code,
     recorded = recorded,
-    time = Sys.time()
-  )))
+    time = Sys.time(),
+    spec = NULL,
+    title = NULL,
+    tags = character(),
+    pinned = FALSE,
+    interactive_code = NULL
+  )
+  if (is.function(plot_register)) {
+    plot_register(state, entry)
+  } else {
+    state$plots <- c(state$plots, list(entry))
+  }
   trim_plots(state)
   state_touch(state)
 

@@ -1,0 +1,146 @@
+---
+title: "Chart Studio"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chart Studio}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r}
+library(RcmdrShiny)
+```
+
+# Overview
+
+The Chart Studio is the **Charts** tab in Studio mode. It is a builder, a live
+preview and a gallery built on top of the plotting engine used by the Rcmdr
+dialogs. Applying a chart always produces the same reproducible command the
+equivalent dialog would produce.
+
+The lifecycle is **spec -> preview -> apply -> gallery -> reopen**.
+
+# A specification is a list
+
+```{r}
+RcmdrShiny:::chart_spec(
+  "histogram", "Dataset",
+  mapping = list(x = "score"),
+  labels = list(title = "Score distribution")
+)
+```
+
+The spec records the data set, the mapping, the type-specific options, the
+theme, the labels and the output size. `RcmdrShiny:::chart_types()` lists the available
+types.
+
+```{r}
+names(RcmdrShiny:::chart_types())
+```
+
+# The generated command
+
+With the default theme and no labels, `RcmdrShiny:::chart_spec_command()` is exactly the
+command of the matching dialog.
+
+```{r}
+spec <- RcmdrShiny:::chart_spec("histogram", "Dataset", list(x = "score"))
+RcmdrShiny:::chart_spec_command(spec)
+```
+
+Theme and labels are additive: they only appear when the user changes them.
+
+```{r}
+spec$theme$palette <- "colorblind"
+spec$labels$title <- "Score distribution"
+RcmdrShiny:::chart_spec_command(spec)
+```
+
+# Preview
+
+`RcmdrShiny:::chart_preview()` renders a PNG in an isolated environment. It does not run a
+command, does not touch the log and does not add a plot to the gallery.
+
+```{r, eval = FALSE}
+state <- AppState()
+result <- RcmdrShiny:::chart_preview(state, spec)
+result$type
+result$error
+```
+
+# Apply
+
+`RcmdrShiny:::chart_apply()` runs the command through `run_command()` and attaches the spec
+to the resulting plot.
+
+```{r, eval = FALSE}
+result <- RcmdrShiny:::chart_apply(state, spec)
+result$ok
+result$index
+```
+
+# Gallery
+
+`RcmdrShiny:::plot_list()` returns one row per plot, with title, type, data set, time and
+pinned state. Search, filter and pin without touching the command log.
+
+```{r, eval = FALSE}
+RcmdrShiny:::plot_list(state, query = "distribution", pinned = FALSE)
+RcmdrShiny:::plot_update(state, 1, title = "Pinned distribution", pinned = TRUE)
+```
+
+The gallery actions map to small pure functions:
+
+```{r, eval = FALSE}
+RcmdrShiny:::plot_reopen(state, 1)      # the spec attached to the plot
+RcmdrShiny:::plot_compare(state, c(1, 2))
+RcmdrShiny:::plot_delete(state, 1)
+```
+
+# Round-trip
+
+A reopened spec can be changed and applied again.
+
+```{r, eval = FALSE}
+reopened <- RcmdrShiny:::plot_reopen(state, 1)
+reopened$options$scale <- "density"
+RcmdrShiny:::chart_apply(state, reopened)
+```
+
+# Export
+
+```{r, eval = FALSE}
+RcmdrShiny:::plot_export(state, 1, "png", "chart.png", width = 1200, height = 800)
+RcmdrShiny:::plot_export(state, 1, "pdf", "chart.pdf")
+RcmdrShiny:::plot_export(state, 1, "svg", "chart.svg")
+```
+
+SVG export uses `svglite` when available and falls back to the cairo device.
+HTML export is available for interactive plots built with `plotly`.
+
+# Interactive selection
+
+Supported charts also have a plotly expression. For an ungrouped scatterplot,
+select points and create a subset:
+
+```{r, eval = FALSE}
+rows <- c(1, 3, 5)
+command <- sprintf("Selected <- Dataset[c(%s), , drop = FALSE]",
+                   paste(rows, collapse = ", "))
+run_command(state, command)
+```
+
+The subset is a normal command and the new data set becomes active.
+
+# Design notes
+
+- The base engine remains the default; ggplot2 is opt-in.
+- The applied command is the dialog command, plus palette and labels only when
+  the user changes them.
+- Previews and gallery metadata are session state, not commands.
+- Every plot keeps its specification, so the round-trip is exact for the
+  supported types.

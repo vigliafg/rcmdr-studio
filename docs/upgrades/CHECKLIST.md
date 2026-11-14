@@ -74,27 +74,27 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| C2.1 | Chart spec e registry | [ ] | |
-| C2.2 | Builder UI | [ ] | |
-| C2.3 | Preview live | [ ] | |
-| C2.4 | Apply e registrazione | [ ] | |
-| C2.5 | Galleria evoluta | [ ] | |
-| C2.6 | Export | [ ] | |
-| C2.7 | Temi e palette | [ ] | |
-| C2.8 | Round-trip e reopen | [ ] | |
-| C2.9 | Selezione e brush | [ ] | |
-| C2.10 | Test, help, vignetta | [ ] | |
+| C2.1 | Chart spec e registry | [x] | `R/chart-spec.R`, `R/chart-types.R` |
+| C2.2 | Builder UI | [x] | `R/chart-studio.R`, layout Build/Gallery |
+| C2.3 | Preview live | [x] | Preview isolata, debounce, cache |
+| C2.4 | Apply e registrazione | [x] | Comando loggato, spec allegata |
+| C2.5 | Galleria evoluta | [x] | Ricerca, pin, rinomina, dettaglio, confronto |
+| C2.6 | Export | [x] | PNG/PDF/SVG/HTML |
+| C2.7 | Temi e palette | [x] | Palette, sfondo, base size, ggplot2 |
+| C2.8 | Round-trip e reopen | [x] | Spec conservata e riaperta |
+| C2.9 | Selezione e brush | [x] | Plotly + subset dagli punti |
+| C2.10 | Test, help, vignetta | [x] | Unit, E2E, topic, vignetta |
 
 ### Chiusura Onda 2
 
-- [ ] Build → preview → apply → gallery → export.
-- [ ] Comando applicato identico al dialogo.
-- [ ] Round-trip fedele.
-- [ ] Export PNG/PDF/SVG/HTML.
-- [ ] Temi e palette.
-- [ ] Advanced verso dialogo esistente.
-- [ ] E2E verde.
-- [ ] Help topic e vignetta.
+- [x] Build → preview → apply → gallery → export.
+- [x] Comando applicato identico al dialogo.
+- [x] Round-trip fedele.
+- [x] Export PNG/PDF/SVG/HTML.
+- [x] Temi e palette.
+- [x] Advanced verso dialogo esistente.
+- [x] E2E verde.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -299,4 +299,9 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              inspector, operazioni strutturali, checkpoint, dizionario,
              import wizard e fallback targeted. Test unit 1632 pass; E2E
              core, Wave 0, documenti e Data Studio verdi.
+2026-11-14 — Onda 2 completata: Chart Studio con chart spec, registry tipi,
+             builder, preview isolata, apply loggato, galleria con metadati,
+             export PNG/PDF/SVG/HTML, temi, round-trip, selezione plotly,
+             topic e vignetta. Test unit 2004 pass; E2E core, Wave 0,
+             documenti, Data Studio e Chart Studio verdi.
 ```

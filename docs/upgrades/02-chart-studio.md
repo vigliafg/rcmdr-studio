@@ -1,9 +1,10 @@
 # Onda 2 — Chart Studio
 
-**Stato:** da implementare  
+**Stato:** implementata — 14 novembre 2026  
 **Dipende da:** Onda 0 (preview engine, cronologia, design system)  
 **Sblocca:** Report Studio (galleria grafici, inserimento plot)  
-**Documento padre:** [`README.md`](README.md)
+**Documento padre:** [`README.md`](README.md)  
+**Diario di handoff:** [`diary/wave-02-chart-studio.md`](diary/wave-02-chart-studio.md)
 
 ---
 
@@ -503,3 +504,31 @@ equivalente; il plot è in galleria e nel report.
 - [ ] Selezione/brush.
 - [ ] Help topic e vignetta.
 - [ ] Test unit e E2E verdi.
+
+---
+
+## 11. Risultato consegnato
+
+- **Chart spec** in `R/chart-spec.R`: `chart_spec()`, validazione, tema,
+  etichette, `chart_spec_command()`, `chart_spec_interactive()`, chiave di
+  cache e motore ggplot2 opt-in.
+- **Registry tipi** in `R/chart-types.R`: undici tipi con mapping, controlli,
+  comando, espressione plotly e memoria del dialogo avanzato.
+- **Builder** in `R/chart-studio.R`: layout Build/Gallery, mapping dinamici,
+  opzioni, tema, etichette, dimensioni, pulsanti Aggiorna/Anteprima/Applica/
+  Reset/Advanced.
+- **Preview isolata** con debounce, cache limitata e messaggi di errore.
+- **Apply** che esegue il comando del dialogo, lo logga con sorgente `chart`,
+  allega la spec al plot e crea la voce di galleria.
+- **Galleria** con ricerca, filtro per tipo, pin, dettaglio, rinomina, elimina,
+  confronto, copia codice, inserimento nel report e riapertura nel builder.
+- **Export** PNG/PDF/SVG/HTML con dialog `chartExport` e download handler.
+- **Temi e palette** con comandi `palette()`/`par()` e supporto ggplot2.
+- **Round-trip** completo tramite la spec conservata.
+- **Selezione plotly** e subset dagli punti selezionati.
+- **Test**: `test-chart-spec.R`, `test-chart-types.R`, `test-chart-preview.R`,
+  `test-chart-apply.R`, `test-chart-gallery.R`, `test-chart-theme.R`,
+  `test-chart-export.R`, `test-chart-roundtrip.R`, `test-chart-studio.R`,
+  `test-chart-studio-e2e.R`.
+- **Documentazione**: topic `chart-studio`, vignetta `chart-studio.Rmd`,
+  README, NEWS e DESCRIPTION.

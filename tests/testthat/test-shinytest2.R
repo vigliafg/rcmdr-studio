@@ -193,12 +193,13 @@ test_that("the full Phase 0 flow works in a real browser", {
   app$wait_for_idle()
 
   switch_tab("Charts")
+  app$set_inputs(chart_mode = "gallery", wait_ = FALSE)
   app$wait_for_js(
-    "document.querySelectorAll('.rcmdr-gallery img.rcmdr-thumb').length > 0",
+    "document.querySelectorAll('.rcmdr-chart-card').length === 2",
     timeout = 30000
   )
   expect_equal(
-    app$get_js("document.querySelectorAll('.rcmdr-gallery img.rcmdr-thumb').length"),
+    app$get_js("document.querySelectorAll('.rcmdr-chart-card').length"),
     2L
   )
 
