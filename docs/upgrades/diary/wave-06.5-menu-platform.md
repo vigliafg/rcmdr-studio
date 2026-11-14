@@ -12,7 +12,8 @@
 ## 0. Punto di ripresa per la prossima sessione
 
 **Stato al momento della compattazione:** 2026-11-14, branch `main`, HEAD
-`a18886e`, working tree pulito, tutto pushato su `origin/main`.
+corrente (vedi `git log -1`), working tree pulito, tutto pushato su
+`origin/main`.
 
 **Baseline verificata:** `testthat::test_local()` → **2932 pass, 0 fail,
 16 skip**; `R CMD check` su `RcmdrShiny_1.21.0.tar.gz` → **Status: OK**.
