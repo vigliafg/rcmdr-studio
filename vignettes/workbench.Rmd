@@ -1,0 +1,166 @@
+---
+title: "Workbench"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Workbench}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r}
+library(RcmdrShiny)
+```
+
+# Overview
+
+The Workbench is the part of Studio that works **outside the dialogs**: Script,
+Console, Output, Messages, Environment and Models. They all use the same
+engine: `run_command()`, `state$history`, `state$output`, `state$messages` and
+`state$env`.
+
+Script, Console and dialogs are therefore three ways to run the same R
+commands, with the same log and the same objects.
+
+# Script cells
+
+The Script tab splits a plain R script into cells that follow the top-level
+expressions. A multi-line call stays in one cell.
+
+```{r}
+text <- paste(
+  "# Data preparation",
+  "D$z <- D$x * 2",
+  "",
+  "fit <- lm(y ~ x, data = D)",
+  "",
+  "summary(fit)",
+  sep = "\n"
+)
+cells <- RcmdrShiny:::script_cells(text, "r")
+cells[, c("id", "label", "start", "end")]
+```
+
+Cells can be selected by a zero-based editor row, and "run above" and "run
+below" take whole cells only.
+
+```{r}
+RcmdrShiny:::script_cell_at(cells, 4)$id
+RcmdrShiny:::script_cells_above(cells, 4)$id
+RcmdrShiny:::script_cells_below(cells, 4)$id
+```
+
+In R Markdown and knitr documents the cells are the code chunks.
+
+```{r}
+rmd <- c("## Section", "", "```{r one}", "1 + 1", "```")
+RcmdrShiny:::script_cells(paste(rmd, collapse = "\n"), "rmd")
+```
+
+Running a cell goes through the command engine with `log = FALSE`, so it is
+recorded in the structured history without duplicating the code into the
+script.
+
+```{r}
+state <- AppState()
+state$env$D <- data.frame(y = c(2, 1, 4, 3), x = c(2, 4, 6, 8))
+RcmdrShiny:::script_run_cell(state, cells[2, , drop = FALSE])$status
+```
+
+# Outline and diagnostics
+
+```{r}
+RcmdrShiny:::script_outline(text, "r")
+RcmdrShiny:::script_diagnostics("x <- (1 + ")
+```
+
+# Formatting
+
+Formatting is optional and explicit. `styler` is a Suggests dependency.
+
+```{r}
+result <- RcmdrShiny:::script_format_text("x<-1")
+result$changed
+```
+
+# Console
+
+The console keeps its own recall history and records every command in the
+structured history.
+
+```{r}
+RcmdrShiny:::console_execute(state, "mean(D$y)")$status
+RcmdrShiny:::console_history_recall(state, -1)
+RcmdrShiny:::console_execute(state, "readline('name? ')")$status
+```
+
+The last call is `blocked`: interactive prompts cannot be answered from a
+browser, so the console refuses to start them.
+
+# Output and Messages
+
+History entries carry enough metadata to build output cards and filter them.
+
+```{r}
+RcmdrShiny:::history_filter_entries(state$history, "", "console", "ok")
+RcmdrShiny:::messages_as_data_frame(state)
+```
+
+A warning becomes a structured message.
+
+```{r}
+RcmdrShiny:::run_command(state, "warning('careful')")
+RcmdrShiny:::messages_filter(state$message_entries, "", "warning")
+```
+
+# Environment
+
+The object explorer renders metadata only and previews objects without running
+a command.
+
+```{r}
+objects <- RcmdrShiny:::object_list(state)
+objects[, c("name", "class", "type")]
+cat(RcmdrShiny:::object_preview(state, "D"))
+```
+
+Actions that print or change the session are reproducible.
+
+```{r}
+RcmdrShiny:::object_action(state, "D", "summary")
+tail(state$log, 1)
+```
+
+# Models
+
+The registry recognises the model classes created by the dialogs and the
+console.
+
+```{r}
+state$env$fit <- stats::lm(y ~ x, data = state$env$D)
+models <- RcmdrShiny:::model_registry(state)
+models[, c("name", "class", "formula", "n", "aic", "bic", "r2")]
+```
+
+Actions reuse the existing commands.
+
+```{r}
+RcmdrShiny:::model_action(state, "fit", "summary")
+tail(state$log, 1)
+```
+
+Reopening the dialog uses the memory stored with the fitting command, when it
+exists.
+
+# Design notes
+
+- The three levels (dialogs, console, script) share one engine and one history.
+- Cell output is session state; it is cleared when the script changes.
+- The console guard prevents blocking commands instead of pretending to
+  interrupt them.
+- The object explorer never copies large objects.
+- The model dashboard adds no statistical procedure: it orchestrates existing
+  commands.

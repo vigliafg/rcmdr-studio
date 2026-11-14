@@ -54,6 +54,10 @@ base_dialog_catalog <- function() {
     data_studio_dialogs(),
     chart_studio_dialogs(),
     report_studio_dialogs(),
+    list(
+      environmentSave = environment_save_dialog(),
+      modelExport = model_export_dialog()
+    ),
     phase2_dialogs(), phase3_dialogs(), phase4_dialogs(), phase5_dialogs()
   )
 }

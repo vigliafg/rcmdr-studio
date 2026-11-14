@@ -16,6 +16,9 @@ default_features <- function() {
     chart_studio = TRUE,
     report_studio = TRUE,
     console = TRUE,
+    script_studio = TRUE,
+    environment_studio = TRUE,
+    models_studio = TRUE,
     project = FALSE
   )
 }

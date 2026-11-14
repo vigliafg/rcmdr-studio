@@ -26,6 +26,9 @@ categories:
   - id: tools
     title: Tools
     order: 65
+  - id: workbench
+    title: Workbench
+    order: 66
   - id: plugins
     title: Plugins
     order: 70
@@ -60,6 +63,10 @@ topics:
   - id: report-studio
     file: topics/report-studio.md
     category: report
+    order: 40
+  - id: workbench
+    file: topics/workbench.md
+    category: workbench
     order: 40
   - id: exporting-results
     file: topics/exporting-results.md

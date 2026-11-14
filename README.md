@@ -13,7 +13,7 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.17 Wave 3 (Report Studio).** The core exposes 213 dialogs and,
+> **Status: 1.18 Wave 4 (Workbench).** The core exposes 230 dialogs and,
 > with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
 > package ships a Studio shell with a Home tab, command palette, structured
 > command history, live R-command preview in dialogs, isolated previews,
@@ -27,13 +27,16 @@ report workspaces, and a Classic mode for compatibility.
 > clickable outline, a chunk list, a fast Markdown preview that never runs
 > code, executable cells with inline output, five templates, conservative
 > YAML editing, a knit manager with history and a recovery-aware autosave.
-> Workbench, navigation and platform waves remain. The remaining disabled
-> core entries are the three lifecycle commands, the nine browser-delegated
-> Edit actions and `Identify3D`; EZR, NMBU and DoE implement every
-> plugin-specific entry. The package includes a searchable offline help
-> centre covering every dialog, interactive plotly versions of the main
-> charts, R Markdown report export, plugin command aliases, accessibility
-> landmarks, vignettes and release engineering.
+> The Workbench adds multi-document script tabs, executable cells with run
+> above/below, an R console with recall, filterable output and message cards,
+> an object explorer with reproducible actions and a model registry with a
+> comparison dashboard. Navigation and platform waves remain. The remaining
+> disabled core entries are the three lifecycle commands, the nine
+> browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
+> implement every plugin-specific entry. The package includes a searchable
+> offline help centre covering every dialog, interactive plotly versions of
+> the main charts, R Markdown report export, plugin command aliases,
+> accessibility landmarks, vignettes and release engineering.
 
 ## Requirements
 
@@ -44,7 +47,8 @@ report workspaces, and a Classic mode for compatibility.
 - Optional: `rgl` for the 3D plot pane, `plotly` for interactive charts,
   `ggplot2` for the optional engine, `svglite` for SVG export, `rmarkdown`,
   `knitr` and Pandoc for report previews and knits, `commonmark` for the fast
-  Markdown preview and `yaml` for front matter parsing
+  Markdown preview, `yaml` for front matter parsing and `styler` for script
+  formatting
 
 ## Install
 
@@ -106,6 +110,16 @@ RcmdrShiny::run(env = env)
 | Conservative YAML front matter form and bibliography | done |
 | Knit manager with formats, history, errors and downloads | done |
 | Autosave, recovery copies and `.bak` backups | done |
+| Multi-document script tabs shared with the Report Studio | done |
+| Executable script cells with run cell, above and below | done |
+| R outline, parse diagnostics and find/replace | done |
+| Console with command recall, history and interactive guard | done |
+| Filterable output cards with pin, rerun and rerun from messages | done |
+| Structured messages by severity with command context | done |
+| Object explorer with preview and reproducible actions | done |
+| Data set registry and model list in the Environment tab | done |
+| Models dashboard with AIC/BIC comparison and existing commands | done |
+| Reopen a model dialog with its recorded memory | done |
 | Plot capture, history gallery, PNG/PDF export | done |
 | rgl 3D scene rendered with `rglwidget()` | done |
 | Studio shell with Home, Charts and Console workspaces | done |
@@ -250,7 +264,11 @@ summaries, fit a linear model, and verify the generated script and output.
 | `R/chart-studio.R` | Chart builder UI, preview, gallery, export and dialogs |
 | `R/report-studio.R` | Report Studio UI, preview, cells, insertion and knit manager |
 | `R/report-templates.R` | Five report templates and the template gallery |
-| `R/console.R` | Minimal Studio console and interactive-command guard |
+| `R/script-studio.R` | Script tabs, cells, outline, diagnostics and formatting |
+| `R/console-studio.R` | Console UI, recall history and structured execution |
+| `R/environment-studio.R` | Object explorer, data set registry and save dialog |
+| `R/models-studio.R` | Model registry, dashboard, actions and export dialog |
+| `R/console.R` | Interactive-command guard |
 | `R/menus.R` | Parser for `Rcmdr-menus.txt` and sidebar renderer |
 | `R/dialogs.R` | Dialog runtime, command preview and presets |
 | `R/widgets.R` | Shiny equivalents of Rcmdr widgets |

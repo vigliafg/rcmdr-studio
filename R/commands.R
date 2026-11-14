@@ -78,6 +78,13 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
   started <- Sys.time()
   source <- source %||% state$execution_source %||% "script"
 
+  history_id <- NULL
+  if (isTRUE(history)) {
+    history_id <- history_next_id(state)
+    state$execution_id <- history_id
+    on.exit(state$execution_id <- NULL, add = TRUE)
+  }
+
   if (isTRUE(log)) state$log <- c(state$log, code)
 
   packages <- required_packages(code)
@@ -100,7 +107,7 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
     duration_ms <- as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
     plot_id <- if (!is.null(result$plot)) basename(result$plot) else NULL
     entry <- history_entry(
-      id = history_next_id(state),
+      id = history_id,
       time = started,
       source = source,
       command = code,
@@ -126,6 +133,7 @@ eval_code <- function(state, code, echo = TRUE) {
   if (inherits(exprs, "error")) {
     message <- conditionMessage(exprs)
     state$messages <- c(state$messages, paste0("Error: ", message))
+    message_add(state, "error", paste0("Error: ", message), code)
     state$last_error <- message
     return(list(
       status = "error", code = code, output = character(),
@@ -186,12 +194,19 @@ eval_code <- function(state, code, echo = TRUE) {
   if (length(warnings) > 0L) {
     state$warnings <- c(state$warnings, warnings)
     state$messages <- c(state$messages, paste0("Warning: ", warnings))
+    for (warning in warnings) {
+      message_add(state, "warning", warning, code)
+    }
   }
   if (length(messages) > 0L) {
     state$messages <- c(state$messages, messages)
+    for (message in messages) {
+      message_add(state, "message", message, code)
+    }
   }
   if (!is.null(error)) {
     state$messages <- c(state$messages, paste0("Error: ", error))
+    message_add(state, "error", error, code)
     state$last_error <- error
   }
 

@@ -1,9 +1,10 @@
 # Onda 4 — Workbench: Script, Console, Output, Environment, Models
 
-**Stato:** da implementare  
+**Stato:** implementata — 14 novembre 2026
 **Dipende da:** Onda 0 (cronologia, shell, design system)  
 **Sblocca:** un ambiente di lavoro completo oltre i dialoghi  
 **Documento padre:** [`README.md`](README.md)
+**Diario di handoff:** [`diary/wave-04-workbench.md`](diary/wave-04-workbench.md)
 
 ---
 
@@ -377,3 +378,32 @@ Una vista d'insieme dei modelli fittati, senza aggiungere procedure.
 - [ ] Reopen dialog.
 - [ ] Help topic e vignetta.
 - [ ] Test unit e E2E verdi.
+
+---
+
+## 13. Risultato consegnato
+
+- **Script Studio** in `R/script-studio.R`: tab dei documenti condivisi con il
+  Report Studio, celle ricavate dal parse R, Run cell/Run above/Run below,
+  outline, diagnostica, find/replace, formattazione con `styler`, autosave e
+  completamento dei nomi.
+- **Console** in `R/console-studio.R`: input diretto, richiama storico con
+  frecce su/giù, esecuzione via `run_command()`, stato e durata, guardia sui
+  comandi interattivi, ricerca e filtro per stato.
+- **Output cards**: card per esecuzione con stato, fonte, durata, comando,
+  output collassabile, pin, rerun, apertura dialogo, inserimento nello script
+  e nel report, copia; filtri per testo, stato e fonte.
+- **Messages**: messaggi strutturati con severità, comando e passo di
+  cronologia; filtro per severità e testo e rerun contestuale.
+- **Environment** in `R/environment-studio.R`: explorer oggetti con classe,
+  tipo e dimensione, anteprima read-only, azioni riproducibili
+  Summary/str/Plot/Save/Remove, registry dei dataset e vista modelli.
+- **Models** in `R/models-studio.R`: registry dei modelli riconosciuti,
+  dashboard con formula, famiglia, dati, n, AIC, BIC, R² e delta AIC, azioni
+  Summary/ANOVA/Effects/Diagnostics/Influence/VIF/Stepwise/AIC/BIC/Export,
+  set active e reopen con memoria.
+- **Dialoghi** `environmentSave` e `modelExport`.
+- **Test** dedicati per registro script, celle, console, output, environment,
+  model registry, dashboard e integrazione Workbench.
+- **Documentazione**: topic `workbench`, vignetta `workbench.Rmd`, README,
+  NEWS e DESCRIPTION.

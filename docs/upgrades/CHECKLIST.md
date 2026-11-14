@@ -131,37 +131,37 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| W4.1 | Registro script e tab | [ ] | |
-| W4.2 | Celle e run above/below | [ ] | |
-| W4.3 | Outline e diagnostica | [ ] | |
-| W4.4 | Find/replace e autocomplete | [ ] | |
-| W4.5 | Format e autosave | [ ] | |
-| W4.6 | Console UI e input | [ ] | |
-| W4.7 | Storico comandi | [ ] | |
-| W4.8 | Output card e rerun | [ ] | |
-| W4.9 | Rilevamento comandi interattivi | [ ] | |
-| W4.10 | Output cards | [ ] | |
-| W4.11 | Ricerca/filtri output | [ ] | |
-| W4.12 | Messages per severità | [ ] | |
-| W4.13 | Object explorer | [ ] | |
-| W4.14 | Anteprima oggetto | [ ] | |
-| W4.15 | Azioni rapide | [ ] | |
-| W4.16 | Dataset registry view | [ ] | |
-| W4.17 | Model registry | [ ] | |
-| W4.18 | Model registry UI | [ ] | |
-| W4.19 | Dashboard tabella/confronto | [ ] | |
-| W4.20 | Azioni modello | [ ] | |
-| W4.21 | Reopen dialog con memoria | [ ] | |
+| W4.1 | Registro script e tab | [x] | `R/script-studio.R`, documenti condivisi |
+| W4.2 | Celle e run above/below | [x] | `script_cells()`, run cell/above/below |
+| W4.3 | Outline e diagnostica | [x] | `script_outline()`, `script_diagnostics()` |
+| W4.4 | Find/replace e autocomplete | [x] | Barra find + completamento Ace |
+| W4.5 | Format e autosave | [x] | `styler` opzionale, autosave condiviso |
+| W4.6 | Console UI e input | [x] | `R/console-studio.R` |
+| W4.7 | Storico comandi | [x] | Recall con frecce, limite opzione |
+| W4.8 | Output card e rerun | [x] | Card con rerun/dialogo/script |
+| W4.9 | Rilevamento comandi interattivi | [x] | Guardia console documentata |
+| W4.10 | Output cards | [x] | Card filtrabili con pin |
+| W4.11 | Ricerca/filtri output | [x] | Testo, stato, fonte |
+| W4.12 | Messages per severità | [x] | `message_add()`, filtro |
+| W4.13 | Object explorer | [x] | `object_list()` |
+| W4.14 | Anteprima oggetto | [x] | `object_preview()` read-only |
+| W4.15 | Azioni rapide | [x] | Summary/str/Plot/Save/Remove |
+| W4.16 | Dataset registry view | [x] | Vista Data sets |
+| W4.17 | Model registry | [x] | `model_registry()` |
+| W4.18 | Model registry UI | [x] | Tab Models |
+| W4.19 | Dashboard tabella/confronto | [x] | AIC/BIC e delta |
+| W4.20 | Azioni modello | [x] | Comandi esistenti |
+| W4.21 | Reopen dialog con memoria | [x] | Memoria da history |
 
 ### Chiusura Onda 4
 
-- [ ] Console, Script e dialoghi condividono log/cronologia.
-- [ ] Output cards con rerun.
-- [ ] Environment con anteprima e azioni.
-- [ ] Models dashboard.
-- [ ] Limiti console documentati.
-- [ ] E2E verde.
-- [ ] Help topic e vignetta.
+- [x] Console, Script e dialoghi condividono log/cronologia.
+- [x] Output cards con rerun.
+- [x] Environment con anteprima e azioni.
+- [x] Models dashboard.
+- [x] Limiti console documentati.
+- [x] E2E verde.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -308,4 +308,9 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              outline, chunk list, preview Markdown veloce, celle eseguibili,
              template, inserimento contestuale, YAML conservativo, knit
              manager, autosave/recovery, topic e vignetta.
+2026-11-14 — Onda 4 completata: Workbench con tab script, celle e run
+             above/below, outline e diagnostica, find/replace, format e
+             autosave, console con storico, output cards e filtri, messages
+             per severità, object explorer, dataset registry e models
+             dashboard con reopen dialog.
 ```

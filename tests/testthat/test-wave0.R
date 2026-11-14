@@ -180,7 +180,8 @@ test_that("history source choices use stable codes", {
   labels <- history_source_labels()
   expect_equal(unname(labels),
                c("all", "dialog", "script", "console", "menu", "data",
-                 "chart", "history", "checkpoint"))
+                 "chart", "report", "environment", "model", "history",
+                 "checkpoint"))
   expect_true(all(nzchar(names(labels))))
 })
 

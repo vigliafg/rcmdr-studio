@@ -1,3 +1,26 @@
+# RcmdrShiny Studio 1.18.0
+
+## Wave 4 — Workbench
+
+- **Script Studio**: document tabs shared with the Report Studio, executable
+  cells with Run cell/Run above/Run below, clickable outline, parse
+  diagnostics, find/replace, formatting with `styler` and autosave.
+- **Console**: direct R input with command recall, captured output, plots and
+  structured history. Interactive prompts are detected and blocked.
+- **Output cards**: search, status/source filters, pinned cards, rerun, open
+  dialog, copy, and insertion into the script or report.
+- **Structured messages**: severity (error/warning/note), the command and the
+  history step, with filtering and rerun.
+- **Environment explorer**: objects with class, type, size, read-only preview
+  and reproducible Summary/str/Plot/Save/Remove actions, plus the data set
+  registry and the model list.
+- **Models dashboard**: recognise fitted models, show formula, family, n, AIC,
+  BIC and R squared, compare delta AIC and run existing commands (summary,
+  ANOVA, effects, diagnostics, influence, VIF, stepwise, export).
+- **Reopen dialog with memory**: uses the dialog and memory recorded by the
+  fitting command, with a class-based fallback.
+- New `workbench` help topic and vignette.
+
 # RcmdrShiny Studio 1.17.0
 
 ## Wave 3 — Report Studio

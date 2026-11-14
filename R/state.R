@@ -18,6 +18,9 @@ AppState <- function(env = globalenv()) {
   state$env <- env
   state$active_dataset <- NULL
   state$active_model <- NULL
+  state$model_selection <- NULL
+  state$environment_selection <- NULL
+  state$environment_preview <- NULL
 
   # Data Studio: dataset registry, data dictionary, session checkpoints and
   # the current grid selection.  `state$active_dataset` remains the single
@@ -44,11 +47,19 @@ AppState <- function(env = globalenv()) {
   state$history <- list()
   state$history_counter <- 0L
   state$recent_commands <- character()
+  state$history_pinned <- character()
   state$console_history <- character()
+  state$console_index <- 0L
+  state$console_last <- NULL
+  # Messages are kept twice: `state$messages` is the historical text buffer,
+  # `state$message_entries` is the structured list used by the Messages tab.
+  state$message_entries <- list()
+  state$message_counter <- 0L
 
   # The source of the command currently being executed.  It is consumed by
   # run_command() and reset by the caller.
   state$execution_source <- NULL
+  state$execution_id <- NULL
 
   state$dialog_memory <- list()
   state$dialog_presets <- list()
@@ -71,6 +82,10 @@ AppState <- function(env = globalenv()) {
   # content; the knit always re-executes the chunks.
   state$cell_outputs <- list()
   state$cell_counter <- 0L
+  # Workbench: inline output of the Script cells.  The keys are cell ids and
+  # the map is cleared whenever the script text changes, because the ids are
+  # positional.
+  state$script_outputs <- list()
   state$knit_result <- NULL
   state$knit_history <- list()
   state$knit_counter <- 0L
@@ -111,6 +126,9 @@ AppState <- function(env = globalenv()) {
     report_preview_cache = 8L,
     autosave_interval = 30000L,
     document_backup = TRUE,
+    console_history_length = 100L,
+    script_cells = TRUE,
+    script_format = TRUE,
     checkpoint_max = 20L,
     checkpoint_max_bytes = 50 * 1024^2,
     import_preview_rows = 20L,

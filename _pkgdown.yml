@@ -72,6 +72,7 @@ articles:
       - data-studio
       - chart-studio
       - report-studio
+      - workbench
   - title: Analysis
     contents:
       - descriptive-statistics

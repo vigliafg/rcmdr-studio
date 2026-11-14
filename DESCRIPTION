@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
 Title: A Browser-Native Statistical Workbench Inspired by the R Commander
-Version: 1.17.0
+Version: 1.18.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),
@@ -20,8 +20,11 @@ Description: A local, browser-based statistical workbench inspired by the
     isolated live preview, themed commands, a searchable gallery and a
     round-trip back to the builder, a Report Studio with a document registry,
     outline, fast Markdown preview, executable cells, templates, conservative
-    YAML editing, a knit manager and autosave/recovery, plus a classic
-    compatibility mode.
+    YAML editing, a knit manager and autosave/recovery, a Workbench with
+    multi-document scripts, executable cells, an R console with recall
+    history, filterable output and message cards, an object explorer with
+    reproducible actions, and a model registry with a comparison dashboard,
+    plus a classic compatibility mode.
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
@@ -71,7 +74,8 @@ Suggests:
     yaml,
     plotly,
     htmlwidgets,
-    svglite
+    svglite,
+    styler
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/vigliafg/rcmdr-studio

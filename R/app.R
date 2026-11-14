@@ -107,6 +107,46 @@ app_css <- function() {
     body.rcmdr-dark .rcmdr-report-preview,
     body.rcmdr-dark .rcmdr-template-card,
     body.rcmdr-dark .rcmdr-cell-card { background: #23272b; border-color: #3a4047; }
+    .rcmdr-doc-tabs { display: flex; align-items: center; gap: .25rem;
+      flex-wrap: wrap; margin-bottom: .5rem; border-bottom: 1px solid #e2e6ea;
+      padding-bottom: .25rem; }
+    .rcmdr-doc-tab { display: inline-flex; align-items: center; gap: .35rem;
+      border: 1px solid #e2e6ea; border-bottom: none; border-radius: .35rem .35rem 0 0;
+      padding: .2rem .45rem; background: #f6f8fa; }
+    .rcmdr-doc-tab.active { background: #fff; border-color: #0d6efd;
+      box-shadow: inset 0 -2px 0 #0d6efd; }
+    .rcmdr-doc-tab a { color: #253746; text-decoration: none;
+      display: inline-flex; gap: .35rem; align-items: center; }
+    .rcmdr-doc-mode { font-size: .68rem; text-transform: uppercase;
+      letter-spacing: .04em; color: #6b7785; }
+    .rcmdr-doc-close, .rcmdr-doc-new { border: none; background: transparent;
+      color: #6b7785; line-height: 1; padding: 0 .2rem; }
+    .rcmdr-doc-close:hover, .rcmdr-doc-new:hover { color: #b02a37; }
+    .rcmdr-doc-new { font-size: 1.1rem; font-weight: 600; }
+    .rcmdr-script-findbar { display: flex; gap: .4rem; align-items: center;
+      flex-wrap: wrap; margin-bottom: .4rem; }
+    .rcmdr-script-outputs { display: flex; flex-direction: column; gap: .4rem;
+      margin-top: .5rem; }
+    .rcmdr-script-output { font-size: .78rem; max-height: 220px;
+      overflow-y: auto; background: #fbfbfc; border: 1px solid #e2e6ea;
+      padding: .4rem; border-radius: .3rem; }
+    .rcmdr-script-diagnostics { display: flex; flex-direction: column; gap: .2rem; }
+    .rcmdr-object-table td, .rcmdr-object-table th,
+    .rcmdr-models-table td, .rcmdr-models-table th { vertical-align: middle;
+      font-size: .86rem; }
+    .rcmdr-object-preview { max-height: 40vh; overflow-y: auto;
+      background: #fbfbfc; border: 1px solid #e2e6ea; padding: .6rem;
+      border-radius: .35rem; font-size: .8rem; }
+    .rcmdr-console-log { max-height: 48vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: .4rem; margin-bottom: .5rem; }
+    .rcmdr-message-text { margin: .25rem 0 0; font-size: .82rem;
+      white-space: pre-wrap; }
+    .rcmdr-history-card.pinned { border-left: 3px solid #0d6efd; }
+    .rcmdr-output-raw { margin-top: .75rem; }
+    body.rcmdr-dark .rcmdr-doc-tab,
+    body.rcmdr-dark .rcmdr-object-preview,
+    body.rcmdr-dark .rcmdr-script-output { background: #23272b; border-color: #3a4047; }
+    body.rcmdr-dark .rcmdr-doc-tab.active { background: #2b3035; }
     .rcmdr-help-text { white-space: pre-wrap; max-height: 60vh; overflow-y: auto;
       background: #fbfbfc; border: 1px solid #e2e6ea; padding: .75rem; }
     .rcmdr-help-search { margin-bottom: .75rem; }
@@ -418,6 +458,86 @@ app_js <- function(lang = current_language()) {
       editor.focus();
       return false;
     };
+    window.rcmdrScriptGoto = function(line) {
+      var element = document.querySelector('#script_editor_ui .ace_editor');
+      if (!element) return false;
+      var editor = ace.edit(element);
+      editor.gotoLine(line + 1, 0);
+      editor.focus();
+      return false;
+    };
+    window.rcmdrScriptRunAt = function(inputId) {
+      var element = document.querySelector('#script_editor_ui .ace_editor');
+      if (!element) return false;
+      var editor = ace.edit(element);
+      var position = editor.getCursorPosition();
+      Shiny.setInputValue(inputId,
+        {row: position.row, column: position.column, nonce: Math.random()},
+        {priority: 'event'});
+      return false;
+    };
+    function rcmdrScriptEditor() {
+      var element = document.querySelector('#script_editor_ui .ace_editor');
+      if (!element) return null;
+      var editor = ace.edit(element);
+      rcmdrApplyCompletions(editor);
+      return editor;
+    }
+    function rcmdrApplyCompletions(editor) {
+      if (!editor || !window.rcmdrCompletionWords) return;
+      try { ace.require('ace/ext/language_tools'); } catch (e) { return; }
+      editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
+      if (editor.__rcmdrCompleter === window.rcmdrCompletionWords) return;
+      editor.__rcmdrCompleter = window.rcmdrCompletionWords;
+      editor.completers = [{
+        getCompletions: function(editor, session, pos, prefix, callback) {
+          callback(null, window.rcmdrCompletionWords.map(function(word) {
+            return {name: word, value: word, score: 1000, meta: 'R'};
+          }));
+        }
+      }].concat(editor.completers || []);
+    }
+    window.rcmdrScriptFind = function() {
+      var editor = rcmdrScriptEditor();
+      if (!editor) return false;
+      var input = document.getElementById('script_find');
+      var query = input ? input.value : '';
+      if (!query) return false;
+      editor.find(query, {
+        backwards: false, wrap: true, caseSensitive: false,
+        wholeWord: false, regExp: false
+      });
+      editor.focus();
+      return false;
+    };
+    window.rcmdrScriptReplace = function(all) {
+      var editor = rcmdrScriptEditor();
+      if (!editor) return false;
+      var findInput = document.getElementById('script_find');
+      var replaceInput = document.getElementById('script_replace');
+      var query = findInput ? findInput.value : '';
+      var replacement = replaceInput ? replaceInput.value : '';
+      if (!query) return false;
+      if (all) {
+        editor.replaceAll(replacement, {regExp: false});
+      } else {
+        editor.find(query, {
+          backwards: false, wrap: true, caseSensitive: false,
+          wholeWord: false, regExp: false
+        });
+        editor.replace(replacement);
+      }
+      editor.focus();
+      return false;
+    };
+    window.rcmdrScriptEditor = rcmdrScriptEditor;
+    Shiny.addCustomMessageHandler('rcmdr-completions', function(words) {
+      window.rcmdrCompletionWords = words || [];
+      rcmdrApplyCompletions(rcmdrScriptEditor());
+    });
+    Shiny.addCustomMessageHandler('rcmdr-bind-script', function(message) {
+      rcmdrScriptEditor();
+    });
     function rcmdrCopy(text) {
       if (!text) return;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -501,6 +621,16 @@ app_js <- function(lang = current_language()) {
         event.preventDefault();
         var consoleRun = document.getElementById('console_run');
         if (consoleRun) consoleRun.click();
+      }
+      if (event.target.id === 'console_input' &&
+          (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+        var historyButton = document.getElementById(
+          event.key === 'ArrowUp' ? 'console_prev' : 'console_next'
+        );
+        if (historyButton) {
+          event.preventDefault();
+          historyButton.click();
+        }
       }
     });
     document.addEventListener('keydown', function(event) {
@@ -710,9 +840,9 @@ home_pane_ui <- function() {
 console_workspace_ui <- function() {
   tabsetPanel(
     id = "console_tabs",
-    tabPanel(tr("Console"), console_pane_ui()),
-    tabPanel(tr("Output"), output_pane_ui()),
-    tabPanel(tr("Messages"), messages_pane_ui()),
+    tabPanel(tr("Console"), console_studio_ui()),
+    tabPanel(tr("Output"), output_studio_ui()),
+    tabPanel(tr("Messages"), messages_studio_ui()),
     tabPanel(tr("History"), history_pane_ui())
   )
 }
@@ -737,9 +867,9 @@ main_tabs_ui <- function(mode = "studio") {
     tabPanel(tr("Data"), data_pane_ui("studio")),
     tabPanel(tr("Charts"), plots_pane_ui("studio")),
     tabPanel(tr("Report"), report_pane_ui("studio")),
-    tabPanel(tr("Script"), script_pane_ui()),
+    tabPanel(tr("Script"), script_studio_ui()),
     tabPanel(tr("Console"), console_workspace_ui()),
-    tabPanel(tr("Environment"), uiOutput("environment_pane")),
+    tabPanel(tr("Environment"), environment_workspace_ui()),
     tabPanel(tr("Help"), help_center_ui())
   )
 }
@@ -872,7 +1002,7 @@ app_server <- function(env = globalenv()) {
     # input binding has propagated the latest keystrokes.
     current_document_text <- function() {
       value <- isolate(input$script)
-      if (!is.null(value)) document_set_text(state, value)
+      if (!is.null(value) && nzchar(value)) document_set_text(state, value)
       document_text(state)
     }
     state$current_document_text <- current_document_text
@@ -1316,7 +1446,80 @@ app_server <- function(env = globalenv()) {
     outputOptions(output, "output_text", suspendWhenHidden = FALSE)
     outputOptions(output, "messages_text", suspendWhenHidden = FALSE)
 
+    output$output_cards <- renderUI({
+      tick()
+      menu_revision()
+      history_revision()
+      entries <- history_filter_entries(
+        history_recent(state, 100L),
+        input$output_filter %||% "",
+        input$output_source %||% "all",
+        input$output_status %||% "all"
+      )
+      if (isTRUE(input$output_pinned)) {
+        pinned <- history_pinned_ids(state)
+        entries <- Filter(function(entry) entry$id %in% pinned, entries)
+      }
+      history_cards_ui(entries, pinned = history_pinned_ids(state))
+    })
+    outputOptions(output, "output_cards", suspendWhenHidden = FALSE)
+
+    output$messages_cards <- renderUI({
+      tick()
+      entries <- messages_filter(
+        state$message_entries %||% list(),
+        input$messages_filter %||% "",
+        input$messages_severity %||% "all"
+      )
+      if (length(entries) == 0L) {
+        return(empty_state(tr("No messages"),
+                           tr("Warnings, errors and notes appear here.")))
+      }
+      htmltools::tagList(lapply(entries, function(entry) {
+        severity <- entry$severity %||% "message"
+        pill <- switch(
+          severity,
+          error = status_pill(tr("Error"), "error"),
+          warning = status_pill(tr("Warning"), "warning"),
+          status_pill(tr("Note"), "muted")
+        )
+        htmltools::tags$div(
+          class = "rcmdr-history-card",
+          htmltools::tags$div(
+            class = "rcmdr-history-head",
+            pill,
+            htmltools::tags$span(class = "rcmdr-history-time",
+                                 format(entry$time %||% Sys.time(), "%H:%M:%S")),
+            if (nzchar(entry$history_id %||% "")) {
+              htmltools::tags$div(
+                class = "ms-auto",
+                htmltools::tags$button(
+                  type = "button", class = "btn btn-sm btn-outline-secondary",
+                  onclick = sprintf(
+                    "rcmdrHistoryClick(this, 'rerun'); return false;"
+                  ),
+                  `data-history-action` = "rerun",
+                  `data-history-id` = entry$history_id,
+                  tr("Rerun")
+                )
+              )
+            }
+          ),
+          if (nzchar(entry$command %||% "")) {
+            htmltools::tags$pre(class = "rcmdr-history-command", entry$command)
+          },
+          htmltools::tags$pre(class = "rcmdr-message-text", entry$text)
+        )
+      }))
+    })
+    outputOptions(output, "messages_cards", suspendWhenHidden = FALSE)
+
     observeEvent(input$clear_output, {
+      state$output <- character()
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$output_clear, {
       state$output <- character()
       tick(tick() + 1L)
     }, ignoreInit = TRUE)
@@ -1325,6 +1528,15 @@ app_server <- function(env = globalenv()) {
       state$messages <- character()
       state$warnings <- character()
       state$last_error <- NULL
+      messages_clear(state)
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$messages_clear, {
+      state$messages <- character()
+      state$warnings <- character()
+      state$last_error <- NULL
+      messages_clear(state)
       tick(tick() + 1L)
     }, ignoreInit = TRUE)
 
@@ -1350,7 +1562,9 @@ app_server <- function(env = globalenv()) {
         rerun = history_rerun(state, action$id),
         dialog = history_open_dialog(state, action$id),
         script = history_insert_script(state, action$id),
-        report = history_insert_report(state, action$id)
+        report = history_insert_report(state, action$id),
+        pin = history_toggle_pin(state, action$id),
+        unpin = history_toggle_pin(state, action$id)
       )
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
@@ -1374,15 +1588,42 @@ app_server <- function(env = globalenv()) {
       tick()
       menu_revision()
       history_revision()
-      entries <- history_recent(state, 12L, source = "console")
+      entries <- console_entries(
+        state,
+        input$console_filter %||% "",
+        input$console_status %||% "all",
+        20L
+      )
       if (length(entries) == 0L) {
         return(empty_state(
           tr("Console ready"),
           tr("Type an R command above. Commands are logged and added to the history.")
         ))
       }
-      history_cards_ui(entries)
+      history_cards_ui(entries, pinned = history_pinned_ids(state))
     })
+
+    output$console_status_ui <- renderUI({
+      tick()
+      last <- state$console_last
+      if (is.null(last)) {
+        return(htmltools::tags$p(
+          class = "small text-muted mb-1",
+          tr("Ready.")
+        ))
+      }
+      htmltools::tags$p(
+        class = if (identical(last$status, "ok")) "small text-success mb-1" else
+          "small text-danger mb-1",
+        sprintf(
+          "%s - %s - %.0f ms",
+          if (identical(last$status, "ok")) tr("OK") else tr("Error"),
+          format(last$time %||% Sys.time(), "%H:%M:%S"),
+          last$duration_ms %||% 0
+        )
+      )
+    })
+    outputOptions(output, "console_status_ui", suspendWhenHidden = FALSE)
 
     observeEvent(input$console_run, {
       code <- trimws(input$console_input %||% "")
@@ -1394,11 +1635,33 @@ app_server <- function(env = globalenv()) {
         )
         return()
       }
-      run_command(state, code, source = "console")
-      state$console_history <- c(state$console_history %||% character(), code)
+      state$busy <- TRUE
+      console_execute(state, code)
+      state$busy <- FALSE
       updateTextInput(session, "console_input", value = "")
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$console_prev, {
+      updateTextInput(session, "console_input",
+                      value = console_history_recall(state, -1L))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$console_next, {
+      updateTextInput(session, "console_input",
+                      value = console_history_recall(state, 1L))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$console_clear, {
+      history <- Filter(function(entry) !identical(entry$source, "console"),
+                        state$history %||% list())
+      state$history <- history
+      state$console_history <- character()
+      state$console_index <- 0L
+      state$console_last <- NULL
+      tick(tick() + 1L)
       history_revision(history_revision() + 1L)
     }, ignoreInit = TRUE)
 
@@ -2199,6 +2462,71 @@ app_server <- function(env = globalenv()) {
       DT::datatable(info, rownames = FALSE, options = list(dom = "t"))
     })
 
+    # -- environment and models ---------------------------------------------
+
+    output$environment_objects <- renderUI({
+      tick()
+      environment_objects_ui(state, input$environment_filter %||% "")
+    })
+
+    output$environment_preview <- renderUI({
+      tick()
+      preview <- state$environment_preview
+      if (is.null(preview) || !nzchar(preview)) {
+        return(help_text(tr("Select Preview on an object to inspect it here.")))
+      }
+      htmltools::tags$pre(class = "rcmdr-object-preview", preview)
+    })
+
+    output$environment_datasets <- renderUI({
+      tick()
+      environment_datasets_ui(state)
+    })
+
+    output$models_dashboard <- renderUI({
+      tick()
+      menu_revision()
+      models_dashboard_ui(state)
+    })
+
+    outputOptions(output, "environment_objects", suspendWhenHidden = FALSE)
+    outputOptions(output, "environment_preview", suspendWhenHidden = FALSE)
+    outputOptions(output, "environment_datasets", suspendWhenHidden = FALSE)
+    outputOptions(output, "models_dashboard", suspendWhenHidden = FALSE)
+
+    observeEvent(input$environment_action, {
+      action <- input$environment_action
+      if (is.null(action) || !nzchar(action$name %||% "")) return()
+      result <- object_action(state, action$name, action$action %||% "preview")
+      if (!isTRUE(result$ok) && nzchar(result$message %||% "")) {
+        showNotification(result$message, type = "message", duration = 5)
+      }
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$environment_refresh, {
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$environment_refresh_datasets, {
+      dataset_registry(state)
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$model_action, {
+      action <- input$model_action
+      if (is.null(action) || !nzchar(action$name %||% "")) return()
+      result <- model_action(state, action$name, action$action %||% "select")
+      if (!isTRUE(result$ok) && nzchar(result$message %||% "")) {
+        showNotification(result$message, type = "message", duration = 5)
+      }
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+    }, ignoreInit = TRUE)
+
     # -- plots --------------------------------------------------------------
 
     current_plot <- reactive({
@@ -2544,11 +2872,10 @@ app_server <- function(env = globalenv()) {
     # -- script pane --------------------------------------------------------
 
     observeEvent(input$script, {
-      if (!identical(isolate(script_value()), input$script)) {
-        script_value(input$script %||% "")
-        if (!identical(document_mode(state), "r")) {
-          document_set_text(state, input$script %||% "")
-        }
+      value <- input$script %||% ""
+      if (!identical(isolate(script_value()), value)) {
+        script_value(value)
+        document_set_text(state, value)
       }
     }, ignoreInit = TRUE)
 
@@ -2582,10 +2909,7 @@ app_server <- function(env = globalenv()) {
     run_script <- function(code) {
       if (is.null(code) || !nzchar(trimws(code))) return(invisible(NULL))
       state$busy <- TRUE
-      result <- tryCatch(
-        run_command(state, code, log = FALSE, source = "script"),
-        error = function(e) list(status = "error", error = conditionMessage(e))
-      )
+      result <- script_execute(state, code, source = "script")
       state$busy <- FALSE
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
@@ -2596,7 +2920,7 @@ app_server <- function(env = globalenv()) {
           type = "error", duration = 8
         )
       }
-      invisible(NULL)
+      invisible(result)
     }
 
     observeEvent(input$run_all, {
@@ -2640,6 +2964,14 @@ app_server <- function(env = globalenv()) {
     }, ignoreInit = TRUE)
 
     observeEvent(input$document_new, {
+      if (identical(document_mode(state), "r")) {
+        current_document_text()
+        script_create(state)
+        sync_editor()
+        tick(tick() + 1L)
+        menu_revision(menu_revision() + 1L)
+        return()
+      }
       state$open_dialog(
         if (identical(document_mode(state), "rnw")) "newRnw" else "newRmd"
       )
@@ -2685,6 +3017,20 @@ app_server <- function(env = globalenv()) {
       removed <- document_remove_current_section(state)
       if (isTRUE(removed)) sync_editor()
     }, ignoreInit = TRUE)
+
+    # -- Script Studio ------------------------------------------------------
+
+    script_studio_server(
+      input, output, session, state,
+      tick = tick,
+      run_code = run_script,
+      refresh = function(...) {
+        tick(tick() + 1L)
+        menu_revision(menu_revision() + 1L)
+        history_revision(history_revision() + 1L)
+        invisible(NULL)
+      }
+    )
   }
 }
 

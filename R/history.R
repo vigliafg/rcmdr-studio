@@ -52,6 +52,80 @@ history_add <- function(state, entry) {
   invisible(entry)
 }
 
+# Structured messages -------------------------------------------------------
+
+#' Record a structured message
+#'
+#' `state$messages` remains the plain text buffer; this list preserves the
+#' severity, the command and the history entry so the Messages tab can filter
+#' and navigate.
+#' @keywords internal
+message_add <- function(state, severity, text, command = NULL) {
+  text <- paste(text, collapse = "\n")
+  if (!nzchar(text)) return(invisible(NULL))
+  state$message_counter <- as.integer(state$message_counter %||% 0L) + 1L
+  entry <- list(
+    id = sprintf("msg-%04d", state$message_counter),
+    severity = severity %||% "message",
+    text = text,
+    command = command %||% "",
+    history_id = state$execution_id %||% NULL,
+    time = Sys.time()
+  )
+  state$message_entries <- c(list(entry), state$message_entries %||% list())
+  limit <- as.integer(state$options$history_length %||% 200L) * 5L
+  state$message_entries <- utils::head(state$message_entries, limit)
+  invisible(entry)
+}
+
+#' Structured messages as a data frame
+#' @keywords internal
+messages_as_data_frame <- function(state) {
+  entries <- state$message_entries %||% list()
+  if (length(entries) == 0L) {
+    return(data.frame(
+      id = character(), severity = character(), text = character(),
+      command = character(), time = character(), stringsAsFactors = FALSE
+    ))
+  }
+  data.frame(
+    id = vapply(entries, function(entry) entry$id %||% "", character(1)),
+    severity = vapply(entries, function(entry) entry$severity %||% "message",
+                      character(1)),
+    text = vapply(entries, function(entry) entry$text %||% "", character(1)),
+    command = vapply(entries, function(entry) entry$command %||% "",
+                     character(1)),
+    time = vapply(entries, function(entry) {
+      format(entry$time %||% Sys.time(), "%H:%M:%S")
+    }, character(1)),
+    stringsAsFactors = FALSE
+  )
+}
+
+#' Filter structured messages
+#' @keywords internal
+messages_filter <- function(entries, query = "", severity = "all") {
+  if (!is.null(severity) && nzchar(severity) && !identical(severity, "all")) {
+    entries <- Filter(function(entry) {
+      identical(entry$severity %||% "message", severity)
+    }, entries)
+  }
+  query <- tolower(trimws(query %||% ""))
+  if (!nzchar(query)) return(entries)
+  Filter(function(entry) {
+    haystack <- paste(entry$text %||% "", entry$command %||% "")
+    grepl(query, tolower(haystack), fixed = TRUE)
+  }, entries)
+}
+
+#' Clear structured messages
+#' @keywords internal
+messages_clear <- function(state) {
+  state$message_entries <- list()
+  state$message_counter <- 0L
+  invisible(NULL)
+}
+
 #' Recent history entries
 #' @param state Application state.
 #' @param n Maximum number of entries.
@@ -65,6 +139,26 @@ history_recent <- function(state, n = 50L, source = NULL) {
   }
   utils::head(history, max(1L, as.integer(n)))
 }
+
+#' Pin or unpin a history entry
+#' @keywords internal
+history_toggle_pin <- function(state, id) {
+  if (is.null(id) || !nzchar(id)) return(invisible(FALSE))
+  pinned <- state$history_pinned %||% character()
+  if (id %in% pinned) {
+    state$history_pinned <- setdiff(pinned, id)
+    value <- FALSE
+  } else {
+    state$history_pinned <- unique(c(id, pinned))
+    value <- TRUE
+  }
+  state_touch(state)
+  invisible(value)
+}
+
+#' Pinned history identifiers
+#' @keywords internal
+history_pinned_ids <- function(state) state$history_pinned %||% character()
 
 #' Find a history entry by id
 #' @keywords internal
@@ -82,6 +176,7 @@ history_clear <- function(state) {
   state$history <- list()
   state$history_counter <- 0L
   state$recent_commands <- character()
+  state$history_pinned <- character()
   state_touch(state)
   invisible(NULL)
 }
