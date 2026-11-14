@@ -26,8 +26,12 @@ RcmdrShiny::run()
 ```
 
 The browser opens the local interface.  The left sidebar holds the application
-menus; the right side holds the tabs **Script**, **Output**, **Messages**,
-**Plots**, **Data**, **Environment** and **Help**.
+menus; the right side holds the Studio tabs **Home**, **Data**, **Charts**,
+**Report**, **Script**, **Console**, **Environment** and **Help**.  The
+**Console** tab contains the **Output**, **Messages** and **History**
+sub-tabs.  Press `Ctrl+K` (or click **Search**) to open the command palette.
+The Classic layout with separate **Script**, **Output**, **Messages** and
+**Plots** tabs is still available from the top bar or **Options**.
 
 ## 2. Load a data set
 
@@ -64,7 +68,8 @@ numSummary(mtcars[, c("mpg", "hp")])
 ```
 
 The command is evaluated in the session and its output is captured in the
-**Output** tab.  This is the core promise of RcmdrShiny: a graphical interface
+**Console > Output** section, and the step also appears in **Console >
+History**.  This is the core promise of RcmdrShiny Studio: a graphical interface
 that never hides the R code it generates.
 
 ## See also

@@ -1,6 +1,6 @@
 # Onda 0 — Fondazioni
 
-**Stato:** da implementare  
+**Stato:** implementata — 14 novembre 2026  
 **Dipende da:** —  
 **Sblocca:** tutte le ondate successive  
 **Documento padre:** [`README.md`](README.md)
@@ -22,6 +22,12 @@ Rendere possibile la Studio UI senza toccare il motore statistico:
 
 Al termine dell'Onda 0 l'app deve essere già più moderna, ma nessun comando
 esistente deve cambiare.
+
+**Risultato consegnato:** shell Studio/Classica con Home e Console, command
+palette, cronologia strutturata con card azionabili, anteprima del comando nei
+dialoghi, preset, preview isolata, temi chiaro/scuro/alto contrasto, console
+minima e feature flag.  Il dettaglio delle modifiche e delle verifiche è nel
+diario [`diary/wave-00-foundations.md`](diary/wave-00-foundations.md).
 
 ---
 

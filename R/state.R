@@ -27,7 +27,20 @@ AppState <- function(env = globalenv()) {
   state$warnings <- character()
   state$last_error <- NULL
 
+  # Structured history.  It runs beside the command log: the log remains the
+  # compatibility contract, while the history records enough metadata to rerun,
+  # reopen a dialog or insert a step into the script/report.
+  state$history <- list()
+  state$history_counter <- 0L
+  state$recent_commands <- character()
+  state$console_history <- character()
+
+  # The source of the command currently being executed.  It is consumed by
+  # run_command() and reset by the caller.
+  state$execution_source <- NULL
+
   state$dialog_memory <- list()
+  state$dialog_presets <- list()
 
   # Document authoring: the Script tab can hold a plain script or an R
   # Markdown/knitr document.  The path, mode and text live here so dialogs and
@@ -62,7 +75,10 @@ AppState <- function(env = globalenv()) {
     use_markdown = FALSE,
     use_knitr = FALSE,
     language = current_language(),
-    theme = "light",
+    theme = "system",
+    ui_mode = "studio",
+    history_length = 200L,
+    features = default_features(),
     capabilities = rcmdr_capabilities()
   )
 

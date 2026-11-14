@@ -9,7 +9,9 @@
 dialog_spec <- function(id, title, ui, on_ok, on_open = NULL,
                         observers = NULL, size = "l",
                         help = NULL, help_package = NULL,
-                        help_topic = NULL) {
+                        help_topic = NULL, category = NULL,
+                        keywords = character(), preview = TRUE,
+                        presets = TRUE, validate = NULL) {
   structure(
     list(
       id = id,
@@ -21,7 +23,12 @@ dialog_spec <- function(id, title, ui, on_ok, on_open = NULL,
       size = size,
       help = help,
       help_package = help_package,
-      help_topic = help_topic
+      help_topic = help_topic,
+      category = category,
+      keywords = keywords,
+      preview = isTRUE(preview),
+      presets = isTRUE(presets),
+      validate = validate
     ),
     class = "RcmdrShinyDialog"
   )
@@ -249,10 +256,10 @@ base_direct_commands <- function() {
     },
     helpCommander = function(state) {
       showModal(modalDialog(
-        title = tr("RcmdrShiny help"),
+        title = tr("RcmdrShiny Studio help"),
         htmltools::tagList(
           htmltools::tags$p(tr(
-            "RcmdrShiny is a Shiny version of the R Commander. Use the sidebar to run commands and dialogs; the generated R code appears in the Script tab."
+            "RcmdrShiny Studio is a browser-native statistical workbench inspired by the R Commander. Use the sidebar or the command palette to run commands and dialogs; the generated R code appears in the Script tab."
           )),
           htmltools::tags$ul(
             htmltools::tags$li(tr("Data: import and manage data sets.")),
@@ -303,20 +310,21 @@ base_direct_commands <- function() {
         error = function(e) "0.1.0"
       )
       showModal(modalDialog(
-        title = tr("About RcmdrShiny"),
+        title = tr("About RcmdrShiny Studio"),
         htmltools::tagList(
           htmltools::tags$p(htmltools::tags$strong(
-            sprintf("RcmdrShiny %s", version)
+            sprintf("RcmdrShiny Studio %s", version)
           )),
           htmltools::tags$p(tr(
-            "A Shiny version of the R Commander, derived from Rcmdr 2.15.0 (GPL-2+)."
+            "A browser-native statistical workbench inspired by the R Commander. It preserves the reproducible command semantics of Rcmdr while replacing the desktop/Tk metaphor with Studio workspaces."
           )),
           htmltools::tags$p(tr(
-            "Copyright (C) 2001-2026 John Fox, Milan Bouchet-Valat and contributors."
+            "RcmdrShiny is derived from Rcmdr 2.15.0 (GPL-2+). Copyright (C) 2001-2026 John Fox, Milan Bouchet-Valat and contributors."
           )),
           htmltools::tags$p(htmltools::tags$a(
-            href = "https://www.r-commander.com/", target = "_blank",
-            "https://www.r-commander.com/"
+            href = "https://github.com/vigliafg/rcmdr-studio",
+            target = "_blank",
+            "https://github.com/vigliafg/rcmdr-studio"
           ))
         ),
         easyClose = TRUE,
@@ -443,14 +451,33 @@ command_enabled <- function(state, command) {
 dialog_modal <- function(spec) {
   has_help <- !is.null(spec$help) ||
     !is.null(help_topic_for_dialog(spec))
+  title <- if (is.null(spec$category) || !nzchar(spec$category)) {
+    spec$title
+  } else {
+    htmltools::tagList(
+      spec$title,
+      htmltools::tags$div(class = "rcmdr-dialog-category", spec$category)
+    )
+  }
   modalDialog(
-    title = spec$title,
+    title = title,
+    uiOutput("dialog_presets_ui"),
     uiOutput("dialog_body"),
+    uiOutput("dialog_validation_ui"),
+    if (!identical(spec$preview, FALSE)) {
+      htmltools::tags$details(
+        class = "rcmdr-dialog-preview", open = "open",
+        htmltools::tags$summary(tr("R command")),
+        uiOutput("dialog_preview_panel")
+      )
+    },
     uiOutput("dialog_help_panel"),
     footer = htmltools::tagList(
       if (has_help) {
         actionButton("dialog_help", tr("Help"), class = "btn-outline-secondary")
       },
+      actionButton("dialog_insert_script", tr("To script"),
+                   class = "btn-outline-secondary"),
       actionButton("dialog_reset", tr("Reset"), class = "btn-outline-secondary"),
       actionButton("dialog_cancel", tr("Cancel"), class = "btn-outline-secondary"),
       actionButton("dialog_apply", tr("Apply"), class = "btn-outline-primary"),
@@ -467,17 +494,26 @@ dialog_modal <- function(spec) {
 #' @param result List returned by a dialog `on_ok` callback.
 #' @return `TRUE` when all commands succeeded.
 #' @keywords internal
-apply_dialog_result <- function(state, result) {
+apply_dialog_result <- function(state, result, dialog_id = state$current_dialog,
+                                dialog_memory = NULL) {
   ok <- TRUE
   # A new dialog result replaces any previous interactive plot.  The base
   # command below still produces the PNG shown in the gallery.
   state$plotly_widget <- NULL
   state$plotly_title <- NULL
 
+  if (is.null(dialog_memory) && !is.null(dialog_id)) {
+    dialog_memory <- get_dialog_memory(state, dialog_id)
+  }
+  source <- if (is.null(dialog_id)) "script" else "dialog"
+
   for (command in result$commands %||% character()) {
     outcome <- run_command(
       state, command,
-      plot = if (isTRUE(result$plot)) TRUE else "auto"
+      plot = if (isTRUE(result$plot)) TRUE else "auto",
+      source = source,
+      dialog_id = dialog_id,
+      dialog_memory = dialog_memory
     )
     if (!identical(outcome$status, "ok")) ok <- FALSE
   }

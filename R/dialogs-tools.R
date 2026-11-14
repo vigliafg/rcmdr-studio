@@ -12,17 +12,39 @@ options_dialog <- function() {
     stringsAsFactors = TRUE,
     edit_threshold = 10000L,
     use_markdown = FALSE,
-    use_knitr = FALSE
+    use_knitr = FALSE,
+    ui_mode = "studio",
+    theme = "system"
   )
 
   dialog_spec(
     id = id,
     title = tr("Options"),
     help = "options",
+    preview = FALSE,
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
 
       htmltools::tagList(
+        htmltools::tags$h6(tr("Interface")),
+        radio_input(
+          ns("ui_mode"), tr("Interface mode"),
+          c("Studio" = "studio", "Classic" = "classic"),
+          m$ui_mode
+        ),
+        selectInput(
+          ns("theme"), tr("Theme"),
+          choices = stats::setNames(
+            c("system", "light", "dark", "contrast"),
+            c(tr("System"), tr("Light"), tr("Dark"), tr("High contrast"))
+          ),
+          selected = m$theme %||% "system",
+          width = "100%"
+        ),
+        help_text(tr(
+          "Studio mode adds the Home, Charts and Console workspaces. Classic mode keeps the original tabs."
+        )),
+        htmltools::tags$hr(),
         htmltools::tags$h6(tr("Output")),
         spin_input(ns("digits"), tr("Number of significant digits:"),
                    m$digits, min = 1, max = 22, step = 1),
@@ -79,14 +101,23 @@ options_dialog <- function() {
       state$options$stringsAsFactors <- stringsAsFactors
       state$options$use_markdown <- isTRUE(input[[ns("use_markdown")]])
       state$options$use_knitr <- isTRUE(input[[ns("use_knitr")]])
+      state$options$ui_mode <- input[[ns("ui_mode")]] %||% "studio"
+      state$options$theme <- input[[ns("theme")]] %||% "system"
       base::options(digits = digits, width = width)
       state_touch(state)
+
+      if (!is.null(state$session)) {
+        state$session$sendCustomMessage("rcmdr-theme",
+                                        state$options$theme)
+      }
 
       list(
         memory = list(
           digits = digits, width = width,
           stringsAsFactors = stringsAsFactors,
-          edit_threshold = threshold
+          edit_threshold = threshold,
+          ui_mode = state$options$ui_mode,
+          theme = state$options$theme
         )
       )
     }

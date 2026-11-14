@@ -1,26 +1,30 @@
-# RcmdrShiny
+# RcmdrShiny Studio
 
-[![R-CMD-check](https://github.com/vigliafg/rstats-commander/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/vigliafg/rstats-commander/actions/workflows/R-CMD-check.yaml)
-[![Browser E2E](https://github.com/vigliafg/rstats-commander/actions/workflows/e2e.yaml/badge.svg)](https://github.com/vigliafg/rstats-commander/actions/workflows/e2e.yaml)
+[![R-CMD-check](https://github.com/vigliafg/rcmdr-studio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/vigliafg/rcmdr-studio/actions/workflows/R-CMD-check.yaml)
+[![Browser E2E](https://github.com/vigliafg/rcmdr-studio/actions/workflows/e2e.yaml/badge.svg)](https://github.com/vigliafg/rcmdr-studio/actions/workflows/e2e.yaml)
 
-A local, browser-based version of the [R Commander](https://www.r-commander.com/)
-(Rcmdr), rebuilt on [Shiny](https://shiny.posit.co/) and free of Tcl/Tk.
+A local, browser-based statistical workbench **inspired by** the
+[R Commander](https://www.r-commander.com/) (Rcmdr), rebuilt on
+[Shiny](https://shiny.posit.co/) and free of Tcl/Tk.
 
-RcmdrShiny is a fork of the Rcmdr 2.15.0 engine: it keeps the R command
-generation semantics of Rcmdr, so every action in the graphical interface
-produces a reproducible command in the script log and in the output pane.
+RcmdrShiny Studio is not a pixel-for-pixel clone of R Commander. It keeps the
+engine and the reproducible command semantics of Rcmdr 2.15.0 — every action
+still produces a visible R command — but replaces the desktop/Tk metaphor with
+a browser-native Studio: command palette, structured history, data, chart and
+report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.13 document authoring.** The core exposes 213 dialogs and, with
-> all 15 plugins loaded, 863 of 900 menu entries are implemented.  The
-> Script tab edits R scripts, R Markdown documents and knitr documents, knits
-> them to HTML, PDF or Word, and shows the result in the **Report** tab.  The
-> remaining disabled core entries are the three lifecycle commands, the nine
-> browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE implement
-> every plugin-specific entry.  The package includes the
-> Shiny shell, a searchable offline help centre with 443 topics covering every dialog,
-> interactive plotly versions of the main charts, R Markdown report export,
-> plugin command aliases, accessibility landmarks, vignettes and release
-> engineering.
+> **Status: 1.14 Wave 0 (Studio foundations).** The core exposes 213 dialogs
+> and, with all 15 plugins loaded, 863 of 900 menu entries are implemented.
+> The package now ships a Studio shell with a Home tab, command palette,
+> structured command history, live R-command preview in dialogs, isolated
+> previews, theme tokens and a Classic mode that preserves the 1.13 layout.
+> Data, Chart and Report studios are the next waves. The remaining disabled
+> core entries are the three lifecycle commands, the nine browser-delegated
+> Edit actions and `Identify3D`; EZR, NMBU and DoE implement every
+> plugin-specific entry. The package includes a searchable offline help centre
+> with 443 topics covering every dialog, interactive plotly versions of the
+> main charts, R Markdown report export, plugin command aliases, accessibility
+> landmarks, vignettes and release engineering.
 
 ## Requirements
 
@@ -67,6 +71,14 @@ RcmdrShiny::run(env = env)
 | Data view (`DT`) and interactive editor (`rhandsontable`, 10,000-cell threshold) | done |
 | Plot capture, history gallery, PNG/PDF export | done |
 | rgl 3D scene rendered with `rglwidget()` | done |
+| Studio shell with Home, Charts and Console workspaces | done |
+| Classic mode preserving the 1.13 layout | done |
+| Command palette (`Ctrl+K`) over menus, help, data, variables and history | done |
+| Structured command history with rerun, dialog reopening and script/report insertion | done |
+| Live R-command preview, "To script" and named dialog presets | done |
+| Isolated preview engine for base plots, plotly and Markdown | done |
+| Minimal browser console with Output, Messages and History | done |
+| Light, dark, high-contrast and system themes; keyboard shortcuts | done |
 | Dialog runtime (tabs, OK/Apply/Reset/Cancel/Help, memory, validation, retry) | done |
 | Read Text Data (file, clipboard, URL) | done |
 | Numerical Summaries (statistics, groups, counts) | done |
@@ -186,11 +198,18 @@ summaries, fit a linear model, and verify the generated script and output.
 
 | File | Responsibility |
 |---|---|
-| `R/app.R` | Shiny UI, server, menu wiring, panes and status bar |
-| `R/state.R` | `AppState`: environment, active data set/model, logs, memory |
-| `R/commands.R` | `run_command()`: evaluation, capture, plot capture |
+| `R/app.R` | Shiny UI, Studio/Classic shell, server and status bar |
+| `R/state.R` | `AppState`: environment, active data set/model, logs, history, memory |
+| `R/commands.R` | `run_command()`: evaluation, capture, plot capture, history hooks |
+| `R/history.R` | Structured command history and rerun/insert helpers |
+| `R/preview.R` | Isolated preview engine for plots, plotly and Markdown |
+| `R/command-palette.R` | Search index and palette over menus, help, data and history |
+| `R/features.R` | Feature flags, Studio/Classic mode and theme settings |
+| `R/ui-components.R` | Shared Studio components and status/empty/metric widgets |
+| `R/history-ui.R` | History cards and filters |
+| `R/console.R` | Minimal Studio console and interactive-command guard |
 | `R/menus.R` | Parser for `Rcmdr-menus.txt` and sidebar renderer |
-| `R/dialogs.R` | Dialog runtime and implementation registry |
+| `R/dialogs.R` | Dialog runtime, command preview and presets |
 | `R/widgets.R` | Shiny equivalents of Rcmdr widgets |
 | `R/command-builders.R` | Pure functions that generate Rcmdr-compatible commands |
 | `R/dialogs-*.R` | Dialog specifications and validation |

@@ -22,7 +22,7 @@ document_open_dialog <- function(id, mode) {
   }
 
   dialog_spec(
-    id = id, title = title, help_topic = "document-authoring",
+    id = id, title = title, help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         file_input(
@@ -83,7 +83,7 @@ document_save_as_dialog <- function(id, mode) {
   }
 
   dialog_spec(
-    id = id, title = title, help_topic = "document-authoring",
+    id = id, title = title, help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       default <- memory$path %||% document_path(state) %||%
         file.path(getwd(), paste0("report.", extension))
@@ -133,7 +133,7 @@ document_new_dialog <- function(id, mode) {
   }
 
   dialog_spec(
-    id = id, title = title, help_topic = "document-authoring",
+    id = id, title = title, help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         entry_input(ns("title"), tr("Document title:"),
@@ -162,7 +162,7 @@ insert_section_dialog <- function() {
   ns <- function(x) paste0(id, "_", x)
 
   dialog_spec(
-    id = id, title = tr("Insert section"), help_topic = "document-authoring",
+    id = id, title = tr("Insert section"), help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         entry_input(ns("title"), tr("Section title:"),
@@ -201,7 +201,7 @@ compile_document_dialog <- function() {
   ns <- function(x) paste0(id, "_", x)
 
   dialog_spec(
-    id = id, title = tr("Knit document"), help_topic = "document-authoring",
+    id = id, title = tr("Knit document"), help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       mode <- document_mode(state)
       formats <- if (identical(mode, "rnw")) {
@@ -251,7 +251,7 @@ insert_chunk_dialog <- function() {
   ns <- function(x) paste0(id, "_", x)
 
   dialog_spec(
-    id = id, title = tr("Insert chunk"), help_topic = "document-authoring",
+    id = id, title = tr("Insert chunk"), help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         entry_input(ns("label"), tr("Chunk label (optional):"),
@@ -303,7 +303,7 @@ bibliography_dialog <- function() {
 
   dialog_spec(
     id = id, title = tr("Document bibliography"),
-    help_topic = "document-authoring",
+    help_topic = "document-authoring", preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         file_input(

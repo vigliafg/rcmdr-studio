@@ -461,6 +461,7 @@ load_plugins_dialog <- function() {
 
   dialog_spec(
     id = id, title = tr("Load Rcmdr Plug-in(s)"), help = "library",
+    preview = FALSE,
     ui = function(state, memory) {
       htmltools::tagList(
         file_input(

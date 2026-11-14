@@ -38,6 +38,10 @@ topics:
     file: topics/getting-started.md
     category: getting-started
     order: 100
+  - id: about-studio
+    file: topics/about.md
+    category: getting-started
+    order: 90
   - id: converting-character-variables
     file: topics/converting-character-variables.md
     category: data

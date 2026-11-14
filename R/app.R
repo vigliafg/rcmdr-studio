@@ -98,6 +98,181 @@ app_css <- function() {
       border-color: #2b3540; }
     body.rcmdr-dark .table { color: #d7dde5; }
     body.rcmdr-dark .modal-content { background: #1d242d; color: #d7dde5; }
+
+    /* Studio design tokens ------------------------------------------------ */
+    :root {
+      --rcmdr-bg: #f6f7f9;
+      --rcmdr-surface: #ffffff;
+      --rcmdr-surface-muted: #eef1f5;
+      --rcmdr-text: #1f2933;
+      --rcmdr-muted: #52606d;
+      --rcmdr-border: #dde2e8;
+      --rcmdr-primary: #1f3a5f;
+      --rcmdr-accent: #0d6efd;
+      --rcmdr-danger: #b42318;
+      --rcmdr-warning: #b54708;
+      --rcmdr-success: #067647;
+      --rcmdr-radius: .5rem;
+      --rcmdr-space: .75rem;
+      --rcmdr-font-size: 1rem;
+    }
+    body.rcmdr-contrast {
+      --rcmdr-bg: #ffffff;
+      --rcmdr-surface: #ffffff;
+      --rcmdr-surface-muted: #f2f2f2;
+      --rcmdr-text: #000000;
+      --rcmdr-muted: #1f1f1f;
+      --rcmdr-border: #000000;
+      --rcmdr-primary: #000000;
+      --rcmdr-accent: #0047ff;
+    }
+    body.rcmdr-density-compact { --rcmdr-space: .45rem; font-size: .94rem; }
+
+    .rcmdr-topbar { background: var(--rcmdr-primary); }
+    .rcmdr-topbar .rcmdr-brand-sub { color: #dfe8f3; }
+    .rcmdr-topbar .form-select { max-width: 9rem; }
+    .rcmdr-sidebar {
+      background: var(--rcmdr-surface);
+      border-right: 1px solid var(--rcmdr-border);
+      min-height: calc(100vh - 90px); padding: var(--rcmdr-space);
+      max-height: calc(100vh - 90px); overflow-y: auto;
+    }
+    .rcmdr-statusbar {
+      background: var(--rcmdr-surface-muted);
+      border-top: 1px solid var(--rcmdr-border);
+    }
+    .rcmdr-toolbar {
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      padding: .5rem .65rem; margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-toolbar-field .form-group,
+    .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
+    .rcmdr-dialog-category {
+      font-size: .78rem; font-weight: 400; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--rcmdr-muted);
+    }
+    .rcmdr-dialog-preview {
+      margin-top: .75rem; border-top: 1px solid var(--rcmdr-border);
+      padding-top: .5rem;
+    }
+    .rcmdr-dialog-preview > summary { cursor: pointer; color: var(--rcmdr-muted); }
+    .rcmdr-dialog-presets {
+      border-bottom: 1px solid var(--rcmdr-border);
+      padding-bottom: .5rem; margin-bottom: .75rem;
+    }
+    .rcmdr-code-preview {
+      position: relative; background: #f4f6f8;
+      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      padding: .5rem .65rem;
+    }
+    .rcmdr-code-preview pre { margin: 0; white-space: pre-wrap; }
+    .rcmdr-code-preview .rcmdr-copy { position: absolute; top: .35rem; right: .35rem; }
+    .rcmdr-status-pill {
+      display: inline-block; padding: .08rem .45rem; border-radius: 999px;
+      font-size: .75rem; font-weight: 600; line-height: 1.4;
+    }
+    .rcmdr-status-ok { background: #dcfae6; color: #067647; }
+    .rcmdr-status-warning { background: #fef0c7; color: #b54708; }
+    .rcmdr-status-error { background: #fee4e2; color: #b42318; }
+    .rcmdr-status-muted { background: #eef1f5; color: #52606d; }
+    .rcmdr-empty {
+      border: 1px dashed var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      padding: 1.25rem; text-align: center; color: var(--rcmdr-muted);
+      background: var(--rcmdr-surface);
+    }
+    .rcmdr-empty-title { font-weight: 600; color: var(--rcmdr-text); }
+    .rcmdr-empty-text { margin: .35rem 0 0; }
+    .rcmdr-metric {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
+    }
+    .rcmdr-metric-label { font-size: .78rem; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--rcmdr-muted); }
+    .rcmdr-metric-value { font-size: 1.35rem; font-weight: 600; }
+    .rcmdr-metric-help { font-size: .82rem; color: var(--rcmdr-muted); }
+    .rcmdr-section-card {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .65rem .85rem;
+      margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-section-card > summary { cursor: pointer; font-weight: 600; }
+    .rcmdr-section-body { padding-top: .5rem; }
+    .rcmdr-breadcrumb { margin-bottom: .5rem; }
+    .rcmdr-home-hero {
+      background: linear-gradient(135deg, #1f3a5f 0%, #2f5d8a 100%);
+      color: #fff; border-radius: var(--rcmdr-radius);
+      padding: 1.4rem 1.6rem; margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-home-hero h2 { font-size: 1.65rem; margin-bottom: .25rem; }
+    .rcmdr-home-hero p { color: #dfe8f3; margin-bottom: 1rem; }
+    .rcmdr-home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--rcmdr-space); }
+    .rcmdr-home-card {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
+    }
+    .rcmdr-home-card h5 { font-size: 1rem; margin-bottom: .5rem; }
+    .rcmdr-history-card {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .6rem .75rem;
+      margin-bottom: .6rem;
+    }
+    .rcmdr-history-head { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+    .rcmdr-history-source, .rcmdr-history-time {
+      font-size: .78rem; color: var(--rcmdr-muted);
+    }
+    .rcmdr-history-command {
+      margin: .5rem 0 .25rem; padding: .45rem .55rem;
+      background: var(--rcmdr-surface-muted); border-radius: .35rem;
+      white-space: pre-wrap; font-size: .86rem;
+    }
+    .rcmdr-history-output pre, .rcmdr-history-messages pre {
+      max-height: 18rem; overflow: auto; font-size: .84rem;
+    }
+    .rcmdr-palette .form-group { margin-bottom: .35rem; }
+    .rcmdr-palette-hint { color: var(--rcmdr-muted); font-size: .78rem; margin-bottom: .5rem; }
+    .rcmdr-palette-results { max-height: 55vh; overflow-y: auto; }
+    .rcmdr-palette-result {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto;
+      gap: .1rem .6rem; width: 100%; text-align: left;
+      background: transparent; border: 1px solid transparent;
+      border-radius: var(--rcmdr-radius); padding: .45rem .6rem;
+      color: var(--rcmdr-text);
+    }
+    .rcmdr-palette-result:hover, .rcmdr-palette-result.active {
+      background: var(--rcmdr-surface-muted); border-color: var(--rcmdr-border);
+    }
+    .rcmdr-palette-result.disabled { opacity: .55; cursor: not-allowed; }
+    .rcmdr-palette-label { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rcmdr-palette-type {
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .04em;
+      color: var(--rcmdr-muted);
+    }
+    .rcmdr-palette-path { grid-column: 1 / -1; font-size: .78rem; color: var(--rcmdr-muted); }
+    .rcmdr-palette-reason { grid-column: 1 / -1; font-size: .78rem; color: var(--rcmdr-warning); }
+    .rcmdr-console-input { display: flex; gap: .5rem; align-items: flex-start; }
+    .rcmdr-console-input .form-group { flex: 1; margin-bottom: 0; }
+    .rcmdr-console-note { color: var(--rcmdr-muted); font-size: .8rem; margin: .5rem 0; }
+    .rcmdr-menu-search { margin-bottom: .6rem; }
+    .rcmdr-menu-search .form-group { margin-bottom: 0; }
+    .rcmdr-menu-flat-path { font-size: .72rem; color: var(--rcmdr-muted); display: block; }
+    body.rcmdr-dark .rcmdr-toolbar,
+    body.rcmdr-dark .rcmdr-metric,
+    body.rcmdr-dark .rcmdr-section-card,
+    body.rcmdr-dark .rcmdr-home-card,
+    body.rcmdr-dark .rcmdr-history-card,
+    body.rcmdr-dark .rcmdr-empty,
+    body.rcmdr-dark .rcmdr-code-preview,
+    body.rcmdr-dark .rcmdr-history-command { background: #1d242d; color: #d7dde5; }
+    body.rcmdr-dark .rcmdr-home-hero { background: linear-gradient(135deg, #172a44 0%, #24476b 100%); }
+    body.rcmdr-dark .rcmdr-palette-result { color: #d7dde5; }
+    body.rcmdr-dark .rcmdr-palette-result:hover,
+    body.rcmdr-dark .rcmdr-palette-result.active { background: #24303d; }
+    body.rcmdr-dark .rcmdr-status-ok { background: #064e3b; color: #a7f3d0; }
+    body.rcmdr-dark .rcmdr-status-warning { background: #4a2c07; color: #fde68a; }
+    body.rcmdr-dark .rcmdr-status-error { background: #4a1512; color: #fecaca; }
+    body.rcmdr-dark .rcmdr-status-muted { background: #24303d; color: #bfcbd9; }
     "
   )
 }
@@ -120,6 +295,32 @@ app_js <- function(lang = current_language()) {
       var el = document.getElementById(id);
       if (el) el.focus();
     });
+    function rcmdrApplyTheme(theme) {
+      var body = document.body;
+      if (!body) return;
+      body.classList.remove('rcmdr-dark', 'rcmdr-contrast');
+      var effective = theme;
+      if (theme === 'system') {
+        effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      if (effective === 'dark') body.classList.add('rcmdr-dark');
+      if (theme === 'contrast') body.classList.add('rcmdr-contrast');
+      window.localStorage.setItem('rcmdr-theme', theme);
+    }
+    Shiny.addCustomMessageHandler('rcmdr-theme', function(theme) {
+      rcmdrApplyTheme(theme);
+    });
+    (function() {
+      function applyStoredTheme() {
+        var stored = window.localStorage.getItem('rcmdr-theme') || 'system';
+        rcmdrApplyTheme(stored);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyStoredTheme);
+      } else {
+        applyStoredTheme();
+      }
+    })();
     function rcmdrRunChunk() {
       var element = document.querySelector('.ace_editor');
       if (!element) return;
@@ -128,23 +329,114 @@ app_js <- function(lang = current_language()) {
       Shiny.setInputValue('run_chunk_at',
         {row: position.row, column: position.column}, {priority: 'event'});
     }
-    document.addEventListener('click', function(event) {
-      var link = event.target.closest('[data-help-topic]');
-      if (!link) return;
-      event.preventDefault();
-      Shiny.setInputValue('help_open',
-        link.getAttribute('data-help-topic'), {priority: 'event'});
-      var pane = document.getElementById('help_topic_pane');
-      if (pane) pane.focus();
-    });
-    (function() {
-      var stored = window.localStorage.getItem('rcmdr-theme');
-      if (stored === 'dark') document.body.classList.add('rcmdr-dark');
-    })();
-    function rcmdrToggleTheme() {
-      var dark = document.body.classList.toggle('rcmdr-dark');
-      window.localStorage.setItem('rcmdr-theme', dark ? 'dark' : 'light');
+    function rcmdrCopy(text) {
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      }
     }
+    window.rcmdrCopy = rcmdrCopy;
+    window.rcmdrPaletteClick = function(el) {
+      if (!el) return false;
+      if (el.getAttribute('data-palette-enabled') === 'false') return false;
+      Shiny.setInputValue('palette_action', {
+        type: el.getAttribute('data-palette-type'),
+        id: el.getAttribute('data-palette-id'),
+        action: el.getAttribute('data-palette-action')
+      }, {priority: 'event'});
+      return false;
+    };
+    window.rcmdrHistoryClick = function(el, action) {
+      if (!el) return false;
+      if (action === 'copy') {
+        rcmdrCopy(el.getAttribute('data-history-command'));
+        return false;
+      }
+      Shiny.setInputValue('history_action', {
+        id: el.getAttribute('data-history-id'),
+        action: action
+      }, {priority: 'event'});
+      return false;
+    };
+    document.addEventListener('click', function(event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var help = target.closest('[data-help-topic]');
+      if (help) {
+        event.preventDefault();
+        Shiny.setInputValue('help_open',
+          help.getAttribute('data-help-topic'), {priority: 'event'});
+        var pane = document.getElementById('help_topic_pane');
+        if (pane) pane.focus();
+        return;
+      }
+      var copy = target.closest('[data-rcmdr-copy]');
+      if (copy) {
+        event.preventDefault();
+        rcmdrCopy(copy.getAttribute('data-rcmdr-copy'));
+        return;
+      }
+    }, true);
+    document.addEventListener('keydown', function(event) {
+      var mod = event.ctrlKey || event.metaKey;
+      var key = (event.key || '').toLowerCase();
+      if (mod && !event.shiftKey && !event.altKey && key === 'k') {
+        var paletteButton = document.getElementById('palette_open');
+        if (paletteButton) {
+          event.preventDefault();
+          paletteButton.click();
+        }
+      }
+      if (mod && !event.shiftKey && !event.altKey && key === 's') {
+        var save = document.getElementById('document_save');
+        if (save) {
+          event.preventDefault();
+          save.click();
+        }
+      }
+      if (mod && event.shiftKey && key === 's') {
+        var saveAs = document.getElementById('document_save_as');
+        if (saveAs) {
+          event.preventDefault();
+          saveAs.click();
+        }
+      }
+      if (event.key === 'Enter' && mod && !event.target.matches('#console_input, #palette_query')) {
+        var run = document.getElementById('run_selection');
+        if (run) {
+          event.preventDefault();
+          run.click();
+        }
+      }
+      if (event.target.id === 'console_input' && event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        var consoleRun = document.getElementById('console_run');
+        if (consoleRun) consoleRun.click();
+      }
+    });
+    document.addEventListener('keydown', function(event) {
+      if (event.target.id !== 'palette_query') return;
+      var results = Array.from(document.querySelectorAll('#palette_results .rcmdr-palette-result:not(.disabled)'));
+      if (results.length === 0) return;
+      var current = results.findIndex(function(el) { return el.classList.contains('active'); });
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        current = Math.min(results.length - 1, current + 1);
+        results.forEach(function(el) { el.classList.remove('active'); });
+        results[current].classList.add('active');
+        results[current].scrollIntoView({block: 'nearest'});
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        current = Math.max(0, current <= 0 ? 0 : current - 1);
+        results.forEach(function(el) { el.classList.remove('active'); });
+        results[current].classList.add('active');
+        results[current].scrollIntoView({block: 'nearest'});
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        if (current < 0) current = 0;
+        results[current].click();
+      }
+    });
     "
   ))
 }
@@ -267,6 +559,78 @@ plots_pane_ui <- function() {
   )
 }
 
+home_pane_ui <- function() {
+  htmltools::tagList(
+    htmltools::div(
+      class = "rcmdr-home-hero",
+      htmltools::tags$h2(tr("RcmdrShiny Studio")),
+      htmltools::tags$p(tr(
+        "A browser-native statistical workbench inspired by the R Commander. Every action still produces reproducible R code."
+      )),
+      htmltools::div(
+        class = "d-flex gap-2 flex-wrap",
+        actionButton("home_import", tr("Import data"), class = "btn-light btn-sm"),
+        actionButton("home_report", tr("New report"), class = "btn-light btn-sm"),
+        actionButton("home_palette", tr("Command palette"), class = "btn-light btn-sm"),
+        actionButton("home_help", tr("Getting started"), class = "btn-light btn-sm")
+      )
+    ),
+    htmltools::div(
+      class = "rcmdr-home-grid",
+      uiOutput("home_continue"),
+      uiOutput("home_recent"),
+      uiOutput("home_health"),
+      htmltools::div(
+        class = "rcmdr-home-card",
+        htmltools::tags$h5(tr("Keyboard")),
+        htmltools::tags$p(class = "small text-muted mb-1",
+                          tr("Ctrl+K opens the command palette.")),
+        htmltools::tags$p(class = "small text-muted mb-1",
+                          tr("Ctrl+Enter runs the selection or the current chunk.")),
+        htmltools::tags$p(class = "small text-muted mb-0",
+                          tr("Ctrl+S saves the current document."))
+      )
+    )
+  )
+}
+
+console_workspace_ui <- function() {
+  tabsetPanel(
+    id = "console_tabs",
+    tabPanel(tr("Console"), console_pane_ui()),
+    tabPanel(tr("Output"), output_pane_ui()),
+    tabPanel(tr("Messages"), messages_pane_ui()),
+    tabPanel(tr("History"), history_pane_ui())
+  )
+}
+
+main_tabs_ui <- function(mode = "studio") {
+  if (identical(mode, "classic")) {
+    return(tabsetPanel(
+      id = "main_tabs",
+      tabPanel(tr("Script"), script_pane_ui()),
+      tabPanel(tr("Output"), output_pane_ui()),
+      tabPanel(tr("Messages"), messages_pane_ui()),
+      tabPanel(tr("Plots"), plots_pane_ui()),
+      tabPanel(tr("Report"), report_pane_ui()),
+      tabPanel(tr("Data"), data_pane_ui()),
+      tabPanel(tr("Environment"), uiOutput("environment_pane")),
+      tabPanel(tr("Help"), help_center_ui())
+    ))
+  }
+  tabsetPanel(
+    id = "main_tabs",
+    tabPanel(tr("Home"), home_pane_ui()),
+    tabPanel(tr("Data"), data_pane_ui()),
+    tabPanel(tr("Charts"), plots_pane_ui()),
+    tabPanel(tr("Report"), report_pane_ui()),
+    tabPanel(tr("Script"), script_pane_ui()),
+    tabPanel(tr("Console"), console_workspace_ui()),
+    tabPanel(tr("Environment"), uiOutput("environment_pane")),
+    tabPanel(tr("Help"), help_center_ui())
+  )
+}
+
 app_ui <- function() {
   languages <- available_languages()
   current <- current_language()
@@ -287,24 +651,34 @@ app_ui <- function() {
       role = "banner",
       htmltools::div(
         class = "d-flex align-items-center gap-2",
-        htmltools::tags$strong("RcmdrShiny", class = "fs-5"),
-        htmltools::tags$small(tr("R Commander for Shiny"), class = "text-white-50")
+        htmltools::tags$strong(tr("RcmdrShiny Studio"), class = "fs-5"),
+        htmltools::tags$small(tr("Inspired by R Commander"),
+                              class = "rcmdr-brand-sub")
       ),
       htmltools::div(
-        class = "d-flex gap-3 badge-box align-items-center",
+        class = "d-flex gap-2 badge-box align-items-center flex-wrap",
+        actionButton(
+          "palette_open", tr("Search"),
+          class = "btn-sm btn-outline-light",
+          title = tr("Command palette (Ctrl+K)")
+        ),
         uiOutput("dataset_badge", inline = TRUE),
         uiOutput("model_badge", inline = TRUE),
         selectInput(
           "language", NULL,
           choices = stats::setNames(languages, toupper(languages)),
-          selected = current, width = "100px"
+          selected = current, width = "90px"
         ),
-        htmltools::tags$button(
-          type = "button", class = "btn btn-sm btn-outline-light",
-          title = tr("Toggle dark mode"),
-          `aria-label` = tr("Toggle dark mode"),
-          onclick = "rcmdrToggleTheme()", "\u25D0"
-        )
+        selectInput(
+          "theme", NULL,
+          choices = stats::setNames(
+            c("system", "light", "dark", "contrast"),
+            c(tr("System"), tr("Light"), tr("Dark"), tr("Contrast"))
+          ),
+          selected = "system", width = "110px"
+        ),
+        uiOutput("ui_mode_toggle_ui", inline = TRUE),
+        actionLink("about_open", tr("About"), class = "text-white small")
       )
     ),
     htmltools::div(
@@ -314,22 +688,17 @@ app_ui <- function() {
         htmltools::div(
           class = "col-lg-3 col-xl-2 rcmdr-sidebar",
           role = "navigation", `aria-label` = tr("Application menus"),
+          htmltools::div(
+            class = "rcmdr-menu-search",
+            textInput("menu_search", NULL,
+                      placeholder = tr("Search menus..."), width = "100%")
+          ),
           uiOutput("menus")
         ),
         htmltools::div(
           class = "col-lg-9 col-xl-10 py-3",
           id = "main-content", role = "main", tabindex = "-1",
-          tabsetPanel(
-            id = "main_tabs",
-            tabPanel(tr("Script"), script_pane_ui()),
-            tabPanel(tr("Output"), output_pane_ui()),
-            tabPanel(tr("Messages"), messages_pane_ui()),
-            tabPanel(tr("Plots"), plots_pane_ui()),
-            tabPanel(tr("Report"), report_pane_ui()),
-            tabPanel(tr("Data"), data_pane_ui()),
-            tabPanel(tr("Environment"), uiOutput("environment_pane")),
-            tabPanel(tr("Help"), help_center_ui())
-          )
+          uiOutput("main_tabs_ui")
         )
       )
     ),
@@ -365,6 +734,8 @@ app_server <- function(env = globalenv()) {
     editor_mode <- reactiveVal(state$document$mode %||% "r")
     plot_selected <- reactiveVal(NULL)
     last_plot_count <- reactiveVal(0L)
+    main_tabs_mode <- reactiveVal(ui_mode(state))
+    history_revision <- reactiveVal(0L)
     state$notify <- function() tick(tick() + 1L)
     state$script_consumed <- 0L
     state$set_script <- function(value) {
@@ -392,6 +763,19 @@ app_server <- function(env = globalenv()) {
       session$sendCustomMessage("rcmdr-tab", label)
     }
 
+    open_palette <- function() {
+      showModal(palette_modal())
+      session$sendCustomMessage("rcmdr-focus", "palette_query")
+    }
+
+    output$ui_mode_toggle_ui <- renderUI({
+      actionLink(
+        "ui_mode_toggle",
+        if (identical(main_tabs_mode(), "studio")) tr("Classic") else tr("Studio"),
+        class = "text-white small"
+      )
+    })
+
     help_server(input, output, session, state)
 
     # Per-session directory for plot thumbnails and downloads.
@@ -414,9 +798,58 @@ app_server <- function(env = globalenv()) {
 
     output$menus <- renderUI({
       menu_revision()
-      menu_ui(tree, function(node) {
-        command_status(state, node$command, node$activation, node$install)
-      })
+      query <- trimws(input$menu_search %||% "")
+      if (!nzchar(query)) {
+        return(menu_ui(tree, function(node) {
+          command_status(state, node$command, node$activation, node$install)
+        }))
+      }
+      matches <- leaves[
+        grepl(query, paste(leaves$label, leaves$path),
+              ignore.case = TRUE, fixed = TRUE),
+        , drop = FALSE
+      ]
+      if (nrow(matches) == 0L) {
+        return(empty_state(
+          tr("No menu entries"),
+          tr("Try a different search term.")
+        ))
+      }
+      htmltools::tagList(lapply(seq_len(nrow(matches)), function(i) {
+        row <- matches[i, , drop = FALSE]
+        status <- command_status(state, row$command, row$activation, row$install)
+        if (identical(status, "hidden")) return(NULL)
+        label <- htmltools::tagList(
+          menu_label(row$label),
+          htmltools::tags$span(class = "rcmdr-menu-flat-path", row$path)
+        )
+        if (identical(status, "enabled")) {
+          htmltools::tags$div(
+            actionLink(row$key, label, class = "rcmdr-menu-item")
+          )
+        } else {
+          htmltools::tags$div(
+            class = "rcmdr-menu-item disabled",
+            title = if (identical(status, "porting")) {
+              tr("In porting")
+            } else {
+              tr("Not available for the current data set")
+            },
+            label
+          )
+        }
+      }))
+    })
+
+    observeEvent(tick(), {
+      mode <- ui_mode(state)
+      if (!identical(mode, isolate(main_tabs_mode()))) {
+        main_tabs_mode(mode)
+      }
+    }, ignoreInit = TRUE)
+
+    output$main_tabs_ui <- renderUI({
+      main_tabs_ui(main_tabs_mode())
     })
 
     open_dialog <- function(spec) {
@@ -460,9 +893,13 @@ app_server <- function(env = globalenv()) {
 
       action <- direct_commands()[[command]]
       if (!is.null(action)) {
+        old_source <- state$execution_source
+        state$execution_source <- "menu"
+        on.exit(state$execution_source <- old_source, add = TRUE)
         action(state)
         tick(tick() + 1L)
         menu_revision(menu_revision() + 1L)
+        history_revision(history_revision() + 1L)
         return(invisible(TRUE))
       }
 
@@ -487,6 +924,158 @@ app_server <- function(env = globalenv()) {
       req(spec)
       spec$ui(state, get_dialog_memory(state, spec$id))
     })
+
+    strip_dialog_prefix <- function(values, id) {
+      prefix <- paste0(id, "_")
+      names(values) <- sub(paste0("^", prefix), "", names(values))
+      values
+    }
+
+    capture_dialog_inputs <- function(id) {
+      values <- shiny::reactiveValuesToList(input)
+      prefix <- paste0(id, "_")
+      keep <- startsWith(names(values), prefix)
+      strip_dialog_prefix(values[keep], id)
+    }
+
+    dialog_preview_result <- shiny::reactive({
+      dialog_revision()
+      spec <- get_dialog_spec(state$current_dialog %||% "")
+      if (is.null(spec) || !isTRUE(feature_enabled(state, "dialog_preview")) ||
+          !isTRUE(spec$preview)) {
+        return(NULL)
+      }
+      tryCatch(
+        spec$on_ok(input, preview_state_clone(state)),
+        error = function(e) list(error = conditionMessage(e))
+      )
+    })
+    dialog_preview_result_d <- shiny::debounce(dialog_preview_result, 300)
+
+    output$dialog_preview_panel <- renderUI({
+      result <- dialog_preview_result_d()
+      if (is.null(result)) return(NULL)
+      if (!is.null(result$error)) {
+        return(htmltools::tags$p(
+          class = "text-muted small mb-0",
+          result$error
+        ))
+      }
+      commands <- result$commands %||% character()
+      if (length(commands) > 0L) {
+        return(code_preview(paste(commands, collapse = "\n")))
+      }
+      if (!is.null(result$script) && nzchar(result$script)) {
+        return(code_preview(result$script))
+      }
+      if (!is.null(result$interactive)) {
+        return(htmltools::tags$p(
+          class = "text-muted small mb-0",
+          tr("This dialog produces an interactive plot.")
+        ))
+      }
+      if (!is.null(result$report)) {
+        return(htmltools::tags$p(
+          class = "text-muted small mb-0",
+          tr("This dialog prepares a report; no R command is generated.")
+        ))
+      }
+      htmltools::tags$p(
+        class = "text-muted small mb-0",
+        tr("No R command is generated by this dialog.")
+      )
+    })
+
+    output$dialog_validation_ui <- renderUI({
+      NULL
+    })
+
+    output$dialog_presets_ui <- renderUI({
+      dialog_revision()
+      spec <- get_dialog_spec(state$current_dialog %||% "")
+      if (is.null(spec) || !isTRUE(feature_enabled(state, "dialog_presets")) ||
+          !isTRUE(spec$presets)) {
+        return(NULL)
+      }
+      presets <- names(state$dialog_presets[[spec$id]] %||% list())
+      choices <- c(stats::setNames("", tr("(no preset)")),
+                   stats::setNames(presets, presets))
+      htmltools::tags$div(
+        class = "rcmdr-dialog-presets d-flex gap-2 align-items-end flex-wrap",
+        htmltools::tags$div(
+          style = "min-width: 170px;",
+          selectInput("dialog_preset_select", NULL, choices = choices,
+                      width = "170px")
+        ),
+        actionButton("dialog_preset_apply", tr("Apply"),
+                     class = "btn-sm btn-outline-secondary"),
+        actionButton("dialog_preset_delete", tr("Delete"),
+                     class = "btn-sm btn-outline-secondary"),
+        htmltools::tags$div(
+          style = "width: 150px;",
+          textInput("dialog_preset_name", NULL,
+                    placeholder = tr("Preset name"))
+        ),
+        actionButton("dialog_preset_save", tr("Save preset"),
+                     class = "btn-sm btn-outline-primary")
+      )
+    })
+
+    observeEvent(input$dialog_preset_apply, {
+      id <- state$current_dialog
+      req(id)
+      name <- input$dialog_preset_select %||% ""
+      if (!nzchar(name)) return()
+      preset <- (state$dialog_presets[[id]] %||% list())[[name]]
+      if (is.null(preset)) return()
+      set_dialog_memory(state, id, preset)
+      dialog_revision(dialog_revision() + 1L)
+      showNotification(tr("Preset applied."), type = "message", duration = 2)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$dialog_preset_save, {
+      id <- state$current_dialog
+      req(id)
+      name <- trimws(input$dialog_preset_name %||% "")
+      if (!nzchar(name)) {
+        showNotification(tr("Enter a preset name first."),
+                         type = "message", duration = 3)
+        return()
+      }
+      presets <- state$dialog_presets[[id]] %||% list()
+      presets[[name]] <- capture_dialog_inputs(id)
+      state$dialog_presets[[id]] <- presets
+      updateTextInput(session, "dialog_preset_name", value = "")
+      dialog_revision(dialog_revision() + 1L)
+      showNotification(tr("Preset saved."), type = "message", duration = 2)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$dialog_preset_delete, {
+      id <- state$current_dialog
+      req(id)
+      name <- input$dialog_preset_select %||% ""
+      if (!nzchar(name)) return()
+      presets <- state$dialog_presets[[id]] %||% list()
+      presets[[name]] <- NULL
+      state$dialog_presets[[id]] <- presets
+      dialog_revision(dialog_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$dialog_insert_script, {
+      result <- isolate(dialog_preview_result())
+      commands <- result$commands %||% character()
+      if (length(commands) == 0L) {
+        showNotification(tr("This dialog has no command to insert."),
+                         type = "message", duration = 3)
+        return()
+      }
+      insert_commands_into_script(state, commands)
+      removeModal()
+      state$current_dialog <- NULL
+      dialog_revision(dialog_revision() + 1L)
+      tick(tick() + 1L)
+      state$show_tab("Script")
+    }, ignoreInit = TRUE)
 
     submit_dialog <- function(close = TRUE) {
       id <- state$current_dialog
@@ -524,6 +1113,7 @@ app_server <- function(env = globalenv()) {
       }
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
 
       if (!ok) {
         state$last_failed_dialog <- list(
@@ -615,6 +1205,253 @@ app_server <- function(env = globalenv()) {
       state$last_error <- NULL
       tick(tick() + 1L)
     }, ignoreInit = TRUE)
+
+    # -- history, console and palette --------------------------------------
+
+    output$history_cards <- renderUI({
+      tick()
+      menu_revision()
+      history_revision()
+      entries <- history_filter_entries(
+        history_recent(state, 100L),
+        input$history_filter %||% "",
+        input$history_source %||% "all"
+      )
+      history_cards_ui(entries)
+    })
+
+    observeEvent(input$history_action, {
+      action <- input$history_action
+      if (is.null(action) || is.null(action$id)) return()
+      switch(
+        action$action %||% "rerun",
+        rerun = history_rerun(state, action$id),
+        dialog = history_open_dialog(state, action$id),
+        script = history_insert_script(state, action$id),
+        report = history_insert_report(state, action$id)
+      )
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$history_clear, {
+      history_clear(state)
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    # Nested console tabs are suspended while hidden; force the history output
+    # to refresh when the History tab becomes visible.
+    observeEvent(input$console_tabs, {
+      if (identical(input$console_tabs, "History")) {
+        history_revision(history_revision() + 1L)
+      }
+    }, ignoreInit = TRUE)
+
+    output$console_log <- renderUI({
+      tick()
+      menu_revision()
+      history_revision()
+      entries <- history_recent(state, 12L, source = "console")
+      if (length(entries) == 0L) {
+        return(empty_state(
+          tr("Console ready"),
+          tr("Type an R command above. Commands are logged and added to the history.")
+        ))
+      }
+      history_cards_ui(entries)
+    })
+
+    observeEvent(input$console_run, {
+      code <- trimws(input$console_input %||% "")
+      if (!nzchar(code)) return()
+      if (console_is_interactive(code)) {
+        showNotification(
+          tr("Interactive commands such as readline() or menu() cannot run in the browser console."),
+          type = "error", duration = 8
+        )
+        return()
+      }
+      run_command(state, code, source = "console")
+      state$console_history <- c(state$console_history %||% character(), code)
+      updateTextInput(session, "console_input", value = "")
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$palette_open, open_palette(), ignoreInit = TRUE)
+    observeEvent(input$home_palette, open_palette(), ignoreInit = TRUE)
+
+    output$palette_results <- renderUI({
+      query <- input$palette_query %||% ""
+      palette_results_ui(palette_search(query, palette_index(state), 25L))
+    })
+
+    observeEvent(input$palette_action, {
+      action <- input$palette_action
+      if (is.null(action) || is.null(action$id)) return()
+      removeModal()
+      switch(
+        action$type %||% "",
+        menu = launch(action$id),
+        help = {
+          if (is.function(state$help_show)) state$help_show(action$id)
+          state$show_tab("Help")
+        },
+        dataset = {
+          tryCatch(active_dataset(state, action$id), error = function(e) NULL)
+          tick(tick() + 1L)
+          menu_revision(menu_revision() + 1L)
+        },
+        variable = {
+          state$show_tab("Data")
+          showNotification(
+            sprintf(tr("Variable: %s"), action$id),
+            type = "message", duration = 2
+          )
+        },
+        history = {
+          if (identical(action$action, "insert")) {
+            history_insert_script(state, action$id)
+          } else {
+            history_rerun(state, action$id)
+          }
+          tick(tick() + 1L)
+          menu_revision(menu_revision() + 1L)
+        }
+      )
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$ui_mode_toggle, {
+      next_mode <- if (identical(ui_mode(state), "studio")) "classic" else "studio"
+      set_ui_mode(state, next_mode)
+      tick(tick() + 1L)
+      showNotification(
+        if (identical(next_mode, "studio")) {
+          tr("Studio interface enabled.")
+        } else {
+          tr("Classic interface enabled.")
+        },
+        type = "message", duration = 2
+      )
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$theme, {
+      set_ui_theme(state, input$theme %||% "system")
+      session$sendCustomMessage("rcmdr-theme", input$theme %||% "system")
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$about_open, {
+      action <- direct_commands()[["helpAboutCommander"]]
+      if (!is.null(action)) action(state)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_import, {
+      state$open_dialog("readDataSet")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_report, {
+      state$open_dialog("newRmd")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_help, {
+      if (is.function(state$help_show)) state$help_show("getting-started")
+      state$show_tab("Help")
+    }, ignoreInit = TRUE)
+
+    output$home_continue <- renderUI({
+      tick()
+      dataset_name <- active_dataset(state)
+      model_name <- active_model(state)
+      htmltools::tags$div(
+        class = "rcmdr-home-card",
+        htmltools::tags$h5(tr("Continue")),
+        htmltools::tags$p(
+          class = "small text-muted mb-1",
+          sprintf(tr("Active data: %s"),
+                  dataset_name %||% tr("none"))
+        ),
+        htmltools::tags$p(
+          class = "small text-muted mb-1",
+          sprintf(tr("Active model: %s"),
+                  model_name %||% tr("none"))
+        ),
+        htmltools::tags$p(
+          class = "small text-muted mb-2",
+          sprintf(tr("Document: %s"), document_mode(state))
+        ),
+        htmltools::tags$div(
+          class = "d-flex gap-2 flex-wrap",
+          actionButton("home_view_data", tr("View data"),
+                       class = "btn-sm btn-outline-secondary"),
+          actionButton("home_script", tr("Open script"),
+                       class = "btn-sm btn-outline-secondary")
+        )
+      )
+    })
+
+    observeEvent(input$home_view_data, {
+      state$show_tab("Data")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_script, {
+      state$show_tab("Script")
+    }, ignoreInit = TRUE)
+
+    output$home_recent <- renderUI({
+      tick()
+      history_revision()
+      entries <- history_recent(state, 5L)
+      htmltools::tags$div(
+        class = "rcmdr-home-card",
+        htmltools::tags$h5(tr("Recent commands")),
+        if (length(entries) == 0L) {
+          htmltools::tags$p(class = "small text-muted mb-0",
+                            tr("No commands yet."))
+        } else {
+          htmltools::tags$ul(
+            class = "small mb-0",
+            lapply(entries, function(entry) {
+              htmltools::tags$li(
+                paste0(history_command_label(entry, 70L), " \u00b7 ",
+                       format(entry$time %||% Sys.time(), "%H:%M"))
+              )
+            })
+          )
+        }
+      )
+    })
+
+    output$home_health <- renderUI({
+      version <- tryCatch(
+        as.character(utils::packageVersion("RcmdrShiny")),
+        error = function(e) "?"
+      )
+      pandoc <- tryCatch(
+        rmarkdown::pandoc_available(),
+        error = function(e) FALSE
+      )
+      topics <- tryCatch(nrow(help_catalog()), error = function(e) NA_integer_)
+      htmltools::tags$div(
+        class = "rcmdr-home-card",
+        htmltools::tags$h5(tr("Environment")),
+        htmltools::tags$p(class = "small text-muted mb-1",
+                          sprintf(tr("RcmdrShiny %s"), version)),
+        htmltools::tags$p(class = "small text-muted mb-1",
+                          sprintf(tr("R %s"), getRversion())),
+        htmltools::tags$p(class = "small text-muted mb-1",
+                          sprintf(tr("pandoc: %s"),
+                                  if (isTRUE(pandoc)) tr("available") else tr("missing"))),
+        htmltools::tags$p(class = "small text-muted mb-0",
+                          sprintf(tr("%s help topics"), topics))
+      )
+    })
+
+    outputOptions(output, "history_cards", suspendWhenHidden = FALSE)
+    outputOptions(output, "console_log", suspendWhenHidden = FALSE)
+    outputOptions(output, "home_recent", suspendWhenHidden = FALSE)
 
     # -- data pane ----------------------------------------------------------
 
@@ -1012,11 +1849,16 @@ app_server <- function(env = globalenv()) {
         sprintf("%d x %d", nrow(df), ncol(df))
       }
       htmltools::tagList(
-        htmltools::tags$span(sprintf(tr("RcmdrShiny %s"), version)),
+        htmltools::tags$span(sprintf(tr("RcmdrShiny Studio %s"), version)),
+        htmltools::tags$span(" | "),
+        htmltools::tags$span(toupper(ui_mode(state))),
         htmltools::tags$span(" | "),
         htmltools::tags$span(dimensions),
         htmltools::tags$span(" | "),
         htmltools::tags$span(sprintf(tr("%d command(s)"), length(state$log))),
+        htmltools::tags$span(" | "),
+        htmltools::tags$span(sprintf(tr("%d history step(s)"),
+                                      length(state$history %||% list()))),
         htmltools::tags$span(" | "),
         htmltools::tags$span(sprintf(tr("%d plot(s)"), length(state$plots))),
         if (isTRUE(state$busy)) {
@@ -1073,12 +1915,13 @@ app_server <- function(env = globalenv()) {
       if (is.null(code) || !nzchar(trimws(code))) return(invisible(NULL))
       state$busy <- TRUE
       result <- tryCatch(
-        run_command(state, code, log = FALSE),
+        run_command(state, code, log = FALSE, source = "script"),
         error = function(e) list(status = "error", error = conditionMessage(e))
       )
       state$busy <- FALSE
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
       if (identical(result$status, "error")) {
         showNotification(
           result$error %||% tr("The script produced an error."),

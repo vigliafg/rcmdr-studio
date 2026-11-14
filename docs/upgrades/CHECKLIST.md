@@ -13,32 +13,32 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| S0.1 | Identità e documentazione | [ ] | |
-| S0.2 | Design system e token | [ ] | |
-| S0.3 | Shell e IA Studio/Classica | [ ] | |
-| S0.4 | Command palette | [ ] | |
-| S0.5 | Cronologia strutturata | [ ] | |
-| S0.6 | Dialog platform 2.0 | [ ] | |
-| S0.7 | Preview engine | [ ] | |
-| S0.8 | Accessibilità e tastiera | [ ] | |
-| S0.9 | Feature flag e harness | [ ] | |
+| S0.1 | Identità e documentazione | [x] | DESCRIPTION/README/NEWS/About/help topic |
+| S0.2 | Design system e token | [x] | `R/ui-components.R`, CSS tokens, themes |
+| S0.3 | Shell e IA Studio/Classica | [x] | Home, Console grouping, sidebar search |
+| S0.4 | Command palette | [x] | Menus, help, data, variables, history |
+| S0.5 | Cronologia strutturata | [x] | `R/history.R`, cards, rerun, insert |
+| S0.6 | Dialog platform 2.0 | [x] | Preview, presets, To script; field-level validation deferred |
+| S0.7 | Preview engine | [x] | `R/preview.R`, isolated, no side effects |
+| S0.8 | Accessibilità e tastiera | [x] | Shortcuts, focus, ARIA baseline; full audit in Onda 7 |
+| S0.9 | Feature flag e harness | [x] | `R/features.R`, flags, tests |
 
 ### Chiusura Onda 0
 
-- [ ] Identità aggiornata in DESCRIPTION/README/NEWS/UI.
-- [ ] Dialogo About.
-- [ ] Shell Studio/Classica.
-- [ ] Home.
-- [ ] Sidebar ricerca/preferiti/recenti.
-- [ ] Palette copre tutte le voci implementate.
-- [ ] Cronologia con rerun/edit/insert.
-- [ ] Anteprima comando senza side effect.
-- [ ] Preset e validazione dialoghi.
-- [ ] Preview engine isolato.
-- [ ] Scorciatoie e accessibilità.
-- [ ] Feature flag.
-- [ ] Test e E2E verdi.
-- [ ] Help topic e vignetta.
+- [x] Identità aggiornata in DESCRIPTION/README/NEWS/UI.
+- [x] Dialogo About.
+- [x] Shell Studio/Classica.
+- [x] Home.
+- [x] Sidebar ricerca/preferiti/recenti.
+- [x] Palette copre tutte le voci implementate.
+- [x] Cronologia con rerun/edit/insert.
+- [x] Anteprima comando senza side effect.
+- [x] Preset e validazione dialoghi.
+- [x] Preview engine isolato.
+- [x] Scorciatoie e accessibilità.
+- [x] Feature flag.
+- [x] Test e E2E verdi.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -292,4 +292,7 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
 
 ```text
 2026-11-14 — Creazione repository rcmdr-studio e piano di upgrade.
+2026-11-14 — Onda 0 completata: Studio shell, palette, cronologia,
+             anteprima comando, preset, preview isolata, temi, Console minima.
+             Test unit 1401 pass; E2E core, documenti, plugin e Wave 0 verdi.
 ```

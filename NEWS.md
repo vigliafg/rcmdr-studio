@@ -1,3 +1,30 @@
+# RcmdrShiny Studio 1.14.0
+
+## Wave 0 — Studio foundations
+
+- New product identity: **RcmdrShiny Studio**, a browser-native statistical
+  workbench inspired by the R Commander. The package remains `RcmdrShiny` and
+  the command-generation semantics are unchanged.
+- **Studio mode** (default) and **Classic mode** (the 1.13 layout), switchable
+  from the top bar and from **Options**.
+- New **Home** tab with quick actions, active data/model, recent commands and
+  environment health.
+- New **command palette** (`Ctrl+K`) over menu entries, help topics, datasets,
+  variables and the structured history.
+- New **structured command history** (`state$history`) beside the existing
+  `state$log`: every command records its source, dialog, memory, status,
+  output, messages, plot and duration. History cards can rerun a command,
+  reopen its dialog, or insert it into the script/report.
+- New minimal **Console** workspace with Output, Messages and History
+  sub-tabs. Interactive commands are detected and blocked with an explanation.
+- **Live R-command preview** in every dialog, plus "To script" without
+  executing and named dialog presets.
+- New **isolated preview engine** for base plots, plotly and Markdown; previews
+  never touch the log, output or plot gallery.
+- New design tokens and components; light, dark, high-contrast and system
+  themes; keyboard shortcuts and focus/ARIA improvements.
+- Feature flags gate the Studio modules while the new workspaces land.
+
 # RcmdrShiny 1.13.0
 
 ## Document authoring (D1-D5)

@@ -27,6 +27,14 @@ e2e_click_menu <- function(app, command) {
   app$wait_for_js("document.querySelector('.modal') !== null", timeout = 60000)
 }
 
+e2e_switch_tab <- function(app, label) {
+  app$run_js(sprintf(
+    "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
+    label
+  ))
+  app$wait_for_idle(timeout = 30000)
+}
+
 e2e_wait_input <- function(app, id) {
   app$wait_for_js(
     sprintf("document.getElementById(%s) !== null",
@@ -74,6 +82,7 @@ e2e_flow <- function(plugin, env, dataset, command, inputs, expected,
     "document.querySelectorAll('.rcmdr-menu-item').length > 0",
     timeout = 60000
   )
+  e2e_switch_tab(app, "Script")
 
   if (!is.null(dataset)) e2e_select_dataset(app, dataset)
 

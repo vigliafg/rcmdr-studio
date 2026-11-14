@@ -54,10 +54,18 @@ push_output <- function(state, value) {
 #' @param echo Reserved: include the command in the output.
 #' @param plot If `TRUE`, capture the resulting plot as a PNG.  The default
 #'   `"auto"` captures only commands that look like plotting calls.
+#' @param source Source label stored in the structured history (`"dialog"`,
+#'   `"script"`, `"console"`, `"menu"`, `"history"`).
+#' @param dialog_id Dialog identifier associated with the command, when any.
+#' @param dialog_memory Dialog memory associated with the command, when any.
+#' @param history Record the execution in `state$history`.  The command log is
+#'   unaffected by this argument.
 #' @return Invisibly, a list with components `status`, `code`, `output`,
 #'   `warnings`, `messages`, `error` and `value`.
 #' @export
-run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto") {
+run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
+                        source = NULL, dialog_id = NULL, dialog_memory = NULL,
+                        history = TRUE) {
   if (!is_app_state(state)) {
     stop("`state` must be created with AppState().", call. = FALSE)
   }
@@ -67,22 +75,47 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto") {
     return(invisible(list(status = "empty", code = code)))
   }
 
+  started <- Sys.time()
+  source <- source %||% state$execution_source %||% "script"
+
   if (isTRUE(log)) state$log <- c(state$log, code)
 
   packages <- required_packages(code)
   if (length(packages) > 0L) attach_packages(packages)
 
-  if (is_rgl_command(code)) {
-    return(invisible(run_rgl_command(state, code, echo = echo)))
+  result <- if (is_rgl_command(code)) {
+    run_rgl_command(state, code, echo = echo)
+  } else {
+    if (identical(plot, "auto")) plot <- is_plot_command(code)
+    if (isTRUE(plot)) {
+      run_plot_command(state, code, echo = echo)
+    } else {
+      output <- eval_code(state, code, echo = echo)
+      state_touch(state)
+      output
+    }
   }
 
-  if (identical(plot, "auto")) plot <- is_plot_command(code)
-  if (isTRUE(plot)) {
-    return(invisible(run_plot_command(state, code, echo = echo)))
+  if (isTRUE(history)) {
+    duration_ms <- as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
+    plot_id <- if (!is.null(result$plot)) basename(result$plot) else NULL
+    entry <- history_entry(
+      id = history_next_id(state),
+      time = started,
+      source = source,
+      command = code,
+      dialog_id = dialog_id,
+      dialog_memory = dialog_memory,
+      status = result$status %||% "ok",
+      output = result$output %||% character(),
+      messages = result$messages %||% character(),
+      warnings = result$warnings %||% character(),
+      plot_id = plot_id,
+      duration_ms = duration_ms
+    )
+    history_add(state, entry)
   }
 
-  result <- eval_code(state, code, echo = echo)
-  state_touch(state)
   invisible(result)
 }
 

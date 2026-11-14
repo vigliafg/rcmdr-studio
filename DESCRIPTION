@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
-Title: A Shiny Version of the R Commander
-Version: 1.13.0
+Title: A Browser-Native Statistical Workbench Inspired by the R Commander
+Version: 1.14.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),
@@ -10,11 +10,12 @@ Authors@R: c(
     person("Milan", "Bouchet-Valat", role = "ctb",
            comment = "Author of Rcmdr, from which this package is derived")
   )
-Description: A local, browser-based graphical user interface for basic
-    statistics, derived from the R Commander (Rcmdr) engine and rebuilt on
-    top of Shiny.  The package keeps the command-generation semantics of
-    Rcmdr while removing the dependency on Tcl/Tk, so that every action in
-    the interface produces a reproducible R command.
+Description: A local, browser-based statistical workbench inspired by the
+    R Commander (Rcmdr).  The package keeps the command-generation semantics
+    of Rcmdr while removing the dependency on Tcl/Tk, so that every action in
+    the interface produces a reproducible R command.  The Studio interface
+    adds a command palette, structured command history, data, chart and
+    report workspaces, and a classic compatibility mode.
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)

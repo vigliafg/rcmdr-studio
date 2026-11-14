@@ -677,6 +677,7 @@
 "","","plugin:RcmdrShinyPlugin.UCA:randomnessFTest","extra","","RcmdrShinyPlugin.UCA"
 "","","plugin:RcmdrShinyPlugin.UCA:randomnessNTest","extra","","RcmdrShinyPlugin.UCA"
 "","","getting-started","extra","","RcmdrShiny"
+"","","about-studio","extra","","RcmdrShiny"
 "","","writing-plugins","extra","","RcmdrShiny"
 "","","keyboard-shortcuts","extra","","RcmdrShiny"
 "","","help-center","extra","","RcmdrShiny"

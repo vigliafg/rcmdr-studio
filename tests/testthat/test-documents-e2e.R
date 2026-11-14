@@ -20,6 +20,14 @@ documents_click_menu <- function(app, label) {
   ), js_label))
 }
 
+documents_switch_tab <- function(app, label) {
+  app$run_js(sprintf(
+    "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
+    label
+  ))
+  app$wait_for_idle(timeout = 30000)
+}
+
 documents_ace <- function(app, value = NULL) {
   if (!is.null(value)) {
     app$run_js(sprintf(
@@ -62,6 +70,7 @@ test_that("the document workflow works in a browser", {
   app$wait_for_idle()
 
   # R Markdown mode with a chunk at a known line.
+  documents_switch_tab(app, "Script")
   app$set_inputs(document_mode = "rmd", wait_ = FALSE)
   app$wait_for_idle()
   documents_ace(app, paste(
@@ -75,6 +84,8 @@ test_that("the document workflow works in a browser", {
   app$wait_for_idle()
   app$run_js("rcmdrRunChunk();")
   app$wait_for_idle(timeout = 30000)
+  documents_switch_tab(app, "Console")
+  documents_switch_tab(app, "Output")
   expect_match(app$get_text("#output_text"), "Min\\.")
 
   # A dialog command becomes a chunk.
@@ -113,6 +124,7 @@ test_that("the document workflow works in a browser", {
   app$set_inputs(compileRmd_format = "html", wait_ = FALSE)
   app$click("dialog_ok")
   app$wait_for_js("document.querySelector('.modal') === null", timeout = 120000)
+  documents_switch_tab(app, "Report")
   app$wait_for_js("document.querySelector('#report_pane iframe') !== null",
                   timeout = 120000)
   expect_match(

@@ -26,6 +26,14 @@ test_that("the full Phase 0 flow works in a real browser", {
   )
   on.exit(app$stop(), add = TRUE)
 
+  switch_tab <- function(label) {
+    app$run_js(sprintf(
+      "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
+      label
+    ))
+    app$wait_for_idle()
+  }
+
   leaves <- menu_leaves(menu_tree())
   key <- function(command) leaves$key[leaves$command == command][[1L]]
 
@@ -84,6 +92,8 @@ test_that("the full Phase 0 flow works in a real browser", {
   app$wait_for_idle()
   app$wait_for_js("document.querySelector('.modal') === null", timeout = 30000)
 
+  switch_tab("Console")
+  switch_tab("Output")
   app$wait_for_js(
     "document.querySelector('#output_text').innerText.includes('mean')",
     timeout = 30000
@@ -115,6 +125,7 @@ test_that("the full Phase 0 flow works in a real browser", {
   expect_match(output, "Coefficients")
   expect_match(output, "lm\\(formula = y ~ x")
 
+  switch_tab("Script")
   app$wait_for_js(
     "ace.edit(document.querySelector('.ace_editor')).getValue().includes('LinearModel.1 <- lm(')",
     timeout = 30000
@@ -181,14 +192,7 @@ test_that("the full Phase 0 flow works in a real browser", {
   app$click("run_all")
   app$wait_for_idle()
 
-  switch_tab <- function(label) {
-    app$run_js(sprintf(
-      "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
-      label
-    ))
-    app$wait_for_idle()
-  }
-  switch_tab("Plots")
+  switch_tab("Charts")
   app$wait_for_js(
     "document.querySelectorAll('.rcmdr-gallery img.rcmdr-thumb').length > 0",
     timeout = 30000
