@@ -24,6 +24,20 @@ preferences_file <- function(state = NULL) {
   preferences_default_file()
 }
 
+#' Read the persisted preferences without applying them
+#'
+#' Used before the UI is built so that the saved language and theme take effect
+#' on the first render.  Missing or unreadable files yield an empty list.
+#'
+#' @param path Optional file path.
+#' @return A list.
+#' @keywords internal
+preferences_peek <- function(path = preferences_default_file()) {
+  if (is.null(path) || !nzchar(path) || !file.exists(path)) return(list())
+  value <- tryCatch(readRDS(path), error = function(e) NULL)
+  if (!is.list(value)) list() else value
+}
+
 #' Preference snapshot
 #'
 #' @param state Application state.
@@ -67,6 +81,15 @@ preferences_load <- function(state, path = preferences_file(state)) {
   if (is.list(value$presets)) {
     state$dialog_presets <- value$presets
     state$dialog_presets_version <- as.integer(value$presets_version %||% 1L)
+  }
+  language <- value$language %||% NULL
+  if (is.character(language) && length(language) == 1L && nzchar(language)) {
+    state$options$language <- i18n_normalize(language)
+  }
+  theme <- value$theme %||% NULL
+  if (is.character(theme) && length(theme) == 1L &&
+      theme %in% c("system", "light", "dark", "contrast")) {
+    state$options$theme <- theme
   }
   invisible(TRUE)
 }

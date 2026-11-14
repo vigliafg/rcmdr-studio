@@ -64,6 +64,29 @@ addition to the ones listed here.
 Search results are announced through an `aria-live` region, and each category
 link has a descriptive label.
 
+Search filters (`type` and `source`) and the category list combine with the
+query. **Clear filters** resets them without clearing the topic pane.
+
+## Help and learning
+
+| Action | Where |
+|---|---|
+| Open the help centre | Help tab, or **Help > Help centre** |
+| Search the help | **Help > Search help...** |
+| Open the guided tour again | **Help > Guided tour** |
+| Open the glossary | **Help > Glossary** |
+| Open the shortcut list | `Ctrl` + `/` |
+| Run a documented example | **Run** in the topic's Examples section |
+| Insert an example in the script | **Insert into script** in the topic |
+| Report a problem | **Report an issue** at the end of a topic |
+
+## Language and theme
+
+The language and theme selectors are in the top bar. Menus, help topics,
+notifications and newly rendered panels use the new language immediately;
+static chrome (for example the top-bar brand) is refreshed when the page is
+reloaded. The choice is saved in the session preferences.
+
 ## Accessibility features
 
 - Landmarks: the sidebar has `role="navigation"` and the content area

@@ -46,6 +46,10 @@ packages: [myPackage]
 related: [other-topic]
 language: en
 status: documented
+examples:
+  - code: "summary(Dataset)"
+    title: "Quick summary"
+    runnable: true
 ---
 ```
 
@@ -62,6 +66,15 @@ status: documented
 | `related` | Other topic ids |
 | `language` | ISO code; defaults to `en` |
 | `status` | `documented`, `draft` or `fallback` |
+| `examples` | Code examples; only `runnable: true` can be executed |
+
+An example is a mapping with `code` (required), `title` (optional) and
+`runnable` (default `false`).  Runnable examples are shown with a **Run**
+button.  The command is confirmed first and then executed through
+`run_command()`, so it appears in the history.  Use `Dataset` or the
+`{dataset}` placeholder when the example should follow the active data set;
+the help centre substitutes the selected data set and asks for one when none is
+available.
 
 ## Manifest entry
 

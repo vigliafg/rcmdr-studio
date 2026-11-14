@@ -135,7 +135,7 @@ base_direct_commands <- function() {
       run_command(state, paste0("summary(", ds, ")"))
     },
     viewData = function(state) {
-      if (!is.null(state$show_tab)) state$show_tab("Data")
+      if (!is.null(state$show_tab)) state$show_tab(tr("Data"))
       invisible(NULL)
     },
     variablesDataSet = function(state) {
@@ -307,6 +307,17 @@ base_direct_commands <- function() {
     },
     helpTutorials = function(state) {
       open_help_topic(state, "getting-started")
+    },
+    helpTour = function(state) {
+      if (is.function(state$start_tour)) {
+        state$start_tour()
+      } else {
+        open_help_topic(state, "getting-started")
+      }
+      invisible(NULL)
+    },
+    helpGlossary = function(state) {
+      open_help_topic(state, "glossary")
     },
     helpShortcuts = function(state) {
       open_help_topic(state, "keyboard-shortcuts")
@@ -579,7 +590,7 @@ apply_dialog_result <- function(state, result, dialog_id = state$current_dialog,
     state$set_script(result$script)
   }
   if (!is.null(result$tab) && is.function(state$show_tab)) {
-    state$show_tab(result$tab)
+    state$show_tab(tr(result$tab))
   }
   if (!is.null(result$message)) {
     showNotification(result$message,

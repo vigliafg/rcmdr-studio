@@ -428,6 +428,8 @@
     item    helpMenu        command         "Help centre"                                   helpCenter                  ""          ""
     item    helpMenu        command         "Search help..."                                helpSearch                  ""          ""
     item    helpMenu        command         "Tutorials"                                     helpTutorials               ""          ""
+    item    helpMenu        command         "Guided tour"                                   helpTour                    ""          ""
+    item    helpMenu        command         "Glossary"                                      helpGlossary                ""          ""
     item    helpMenu        command         "Keyboard shortcuts"                            helpShortcuts               ""          ""
     item    helpMenu        command         "Plugin help"                                   helpPluginsTopic            ""          ""
     item    helpMenu        command         "Diagnostics"                                   helpDiagnostics             ""          ""

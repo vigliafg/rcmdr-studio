@@ -584,6 +584,10 @@ topics:
     file: topics/document-authoring.md
     category: help
     order: 40
+  - id: glossary
+    file: topics/glossary.md
+    category: help
+    order: 20
   - id: keyboard-shortcuts
     file: topics/keyboard-shortcuts.md
     category: help

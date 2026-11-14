@@ -41,7 +41,28 @@ browser.
 | Aprire il primo risultato | `Invio` nel campo |
 | Spostarsi tra le categorie | `Tab` e frecce |
 
-I risultati sono annunciati tramite una regione `aria-live`.
+I risultati sono annunciati tramite una regione `aria-live`. I filtri per tipo
+e origine si combinano con la ricerca e con l'elenco delle categorie.
+
+## Aiuto e apprendimento
+
+| Azione | Dove |
+|---|---|
+| Aprire il centro assistenza | Scheda Help, oppure **Aiuto > Centro assistenza** |
+| Cercare nell'aiuto | **Aiuto > Cerca nell'aiuto...** |
+| Riavviare il tour guidato | **Aiuto > Tour guidato** |
+| Aprire il glossario | **Aiuto > Glossario** |
+| Mostrare l'elenco delle scorciatoie | `Ctrl` + `/` |
+| Eseguire un esempio documentato | **Esegui** nella sezione Esempi |
+| Inserire un esempio nello script | **Inserisci nello script** |
+| Segnalare un problema | **Segnala un problema** in fondo all'argomento |
+
+## Lingua e tema
+
+I selettori di lingua e tema sono nella barra superiore. Menu, argomenti di
+aiuto, notifiche e pannelli ridisegnati usano subito la nuova lingua; la
+cornice statica viene aggiornata al ricaricamento della pagina. La scelta è
+salvata nelle preferenze di sessione.
 
 ## Funzioni di accessibilità
 

@@ -8,11 +8,14 @@ search box, a category list, a result list, a recent-topics list and a topic
 pane.  \code{help_server()} also provides the inline help shown inside dialogs.
 }
 \usage{
-help_center_ui()
+help_center_ui(filter_choices = NULL)
 
 help_server(input, output, session, state)
 }
 \arguments{
+  \item{filter_choices}{Optional filter choices returned by the internal
+  \code{help_filter_choices()} function.  When \code{NULL} they are computed
+  from the current registry.}
   \item{input, output, session}{Shiny objects.}
   \item{state}{Application state created by \code{\link{AppState}}.}
 }

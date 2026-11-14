@@ -34,9 +34,11 @@ help_topics_for_dialog(dialog_id, language = NULL)
 
 help_index()
 
-help_catalog(category = NULL, language = NULL)
+help_catalog(category = NULL, language = NULL, type = NULL,
+             package = "all")
 
-help_search(query, limit = 20L, language = NULL)
+help_search(query, limit = 20L, language = NULL, category = NULL,
+            type = NULL, package = "all")
 
 help_render(markdown)
 
@@ -63,23 +65,28 @@ register_plugin_help(package, name = package, lib.loc = NULL)
   \code{\link{plugin_dialog}}.}
   \item{dialog_id}{Dialog identifier.}
   \item{category}{Optional category filter.}
+  \item{type}{Optional topic type filter (\code{"guide"}, \code{"reference"},
+  \code{"tutorial"}, \code{"troubleshooting"}).}
+  \item{package}{For the search and catalogue filters, \code{"all"},
+  \code{"core"} or a plugin package name.  For registration, the plugin package
+  name; in \code{help_unregister()}, the plugin to remove (all topics when
+  \code{NULL}).}
   \item{query}{One or more search terms.}
   \item{limit}{Maximum number of search results.}
   \item{markdown}{Markdown source.}
   \item{manifest}{Manifest list as returned by the internal
   \code{help_read_manifest()} function.}
   \item{base_dir}{Directory the manifest paths are relative to.}
-  \item{package}{Package name for plugin help registration, or \code{NULL} for
-  the core.  In \code{help_unregister()}, the plugin to remove (all topics when
-  \code{NULL}).}
   \item{name}{Plugin name used for the help namespace; defaults to the package
   name.}
   \item{lib.loc}{Library location, or \code{NULL}.}
 }
 \details{
-\code{help_search()} ranks matches by where the terms appear: title, keywords,
-aliases and command names, then body.  A lightweight prefix match handles plural
-forms such as \sQuote{summaries} versus \sQuote{summary}.
+\code{help_search()} uses an in-memory full-text index.  Titles weigh 5,
+keywords and aliases 4, headings 3 and the body 1; an exact title match is
+boosted further.  A lightweight prefix match handles plural forms such as
+\sQuote{summaries} versus \sQuote{summary}, but only completes the word by a few
+characters.  Results can be filtered by category, type and source.
 
 \code{help_topic_for_dialog()} resolves a dialog's help in this order: the
 \code{help_topic} field of the specification, the dialog id, then any topic that
@@ -96,8 +103,8 @@ for the supported subset otherwise; set
 \value{
 \code{help_topics()} returns a named list of topic records.  \code{help_topic()}
 returns one record or \code{NULL}.  \code{help_search()} returns a data frame
-with \code{id}, \code{title}, \code{category}, \code{score}, \code{snippet} and
-\code{package}.  \code{help_index()} returns the category table and
+with \code{id}, \code{title}, \code{category}, \code{type}, \code{score},
+\code{snippet}, \code{snippet_html}, \code{package} and \code{language}.  \code{help_index()} returns the category table and
 \code{help_catalog()} the topic table.  The registration functions return
 invisible values.
 }

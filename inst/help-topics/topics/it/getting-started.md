@@ -23,6 +23,11 @@ riproducibile nella scheda **Script**.
 RcmdrShiny::run()
 ```
 
+Al primo avvio un tour in quattro passi indica le aree dati, grafici, report e
+palette. Si chiude con **Salta**, si nasconde con **Non mostrare più** e si
+riavvia da **Aiuto > Tour guidato**. La scheda **Home** mantiene una checklist
+dei primi passi e la spunta man mano che le azioni vengono eseguite.
+
 ## 2. Caricare i dati
 
 Aprire **Dati > Importa dati > da file di testo, appunti o URL...** e scegliere

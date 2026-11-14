@@ -1,0 +1,165 @@
+msgid	msgstr
+# Studio interface strings that are not in the inherited Rcmdr catalogue.
+Home	Casa
+Workflows	Workflow
+Data	Dati
+Charts	Grafici
+Report	Report
+Script	Script
+Console	Console
+Environment	Ambiente
+Help	Aiuto
+Output	Output
+Messages	Messaggi
+History	Cronologia
+Models	Modelli
+Search	Cerca
+Classic	Classica
+Studio	Studio
+About	Informazioni
+Command palette	Palette dei comandi
+Command palette (Ctrl+K)	Palette dei comandi (Ctrl+K)
+Import data	Importa dati
+New report	Nuovo report
+Guided workflows	Workflow guidati
+Getting started	Per iniziare
+All keyboard shortcuts	Tutte le scorciatoie
+Keyboard	Scorciatoie
+First steps	Primi passi
+Continue	Continua
+Recent commands	Comandi recenti
+Inspired by R Commander	Ispirato a R Commander
+Skip to main content	Salta al contenuto principale
+No active data set	Nessun dataset attivo
+No active model	Nessun modello attivo
+none	nessuno
+Active data: %s	Dataset attivo: %s
+Active model: %s	Modello attivo: %s
+Document: %s	Documento: %s
+View data	Vedi dati
+Open script	Apri script
+available	disponibile
+missing	mancante
+%s help topics	%s argomenti di aiuto
+No commands yet.	Nessun comando.
+System	Sistema
+Light	Chiaro
+Dark	Scuro
+Contrast	Contrasto
+Language changed. Menus, help and new output use the new language.	Lingua cambiata. Menu, aiuto e nuovi output usano la nuova lingua.
+Search menus...	Cerca nei menu...
+Expand all	Espandi tutto
+Collapse all	Comprimi tutto
+Application menus	Menu dell'applicazione
+Keyboard shortcuts	Scorciatoie da tastiera
+Help centre	Centro assistenza
+Search help	Cerca nell'aiuto
+Search help topics...	Cerca negli argomenti...
+Categories	Categorie
+Clear filters	Cancella filtri
+All sources	Tutte le origini
+Core	Nucleo
+All types	Tutti i tipi
+All categories	Tutte le categorie
+Recent	Recenti
+Related topics	Argomenti correlati
+Help categories	Categorie di aiuto
+Getting started	Per iniziare
+Data	Dati
+Statistics	Statistiche
+Models	Modelli
+Graphs	Grafici
+Distributions	Distribuzioni
+Reports	Report
+Tools	Strumenti
+Workbench	Workbench
+Plugins	Plugin
+Using the help	Usare l'aiuto
+Troubleshooting	Diagnostica
+Start here	Inizia qui
+Your first analysis	La prima analisi
+Importing data	Importare i dati
+Glossary	Glossario
+Using the help centre	Usare il centro assistenza
+%d topic(s) found	%d argomenti trovati
+No help topic matches the search.	Nessun argomento corrisponde alla ricerca.
+No help topic matches the filters.	Nessun argomento corrisponde ai filtri.
+Filtered topics	Argomenti filtrati
+On this page	In questa pagina
+Examples	Esempi
+Related dialogs	Dialoghi correlati
+Commands cited	Comandi citati
+R reference	Riferimento R
+Report an issue	Segnala un problema
+Copy link	Copia link
+Open in help centre	Apri nel centro assistenza
+Close help	Chiudi aiuto
+Help on this window: %s	Aiuto su questa finestra: %s
+No help topic for '%s'.	Nessun argomento di aiuto per '%s'.
+No R reference found for '%s'.	Nessun riferimento R trovato per '%s'.
+Run	Esegui
+Copy	Copia
+Insert into script	Inserisci nello script
+Run help example	Esegui esempio
+Data set	Dataset
+The command is logged in the history exactly as shown.	Il comando viene registrato nella cronologia esattamente come mostrato.
+Example executed. It is now in the history.	Esempio eseguito. Ora è nella cronologia.
+Example inserted into the script.	Esempio inserito nello script.
+The example produced an error.	L'esempio ha prodotto un errore.
+This example needs a data set. Import one or select it in the dialog.	Questo esempio richiede un dataset. Importane uno o selezionalo nel dialogo.
+Data set '%s' does not exist.	Il dataset '%s' non esiste.
+Diagnostics unavailable:	Diagnostica non disponibile:
+Copy this report into the issue together with the step that failed. It contains versions and help counts, never your data.	Copia questo report nella segnalazione insieme al passo che ha fallito. Contiene versioni e conteggi dell'aiuto, mai i tuoi dati.
+Diagnostics	Diagnostica
+Close	Chiudi
+Start with your data	Inizia dai dati
+Import a data set, inspect its columns in the Data Studio and use the inspector to choose the next analysis.	Importa un dataset, ispeziona le colonne nel Data Studio e usa l'inspector per scegliere l'analisi successiva.
+Build a chart	Costruisci un grafico
+Chart Studio turns a visual specification into reproducible ggplot2 code. The preview is isolated and the gallery keeps every chart.	Chart Studio trasforma una specifica visuale in codice ggplot2 riproducibile. L'anteprima è isolata e la galleria conserva ogni grafico.
+Write a report	Scrivi un report
+Report Studio collects commands, output and plots in an R Markdown document that can be knitted and downloaded.	Report Studio raccoglie comandi, output e grafici in un documento R Markdown che può essere knitted e scaricato.
+Find anything with the palette	Trova tutto con la palette
+Press Ctrl+K to search menus, dialogs, help topics, data and history. Favourites and recents stay at the top of the sidebar.	Premi Ctrl+K per cercare menu, dialoghi, argomenti di aiuto, dati e cronologia. Preferiti e recenti restano in cima alla barra laterale.
+Tour: %s	Tour: %s
+Step %d of %d	Passo %d di %d
+Open the related help topic	Apri l'argomento di aiuto correlato
+Don't show again	Non mostrare più
+Skip	Salta
+Back	Indietro
+Next	Avanti
+Done	Fatto
+Tour completed. You can restart it from Help > Tour.	Tour completato. Puoi riavviarlo da Aiuto > Tour guidato.
+%d of %d	%d di %d
+Import a data set	Importa un dataset
+Run a summary	Esegui un riassunto
+Numerical summaries are the quickest first analysis.	I riassunti numerici sono la prima analisi più rapida.
+Create a chart	Crea un grafico
+Build a chart and keep it in the gallery.	Costruisci un grafico e conservalo nella galleria.
+Create a report	Crea un report
+Start an R Markdown document and knit it.	Apri un documento R Markdown e fai il knit.
+Save a project	Salva un progetto
+Project persistence is part of the platform release.	La persistenza del progetto arriva con la release della piattaforma.
+Start	Inizia
+Project persistence is not available in this release yet.	La persistenza del progetto non è ancora disponibile in questa release.
+Open help: %s	Apri aiuto: %s
+Command error	Errore del comando
+The command produced an error.	Il comando ha prodotto un errore.
+Retry	Riprova
+Close help	Chiudi aiuto
+Apply	Applica
+Cancel	Annulla
+Reset	Reimposta
+To script	Allo script
+Rerun	Riesegui
+Pin	Fissa
+Unpin	Rimuovi
+Errors	Errori
+Warnings	Avvisi
+Notes	Note
+All statuses	Tutti gli stati
+Raw output	Output grezzo
+Raw messages	Messaggi grezzi
+Clear	Pulisci
+Messages	Messaggi
+No messages	Nessun messaggio
+Warnings, errors and notes appear here.	Avvisi, errori e note compaiono qui.

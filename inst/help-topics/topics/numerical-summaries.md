@@ -11,6 +11,13 @@ packages: [RcmdrMisc]
 related: [frequency-distributions, correlation]
 language: en
 status: documented
+examples:
+  - code: "summary(Dataset)"
+    title: "Quick summary"
+    runnable: true
+  - code: "numSummary(Dataset[, \"y\"], statistics = c(\"mean\", \"sd\"))"
+    title: "Mean and standard deviation of one variable"
+    runnable: false
 ---
 
 # Numerical summaries

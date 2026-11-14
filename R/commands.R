@@ -117,6 +117,7 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
       output = result$output %||% character(),
       messages = result$messages %||% character(),
       warnings = result$warnings %||% character(),
+      error = result$error %||% NULL,
       plot_id = plot_id,
       duration_ms = duration_ms
     )

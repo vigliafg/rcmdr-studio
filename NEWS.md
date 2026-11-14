@@ -1,3 +1,37 @@
+# RcmdrShiny Studio 1.20.0
+
+## Wave 6 — Help, i18n and onboarding
+
+- **Full-text help index**: cached per registry revision and language, with
+  title/keyword/alias/heading/body weights, exact-title boost and prefix
+  completion that does not over-match dialog ids.
+- **Ranked search and filters**: filter by type, source (core or plugin) and
+  category; results show type, source, category and a snippet with highlighted
+  terms.
+- **Richer topic pane**: on-page table of contents, related dialogs, cited
+  commands, related topics, copy-link and report-an-issue actions.
+- **Runnable examples**: examples are declared in the front matter; only
+  `runnable: true` can run, after confirmation, through `run_command()`. They
+  are logged in the history and can be inserted into the script. `{dataset}`
+  and `Dataset` placeholders follow the selected data set.
+- **Error-to-topic mapping**: missing objects, missing functions or packages,
+  factor conversion, missing values, pandoc/knit, file, memory and singular-fit
+  errors link to the relevant topic in error cards and dialogs.
+- **Glossary and shortcuts**: new `glossary` topic and an updated
+  `keyboard-shortcuts` reference covering filters, examples and the tour.
+- **Onboarding**: four-step tour with highlight, Skip and Don't show again
+  (browser local storage), restartable from Help > Guided tour; Home checklist
+  for import, summary, chart, report and the future project step.
+- **Live language switch**: in-process PO/TSV catalogue, top bar, menus, tabs,
+  help and server messages re-render without restarting R; the language and
+  theme persist in the preferences file.
+- **Italian coverage**: new Italian translations for the glossary, Data Studio,
+  Chart Studio, Report Studio, Workbench, navigation/workflows and the updated
+  help centre and shortcut topics, plus a TSV overlay for Studio interface
+  strings. `tools/audit_i18n.R` reports the remaining untranslated strings.
+- New `help-index`, `help-errors` and `onboarding` modules, tests and CI audit
+  step.
+
 # RcmdrShiny Studio 1.19.0
 
 ## Wave 5 — Navigation, dialogs and guided workflows

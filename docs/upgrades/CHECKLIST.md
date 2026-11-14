@@ -202,36 +202,36 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| H6.1 | Indice full-text | [ ] | |
-| H6.2 | Ranking e filtri | [ ] | |
-| H6.3 | Snippet e correlati | [ ] | |
-| H6.4 | Topic TOC e link | [ ] | |
-| H6.5 | “Try it” | [ ] | |
-| H6.6 | Parser esempi | [ ] | |
-| H6.7 | UI esempi e conferma | [ ] | |
-| H6.8 | Esecuzione loggata | [ ] | |
-| H6.9 | Mappa errori | [ ] | |
-| H6.10 | UI errore contestuale | [ ] | |
-| H6.11 | Glossario | [ ] | |
-| H6.12 | Scorciatoie aggiornate | [ ] | |
-| H6.13 | Tour engine | [ ] | |
-| H6.14 | Tour UI e persistenza | [ ] | |
-| H6.15 | Checklist Home | [ ] | |
-| H6.16 | Audit stringhe | [ ] | |
-| H6.17 | Topic italiani | [ ] | |
-| H6.18 | Lingua reattiva | [ ] | |
-| H6.19 | Persistenza lingua | [ ] | |
+| H6.1 | Indice full-text | [x] | `R/help-index.R`; indice per revisione/lingua |
+| H6.2 | Ranking e filtri | [x] | pesi 5/4/3/1, boost titolo, filtri tipo/origine/categoria |
+| H6.3 | Snippet e correlati | [x] | snippet con `<mark>`, correlati, comandi e dialoghi |
+| H6.4 | Topic TOC e link | [x] | TOC con ancore, link topic/dialoghi/comandi |
+| H6.5 | “Try it” | [x] | conferma, dataset, `run_command(source="help")` |
+| H6.6 | Parser esempi | [x] | `help_parse_examples()`, solo `runnable: true` |
+| H6.7 | UI esempi e conferma | [x] | Esegui/Copia/Inserisci nello script |
+| H6.8 | Esecuzione loggata | [x] | history con `source = "help"` e output |
+| H6.9 | Mappa errori | [x] | `R/help-errors.R`, pattern conservativi |
+| H6.10 | UI errore contestuale | [x] | link nella card errore, messages e modal dialogo |
+| H6.11 | Glossario | [x] | `glossary` + traduzione italiana |
+| H6.12 | Scorciatoie aggiornate | [x] | `keyboard-shortcuts` aggiornato (help, tour, lingua) |
+| H6.13 | Tour engine | [x] | `R/onboarding.R`, quattro passi |
+| H6.14 | Tour UI e persistenza | [x] | modal, highlight, localStorage, Help > Tour guidato |
+| H6.15 | Checklist Home | [x] | checklist Home; progetto gated su feature flag |
+| H6.16 | Audit stringhe | [x] | `tools/audit_i18n.R`, step CI |
+| H6.17 | Topic italiani | [x] | 27 topic core italiani + overlay TSV Studio |
+| H6.18 | Lingua reattiva | [x] | catalogo PO/TSV live; topbar, menu, tab, help, messaggi |
+| H6.19 | Persistenza lingua | [x] | lingua e tema in `preferences.rds` |
 
 ### Chiusura Onda 6
 
-- [ ] Ricerca full-text e filtri.
-- [ ] “Try it” tracciato.
-- [ ] Mappa errori.
-- [ ] Glossario e scorciatoie.
-- [ ] Tour e checklist.
-- [ ] Italiano completo.
-- [ ] Cambio lingua live o fallback documentato.
-- [ ] E2E verde.
+- [x] Ricerca full-text e filtri. — indice, ranking, filtri e snippet
+- [x] “Try it” tracciato. — esempi runnable, conferma, log
+- [x] Mappa errori. — errori → topic in card e dialoghi
+- [x] Glossario e scorciatoie. — glossary e keyboard-shortcuts
+- [x] Tour e checklist. — tour + checklist Home
+- [x] Italiano completo. — 27 topic core + overlay UI; fallback inglese
+- [x] Cambio lingua live o fallback documentato. — live per menu/tab/help/messaggi; chrome statico al reload
+- [x] E2E verde. — help/onboarding E2E e navigation E2E verdi
 
 ---
 
@@ -319,4 +319,11 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              validazione inline, selector descrittivi, cinque workflow con
              stato e sezione report, suggerimenti per variabile. Nuovo topic
              `navigation-workflows` e vignetta.
+2026-11-14 — Onda 6 completata: indice full-text con ranking e filtri,
+             snippet evidenziati, TOC e link a dialoghi/comandi, esempi
+             runnable con conferma e log, mappa errori → topic, glossario,
+             tour in quattro passi con localStorage, checklist Home, audit
+             i18n, 27 topic core italiani e overlay TSV per la UI, cambio
+             lingua live con persistenza di lingua e tema. Nuovo topic
+             `glossary` e vignetta `help-and-onboarding`.
 ```

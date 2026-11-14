@@ -12,7 +12,8 @@ history_entry <- function(id, time, source, command,
                           dialog_id = NULL, dialog_memory = NULL,
                           status = "ok", output = character(),
                           messages = character(), warnings = character(),
-                          plot_id = NULL, duration_ms = NA_real_) {
+                          error = NULL, plot_id = NULL,
+                          duration_ms = NA_real_) {
   list(
     id = id,
     time = time,
@@ -24,6 +25,7 @@ history_entry <- function(id, time, source, command,
     output = output,
     messages = messages,
     warnings = warnings,
+    error = error,
     plot_id = plot_id,
     duration_ms = duration_ms
   )

@@ -1,6 +1,6 @@
 # Onda 6 — Help, i18n e onboarding
 
-**Stato:** da implementare  
+**Stato:** implementata (2026-11-14)
 **Dipende da:** Onda 0 (shell, palette, design system)  
 **Sblocca:** autonomia dell'utente e documentazione di prodotto  
 **Documento padre:** [`README.md`](README.md)
@@ -341,22 +341,22 @@ Nella Home:
 
 ## 13. Checklist di chiusura
 
-- [ ] Indice full-text.
-- [ ] Ranking e filtri.
-- [ ] Snippet e correlati.
-- [ ] TOC topic.
-- [ ] “Try it”.
-- [ ] Parser esempi.
-- [ ] Esecuzione loggata.
-- [ ] Mappa errori.
-- [ ] UI errore contestuale.
-- [ ] Glossario.
-- [ ] Scorciatoie aggiornate.
-- [ ] Tour engine.
-- [ ] Tour UI.
-- [ ] Checklist Home.
-- [ ] Audit stringhe.
-- [ ] Topic italiani.
-- [ ] Lingua reattiva.
-- [ ] Persistenza lingua.
-- [ ] Test unit e E2E verdi.
+- [x] Indice full-text.
+- [x] Ranking e filtri.
+- [x] Snippet e correlati.
+- [x] TOC topic.
+- [x] “Try it”.
+- [x] Parser esempi.
+- [x] Esecuzione loggata.
+- [x] Mappa errori.
+- [x] UI errore contestuale.
+- [x] Glossario.
+- [x] Scorciatoie aggiornate.
+- [x] Tour engine.
+- [x] Tour UI.
+- [x] Checklist Home.
+- [x] Audit stringhe.
+- [x] Topic italiani.
+- [x] Lingua reattiva.
+- [x] Persistenza lingua.
+- [x] Test unit e E2E verdi.

@@ -113,6 +113,8 @@ for (topic in c(all_topics, lapply(translation_files, function(file) {
   }
 
   relative <- regmatches(body, gregexpr(link_pattern, body, perl = TRUE))[[1L]]
+  # topic: links are resolved by the help centre, not by the filesystem.
+  relative <- relative[!grepl("^\\]\\(topic:", relative)]
   relative <- sub("^\\]\\(topic:", "", relative)
   relative <- sub("^\\]\\(", "", relative)
   relative <- sub("\\)$", "", relative)

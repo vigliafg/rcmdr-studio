@@ -47,6 +47,9 @@ jobs:
       - name: Check help links
         run: Rscript tools/check_help_links.R --strict
 
+      - name: Audit interface translations
+        run: Rscript tools/audit_i18n.R
+
       - name: Verify topics load
         run: |
           Rscript -e '

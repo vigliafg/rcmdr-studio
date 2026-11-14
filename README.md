@@ -13,7 +13,7 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.19 Wave 5 (Navigation and workflows).** The core exposes 230 dialogs and,
+> **Status: 1.20 Wave 6 (Help, i18n and onboarding).** The core exposes 230 dialogs and,
 > with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
 > package ships a Studio shell with a Home tab, command palette, structured
 > command history, live R-command preview in dialogs, isolated previews,
@@ -34,7 +34,13 @@ report workspaces, and a Classic mode for compatibility.
 > with favourites and recents, live menu search, breadcrumbs, complete
 > shortcuts, dialog presets and inline validation, five guided workflows that
 > orchestrate the existing dialogs, and contextual variable suggestions in the
-> Data Studio inspector. The platform wave remains. The remaining
+> Data Studio inspector. The help centre now has a full-text index with ranked
+> results and filters, highlighted snippets, tables of contents, related
+> dialogs and commands, runnable examples that go through the command engine,
+> contextual error-to-topic links, a glossary, a four-step first-run tour and a
+> Home checklist. Italian covers 27 core topics and the Studio's own interface
+> strings, and the language switch re-renders the shell without a restart. The
+> platform wave remains. The remaining
 > disabled core entries are the three lifecycle commands, the nine
 > browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
 > implement every plugin-specific entry. The package includes a searchable
@@ -155,9 +161,12 @@ RcmdrShiny::run(env = env)
 | 3D graphs with rgl and plot export/snapshot | done |
 | Models: diagnostics, influence, hypotheses, model selection, effect plots | done |
 | Tools and Help menus | done |
-| Help tab: search, categories, topic pane, recent and contextual help | done |
-| Markdown help topics for the core and every plugin (443 topics, every dialog documented) | done |
-| Italian translations for 21 core topics, with English fallback | done |
+| Help tab: full-text search, filters, categories, TOC, related dialogs and contextual help | done |
+| Markdown help topics for the core and every plugin (644 documented topics) | done |
+| Runnable help examples with confirmation, logging and script insertion | done |
+| Error-to-topic mapping and contextual help links in error cards | done |
+| Glossary, updated shortcut reference and first-run tour/checklist | done |
+| Italian translations for 27 core topics and live language switching | done |
 | Interactive plots (plotly) for histogram, boxplot, scatterplot and line graph | done |
 | Session report export (R Markdown, HTML when rmarkdown is installed) | done |
 | Plugin command aliases (`aliases = c(new = "core")`) | done |
@@ -187,10 +196,12 @@ Rscript tools/inventory_dialogs.R /path/to/Rcmdr
 
 ## Help and documentation
 
-The **Help** tab is a small offline documentation browser: search, categories,
-recent topics and a topic pane. Every dialog has a **Help** button that opens
-its topic inside the dialog, with a link to the R reference and to the full
-help centre.
+The **Help** tab is an offline documentation browser: full-text search with
+type/source/category filters, highlighted snippets, recent topics, a table of
+contents, related dialogs and commands, runnable examples and a topic pane.
+Every dialog has a **Help** button that opens its topic inside the dialog, with
+a link to the R reference and to the full help centre. Failed commands offer
+the topic that most likely explains the error.
 
 Help topics are Markdown files with a YAML front matter, shipped in
 `inst/help-topics/` and in each plugin's `inst/help-topics/`. The same API is available from
@@ -225,7 +236,13 @@ Rscript tools/new_help_topic.R my-topic --title "My topic" --category statistics
 Rscript tools/generate_help_topics.R --core
 Rscript tools/inventory_help.R
 Rscript tools/check_help_links.R --strict
+Rscript tools/audit_i18n.R --language it
 ```
+
+`audit_i18n.R` compares the literal `tr()` messages in `R/` and the menu labels
+with the PO catalogue and the Studio TSV overlay, reporting the untranslated
+strings. The first-run tour is dismissible, can be hidden permanently in the
+browser's local storage, and can be restarted from **Help > Guided tour**.
 
 `inventory_help.R` writes `inst/etc/help-inventory.csv` with one row per dialog
 (`documented`, `draft`, `fallback` or `missing`) and the continuous integration

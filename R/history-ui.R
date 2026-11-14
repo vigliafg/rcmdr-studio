@@ -3,10 +3,11 @@
 history_source_labels <- function() {
   stats::setNames(
     c("all", "dialog", "script", "console", "menu", "data", "chart",
-      "report", "environment", "model", "history", "checkpoint"),
+      "report", "environment", "model", "history", "checkpoint", "help"),
     c(tr("All sources"), tr("Dialogs"), tr("Script"), tr("Console"),
       tr("Menus"), tr("Data Studio"), tr("Chart Studio"), tr("Report"),
-      tr("Environment"), tr("Models"), tr("History"), tr("Checkpoints"))
+      tr("Environment"), tr("Models"), tr("History"), tr("Checkpoints"),
+      tr("Help examples"))
   )
 }
 
@@ -40,6 +41,15 @@ history_status_class <- function(status) {
 history_card_ui <- function(entry, pinned = FALSE) {
   output <- paste(entry$output %||% character(), collapse = "\n")
   messages <- paste(entry$messages %||% character(), collapse = "\n")
+  help_link <- if (identical(entry$status %||% "ok", "error")) {
+    tryCatch(
+      error_help_link_ui(paste(c(entry$error, entry$messages, entry$output),
+                               collapse = " ")),
+      error = function(e) NULL
+    )
+  } else {
+    NULL
+  }
   duration <- entry$duration_ms
   duration_label <- if (is.null(duration) || is.na(duration)) {
     ""
@@ -110,6 +120,13 @@ history_card_ui <- function(entry, pinned = FALSE) {
       )
     ),
     htmltools::tags$pre(class = "rcmdr-history-command", entry$command %||% ""),
+    if (!is.null(entry$error) && nzchar(entry$error %||% "")) {
+      htmltools::tags$pre(class = "rcmdr-message-text",
+                          paste0("Error: ", entry$error))
+    },
+    if (!is.null(help_link)) {
+      htmltools::tags$p(class = "small mb-1", help_link)
+    },
     if (nzchar(output)) {
       htmltools::tags$details(
         class = "rcmdr-history-output",

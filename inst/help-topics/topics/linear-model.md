@@ -11,6 +11,13 @@ packages: [stats, car]
 related: [generalized-linear-model, correlation, one-way-anova]
 language: en
 status: documented
+examples:
+  - code: "summary(lm(mpg ~ hp, data = mtcars))"
+    title: "A small linear model"
+    runnable: true
+  - code: "LinearModel.1 <- lm(mpg ~ hp, data = mtcars)"
+    title: "Store the model"
+    runnable: false
 ---
 
 # Linear model

@@ -18,6 +18,7 @@ help_registry_reset <- function() {
   .help_registry$manifests <- list()
   .help_registry$loaded <- FALSE
   .help_registry$revision <- 0L
+  if (is.function(help_index_reset)) help_index_reset()
   invisible(NULL)
 }
 
@@ -443,6 +444,7 @@ help_register <- function(manifest, base_dir = NULL, package = NULL) {
   }
 
   .help_registry$revision <- .help_registry$revision + 1L
+  if (is.function(help_index_reset)) help_index_reset()
   invisible(.help_registry$revision)
 }
 
@@ -501,12 +503,13 @@ help_read_topic <- function(path, entry = list(), package = NULL) {
     status = help_meta_chr(meta, "status", "documented"),
     language = language,
     path = path,
-    body = body
+    body = body,
+    examples = help_parse_examples(meta$examples)
   )
   topic$languages <- list()
   topic$languages[[language]] <- list(
     title = title, body = body, path = path,
-    status = topic$status
+    status = topic$status, examples = topic$examples
   )
   topic
 }
@@ -567,6 +570,7 @@ help_unregister <- function(package = NULL) {
   .help_registry$aliases <- .help_registry$aliases[keep_alias]
   .help_registry$manifests[[package]] <- NULL
   .help_registry$revision <- .help_registry$revision + 1L
+  if (is.function(help_index_reset)) help_index_reset()
   invisible(NULL)
 }
 
@@ -581,6 +585,9 @@ help_resolve_language <- function(topic, language = NULL) {
   topic$body <- entry$body %||% topic$body
   topic$path <- entry$path %||% topic$path
   topic$status <- entry$status %||% topic$status
+  if (length(entry$examples %||% list()) > 0L) {
+    topic$examples <- entry$examples
+  }
   topic$language <- if (language %in% names(topic$languages)) language else "en"
   topic
 }
@@ -723,14 +730,19 @@ help_index <- function() {
 #'
 #' @param category Optional category filter.
 #' @param language Language code.
+#' @param type Optional topic type filter (`"guide"`, `"reference"`,
+#'   `"tutorial"`, `"troubleshooting"`, ...).
+#' @param package `"all"`, `"core"` or a plugin package name.
 #' @return A data frame with one row per topic.
 #' @export
-help_catalog <- function(category = NULL, language = NULL) {
+help_catalog <- function(category = NULL, language = NULL, type = NULL,
+                         package = "all") {
   topics <- help_topics(language)
   if (length(topics) == 0L) {
     return(data.frame(
-      id = character(), title = character(), category = character(),
-      type = character(), status = character(), package = character(),
+      id = character(), local_id = character(), title = character(),
+      category = character(), type = character(), status = character(),
+      order = integer(), package = character(),
       stringsAsFactors = FALSE
     ))
   }
@@ -748,8 +760,22 @@ help_catalog <- function(category = NULL, language = NULL) {
     )
   })
   table <- do.call(rbind, rows)
-  if (!is.null(category)) {
+  if (!is.null(category) && length(category) > 0L && nzchar(category) &&
+      !identical(category, "all")) {
     table <- table[table$category == category, , drop = FALSE]
+  }
+  if (!is.null(type) && length(type) > 0L && nzchar(type) &&
+      !identical(type, "all")) {
+    table <- table[table$type == type, , drop = FALSE]
+  }
+  if (!is.null(package) && length(package) > 0L && nzchar(package) &&
+      !identical(package, "all")) {
+    if (identical(package, "core")) {
+      table <- table[is.na(table$package) | !nzchar(table$package), , drop = FALSE]
+    } else {
+      table <- table[!is.na(table$package) & table$package == package, ,
+                     drop = FALSE]
+    }
   }
   table <- table[order(table$category, table$order, table$title), , drop = FALSE]
   rownames(table) <- NULL
@@ -801,7 +827,7 @@ help_plain_text <- function(markdown) {
   text <- gsub("\\[([^]]*)\\]\\([^)]*\\)", "\\1", text)
   text <- gsub("^[ \t]*#+[ \t]*", "", text)
   text <- gsub("[*_>#|]", " ", text)
-  text <- gsub("[ \t]+", " ", text)
+  text <- gsub("[[:space:]]+", " ", text)
   trimws(text)
 }
 
@@ -834,41 +860,62 @@ help_snippet <- function(body, tokens, width = 160L) {
 
 #' Search the offline help
 #'
-#' Simple weighted search over titles, keywords, aliases, dialogs and body.
+#' Full-text search over the cached index, with filtering by source, category
+#' and topic type.  Ranking weights titles highest, then keywords and aliases,
+#' then headings and finally the body.
 #'
 #' @param query Search terms.
 #' @param limit Maximum number of results.
 #' @param language Language code.
-#' @return A data frame with `id`, `title`, `category`, `score`, `snippet`
-#'   and `package`.
+#' @param category Optional category filter.
+#' @param type Optional topic type filter.
+#' @param package `"all"`, `"core"` or a plugin package name.
+#' @return A data frame with `id`, `title`, `category`, `type`, `score`,
+#'   `snippet`, `snippet_html`, `package` and `language`.
 #' @export
-help_search <- function(query, limit = 20L, language = NULL) {
+help_search <- function(query, limit = 20L, language = NULL,
+                        category = NULL, type = NULL, package = "all") {
   help_ensure_loaded()
   tokens <- help_tokens(query %||% "")
   empty <- data.frame(
     id = character(), title = character(), category = character(),
-    score = numeric(), snippet = character(), package = character(),
-    stringsAsFactors = FALSE
+    type = character(), score = numeric(), snippet = character(),
+    snippet_html = character(), package = character(),
+    language = character(), stringsAsFactors = FALSE
   )
   if (length(tokens) == 0L) return(empty)
 
-  topics <- help_topics(language)
-  if (length(topics) == 0L) return(empty)
+  index <- help_index_cached(language)
+  docs <- index$docs
+  if (nrow(docs) == 0L) return(empty)
 
+  scores <- help_index_score(index, tokens)
+  docs$score <- unname(scores[docs$id])
+  docs <- docs[docs$score > 0, , drop = FALSE]
+  docs <- help_filter_docs(docs, category = category, type = type,
+                           package = package)
+  if (nrow(docs) == 0L) return(empty)
+
+  topics <- help_topics(language)
   categories <- help_category_table()
   category_order <- stats::setNames(categories$order, categories$id)
 
-  rows <- lapply(topics, function(topic) {
-    score <- help_score_topic(topic, tokens)
-    if (score <= 0) return(NULL)
-    category <- topic$category %||% "general"
+  rows <- lapply(seq_len(nrow(docs)), function(i) {
+    doc <- docs[i, , drop = FALSE]
+    topic <- topics[[doc$id]]
+    if (is.null(topic)) return(NULL)
+    category <- doc$category
     data.frame(
-      id = topic$id,
-      title = topic$title,
+      id = doc$id,
+      title = doc$title,
       category = category,
-      score = score,
+      type = doc$type,
+      score = doc$score,
       snippet = help_snippet(topic$body, tokens),
-      package = topic$package %||% NA_character_,
+      snippet_html = help_snippet_highlight(help_snippet(topic$body, tokens),
+                                            tokens),
+      package = doc$package,
+      language = doc$language,
       category_order = unname(category_order[[category]] %||% 100L),
       topic_order = topic$order %||% 100L,
       stringsAsFactors = FALSE
@@ -975,7 +1022,12 @@ open_help_topic <- function(state, id) {
   invisible(TRUE)
 }
 
-help_topic_html_from_record <- function(topic) {  body <- help_render(topic$body)
+help_topic_html_from_record <- function(topic, with_anchors = TRUE) {
+  body <- if (isTRUE(with_anchors)) {
+    help_render(help_markdown_with_anchors(topic$body))
+  } else {
+    help_render(topic$body)
+  }
   header <- help_render_topic_header(topic)
   paste0(header, body)
 }

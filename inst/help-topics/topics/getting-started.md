@@ -11,6 +11,13 @@ packages: [RcmdrShiny]
 related: [data-import, numerical-summaries, linear-model]
 language: en
 status: documented
+examples:
+  - code: "summary(mtcars)"
+    title: "Describe the built-in mtcars data"
+    runnable: true
+  - code: "numSummary(mtcars[, c(\"mpg\", \"hp\")])"
+    title: "Numerical summaries"
+    runnable: true
 ---
 
 # Your first analysis
@@ -32,6 +39,11 @@ menus; the right side holds the Studio tabs **Home**, **Data**, **Charts**,
 sub-tabs.  Press `Ctrl+K` (or click **Search**) to open the command palette.
 The Classic layout with separate **Script**, **Output**, **Messages** and
 **Plots** tabs is still available from the top bar or **Options**.
+
+On first use a four-step tour points at the data, chart, report and palette
+areas.  Close it with **Skip**, hide it permanently with **Don't show again**,
+or restart it from **Help > Guided tour**.  The **Home** tab keeps a checklist
+of the first steps and marks each one when the action has been performed.
 
 ## 2. Load a data set
 
