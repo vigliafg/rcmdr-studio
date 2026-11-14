@@ -100,6 +100,9 @@ Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il
 Report Studio riusa la galleria grafici.
 
+**Onda 0 completata il 14 novembre 2026.** Il diario di handoff è
+[`diary/wave-00-foundations.md`](diary/wave-00-foundations.md).
+
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.
 
