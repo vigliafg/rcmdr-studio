@@ -12,7 +12,7 @@
 ## 0. Punto di ripresa per la prossima sessione
 
 **Stato al momento della compattazione:** 2026-11-14, branch `main`, HEAD
-`3e45e7f`, working tree pulito, tutto pushato su `origin/main`.
+`a18886e`, working tree pulito, tutto pushato su `origin/main`.
 
 **Baseline verificata:** `testthat::test_local()` → **2932 pass, 0 fail,
 16 skip**; `R CMD check` su `RcmdrShiny_1.21.0.tar.gz` → **Status: OK**.
@@ -88,7 +88,8 @@ Tutti i task M6.5.1–M6.5.7 sono chiusi.
 | Hash | Messaggio | Note |
 |---|---|---|
 | `4952414` | feat: Wave 6.5 menu platform and stable ids | Commit principale |
-| `3e45e7f` | docs: add Wave 6.5 menu platform handoff diary | Questo diario |
+| `3e45e7f` | docs: add Wave 6.5 menu platform handoff diary | Diario Onda 6.5 |
+| `a18886e` | docs: add pre-Wave 7 resume checkpoint | Punto di ripresa pre-compattazione |
 | `4173539` | docs: add Wave 6.5 menu platform plan | Piano approvato |
 
 ---
