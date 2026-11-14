@@ -94,7 +94,7 @@ test_that("the Studio foundation flow works in a browser", {
   app$wait_for_js("document.querySelector('.modal') === null",
                   timeout = 30000)
   app$wait_for_js(
-    "ace.edit(document.querySelector('.ace_editor')).getValue().includes('numSummary')",
+    "ace.edit(document.querySelector('#script_editor_ui .ace_editor')).getValue().includes('numSummary')",
     timeout = 30000
   )
 

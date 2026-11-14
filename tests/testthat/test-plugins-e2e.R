@@ -112,12 +112,12 @@ e2e_flow <- function(plugin, env, dataset, command, inputs, expected,
   app$wait_for_idle(timeout = 60000)
 
   app$wait_for_js(
-    sprintf("ace.edit(document.querySelector('.ace_editor')).getValue().includes(%s)",
+    sprintf("ace.edit(document.querySelector('#script_editor_ui .ace_editor')).getValue().includes(%s)",
             jsonlite::toJSON(expected, auto_unbox = TRUE)),
     timeout = 60000
   )
   script <- app$get_js(
-    "ace.edit(document.querySelector('.ace_editor')).getValue()"
+    "ace.edit(document.querySelector('#script_editor_ui .ace_editor')).getValue()"
   )
   expect_match(script, expected, fixed = TRUE)
 }

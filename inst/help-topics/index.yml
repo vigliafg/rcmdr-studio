@@ -20,6 +20,9 @@ categories:
   - id: distributions
     title: Distributions
     order: 60
+  - id: report
+    title: Reports
+    order: 62
   - id: tools
     title: Tools
     order: 65
@@ -53,6 +56,10 @@ topics:
   - id: data-studio
     file: topics/data-studio.md
     category: data
+    order: 40
+  - id: report-studio
+    file: topics/report-studio.md
+    category: report
     order: 40
   - id: exporting-results
     file: topics/exporting-results.md

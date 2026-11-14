@@ -1076,11 +1076,13 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
 
   output$chart_preview_image <- renderImage({
     result <- chart_preview_result()
-    if (is.null(result) || is.null(result$file) || !file.exists(result$file)) {
+    src <- result$file %||% NULL
+    if (is.null(src) || length(src) != 1L || is.na(src) ||
+        !nzchar(src) || !file.exists(src)) {
       return(NULL)
     }
     list(
-      src = result$file,
+      src = src,
       contentType = "image/png",
       width = isolate(input$chart_width %||% 800),
       height = isolate(input$chart_height %||% 600),

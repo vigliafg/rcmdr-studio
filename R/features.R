@@ -14,7 +14,7 @@ default_features <- function() {
     dialog_presets = TRUE,
     data_studio = FALSE,
     chart_studio = TRUE,
-    report_studio = FALSE,
+    report_studio = TRUE,
     console = TRUE,
     project = FALSE
   )

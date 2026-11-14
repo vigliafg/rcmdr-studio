@@ -53,6 +53,7 @@ base_dialog_catalog <- function() {
     document_dialogs(),
     data_studio_dialogs(),
     chart_studio_dialogs(),
+    report_studio_dialogs(),
     phase2_dialogs(), phase3_dialogs(), phase4_dialogs(), phase5_dialogs()
   )
 }

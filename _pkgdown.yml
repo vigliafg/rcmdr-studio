@@ -71,6 +71,7 @@ articles:
       - data-import
       - data-studio
       - chart-studio
+      - report-studio
   - title: Analysis
     contents:
       - descriptive-statistics

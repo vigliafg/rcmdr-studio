@@ -55,6 +55,58 @@ app_css <- function() {
       border: 1px solid #e2e6ea; border-radius: .45rem; padding: .9rem; }
     .rcmdr-chart-detail-image { max-width: 100%; border: 1px solid #e2e6ea;
       border-radius: .35rem; margin: .5rem 0; }
+    .rcmdr-report-toolbar { background: #fff; border: 1px solid #e2e6ea;
+      border-radius: .45rem; padding: .6rem .75rem; margin-bottom: .75rem; }
+    .rcmdr-report-workspace .rcmdr-section-card { margin-bottom: .75rem; }
+    .rcmdr-report-outline { display: flex; flex-direction: column; gap: .15rem;
+      max-height: 32vh; overflow-y: auto; }
+    .rcmdr-report-outline a { color: #1f3a5f; text-decoration: none;
+      padding: .1rem .25rem; border-radius: .2rem; }
+    .rcmdr-report-outline a:hover { background: #eef2f7; }
+    .rcmdr-report-outline .rcmdr-outline-level-1 { font-weight: 600; }
+    .rcmdr-report-outline .rcmdr-outline-level-2 { padding-left: .9rem; }
+    .rcmdr-report-outline .rcmdr-outline-level-3 { padding-left: 1.8rem;
+      font-size: .92rem; }
+    .rcmdr-report-outline .rcmdr-outline-level-4,
+    .rcmdr-report-outline .rcmdr-outline-level-5,
+    .rcmdr-report-outline .rcmdr-outline-level-6 { padding-left: 2.6rem;
+      font-size: .88rem; }
+    .rcmdr-cell-list { display: flex; flex-direction: column; gap: .4rem;
+      max-height: 34vh; overflow-y: auto; }
+    .rcmdr-cell-card { border: 1px solid #e2e6ea; border-radius: .35rem;
+      padding: .35rem .5rem; background: #fbfbfc; }
+    .rcmdr-cell-output { margin-top: .25rem; }
+    .rcmdr-cell-output pre { font-size: .78rem; max-height: 200px;
+      overflow-y: auto; background: #fff; border: 1px solid #e2e6ea;
+      padding: .35rem; border-radius: .25rem; }
+    .rcmdr-cell-plot { max-width: 100%; border: 1px solid #e2e6ea;
+      border-radius: .25rem; margin-top: .35rem; }
+    .rcmdr-report-preview { max-height: 62vh; overflow-y: auto;
+      background: #fff; border: 1px solid #e2e6ea; border-radius: .35rem;
+      padding: .75rem; }
+    .rcmdr-report-chunk { border: 1px dashed #b9c3ce; border-radius: .35rem;
+      margin: .5rem 0; background: #f6f8fa; }
+    .rcmdr-report-chunk-label { font-size: .78rem; text-transform: uppercase;
+      letter-spacing: .04em; color: #5a6672; padding: .25rem .5rem;
+      border-bottom: 1px dashed #b9c3ce; }
+    .rcmdr-report-chunk pre { margin: 0; padding: .5rem; font-size: .8rem; }
+    .rcmdr-report-source { white-space: pre-wrap; font-size: .82rem;
+      background: #fbfbfc; border: 1px solid #e2e6ea; padding: .5rem;
+      border-radius: .3rem; }
+    .rcmdr-template-grid { display: grid; gap: .5rem;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+    .rcmdr-template-list { display: flex; flex-direction: column; gap: .35rem; }
+    .rcmdr-template-card { display: block; border: 1px solid #e2e6ea;
+      border-radius: .35rem; padding: .5rem .6rem; background: #fff;
+      color: inherit; text-decoration: none; }
+    .rcmdr-template-card:hover { border-color: #0d6efd; background: #f5f8ff; }
+    .rcmdr-report-status { border-top: 1px solid #e2e6ea; padding-top: .35rem; }
+    .rcmdr-knit-history { display: flex; flex-direction: column; gap: .25rem; }
+    .rcmdr-knit-entry { border-bottom: 1px solid #eef1f4; padding: .2rem 0; }
+    body.rcmdr-dark .rcmdr-report-toolbar,
+    body.rcmdr-dark .rcmdr-report-preview,
+    body.rcmdr-dark .rcmdr-template-card,
+    body.rcmdr-dark .rcmdr-cell-card { background: #23272b; border-color: #3a4047; }
     .rcmdr-help-text { white-space: pre-wrap; max-height: 60vh; overflow-y: auto;
       background: #fbfbfc; border: 1px solid #e2e6ea; padding: .75rem; }
     .rcmdr-help-search { margin-bottom: .75rem; }
@@ -351,13 +403,21 @@ app_js <- function(lang = current_language()) {
       }
     })();
     function rcmdrRunChunk() {
-      var element = document.querySelector('.ace_editor');
+      var element = document.querySelector('#script_editor_ui .ace_editor');
       if (!element) return;
       var editor = ace.edit(element);
       var position = editor.getCursorPosition();
       Shiny.setInputValue('run_chunk_at',
         {row: position.row, column: position.column}, {priority: 'event'});
     }
+    window.rcmdrReportGoto = function(line) {
+      var element = document.querySelector('#report_editor_ui .ace_editor');
+      if (!element) return false;
+      var editor = ace.edit(element);
+      editor.gotoLine(line + 1, 0);
+      editor.focus();
+      return false;
+    };
     function rcmdrCopy(text) {
       if (!text) return;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -509,7 +569,7 @@ script_pane_ui <- function() {
   )
 }
 
-report_pane_ui <- function() {
+classic_report_pane_ui <- function() {
   htmltools::tagList(
     htmltools::div(
       class = "d-flex gap-2 mb-2 flex-wrap",
@@ -519,6 +579,14 @@ report_pane_ui <- function() {
     ),
     uiOutput("report_pane")
   )
+}
+
+report_pane_ui <- function(mode = "studio") {
+  if (identical(mode, "classic")) {
+    classic_report_pane_ui()
+  } else {
+    report_studio_ui()
+  }
 }
 
 output_pane_ui <- function() {
@@ -657,7 +725,7 @@ main_tabs_ui <- function(mode = "studio") {
       tabPanel(tr("Output"), output_pane_ui()),
       tabPanel(tr("Messages"), messages_pane_ui()),
       tabPanel(tr("Plots"), plots_pane_ui("classic")),
-      tabPanel(tr("Report"), report_pane_ui()),
+      tabPanel(tr("Report"), report_pane_ui("classic")),
       tabPanel(tr("Data"), data_pane_ui("classic")),
       tabPanel(tr("Environment"), uiOutput("environment_pane")),
       tabPanel(tr("Help"), help_center_ui())
@@ -668,7 +736,7 @@ main_tabs_ui <- function(mode = "studio") {
     tabPanel(tr("Home"), home_pane_ui()),
     tabPanel(tr("Data"), data_pane_ui("studio")),
     tabPanel(tr("Charts"), plots_pane_ui("studio")),
-    tabPanel(tr("Report"), report_pane_ui()),
+    tabPanel(tr("Report"), report_pane_ui("studio")),
     tabPanel(tr("Script"), script_pane_ui()),
     tabPanel(tr("Console"), console_workspace_ui()),
     tabPanel(tr("Environment"), uiOutput("environment_pane")),
@@ -772,6 +840,7 @@ app_server <- function(env = globalenv()) {
   function(input, output, session) {
     state <- AppState(env)
     state$session <- session
+    document_registry_ensure(state)
     tick <- reactiveVal(0L)
     menu_revision <- reactiveVal(0L)
     dialog_revision <- reactiveVal(0L)
@@ -838,6 +907,11 @@ app_server <- function(env = globalenv()) {
     state$knit_dir <- knit_dir
     state$knit_prefix <- paste0("rcmdr-knit-", session$token)
     try(addResourcePath(state$knit_prefix, knit_dir), silent = TRUE)
+
+    report_dir <- file.path(tempdir(), paste0("rcmdrshiny-report-", session$token))
+    dir.create(report_dir, showWarnings = FALSE, recursive = TRUE)
+    state$report_dir <- report_dir
+    state$autosave_dir <- file.path(tempdir(), "rcmdrshiny-autosave")
 
     tree <- menu_tree()
     leaves <- menu_leaves(tree)
@@ -2240,6 +2314,19 @@ app_server <- function(env = globalenv()) {
         menu_revision(menu_revision() + 1L)
         history_revision(history_revision() + 1L)
         chart_revision(chart_revision() + 1L)
+        invisible(NULL)
+      }
+    )
+
+    # -- Report Studio ------------------------------------------------------
+
+    report_studio_server(
+      input, output, session, state,
+      tick = tick,
+      refresh = function(...) {
+        tick(tick() + 1L)
+        menu_revision(menu_revision() + 1L)
+        history_revision(history_revision() + 1L)
         invisible(NULL)
       }
     )

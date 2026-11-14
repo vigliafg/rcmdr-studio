@@ -102,28 +102,28 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| R3.1 | Registro documenti | [ ] | |
-| R3.2 | Report Studio UI | [ ] | |
-| R3.3 | Outline e chunk list | [ ] | |
-| R3.4 | Preview Markdown/HTML | [ ] | |
-| R3.5 | Celle eseguibili | [ ] | |
-| R3.6 | Template gallery | [ ] | |
-| R3.7 | Inserimento contestuale | [ ] | |
-| R3.8 | YAML form e bibliografia | [ ] | |
-| R3.9 | Knit manager | [ ] | |
-| R3.10 | Autosave e recovery | [ ] | |
-| R3.11 | Test, help, vignetta | [ ] | |
+| R3.1 | Registro documenti | [x] | `R/document.R`, multi-documento |
+| R3.2 | Report Studio UI | [x] | `R/report-studio.R`, toolbar/outline/editor/preview |
+| R3.3 | Outline e chunk list | [x] | `document_outline()`, `document_chunks()` |
+| R3.4 | Preview Markdown/HTML | [x] | commonmark, placeholder, HTML da knit |
+| R3.5 | Celle eseguibili | [x] | `report_run_cell()`, output inline |
+| R3.6 | Template gallery | [x] | Cinque template e card |
+| R3.7 | Inserimento contestuale | [x] | Output, plot, storia, tabella, profilo, modello |
+| R3.8 | YAML form e bibliografia | [x] | Round-trip conservativo |
+| R3.9 | Knit manager | [x] | Formati, storico, errori, download |
+| R3.10 | Autosave e recovery | [x] | Autosave, banner, `.bak` |
+| R3.11 | Test, help, vignetta | [x] | Unit, E2E, topic, vignetta |
 
 ### Chiusura Onda 3
 
-- [ ] Template → insert → preview → knit → download.
-- [ ] Preview veloce non esegue codice.
-- [ ] Celle con output inline.
-- [ ] YAML round-trip conservativo.
-- [ ] Knit history e errori contestualizzati.
-- [ ] Autosave/recovery.
-- [ ] E2E verde.
-- [ ] Help topic e vignetta.
+- [x] Template → insert → preview → knit → download.
+- [x] Preview veloce non esegue codice.
+- [x] Celle con output inline.
+- [x] YAML round-trip conservativo.
+- [x] Knit history e errori contestualizzati.
+- [x] Autosave/recovery.
+- [x] E2E verde.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -304,4 +304,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              export PNG/PDF/SVG/HTML, temi, round-trip, selezione plotly,
              topic e vignetta. Test unit 2004 pass; E2E core, Wave 0,
              documenti, Data Studio e Chart Studio verdi.
+2026-11-14 — Onda 3 completata: Report Studio con registro documenti,
+             outline, chunk list, preview Markdown veloce, celle eseguibili,
+             template, inserimento contestuale, YAML conservativo, knit
+             manager, autosave/recovery, topic e vignetta.
 ```

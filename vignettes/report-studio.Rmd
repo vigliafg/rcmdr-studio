@@ -1,0 +1,137 @@
+---
+title: "Report Studio"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Report Studio}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r}
+library(RcmdrShiny)
+```
+
+# Overview
+
+The Report Studio is the **Report** tab in Studio mode. It authors R Markdown
+and knitr documents while sharing the document buffer with the Script tab. The
+lifecycle is **template or blank -> edit -> preview -> run cells -> knit ->
+download**.
+
+The fast preview never executes code; the knit executes every chunk in the
+session.
+
+# Templates
+
+```{r}
+names(RcmdrShiny:::report_templates())
+```
+
+A template is a function of the data set name and the title. It only uses
+commands that the dialogs already generate.
+
+```{r}
+text <- RcmdrShiny:::report_template_text("profile", "Dataset", "Data profile")
+cat(head(text, 12), sep = "\n")
+```
+
+# Documents
+
+The registry keeps every open document while `state$document` remains the
+active buffer for backward compatibility.
+
+```{r}
+state <- AppState()
+RcmdrShiny:::document_registry_ensure(state)
+RcmdrShiny:::document_create(state, "rmd", "Example", text = "## Section")
+RcmdrShiny:::document_list(state)
+```
+
+The outline and the chunk list are pure functions of the text.
+
+```{r}
+doc <- RcmdrShiny:::document_text(state)
+RcmdrShiny:::document_outline(doc, "rmd")
+```
+
+# Preview
+
+`report_preview()` renders Markdown with `commonmark` and replaces chunks with
+labelled placeholders. It does not run code.
+
+```{r}
+preview <- RcmdrShiny:::report_preview(
+  c("## Results", "", "```{r}", "summary(Dataset)", "```"), "rmd"
+)
+class(preview$html)
+```
+
+# Executable cells
+
+A cell run goes through `run_command()` and is stored under
+`state$cell_outputs`; the document is not modified.
+
+```{r, eval = FALSE}
+RcmdrShiny:::report_run_cell(state, "chunk-01", doc, "rmd")
+RcmdrShiny:::report_cell_status(state, "chunk-01")
+```
+
+# Insertion
+
+Insertion is explicit and never happens on preview or on a cell run.
+
+```{r, eval = FALSE}
+RcmdrShiny:::report_insert_output(state, history_id)
+RcmdrShiny:::report_insert_plot(state, plot_id, caption = "Figure 1")
+RcmdrShiny:::report_insert_data_profile(state, "Dataset")
+RcmdrShiny:::report_insert_model_summary(state, "LinearModel.1")
+```
+
+# YAML front matter
+
+The form merges fields instead of replacing the block, so unknown metadata is
+preserved.
+
+```{r}
+header <- c("---", 'title: "Old"', "custom: keep", "---", "", "Body")
+tmp <- AppState()
+RcmdrShiny:::document_create(tmp, "rmd", "Meta", text = header)
+RcmdrShiny:::document_set_front_matter(tmp, list(title = "New", toc = TRUE))
+cat(RcmdrShiny:::document_text(tmp))
+```
+
+# Knit
+
+`document_knit()` renders the document in the session environment and records
+the attempt in `state$knit_history`.
+
+```{r, eval = FALSE}
+result <- RcmdrShiny:::document_knit(state, "html")
+result$file
+```
+
+Formats explain why they are unavailable:
+
+```{r}
+RcmdrShiny:::document_format_reason("pdf", "rmd")
+```
+
+# Autosave
+
+```{r, eval = FALSE}
+RcmdrShiny:::document_autosave(state)
+RcmdrShiny:::document_recoveries(state)
+```
+
+# Design notes
+
+- The preview and the knit are clearly separate: one does not execute code,
+  the other does.
+- Cell output is session state; the knit is the final source of truth.
+- YAML round-trips conservatively.
+- Templates never add a statistical procedure.
+- Classic mode keeps the historical Report iframe.

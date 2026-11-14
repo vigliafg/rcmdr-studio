@@ -1,9 +1,10 @@
 # Onda 3 — Report Studio
 
-**Stato:** da implementare  
+**Stato:** implementata — 14 novembre 2026
 **Dipende da:** Onda 0, Onda 2 (galleria grafici)  
 **Sblocca:** report riproducibili e presentabili senza lasciare l'app  
 **Documento padre:** [`README.md`](README.md)
+**Diario di handoff:** [`diary/wave-03-report-studio.md`](diary/wave-03-report-studio.md)
 
 ---
 
@@ -537,3 +538,41 @@ leggibili e contestualizzati.
 - [ ] Autosave/recovery.
 - [ ] Help topic e vignetta.
 - [ ] Test unit e E2E verdi.
+
+---
+
+## 11. Risultato consegnato
+
+- **Registro documenti** in `R/document.R`: `document_create()`,
+  `document_activate()`, `document_close()`, `document_list()` e dirty
+  tracking; `state$document` resta il buffer attivo.
+- **Outline e chunk list**: `document_outline()`, `document_chunks()`,
+  `document_chunk_by_id()` e parser dei chunk Rmd/Rnw.
+- **Front matter** conservativo: `document_front_matter()`,
+  `document_set_front_matter()` e serializzatore con preservazione dei campi
+  sconosciuti.
+- **Autosave e recovery**: copie periodiche, banner di recovery, backup `.bak`
+  prima del salvataggio e pulizia dell'autosave.
+- **Knit manager**: `document_knit()` registra successi e fallimenti in
+  `state$knit_history`, con durata, errore e link; `document_format_reason()`
+  spiega i formati non disponibili.
+- **Report Studio** in `R/report-studio.R`: toolbar, selettore documenti,
+  outline cliccabile, chunk list con stato, editor Ace, tab Markdown/HTML/
+  Source, barra di stato, pannello Insert, storico knit e download.
+- **Preview veloce** con `commonmark`: YAML come blocco titolo, chunk come
+  placeholder etichettati, nessuna esecuzione di codice, cache limitata.
+- **Celle eseguibili**: `report_run_cell()` e `report_run_all_cells()` con
+  output inline, plot e storia strutturata con sorgente `report`.
+- **Template** in `R/report-templates.R`: analysis, profile, diagnostics,
+  teaching, survival, con sostituzione `{{dataset}}`.
+- **Inserimento contestuale**: output, plot, passo di storia, tabella, data
+  profile, model summary, sezione e chunk.
+- **Dialoghi**: `reportYaml` e `reportTemplate`.
+- **Modalità Classica**: mantiene il vecchio iframe `#report_pane`.
+- **Test**: `test-document-registry.R`, `test-document-outline.R`,
+  `test-report-preview.R`, `test-report-cells.R`, `test-report-templates.R`,
+  `test-report-insert.R`, `test-report-yaml.R`, `test-report-knit-manager.R`,
+  `test-report-autosave.R`, `test-report-studio.R`,
+  `test-report-studio-e2e.R`.
+- **Documentazione**: topic `report-studio`, vignetta `report-studio.Rmd`,
+  README, NEWS e DESCRIPTION.

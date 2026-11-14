@@ -31,12 +31,12 @@ documents_switch_tab <- function(app, label) {
 documents_ace <- function(app, value = NULL) {
   if (!is.null(value)) {
     app$run_js(sprintf(
-      "ace.edit(document.querySelector('.ace_editor')).setValue(%s, 1);",
+      "ace.edit(document.querySelector('#script_editor_ui .ace_editor')).setValue(%s, 1);",
       jsonlite::toJSON(value, auto_unbox = TRUE)
     ))
     app$wait_for_idle(timeout = 30000)
   }
-  app$get_js("ace.edit(document.querySelector('.ace_editor')).getValue()")
+  app$get_js("ace.edit(document.querySelector('#script_editor_ui .ace_editor')).getValue()")
 }
 
 test_that("the document workflow works in a browser", {
@@ -79,7 +79,7 @@ test_that("the document workflow works in a browser", {
     sep = "\n"
   ))
   app$run_js(
-    "var e=ace.edit(document.querySelector('.ace_editor')); e.gotoLine(7, 1); e.focus();"
+    "var e=ace.edit(document.querySelector('#script_editor_ui .ace_editor')); e.gotoLine(7, 1); e.focus();"
   )
   app$wait_for_idle()
   app$run_js("rcmdrRunChunk();")
@@ -125,10 +125,13 @@ test_that("the document workflow works in a browser", {
   app$click("dialog_ok")
   app$wait_for_js("document.querySelector('.modal') === null", timeout = 120000)
   documents_switch_tab(app, "Report")
-  app$wait_for_js("document.querySelector('#report_pane iframe') !== null",
-                  timeout = 120000)
+  app$set_inputs(report_preview_mode = "html", wait_ = FALSE)
+  app$wait_for_js(
+    "document.querySelector('.rcmdr-report-preview iframe') !== null",
+    timeout = 120000
+  )
   expect_match(
-    app$get_js("document.querySelector('#report_pane iframe').src"),
+    app$get_js("document.querySelector('.rcmdr-report-preview iframe').src"),
     "document.html"
   )
 

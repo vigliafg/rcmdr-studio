@@ -1,3 +1,28 @@
+# RcmdrShiny Studio 1.17.0
+
+## Wave 3 — Report Studio
+
+- **Document registry**: multiple open Rmd/Rnw documents with activation,
+  closing, dirty tracking and a shared active buffer.
+- **Report Studio UI**: toolbar, document selector, clickable outline, chunk
+  list, Ace editor, preview tabs and a status bar. Classic mode keeps the
+  historical Report iframe.
+- **Fast Markdown preview** with `commonmark`: YAML becomes a title block and
+  chunks become labelled placeholders. It never executes code.
+- **Executable cells**: run one chunk or all chunks, inline collapsible output,
+  captured plots and structured-history entries with source `report`.
+- **Five templates**: analysis report, data profile, model diagnostics,
+  teaching handout and survival report.
+- **Contextual insertion**: output, plot, history step, table, data profile,
+  model summary, section and chunk.
+- **YAML form**: title, author, date, output, TOC, theme, bibliography and
+  citation linking. Unknown fields are preserved on round-trip.
+- **Knit manager**: format availability with reasons, progress feedback,
+  structured errors, history, HTML preview and download.
+- **Autosave and recovery**: periodic recovery copies, a recovery banner,
+  `.bak` backup before saving and autosave cleanup after a save.
+- New Report Studio help topic and vignette.
+
 # RcmdrShiny Studio 1.16.0
 
 ## Wave 2 — Chart Studio

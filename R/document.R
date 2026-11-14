@@ -61,7 +61,28 @@ document_with_trailing_newline <- function(text) {
 #' The current document
 #' @keywords internal
 document <- function(state) {
+  id <- state$active_document
+  if (!is.null(id) && !is.null(state$documents[[id]])) {
+    return(state$documents[[id]])
+  }
   state$document %||% list(text = "", path = NULL, mode = "r")
+}
+
+#' Keep the active buffer and its registry entry in sync
+#' @keywords internal
+document_store <- function(state, current) {
+  state$document <- current
+  id <- state$active_document
+  if (!is.null(id) && !is.null(state$documents[[id]])) {
+    state$documents[[id]] <- current
+  }
+  invisible(current)
+}
+
+#' Identifier of the active document
+#' @keywords internal
+document_id <- function(state) {
+  state$active_document %||% NULL
 }
 
 #' @keywords internal
@@ -74,10 +95,23 @@ document_path <- function(state) document(state)$path
 document_mode <- function(state) document(state)$mode
 
 #' @keywords internal
-document_set_text <- function(state, text) {
+document_title <- function(state, doc = document(state)) {
+  title <- doc$title %||% ""
+  if (nzchar(title)) return(title)
+  path <- doc$path %||% ""
+  if (nzchar(path)) return(basename(path))
+  section <- document_outline(doc$text %||% "", doc$mode %||% "r")
+  if (nrow(section) > 0L) return(section$title[[1L]])
+  tr("Untitled document")
+}
+
+#' @keywords internal
+document_set_text <- function(state, text, dirty = TRUE) {
   current <- document(state)
   current$text <- paste(text, collapse = "\n")
-  state$document <- current
+  if (isTRUE(dirty)) current$dirty <- TRUE
+  document_store(state, current)
+  if (isTRUE(dirty)) document_mark_dirty(state, TRUE)
   invisible(current$text)
 }
 
@@ -85,7 +119,10 @@ document_set_text <- function(state, text) {
 document_set_path <- function(state, path) {
   current <- document(state)
   current$path <- path
-  state$document <- current
+  if (!is.null(path) && nzchar(path) && is.null(current$title)) {
+    current$title <- basename(path)
+  }
+  document_store(state, current)
   invisible(path)
 }
 
@@ -104,10 +141,162 @@ document_set_mode <- function(state, mode) {
   }
   current <- document(state)
   current$mode <- mode
-  state$document <- current
+  document_store(state, current)
   document_enable_options(state, mode)
   state_touch(state)
   invisible(mode)
+}
+
+# -- registry ----------------------------------------------------------------
+
+#' Ensure the legacy buffer has a registry entry
+#'
+#' The application starts with an empty `state$document`; this function turns
+#' it into the first registry document so that multi-document features work
+#' without changing the historical callers.
+#' @keywords internal
+document_registry_ensure <- function(state) {
+  if (length(state$documents %||% list()) > 0L) return(invisible(state$active_document))
+  document_create(
+    state,
+    mode = state$document$mode %||% "r",
+    title = state$document$title %||% tr("Untitled document"),
+    text = state$document$text %||% "",
+    dirty = isTRUE(state$document$dirty),
+    activate = TRUE
+  )
+  invisible(state$active_document)
+}
+
+#' Create a document and make it active
+#'
+#' @param state Application state.
+#' @param mode `"r"`, `"rmd"` or `"rnw"`.
+#' @param title Document title.
+#' @param text Initial text.  When `NULL`, the mode template is used.
+#' @param path Optional file path.
+#' @param dirty Initial dirty state.
+#' @param activate Activate the new document.
+#' @return The document id, invisibly.
+#' @keywords internal
+document_create <- function(state, mode = "rmd",
+                            title = tr("Untitled document"), text = NULL,
+                            path = NULL, dirty = FALSE, activate = TRUE) {
+  if (!mode %in% document_modes()) {
+    stop(sprintf("Unknown document mode: %s", mode), call. = FALSE)
+  }
+  state$document_counter <- as.integer(state$document_counter %||% 0L) + 1L
+  id <- sprintf("document-%04d", state$document_counter)
+  if (is.null(text)) text <- document_join(document_template(mode, title))
+  doc <- list(
+    id = id,
+    title = title,
+    path = path,
+    mode = mode,
+    text = paste(text, collapse = "\n"),
+    dirty = isTRUE(dirty),
+    last_saved = if (!is.null(path) && file.exists(path)) Sys.time() else NULL,
+    autosave_path = NULL,
+    autosave_time = NULL
+  )
+  state$documents[[id]] <- doc
+  if (isTRUE(activate)) {
+    document_activate(state, id)
+  }
+  invisible(id)
+}
+
+#' Activate a document
+#' @keywords internal
+document_activate <- function(state, id) {
+  if (is.null(id) || is.null(state$documents[[id]])) {
+    stop(sprintf("Unknown document: %s",
+                 if (is.null(id)) "NULL" else id), call. = FALSE)
+  }
+  state$active_document <- id
+  state$document <- state$documents[[id]]
+  document_enable_options(state, state$document$mode)
+  state_touch(state)
+  invisible(id)
+}
+
+#' Close a document
+#'
+#' Closing the active document activates the most recent remaining one, or
+#' resets the buffer to an empty R script.
+#' @keywords internal
+document_close <- function(state, id = state$active_document) {
+  if (is.null(id) || is.null(state$documents[[id]])) {
+    return(invisible(FALSE))
+  }
+  state$documents[[id]] <- NULL
+  if (identical(state$active_document, id)) {
+    if (length(state$documents) > 0L) {
+      document_activate(state, names(state$documents)[[length(state$documents)]])
+    } else {
+      state$active_document <- NULL
+      state$document <- list(text = "", path = NULL, mode = "r",
+                             title = tr("Untitled document"), dirty = FALSE)
+      document_enable_options(state, "r")
+      state_touch(state)
+    }
+  } else {
+    state_touch(state)
+  }
+  invisible(TRUE)
+}
+
+#' List the open documents
+#' @return A data frame with `id`, `title`, `path`, `mode`, `dirty`,
+#'   `active` and `autosave`.
+#' @keywords internal
+document_list <- function(state) {
+  documents <- state$documents %||% list()
+  if (length(documents) == 0L) {
+    return(data.frame(
+      id = character(), title = character(), path = character(),
+      mode = character(), dirty = logical(), active = logical(),
+      autosave = logical(), stringsAsFactors = FALSE
+    ))
+  }
+  rows <- lapply(documents, function(doc) {
+    data.frame(
+      id = doc$id %||% "",
+      title = document_title(state, doc),
+      path = doc$path %||% "",
+      mode = doc$mode %||% "r",
+      dirty = isTRUE(doc$dirty),
+      active = identical(doc$id, state$active_document),
+      autosave = !is.null(doc$autosave_path) &&
+        nzchar(doc$autosave_path %||% ""),
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, rows)
+}
+
+#' Dirty state of the active document
+#' @keywords internal
+document_dirty <- function(state) {
+  isTRUE(document(state)$dirty) || isTRUE(state$document_dirty)
+}
+
+#' @keywords internal
+document_mark_dirty <- function(state, value = TRUE) {
+  state$document_dirty <- isTRUE(value)
+  current <- document(state)
+  current$dirty <- isTRUE(value)
+  document_store(state, current)
+  invisible(state$document_dirty)
+}
+
+#' @keywords internal
+document_mark_clean <- function(state) {
+  document_mark_dirty(state, FALSE)
+  current <- document(state)
+  current$last_saved <- Sys.time()
+  document_store(state, current)
+  invisible(NULL)
 }
 
 # -- templates ---------------------------------------------------------------
@@ -147,9 +336,30 @@ document_template <- function(mode = "rmd", title = "RcmdrShiny report") {
 #' Create a new document in the application state
 #' @keywords internal
 document_new <- function(state, mode = "rmd", title = "RcmdrShiny report") {
-  document_set_text(state, document_template(mode, title))
-  document_set_path(state, NULL)
-  document_set_mode(state, mode)
+  current <- document(state)
+  empty <- !nzchar(trimws(current$text %||% "")) &&
+    !isTRUE(current$dirty) &&
+    (is.null(current$path) || !nzchar(current$path %||% ""))
+  if (empty && !is.null(state$active_document)) {
+    current$mode <- mode
+    current$title <- title
+    current$path <- NULL
+    current$text <- document_join(document_template(mode, title))
+    current$dirty <- FALSE
+    current$last_saved <- NULL
+    current$autosave_path <- NULL
+    current$autosave_time <- NULL
+    document_store(state, current)
+    document_enable_options(state, mode)
+    document_mark_clean(state)
+    state_touch(state)
+    return(invisible(TRUE))
+  }
+  document_create(
+    state, mode = mode, title = title,
+    text = document_join(document_template(mode, title)),
+    dirty = FALSE, activate = TRUE
+  )
   invisible(TRUE)
 }
 
@@ -400,11 +610,10 @@ document_switch_mode <- function(state, mode) {
     # rmd <-> rnw: the markup languages are different, so keep the code and
     # use the target template; prose is not converted.
     script <- document_script_from_chunks(text, current)
-    state$document <- list(
-      text = document_join(document_template(mode)),
-      path = document_path(state),
-      mode = mode
-    )
+    current_doc <- document(state)
+    current_doc$text <- document_join(document_template(mode))
+    current_doc$mode <- mode
+    document_store(state, current_doc)
     if (nzchar(trimws(script))) document_append_chunk(state, script, mode)
     document_set_mode(state, mode)
     return(invisible(TRUE))
@@ -456,18 +665,27 @@ document_format_available <- function(format = "html", mode = "rmd") {
 #' @return A list with `file`, `url`, `format` and `input`.
 #' @export
 document_knit <- function(state, format = "html") {
+  started <- Sys.time()
+  fail <- function(message) {
+    document_knit_record(
+      state, format = format, status = "error", error = message,
+      duration_ms = as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
+    )
+    stop(message, call. = FALSE)
+  }
+
   mode <- document_mode(state)
   if (identical(mode, "r")) {
-    stop("Switch to an R Markdown or knitr document first.", call. = FALSE)
+    fail("Switch to an R Markdown or knitr document first.")
   }
   text <- document_text(state)
   if (!nzchar(trimws(text))) {
-    stop("The document is empty.", call. = FALSE)
+    fail("The document is empty.")
   }
   format <- match.arg(format, c("html", "pdf", "word"))
   if (!document_format_available(format, mode)) {
-    stop(sprintf("The '%s' format is not available: install the required tools.",
-                 format), call. = FALSE)
+    fail(sprintf("The '%s' format is not available: install the required tools.",
+                 format))
   }
 
   directory <- state$knit_dir
@@ -480,28 +698,32 @@ document_knit <- function(state, format = "html") {
   input <- file.path(directory, paste0("document", extension))
   writeLines(text, input, useBytes = TRUE)
 
-  if (identical(mode, "rnw")) {
-    tex <- knitr::knit(input, output = sub("\\.Rnw$", ".tex", input),
-                       quiet = TRUE, envir = state$env)
-    old <- setwd(dirname(tex))
-    on.exit(setwd(old), add = TRUE)
-    tools::texi2pdf(basename(tex), clean = TRUE, quiet = TRUE)
-    output <- file.path(dirname(tex), sub("\\.tex$", ".pdf", basename(tex)))
-  } else {
-    output_format <- switch(
-      format,
-      html = rmarkdown::html_document(),
-      pdf = rmarkdown::pdf_document(),
-      word = rmarkdown::word_document()
-    )
-    output <- rmarkdown::render(
-      input, output_format = output_format, output_dir = directory,
-      envir = state$env, quiet = TRUE
-    )
-  }
+  output <- tryCatch({
+    if (identical(mode, "rnw")) {
+      tex <- knitr::knit(input, output = sub("\\.Rnw$", ".tex", input),
+                         quiet = TRUE, envir = state$env)
+      old <- setwd(dirname(tex))
+      on.exit(setwd(old), add = TRUE)
+      tools::texi2pdf(basename(tex), clean = TRUE, quiet = TRUE)
+      file.path(dirname(tex), sub("\\.tex$", ".pdf", basename(tex)))
+    } else {
+      output_format <- switch(
+        format,
+        html = rmarkdown::html_document(),
+        pdf = rmarkdown::pdf_document(),
+        word = rmarkdown::word_document()
+      )
+      rmarkdown::render(
+        input, output_format = output_format, output_dir = directory,
+        envir = state$env, quiet = TRUE
+      )
+    }
+  }, error = function(e) {
+    fail(paste(tr("Knit failed:"), conditionMessage(e)))
+  })
 
   if (!file.exists(output)) {
-    stop("The document was not produced. Check the Messages tab.", call. = FALSE)
+    fail("The document was not produced. Check the Messages tab.")
   }
 
   url <- NULL
@@ -511,15 +733,21 @@ document_knit <- function(state, format = "html") {
     url <- paste0(prefix, "/", basename(output))
   }
 
+  duration_ms <- as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
   result <- list(
     file = output,
     url = url,
     format = if (identical(mode, "rnw")) "pdf" else format,
     input = input,
     mode = mode,
-    time = Sys.time()
+    time = Sys.time(),
+    duration_ms = duration_ms
   )
   state$knit_result <- result
+  document_knit_record(
+    state, format = result$format, file = output, url = url, status = "ok",
+    duration_ms = duration_ms
+  )
   state_touch(state)
   invisible(result)
 }
@@ -530,8 +758,14 @@ document_save <- function(state, path = document_path(state)) {
   if (is.null(path) || !nzchar(path)) {
     stop("Choose a file name first.", call. = FALSE)
   }
+  if (isTRUE(state$options$document_backup) && file.exists(path)) {
+    try(file.copy(path, paste0(path, ".bak"), overwrite = TRUE),
+        silent = TRUE)
+  }
   writeLines(document_text(state), path, useBytes = TRUE)
   document_set_path(state, path)
+  document_mark_clean(state)
+  document_remove_autosave(state)
   state_touch(state)
   invisible(path)
 }
@@ -577,11 +811,412 @@ document_open <- function(state, path) {
   if (!file.exists(path)) {
     stop(sprintf("File not found: %s", path), call. = FALSE)
   }
-  text <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
   mode <- document_detect_mode(path)
-  document_set_text(state, paste(text, collapse = "\n"))
-  document_set_path(state, path)
-  document_set_mode(state, mode)
-  if (!identical(mode, "r")) document_enable_options(state, mode)
-  invisible(text)
+  document_create(
+    state, mode = mode, title = basename(path),
+    text = paste(lines, collapse = "\n"), path = path,
+    dirty = FALSE, activate = TRUE
+  )
+  invisible(lines)
+}
+
+# -- outline, chunks and front matter ----------------------------------------
+
+#' Outline of the headings outside code chunks
+#'
+#' @param text Document text.
+#' @param mode Document mode.
+#' @return A data frame with `level`, `title` and `line` (1-based).
+#' @keywords internal
+document_outline <- function(text, mode = "rmd") {
+  empty <- data.frame(level = integer(), title = character(),
+                      line = integer(), stringsAsFactors = FALSE)
+  if (identical(mode, "r")) return(empty)
+  lines <- document_lines(text)
+  if (length(lines) == 0L) return(empty)
+  inside <- document_chunk_lines(text, mode)
+  rows <- list()
+  for (i in seq_along(lines)) {
+    if (inside[[i]]) next
+    line <- lines[[i]]
+    if (identical(mode, "rnw")) {
+      hit <- regmatches(
+        line,
+        regexec("^\\s*\\\\(section|subsection|subsubsection)\\*?\\{(.*)\\}\\s*$",
+                line)
+      )[[1L]]
+      if (length(hit) == 3L) {
+        level <- switch(hit[[2L]], section = 1L, subsection = 2L, 3L)
+        rows[[length(rows) + 1L]] <- data.frame(
+          level = level, title = trimws(hit[[3L]]), line = i,
+          stringsAsFactors = FALSE
+        )
+      }
+    } else {
+      hit <- regmatches(line, regexec("^(#{1,6})\\s+(.+?)\\s*#*\\s*$", line))[[1L]]
+      if (length(hit) == 3L) {
+        rows[[length(rows) + 1L]] <- data.frame(
+          level = nchar(hit[[2L]]), title = trimws(hit[[3L]]), line = i,
+          stringsAsFactors = FALSE
+        )
+      }
+    }
+  }
+  if (length(rows) == 0L) return(empty)
+  do.call(rbind, rows)
+}
+
+#' Code chunks as a table
+#'
+#' @param text Document text.
+#' @param mode Document mode.
+#' @return A data frame with `id`, `label`, `engine`, `start`, `end`, `code`
+#'   and `header`.
+#' @keywords internal
+document_chunks <- function(text, mode = "rmd") {
+  empty <- data.frame(
+    id = character(), label = character(), engine = character(),
+    start = integer(), end = integer(), code = character(),
+    header = character(), stringsAsFactors = FALSE
+  )
+  if (identical(mode, "r")) return(empty)
+  lines <- document_lines(text)
+  bounds <- document_chunk_bounds(text, mode)
+  if (nrow(bounds) == 0L) return(empty)
+  rows <- lapply(seq_len(nrow(bounds)), function(i) {
+    start <- bounds$start[[i]]
+    end <- bounds$end[[i]]
+    header <- lines[[start]]
+    parsed <- document_parse_chunk_header(header, mode)
+    from <- start + 1L
+    to <- end - 1L
+    code <- if (to < from) "" else paste(lines[seq.int(from, to)], collapse = "\n")
+    id <- if (nzchar(parsed$label)) {
+      paste0("chunk-", parsed$label)
+    } else {
+      sprintf("chunk-%02d", i)
+    }
+    data.frame(
+      id = id, label = parsed$label, engine = parsed$engine,
+      start = start, end = end, code = code, header = header,
+      stringsAsFactors = FALSE
+    )
+  })
+  table <- do.call(rbind, rows)
+  # Make identifiers unique even when two chunks share a label.
+  if (anyDuplicated(table$id)) {
+    table$id <- make.unique(table$id, sep = "-")
+  }
+  table
+}
+
+#' Parse a chunk header
+#' @keywords internal
+document_parse_chunk_header <- function(header, mode = "rmd") {
+  header <- paste(header, collapse = " ")
+  engine <- "r"
+  label <- ""
+  if (identical(mode, "rnw")) {
+    hit <- regmatches(header, regexec("^\\s*<<(.*)>>=\\s*$", header))[[1L]]
+    content <- if (length(hit) == 2L) hit[[2L]] else ""
+    if (identical(content, "")) content <- "r"
+  } else {
+    hit <- regmatches(header, regexec("^\\s*```\\s*\\{(.*)\\}\\s*$", header))[[1L]]
+    content <- if (length(hit) == 2L) hit[[2L]] else ""
+  }
+  parts <- trimws(strsplit(content, ",", fixed = TRUE)[[1L]])
+  parts <- parts[nzchar(parts)]
+  if (identical(mode, "rnw")) {
+    # <<label, options>>= has no engine: knitr chunks are always R.
+    engine <- "r"
+    if (length(parts) > 0L && !grepl("=", parts[[1L]], fixed = TRUE)) {
+      label <- parts[[1L]]
+    }
+    return(list(engine = engine, label = label))
+  }
+  if (length(parts) > 0L) {
+    words <- strsplit(parts[[1L]], "[[:space:]]+")[[1L]]
+    engine <- words[[1L]]
+    if (length(words) > 1L && !grepl("=", words[[2L]], fixed = TRUE)) {
+      label <- words[[2L]]
+    }
+    parts <- parts[-1L]
+  }
+  if (!nzchar(label) && length(parts) > 0L &&
+      !grepl("=", parts[[1L]], fixed = TRUE)) {
+    label <- parts[[1L]]
+  }
+  list(engine = engine, label = label)
+}
+
+#' Find a chunk by its stable id
+#' @keywords internal
+document_chunk_by_id <- function(text, id, mode = "rmd") {
+  chunks <- document_chunks(text, mode)
+  if (nrow(chunks) == 0L) return(NULL)
+  index <- match(id, chunks$id)
+  if (is.na(index)) return(NULL)
+  chunks[index, , drop = FALSE]
+}
+
+#' Parse the YAML front matter
+#'
+#' @param text Document text.
+#' @return A list with `values`, `lines`, `bounds` (start/end line numbers or
+#'   `NULL`) and `raw`.
+#' @keywords internal
+document_front_matter <- function(text) {
+  lines <- document_lines(text)
+  empty <- list(values = list(), lines = character(), bounds = NULL, raw = "")
+  if (length(lines) < 2L || !identical(trimws(lines[[1L]]), "---")) return(empty)
+  closing <- which(trimws(lines) == "---")
+  closing <- closing[closing > 1L]
+  if (length(closing) == 0L) return(empty)
+  end <- closing[[1L]]
+  front <- if (end > 2L) lines[2:(end - 1L)] else character()
+  list(
+    values = document_parse_yaml(front),
+    lines = front,
+    bounds = c(1L, end),
+    raw = paste(front, collapse = "\n")
+  )
+}
+
+#' Parse simple top-level YAML
+#' @keywords internal
+document_parse_yaml <- function(lines) {
+  if (length(lines) == 0L) return(list())
+  if (requireNamespace("yaml", quietly = TRUE)) {
+    parsed <- tryCatch(
+      yaml::yaml.load(paste(lines, collapse = "\n")),
+      error = function(e) NULL
+    )
+    if (is.list(parsed)) return(parsed)
+  }
+  values <- list()
+  for (line in lines) {
+    if (!nzchar(trimws(line)) || grepl("^\\s*#", line)) next
+    hit <- regmatches(line, regexec("^\\s*([A-Za-z0-9_.-]+)\\s*:\\s*(.*)$", line))[[1L]]
+    if (length(hit) != 3L) next
+    value <- trimws(hit[[3L]])
+    value <- sub("\\s+#.*$", "", value)
+    value <- sub("^\"(.*)\"$", "\\1", value)
+    value <- sub("^'(.*)'$", "\\1", value)
+    if (grepl("^(true|yes)$", value, ignore.case = TRUE)) {
+      value <- TRUE
+    } else if (grepl("^(false|no)$", value, ignore.case = TRUE)) {
+      value <- FALSE
+    } else if (grepl("^-?[0-9]+(\\.[0-9]+)?$", value)) {
+      value <- as.numeric(value)
+    }
+    values[[hit[[2L]]]] <- value
+  }
+  values
+}
+
+#' Serialise simple top-level YAML
+#' @keywords internal
+document_yaml_lines <- function(values) {
+  if (length(values) == 0L) return(character())
+  vapply(names(values), function(name) {
+    value <- values[[name]]
+    if (is.null(value) || (length(value) == 1L && is.na(value))) {
+      return(sprintf("%s: null", name))
+    }
+    if (is.logical(value)) {
+      return(sprintf("%s: %s", name, if (isTRUE(value)) "true" else "false"))
+    }
+    if (is.numeric(value)) {
+      return(sprintf("%s: %s", name, format(value, scientific = FALSE)))
+    }
+    if ((is.list(value) || length(value) > 1L) &&
+        requireNamespace("yaml", quietly = TRUE)) {
+      nested <- tryCatch(
+        yaml::as.yaml(stats::setNames(list(value), name)),
+        error = function(e) NULL
+      )
+      if (!is.null(nested)) return(sub("\n$", "", nested))
+    }
+    value <- paste(as.character(value), collapse = ", ")
+    needs_quote <- grepl("[^A-Za-z0-9._ /-]", value) ||
+      grepl("^\\s|\\s$", value) || identical(value, "")
+    if (needs_quote) {
+      value <- sprintf('"%s"', gsub('"', '\\\\"', value))
+    }
+    sprintf("%s: %s", name, value)
+  }, character(1), USE.NAMES = FALSE)
+}
+
+#' Set or merge YAML front matter fields
+#'
+#' Fields that are not mentioned in `values` are preserved, so the form never
+#' loses hand-written metadata.  A `NULL` value removes a field.
+#' @keywords internal
+document_set_front_matter <- function(state, values) {
+  text <- document_text(state)
+  current <- document_front_matter(text)
+  merged <- current$values %||% list()
+  for (name in names(values)) {
+    value <- values[[name]]
+    if (is.null(value) || (length(value) == 1L && is.na(value)) ||
+        (is.character(value) && length(value) == 1L && !nzchar(value))) {
+      merged[[name]] <- NULL
+    } else {
+      merged[[name]] <- value
+    }
+  }
+  front <- document_yaml_lines(merged)
+  lines <- document_lines(text)
+  block <- c("---", front, "---")
+  if (!is.null(current$bounds)) {
+    start <- current$bounds[[1L]]
+    end <- current$bounds[[2L]]
+    before <- if (start > 1L) lines[seq_len(start - 1L)] else character()
+    after <- if (end < length(lines)) lines[seq.int(end + 1L, length(lines))] else character()
+    lines <- c(before, block, after)
+  } else {
+    body <- if (length(lines) > 0L) c("", lines) else character()
+    lines <- c(block, body)
+  }
+  document_set_text(state, document_join(lines))
+  invisible(merged)
+}
+
+#' Front matter values of the active document
+#' @keywords internal
+document_front_matter_values <- function(state) {
+  document_front_matter(document_text(state))$values
+}
+
+# -- autosave and recovery ---------------------------------------------------
+
+#' Directory used for autosave files
+#' @keywords internal
+document_autosave_dir <- function(state) {
+  directory <- state$autosave_dir
+  if (is.null(directory) || !nzchar(directory)) {
+    directory <- file.path(tempdir(), "rcmdrshiny-autosave")
+  }
+  dir.create(directory, recursive = TRUE, showWarnings = FALSE)
+  directory
+}
+
+#' Autosave path for a document
+#' @keywords internal
+document_autosave_path <- function(state, doc = document(state)) {
+  id <- doc$id %||% state$active_document %||% "document"
+  extension <- document_extension(doc$mode %||% "r")
+  file.path(document_autosave_dir(state),
+            paste0(id, ".autosave.", extension))
+}
+
+#' Write the active document to its autosave file
+#' @return `TRUE` when a file was written.
+#' @keywords internal
+document_autosave <- function(state) {
+  if (!document_dirty(state)) return(invisible(FALSE))
+  doc <- document(state)
+  path <- document_autosave_path(state, doc)
+  writeLines(doc$text %||% "", path, useBytes = TRUE)
+  doc$autosave_path <- path
+  doc$autosave_time <- Sys.time()
+  document_store(state, doc)
+  state$autosave_time <- doc$autosave_time
+  invisible(TRUE)
+}
+
+#' Remove the autosave file of the active document
+#' @keywords internal
+document_remove_autosave <- function(state) {
+  doc <- document(state)
+  path <- doc$autosave_path
+  if (!is.null(path) && nzchar(path) && file.exists(path)) unlink(path)
+  doc$autosave_path <- NULL
+  doc$autosave_time <- NULL
+  document_store(state, doc)
+  invisible(NULL)
+}
+
+#' Autosave files available for recovery
+#' @keywords internal
+document_recoveries <- function(state, directory = NULL) {
+  directory <- directory %||% document_autosave_dir(state)
+  if (!dir.exists(directory)) {
+    state$recoveries <- list()
+    return(data.frame(path = character(), title = character(),
+                      time = character(), stringsAsFactors = FALSE))
+  }
+  files <- list.files(directory, pattern = "\\.autosave\\.(Rmd|Rnw|R)$",
+                      full.names = TRUE)
+  rows <- lapply(files, function(path) {
+    info <- file.info(path)
+    data.frame(
+      path = path,
+      title = sub("\\.autosave\\.[A-Za-z]+$", "", basename(path)),
+      time = format(info$mtime %||% Sys.time(), "%Y-%m-%d %H:%M:%S"),
+      stringsAsFactors = FALSE
+    )
+  })
+  table <- if (length(rows) == 0L) {
+    data.frame(path = character(), title = character(), time = character(),
+               stringsAsFactors = FALSE)
+  } else {
+    do.call(rbind, rows)
+  }
+  state$recoveries <- table
+  table
+}
+
+#' Load an autosave file into a new document
+#' @keywords internal
+document_recover <- function(state, path) {
+  if (!file.exists(path)) stop("The recovery file is missing.", call. = FALSE)
+  lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  mode <- document_detect_mode(path)
+  title <- sub("\\.autosave\\.[A-Za-z]+$", "", basename(path))
+  document_create(
+    state, mode = mode, title = title,
+    text = paste(lines, collapse = "\n"), dirty = TRUE, activate = TRUE
+  )
+  invisible(TRUE)
+}
+
+# -- knit manager ------------------------------------------------------------
+
+#' Why a knit format is unavailable
+#' @keywords internal
+document_format_reason <- function(format = "html", mode = "rmd") {
+  if (document_format_available(format, mode)) return("")
+  if (identical(mode, "rnw")) {
+    return(tr("Knitting an Rnw document needs knitr and a LaTeX installation (pdflatex)."))
+  }
+  if (identical(format, "html")) {
+    return(tr("HTML output needs rmarkdown, knitr and Pandoc."))
+  }
+  if (identical(format, "pdf")) {
+    return(tr("PDF output needs rmarkdown, knitr, Pandoc and a LaTeX installation (pdflatex)."))
+  }
+  tr("Word output needs rmarkdown, knitr and Pandoc.")
+}
+
+#' Record a knit attempt
+#' @keywords internal
+document_knit_record <- function(state, format, file = NULL, url = NULL,
+                                 status = "ok", error = NULL,
+                                 duration_ms = NA_real_) {
+  state$knit_counter <- as.integer(state$knit_counter %||% 0L) + 1L
+  entry <- list(
+    id = sprintf("knit-%04d", state$knit_counter),
+    format = format,
+    file = file,
+    url = url,
+    status = status,
+    error = error,
+    time = Sys.time(),
+    duration_ms = duration_ms
+  )
+  history <- c(list(entry), state$knit_history %||% list())
+  state$knit_history <- utils::head(history, 20L)
+  invisible(state$knit_history)
 }

@@ -57,7 +57,23 @@ AppState <- function(env = globalenv()) {
   # Markdown/knitr document.  The path, mode and text live here so dialogs and
   # direct commands share the same buffer.
   state$document <- list(text = "", path = NULL, mode = "r")
+  # Report Studio: the document registry.  `state$document` remains the
+  # active buffer for backward compatibility; every registry entry is kept in
+  # sync with it.
+  state$documents <- list()
+  state$active_document <- NULL
+  state$document_counter <- 0L
+  state$document_dirty <- FALSE
+  state$autosave_dir <- NULL
+  state$autosave_time <- NULL
+  state$recoveries <- list()
+  # Executable cells: chunk id -> captured output.  Session state, not document
+  # content; the knit always re-executes the chunks.
+  state$cell_outputs <- list()
+  state$cell_counter <- 0L
   state$knit_result <- NULL
+  state$knit_history <- list()
+  state$knit_counter <- 0L
   # Set by the Shiny server so direct commands can refresh the editor.
   state$sync_document <- NULL
   state$open_dialog <- NULL
@@ -92,6 +108,9 @@ AppState <- function(env = globalenv()) {
     chart_preview_width = 640L,
     chart_preview_height = 420L,
     chart_preview_cache = 12L,
+    report_preview_cache = 8L,
+    autosave_interval = 30000L,
+    document_backup = TRUE,
     checkpoint_max = 20L,
     checkpoint_max_bytes = 50 * 1024^2,
     import_preview_rows = 20L,
