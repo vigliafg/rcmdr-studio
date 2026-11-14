@@ -38,6 +38,7 @@ reale dei comandi, debugger R, esecuzione in background.
 | Hash | Messaggio | Note |
 |---|---|---|
 | `165a70c` | feat: Wave 4 Workbench | Commit principale dell'Onda 4 |
+| `22ce9e2` | fix: allow multi-line console input with Shift+Enter | Correzione finale della console |
 | `8f1458c` | docs: add Wave 3 Report Studio handoff diary | Ultimo commit Onda 3 |
 
 Il diario viene committato subito dopo il commit principale.
