@@ -10,7 +10,7 @@
 RcmdrShiny.plugin(name, menus = NULL, dialogs = list(),
   commands = list(), description = NULL, version = NULL,
   tcltk = FALSE, predicates = list(), replace = FALSE, help = NULL,
-  aliases = NULL)
+  aliases = NULL, api_version = NULL)
 
 plugin_dialog(id, title, ui, on_ok, on_open = NULL,
   observers = NULL, size = "l", help = NULL, help_package = NULL,
@@ -47,6 +47,9 @@ column of plugin menu entries.}
 
 \item{replace}{Allow this plugin to replace an earlier plugin with the same
 name and to override command, dialog or predicate names.}
+
+\item{api_version}{Plugin contract version; defaults to the current SDK
+version and may not be newer than the running package.}
 
 \item{id}{Command name used in the plugin menu file.}
 

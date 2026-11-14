@@ -186,7 +186,7 @@ onboarding_checklist <- function(state) {
     list(
       id = "project",
       label = tr("Save a project"),
-      description = tr("Project persistence is part of the platform release."),
+      description = tr("Save data, documents and plots in a project."),
       done = onboarding_did_project(state),
       available = feature_enabled(state, "project"),
       action = "project"

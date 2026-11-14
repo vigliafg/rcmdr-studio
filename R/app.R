@@ -537,6 +537,14 @@ app_css <- function() {
     body.rcmdr-dark .rcmdr-status-warning { background: #4a2c07; color: #fde68a; }
     body.rcmdr-dark .rcmdr-status-error { background: #4a1512; color: #fecaca; }
     body.rcmdr-dark .rcmdr-status-muted { background: #24303d; color: #bfcbd9; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
     "
   )
 }
@@ -1129,6 +1137,7 @@ home_pane_ui <- function() {
     htmltools::div(
       class = "rcmdr-home-grid",
       uiOutput("home_continue"),
+      uiOutput("home_projects"),
       uiOutput("home_checklist"),
       uiOutput("home_recent"),
       uiOutput("home_health"),
@@ -1331,6 +1340,36 @@ app_server <- function(env = globalenv()) {
       invisible(value)
     }
     state$sync_document <- sync_editor
+
+    # Project autosave.  The timer is cheap: it writes only when a project is
+    # open or has unsaved metadata, and project_autosave() is atomic.
+    project_autosave_timer <- shiny::reactiveTimer(
+      as.integer(state$options$autosave_interval %||% 30000L)
+    )
+    shiny::observeEvent(project_autosave_timer(), {
+      if (!is.null(state$project_path) || isTRUE(state$project_dirty)) {
+        project_autosave(state)
+      }
+    }, ignoreInit = TRUE)
+
+    # Offer recovery once, when the most recent project has a newer autosave.
+    if (isTRUE(getOption("RcmdrShiny.recovery_prompt", TRUE))) {
+      session$onFlushed(function() {
+        recent <- tryCatch(project_recent(limit = 1L), error = function(e) NULL)
+        if (is.null(recent) || nrow(recent) == 0L) return(invisible(NULL))
+        info <- tryCatch(
+          project_recovery_info(recent$path[[1L]]),
+          error = function(e) NULL
+        )
+        if (is.null(info) || !isTRUE(info$available) ||
+            !isTRUE(info$newer)) {
+          return(invisible(NULL))
+        }
+        state$project_recovery_path <- info$path
+        shiny::showModal(project_recovery_modal(info))
+        invisible(NULL)
+      }, once = TRUE)
+    }
 
     # Read the editor content even when a tick-driven observer runs before the
     # input binding has propagated the latest keystrokes.
@@ -2421,10 +2460,68 @@ app_server <- function(env = globalenv()) {
     }, ignoreInit = TRUE)
 
     observeEvent(input$home_check_project, {
-      showNotification(
-        tr("Project persistence is not available in this release yet."),
-        type = "message", duration = 5
-      )
+      state$open_dialog("projectNew")
+    }, ignoreInit = TRUE)
+
+    output$home_projects <- renderUI({
+      tick()
+      language_revision()
+      project_home_ui(state)
+    })
+
+    observeEvent(input$home_project_new, {
+      state$open_dialog("projectNew")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_project_open, {
+      state$open_dialog("projectOpen")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_project_save, {
+      action <- direct_commands()[["projectSave"]]
+      if (!is.null(action)) action(state)
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_project_bundle, {
+      state$open_dialog("projectBundle")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_project_recent_open, {
+      path <- input$home_project_recent %||% ""
+      if (!nzchar(path)) return()
+      result <- tryCatch(project_load(state, path), error = function(e) e)
+      if (inherits(result, "error")) {
+        showNotification(conditionMessage(result), type = "error")
+        return()
+      }
+      if (is.function(state$sync_document)) state$sync_document()
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$project_recovery_recover, {
+      path <- state$project_recovery_path
+      removeModal()
+      if (is.null(path)) return()
+      result <- tryCatch(project_recover(state, path), error = function(e) e)
+      if (inherits(result, "error")) {
+        showNotification(conditionMessage(result), type = "error")
+        return()
+      }
+      if (is.function(state$sync_document)) state$sync_document()
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$project_recovery_ignore, {
+      state$project_recovery_ignored <- TRUE
+      removeModal()
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$project_recovery_delete, {
+      path <- state$project_recovery_path
+      removeModal()
+      if (!is.null(path)) unlink(paste0(path, ".autosave"))
+      state$project_recovery_ignored <- TRUE
     }, ignoreInit = TRUE)
 
     output$home_continue <- renderUI({
@@ -2491,29 +2588,19 @@ app_server <- function(env = globalenv()) {
     })
 
     output$home_health <- renderUI({
-      version <- tryCatch(
-        as.character(utils::packageVersion("RcmdrShiny")),
-        error = function(e) "?"
-      )
-      pandoc <- tryCatch(
-        rmarkdown::pandoc_available(),
-        error = function(e) FALSE
-      )
-      topics <- tryCatch(nrow(help_catalog()), error = function(e) NA_integer_)
-      htmltools::tags$div(
-        class = "rcmdr-home-card",
-        htmltools::tags$h5(tr("Environment")),
-        htmltools::tags$p(class = "small text-muted mb-1",
-                          sprintf(tr("RcmdrShiny %s"), version)),
-        htmltools::tags$p(class = "small text-muted mb-1",
-                          sprintf(tr("R %s"), getRversion())),
-        htmltools::tags$p(class = "small text-muted mb-1",
-                          sprintf(tr("pandoc: %s"),
-                                  if (isTRUE(pandoc)) tr("available") else tr("missing"))),
-        htmltools::tags$p(class = "small text-muted mb-0",
-                          sprintf(tr("%s help topics"), topics))
-      )
+      tick()
+      language_revision()
+      health_panel_ui(state)
     })
+
+    observeEvent(input$health_refresh, {
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$health_diagnostics, {
+      action <- direct_commands()[["helpDiagnostics"]]
+      if (!is.null(action)) action(state)
+    }, ignoreInit = TRUE)
 
     outputOptions(output, "history_cards", suspendWhenHidden = FALSE)
     outputOptions(output, "console_log", suspendWhenHidden = FALSE)

@@ -128,7 +128,24 @@ AppState <- function(env = globalenv()) {
   state$model_number <- 0L
   state$revision <- 0L
   state$busy <- FALSE
+
+  # Project persistence (Wave 7).  `project_path` is the saved file, while
+  # `project_title` is the display name.  The dirty flag is set by mutations
+  # that change the project payload; autosave and recovery use the separate
+  # `.autosave` file beside the project.
+  state$project_path <- NULL
+  state$project_title <- NULL
+  state$project_created <- NULL
+  state$project_modified <- NULL
+  state$project_dirty <- FALSE
+  state$project_autosave_time <- NULL
+  state$project_recent_file <- NULL
+  state$project_models <- list()
+  state$session_checkpoints <- list()
+  state$session_checkpoint_counter <- 0L
+
   state$session <- NULL
+  state$session_started <- Sys.time()
   state$set_script <- NULL
   state$plot_dir <- NULL
   state$plot_prefix <- NULL
@@ -152,6 +169,7 @@ AppState <- function(env = globalenv()) {
     script_format = TRUE,
     checkpoint_max = 20L,
     checkpoint_max_bytes = 50 * 1024^2,
+    session_checkpoint_max = 10L,
     import_preview_rows = 20L,
     use_markdown = FALSE,
     use_knitr = FALSE,
@@ -162,6 +180,12 @@ AppState <- function(env = globalenv()) {
     menu_recent_length = 8L,
     persist_preferences = TRUE,
     preferences_file = NULL,
+    project_recent_length = 8L,
+    project_history = FALSE,
+    project_autosave = TRUE,
+    script_output_cells = 50L,
+    knit_history_length = 20L,
+    plugin_lazy = FALSE,
     workflow_step_limit = 50L,
     features = default_features(),
     capabilities = rcmdr_capabilities()
@@ -180,6 +204,9 @@ is_app_state <- function(state) inherits(state, "RcmdrShinyState")
 state_touch <- function(state) {
   if (!is_app_state(state)) return(invisible(NULL))
   state$revision <- state$revision + 1L
+  # Any session mutation makes an open project dirty.  Project save/load
+  # clears the flag after calling state_touch().
+  if (!is.null(state$project_path)) state$project_dirty <- TRUE
   notify <- state$notify
   if (is.function(notify)) notify()
   invisible(state$revision)

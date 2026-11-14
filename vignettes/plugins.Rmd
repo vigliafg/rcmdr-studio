@@ -52,9 +52,51 @@ Rscript tools/new_plugin.R Export --title "Export R output" \
 The package must depend on `RcmdrShiny (>= 1.1.0)`, export
 `rcmdrshiny_plugin()`, and must not import `tcltk` or `tcltk2`.
 
+The 15 plugins shipped under `plugins/` are **first-party modules**: they are
+maintained and versioned with the application and target the internal SDK v2
+contract. There is no external compatibility promise for third-party Tk
+plugins.
+
 # Menu file
 
-Plugin menus use the same tabular format as `Rcmdr-menus.txt`:
+First-party modules use the stable registry fragment at
+`inst/menus/module.yml`:
+
+```yaml
+version: 1
+module: demo
+groups:
+  - id: menu.demo
+    parent: ""
+    label: Demo plugin
+    order: 5000
+items:
+  - id: item.demo.hello
+    parent: menu.demo
+    label: "Demo: Hello"
+    command: demoHello
+    order: 10
+  - id: item.demo.dialog
+    parent: menu.demo
+    label: "Demo: Shiny dialog"
+    command: demoDialog
+    order: 20
+```
+
+The fragment declares `groups`, `items` and optional `removes`. A module may
+remove an individual core command it replaces:
+
+```yaml
+removes:
+  - target: numericalSummaries
+    kind: command
+    source_module: core
+```
+
+A first-party module does not delete a whole core menu: the curated shell and
+its help entries remain available.
+
+Legacy script plugins may still use the tabular `Rcmdr-menus.txt` format:
 
 ```text
     menu    demoMenu        topMenu         ""                          ""          ""  ""
@@ -65,9 +107,7 @@ Plugin menus use the same tabular format as `Rcmdr-menus.txt`:
 
 The first column is `menu`, `item` or `remove`; the remaining columns follow
 Rcmdr's conventions for parent, label, command, activation and installation
-expressions.  Items can be inserted into the core menus (for example
-`item helpMenu command ...`) and `remove menuId` deletes an existing menu with
-its children.  Top-level cascades are placed before Tools and Help.
+expressions.
 
 # Registering the plugin
 
@@ -112,6 +152,54 @@ rcmdrshiny_plugin <- function() {
 dialog runtime.  `plugin_dialog()` forwards `help` and `help_package` to the
 dialog's Help button.
 
+# SDK v2
+
+`plugin_api_version()` returns the current contract version (2).
+`RcmdrShiny.plugin()` accepts `api_version` and rejects a version newer than
+the running package. Each plugin records an `api_version` and a `module_id`
+derived from its package name. `plugin_contract()` documents the stable fields:
+
+| Area | Stable fields |
+|---|---|
+| Menu | `module_id`, `menu_id`, `item_id`, `command_id` |
+| Dialog | `id`, `title`, `ui`, `on_ok`, `observers`, `help`, `help_topic`, `size`, `preview` |
+| Extensions | component, preset, workflow, chart type, report template, help examples |
+
+The extension hooks are additive:
+
+```r
+RcmdrShiny::plugin_ui_component("badge", render = function(text) {
+  htmltools::tags$span(class = "badge", text)
+})
+RcmdrShiny::plugin_register_preset(
+  "numericalSummaries", "Teaching", list(mean = TRUE, sd = TRUE)
+)
+RcmdrShiny::plugin_register_workflow(RcmdrShiny:::workflow_spec(
+  id = "demo-flow", title = "Demo flow", description = "Two steps",
+  steps = list(RcmdrShiny:::workflow_step("one", "One", command = "countMissing"))
+))
+RcmdrShiny::plugin_register_chart_type(list(
+  id = "demo-chart", label = "Demo chart", group = "custom", mapping = list()
+))
+RcmdrShiny::plugin_register_report_template(list(
+  id = "demo-report", title = "Demo report",
+  description = "A short report", build = function(...) "# Demo"
+))
+RcmdrShiny::plugin_help_try_it("projects", list(
+  list(code = "RcmdrShiny:::project_summary(AppState())",
+       title = "Project summary", runnable = TRUE)
+))
+```
+
+`plugin_dialog_preview(spec)` renders a dialog body without a session, which is
+useful in package tests and documentation. `plugin_ui_component()` has two
+forms: with `render` it registers a factory; without it, it renders the
+registered component.
+
+A plugin cannot replace a built-in workflow, chart type or report template by
+id; it can only add a new one. Presets merge with the session presets, and a
+session preset with the same name wins.
+
 # Activation predicates
 
 The `predicates` argument binds plugin functions in the menu activation
@@ -139,7 +227,10 @@ Plugin packages can use the exported state accessors and widgets:
 
 # Loading plugins
 
-Package plugins are loaded by name:
+Package plugins are loaded by name. The loader can queue them with
+`load_plugins(..., lazy = TRUE)` or
+`options(RcmdrShiny.lazy_plugins = TRUE)`; the catalogue is materialised on the
+first menu or command lookup.
 
 ```r
 RcmdrShiny::run(plugins = "RcmdrShinyPlugin.Export")
@@ -179,7 +270,10 @@ Rscript tools/inventory_plugin.R /path/to/RcmdrPlugin.Export
 ```
 
 A plugin package should include golden tests for the generated commands and a
-test that `rcmdrshiny_plugin()` registers with `RcmdrShiny`.
+test that `rcmdrshiny_plugin()` registers with `RcmdrShiny`. The application
+itself runs `tests/testthat/test-plugins-compat.R` against all 15 first-party
+modules: it checks the package metadata, the registry fragment, the command
+coverage and the absence of duplicate DOM keys when the packages are installed.
 
 # Example
 

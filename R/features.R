@@ -23,7 +23,7 @@ default_features <- function() {
     script_studio = TRUE,
     environment_studio = TRUE,
     models_studio = TRUE,
-    project = FALSE
+    project = TRUE
   )
 }
 

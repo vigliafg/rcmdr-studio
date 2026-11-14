@@ -9,9 +9,11 @@
 #' versions that matter for graphics and modelling, and the session options that
 #' change generated commands.
 #'
+#' @param state Optional application state.  When supplied, the report also
+#'   includes the UI mode, feature flags, project, history and caches.
 #' @return A named list.
 #' @export
-diagnostics_report <- function() {
+diagnostics_report <- function(state = NULL) {
   package_version <- function(package) {
     tryCatch(as.character(utils::packageVersion(package)),
              error = function(e) NA_character_)
@@ -22,7 +24,7 @@ diagnostics_report <- function() {
                 "yaml")
   versions <- vapply(packages, package_version, character(1))
 
-  list(
+  report <- list(
     r_version = R.version.string,
     platform = R.version$platform,
     rcmdrshiny = package_version("RcmdrShiny"),
@@ -37,6 +39,21 @@ diagnostics_report <- function() {
       help_yaml = getOption("RcmdrShiny.help.yaml", "auto")
     )
   )
+
+  if (!is.null(state)) {
+    report$ui_mode <- tryCatch(ui_mode(state), error = function(e) "studio")
+    report$features <- names(Filter(
+      isTRUE, state$options$features %||% list()
+    ))
+    report$project <- tryCatch(project_summary(state),
+                               error = function(e) NULL)
+    report$history <- length(state$history %||% list())
+    report$last_error <- state$last_error
+    report$caches <- tryCatch(cache_stats(), error = function(e) NULL)
+    report$pending_plugins <- tryCatch(plugins_pending(),
+                                       error = function(e) character())
+  }
+  report
 }
 
 #' Format a diagnostic report as text
@@ -59,6 +76,18 @@ format_diagnostics <- function(report = diagnostics_report()) {
             } else {
               paste(report$plugins, collapse = ", ")
             }),
+    if (length(report$pending_plugins %||% character()) > 0L) {
+      sprintf("Pending plugins: %s",
+              paste(report$pending_plugins, collapse = ", "))
+    } else {
+      NULL
+    },
+    if (!is.null(report$ui_mode)) sprintf("UI mode: %s", report$ui_mode),
+    if (length(report$features %||% character()) > 0L) {
+      sprintf("Feature flags: %s", paste(report$features, collapse = ", "))
+    } else {
+      NULL
+    },
     "",
     "Package versions:",
     sprintf("  %s: %s", names(report$packages),
@@ -70,5 +99,58 @@ format_diagnostics <- function(report = diagnostics_report()) {
               paste(format(value), collapse = ", ")
             }, character(1)))
   )
+  if (!is.null(report$project)) {
+    lines <- c(
+      lines, "", "Project:",
+      sprintf("  title: %s", report$project$title %||% "(untitled)"),
+      sprintf("  path: %s", report$project$path %||% "(not saved)"),
+      sprintf("  dirty: %s", if (isTRUE(report$project$dirty)) "yes" else "no"),
+      sprintf("  data sets: %d", report$project$datasets),
+      sprintf("  documents: %d", report$project$documents),
+      sprintf("  plots: %d", report$project$plots)
+    )
+  }
+  if (!is.null(report$caches) && nrow(report$caches) > 0L) {
+    lines <- c(
+      lines, "", "Caches:",
+      sprintf("  %s: %s (%d entries)", report$caches$cache,
+              ifelse(report$caches$ready, "warm", "cold"),
+              report$caches$entries)
+    )
+  }
+  if (!is.null(report$history)) {
+    lines <- c(lines, "", sprintf("History: %d entries", report$history))
+  }
+  if (!is.null(report$last_error)) {
+    lines <- c(lines, sprintf("Last error: %s", report$last_error))
+  }
   lines
+}
+
+#' Text of the diagnostic report
+#'
+#' @param state Optional application state.
+#' @return A character scalar.
+#' @keywords internal
+diagnostics_report_text <- function(state = NULL) {
+  paste(format_diagnostics(diagnostics_report(state)), collapse = "\n")
+}
+
+#' GitHub issue URL pre-filled with the diagnostic report
+#'
+#' @param report Report from [diagnostics_report()].
+#' @param base Repository issue URL.
+#' @return A URL string.
+#' @keywords internal
+diagnostics_issue_url <- function(report = diagnostics_report(),
+                                  base = "https://github.com/vigliafg/rcmdr-studio/issues/new") {
+  body <- paste(format_diagnostics(report), collapse = "\n")
+  body <- paste0(
+    "### What happened\n\n<!-- Describe the problem -->\n\n",
+    "### Diagnostic report\n\n```text\n", body, "\n```\n"
+  )
+  title <- "RcmdrShiny Studio issue"
+  paste0(base,
+         "?title=", utils::URLencode(title, reserved = TRUE),
+         "&body=", utils::URLencode(body, reserved = TRUE))
 }

@@ -264,6 +264,33 @@ trim_state <- function(state) {
   if (length(state$messages) > limit) {
     state$messages <- utils::tail(state$messages, limit)
   }
+  session_trim(state)
+  invisible(NULL)
+}
+
+#' Trim the secondary session buffers
+#'
+#' Output, messages, figures, checkpoints, cell outputs and knit history all
+#' have a cap.  The command log is deliberately not trimmed: the Script pane
+#' and the report use its indices.
+#' @keywords internal
+session_trim <- function(state) {
+  cells <- as.integer(state$options$script_output_cells %||% 50L)
+  if (length(state$script_outputs %||% list()) > cells) {
+    state$script_outputs <- utils::tail(state$script_outputs, cells)
+  }
+  if (length(state$cell_outputs %||% list()) > cells) {
+    state$cell_outputs <- utils::tail(state$cell_outputs, cells)
+  }
+  knits <- as.integer(state$options$knit_history_length %||% 20L)
+  if (length(state$knit_history %||% list()) > knits) {
+    state$knit_history <- utils::head(state$knit_history, knits)
+  }
+  recent <- as.integer(state$options$menu_recent_length %||% 8L)
+  if (length(state$recent_commands %||% character()) > recent * 3L) {
+    state$recent_commands <- utils::head(state$recent_commands,
+                                         recent * 3L)
+  }
   invisible(NULL)
 }
 

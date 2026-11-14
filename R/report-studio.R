@@ -172,6 +172,7 @@ report_run_cell <- function(state, chunk_id, text = NULL, mode = NULL) {
       plot_url = NULL, time = Sys.time()
     )
     state$cell_outputs[[chunk_id]] <- output
+    if (is.function(session_trim)) session_trim(state)
     return(output)
   }
   before <- length(state$plots %||% list())
@@ -199,6 +200,7 @@ report_run_cell <- function(state, chunk_id, text = NULL, mode = NULL) {
     duration_ms = as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
   )
   state$cell_outputs[[chunk_id]] <- output
+  if (is.function(session_trim)) session_trim(state)
   output
 }
 

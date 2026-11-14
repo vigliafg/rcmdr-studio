@@ -398,7 +398,7 @@ items:
   command: Setwd
   activation: ''
   install: ''
-  order: 1001
+  order: 1006
   module: core
   legacy_ids:
   - Setwd
@@ -458,7 +458,7 @@ items:
   command: compileRmd
   activation: ''
   install: ''
-  order: 1015
+  order: 1020
   module: core
   legacy_ids:
   - compileRmd
@@ -468,7 +468,7 @@ items:
   command: setBibliography
   activation: ''
   install: ''
-  order: 1016
+  order: 1021
   module: core
   legacy_ids:
   - setBibliography
@@ -478,7 +478,7 @@ items:
   command: CloseCommander
   activation: ''
   install: ''
-  order: 1026
+  order: 1032
   module: core
   legacy_ids:
   - CloseCommander
@@ -488,7 +488,7 @@ items:
   command: closeCommanderAndR
   activation: ''
   install: ''
-  order: 1027
+  order: 1033
   module: core
   legacy_ids:
   - closeCommanderAndR
@@ -498,7 +498,7 @@ items:
   command: restartCommander
   activation: ''
   install: ''
-  order: 1028
+  order: 1034
   module: core
   legacy_ids:
   - restartCommander
@@ -508,7 +508,7 @@ items:
   command: editMarkdown
   activation: ''
   install: ''
-  order: 1031
+  order: 1037
   module: core
   legacy_ids:
   - editMarkdown
@@ -518,7 +518,7 @@ items:
   command: editKnitr
   activation: ''
   install: ''
-  order: 1032
+  order: 1038
   module: core
   legacy_ids:
   - editKnitr
@@ -528,7 +528,7 @@ items:
   command: removeLastRmdBlock
   activation: ''
   install: ''
-  order: 1033
+  order: 1039
   module: core
   legacy_ids:
   - removeLastRmdBlock
@@ -538,7 +538,7 @@ items:
   command: removeLastRmdSection
   activation: ''
   install: ''
-  order: 1034
+  order: 1040
   module: core
   legacy_ids:
   - removeLastRmdSection
@@ -548,7 +548,7 @@ items:
   command: removeLastRnwBlock
   activation: ''
   install: ''
-  order: 1035
+  order: 1041
   module: core
   legacy_ids:
   - removeLastRnwBlock
@@ -558,7 +558,7 @@ items:
   command: insertSection
   activation: ''
   install: ''
-  order: 1036
+  order: 1042
   module: core
   legacy_ids:
   - insertSection
@@ -568,13 +568,13 @@ items:
   command: insertChunk
   activation: ''
   install: ''
-  order: 1037
+  order: 1043
   module: core
   legacy_ids:
   - insertChunk
 - kind: separator
   parent: menu.edit
-  order: 1038
+  order: 1044
   module: core
 - id: item.core.menu_edit.on_cut
   parent: menu.edit
@@ -582,7 +582,7 @@ items:
   command: onCut
   activation: ''
   install: ''
-  order: 1039
+  order: 1045
   module: core
   legacy_ids:
   - onCut
@@ -592,7 +592,7 @@ items:
   command: onCopy
   activation: ''
   install: ''
-  order: 1040
+  order: 1046
   module: core
   legacy_ids:
   - onCopy
@@ -602,7 +602,7 @@ items:
   command: onPaste
   activation: ''
   install: ''
-  order: 1041
+  order: 1047
   module: core
   legacy_ids:
   - onPaste
@@ -612,13 +612,13 @@ items:
   command: onDelete
   activation: ''
   install: ''
-  order: 1042
+  order: 1048
   module: core
   legacy_ids:
   - onDelete
 - kind: separator
   parent: menu.edit
-  order: 1043
+  order: 1049
   module: core
 - id: item.core.menu_edit.on_find
   parent: menu.edit
@@ -626,7 +626,7 @@ items:
   command: onFind
   activation: ''
   install: ''
-  order: 1044
+  order: 1050
   module: core
   legacy_ids:
   - onFind
@@ -636,13 +636,13 @@ items:
   command: onSelectAll
   activation: ''
   install: ''
-  order: 1045
+  order: 1051
   module: core
   legacy_ids:
   - onSelectAll
 - kind: separator
   parent: menu.edit
-  order: 1046
+  order: 1052
   module: core
 - id: item.core.menu_edit.on_undo
   parent: menu.edit
@@ -650,7 +650,7 @@ items:
   command: onUndo
   activation: ''
   install: ''
-  order: 1047
+  order: 1053
   module: core
   legacy_ids:
   - onUndo
@@ -660,13 +660,13 @@ items:
   command: onRedo
   activation: ''
   install: ''
-  order: 1048
+  order: 1054
   module: core
   legacy_ids:
   - onRedo
 - kind: separator
   parent: menu.edit
-  order: 1049
+  order: 1055
   module: core
 - id: item.core.menu_edit.on_clear
   parent: menu.edit
@@ -674,7 +674,7 @@ items:
   command: onClear
   activation: ''
   install: ''
-  order: 1050
+  order: 1056
   module: core
   legacy_ids:
   - onClear
@@ -704,13 +704,13 @@ items:
   command: mergeDataSets
   activation: dataSetsP(2)
   install: packageAvailable('car') && packageAvailable('RcmdrMisc')
-  order: 1054
+  order: 1060
   module: core
   legacy_ids:
   - mergeDataSets
 - kind: separator
   parent: menu.data
-  order: 1055
+  order: 1061
   module: core
 - id: item.core.menu_data_import_menu.read_data_set
   parent: menu.data.import_menu
@@ -718,7 +718,7 @@ items:
   command: readDataSet
   activation: ''
   install: ''
-  order: 1056
+  order: 1062
   module: core
   legacy_ids:
   - readDataSet
@@ -728,7 +728,7 @@ items:
   command: importSPSS
   activation: ''
   install: packageAvailable('foreign')
-  order: 1057
+  order: 1063
   module: core
   legacy_ids:
   - importSPSS
@@ -738,7 +738,7 @@ items:
   command: importSAS
   activation: ''
   install: packageAvailable('foreign')
-  order: 1058
+  order: 1064
   module: core
   legacy_ids:
   - importSAS
@@ -748,7 +748,7 @@ items:
   command: importSASb7dat
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1059
+  order: 1065
   module: core
   legacy_ids:
   - importSASb7dat
@@ -758,7 +758,7 @@ items:
   command: importMinitab
   activation: ''
   install: packageAvailable('foreign')
-  order: 1060
+  order: 1066
   module: core
   legacy_ids:
   - importMinitab
@@ -768,7 +768,7 @@ items:
   command: importSTATA
   activation: ''
   install: packageAvailable('foreign')
-  order: 1061
+  order: 1067
   module: core
   legacy_ids:
   - importSTATA
@@ -778,7 +778,7 @@ items:
   command: importExcel
   activation: ''
   install: packageAvailable('readxl')
-  order: 1062
+  order: 1068
   module: core
   legacy_ids:
   - importExcel
@@ -788,7 +788,7 @@ items:
   command: listDataSetsInPackages
   activation: ''
   install: ''
-  order: 1064
+  order: 1070
   module: core
   legacy_ids:
   - listDataSetsInPackages
@@ -798,7 +798,7 @@ items:
   command: readDataFromPackage
   activation: ''
   install: ''
-  order: 1065
+  order: 1071
   module: core
   legacy_ids:
   - readDataFromPackage
@@ -808,7 +808,7 @@ items:
   command: viewData
   activation: activeDataSetP()
   install: ''
-  order: 1067
+  order: 1073
   module: core
   legacy_ids:
   - viewData
@@ -818,7 +818,7 @@ items:
   command: selectActiveDataSet
   activation: dataSetsP()
   install: ''
-  order: 1068
+  order: 1074
   module: core
   legacy_ids:
   - selectActiveDataSet
@@ -828,7 +828,7 @@ items:
   command: refreshActiveDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1069
+  order: 1075
   module: core
   legacy_ids:
   - refreshActiveDataSet
@@ -838,7 +838,7 @@ items:
   command: helpDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1070
+  order: 1076
   module: core
   legacy_ids:
   - helpDataSet
@@ -848,7 +848,7 @@ items:
   command: variablesDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1071
+  order: 1077
   module: core
   legacy_ids:
   - variablesDataSet
@@ -858,7 +858,7 @@ items:
   command: setCaseNames
   activation: activeDataSetP()
   install: ''
-  order: 1072
+  order: 1078
   module: core
   legacy_ids:
   - setCaseNames
@@ -868,7 +868,7 @@ items:
   command: subsetDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1073
+  order: 1079
   module: core
   legacy_ids:
   - subsetDataSet
@@ -878,7 +878,7 @@ items:
   command: sortDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1074
+  order: 1080
   module: core
   legacy_ids:
   - sortDataSet
@@ -888,7 +888,7 @@ items:
   command: Aggregate
   activation: activeDataSetP() && factorsP()
   install: ''
-  order: 1075
+  order: 1081
   module: core
   legacy_ids:
   - Aggregate
@@ -898,7 +898,7 @@ items:
   command: SelectRows
   activation: activeDataSetP()
   install: ''
-  order: 1076
+  order: 1082
   module: core
   legacy_ids:
   - SelectRows
@@ -908,7 +908,7 @@ items:
   command: RemoveRows
   activation: activeDataSetP()
   install: ''
-  order: 1077
+  order: 1083
   module: core
   legacy_ids:
   - RemoveRows
@@ -918,7 +918,7 @@ items:
   command: Stack
   activation: activeDataSetP() && numericP(2)
   install: ''
-  order: 1078
+  order: 1084
   module: core
   legacy_ids:
   - Stack
@@ -928,7 +928,7 @@ items:
   command: filterNA
   activation: activeDataSetP()
   install: ''
-  order: 1079
+  order: 1085
   module: core
   legacy_ids:
   - filterNA
@@ -938,7 +938,7 @@ items:
   command: reshapeLong2Wide
   activation: activeDataSetP()
   install: ''
-  order: 1080
+  order: 1086
   module: core
   legacy_ids:
   - reshapeLong2Wide
@@ -948,7 +948,7 @@ items:
   command: reshapeWide2Long
   activation: activeDataSetP()
   install: ''
-  order: 1081
+  order: 1087
   module: core
   legacy_ids:
   - reshapeWide2Long
@@ -958,7 +958,7 @@ items:
   command: convertStrings2Factors
   activation: characterP()
   install: ''
-  order: 1082
+  order: 1088
   module: core
   legacy_ids:
   - convertStrings2Factors
@@ -968,7 +968,7 @@ items:
   command: exportDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1084
+  order: 1090
   module: core
   legacy_ids:
   - exportDataSet
@@ -978,7 +978,7 @@ items:
   command: RecodeDialog
   activation: activeDataSetP()
   install: packageAvailable('car')
-  order: 1086
+  order: 1092
   module: core
   legacy_ids:
   - RecodeDialog
@@ -988,7 +988,7 @@ items:
   command: Compute
   activation: activeDataSetP()
   install: ''
-  order: 1087
+  order: 1093
   module: core
   legacy_ids:
   - Compute
@@ -998,7 +998,7 @@ items:
   command: addObsNumbers
   activation: activeDataSetP()
   install: ''
-  order: 1088
+  order: 1094
   module: core
   legacy_ids:
   - addObsNumbers
@@ -1008,7 +1008,7 @@ items:
   command: standardize
   activation: numericP()
   install: ''
-  order: 1089
+  order: 1095
   module: core
   legacy_ids:
   - standardize
@@ -1018,7 +1018,7 @@ items:
   command: numericToFactor
   activation: numericP()
   install: ''
-  order: 1090
+  order: 1096
   module: core
   legacy_ids:
   - numericToFactor
@@ -1028,7 +1028,7 @@ items:
   command: characterToFactor
   activation: characterP()
   install: ''
-  order: 1091
+  order: 1097
   module: core
   legacy_ids:
   - characterToFactor
@@ -1038,7 +1038,7 @@ items:
   command: binVariable
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1092
+  order: 1098
   module: core
   legacy_ids:
   - binVariable
@@ -1048,7 +1048,7 @@ items:
   command: reorderFactor
   activation: factorsP()
   install: ''
-  order: 1093
+  order: 1099
   module: core
   legacy_ids:
   - reorderFactor
@@ -1058,7 +1058,7 @@ items:
   command: dropUnusedFactorLevels
   activation: factorsP()
   install: ''
-  order: 1094
+  order: 1100
   module: core
   legacy_ids:
   - dropUnusedFactorLevels
@@ -1068,7 +1068,7 @@ items:
   command: setContrasts
   activation: factorsP()
   install: ''
-  order: 1095
+  order: 1101
   module: core
   legacy_ids:
   - setContrasts
@@ -1078,7 +1078,7 @@ items:
   command: renameVariables
   activation: activeDataSetP()
   install: ''
-  order: 1096
+  order: 1102
   module: core
   legacy_ids:
   - renameVariables
@@ -1088,7 +1088,7 @@ items:
   command: deleteVariable
   activation: activeDataSetP()
   install: ''
-  order: 1097
+  order: 1103
   module: core
   legacy_ids:
   - deleteVariable
@@ -1098,7 +1098,7 @@ items:
   command: summarizeDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1100
+  order: 1106
   module: core
   legacy_ids:
   - summarizeDataSet
@@ -1108,7 +1108,7 @@ items:
   command: numericalSummaries
   activation: numericP()
   install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
-  order: 1101
+  order: 1107
   module: core
   legacy_ids:
   - numericalSummaries
@@ -1118,7 +1118,7 @@ items:
   command: frequencyDistribution
   activation: factorsP()
   install: ''
-  order: 1102
+  order: 1108
   module: core
   legacy_ids:
   - frequencyDistribution
@@ -1128,7 +1128,7 @@ items:
   command: countMissing
   activation: activeDataSetP()
   install: ''
-  order: 1103
+  order: 1109
   module: core
   legacy_ids:
   - countMissing
@@ -1138,7 +1138,7 @@ items:
   command: statisticsTable
   activation: numericP() && factorsP()
   install: ''
-  order: 1104
+  order: 1110
   module: core
   legacy_ids:
   - statisticsTable
@@ -1148,7 +1148,7 @@ items:
   command: correlationMatrix
   activation: numericP(2)
   install: packageAvailable('RcmdrMisc')
-  order: 1105
+  order: 1111
   module: core
   legacy_ids:
   - correlationMatrix
@@ -1158,7 +1158,7 @@ items:
   command: correlationTest
   activation: numericP(2)
   install: packageAvailable('RcmdrMisc')
-  order: 1106
+  order: 1112
   module: core
   legacy_ids:
   - correlationTest
@@ -1168,7 +1168,7 @@ items:
   command: NormalityTest
   activation: numericP()
   install: packageAvailable('nortest')
-  order: 1107
+  order: 1113
   module: core
   legacy_ids:
   - NormalityTest
@@ -1178,7 +1178,7 @@ items:
   command: transformVariables
   activation: numericP()
   install: packageAvailable('car')
-  order: 1108
+  order: 1114
   module: core
   legacy_ids:
   - transformVariables
@@ -1188,7 +1188,7 @@ items:
   command: twoWayTable
   activation: factorsP(2)
   install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
-  order: 1109
+  order: 1115
   module: core
   legacy_ids:
   - twoWayTable
@@ -1198,7 +1198,7 @@ items:
   command: twoWayTableFromCounts
   activation: factorsP(2) && numericPositiveP()
   install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
-  order: 1110
+  order: 1116
   module: core
   legacy_ids:
   - twoWayTableFromCounts
@@ -1208,7 +1208,7 @@ items:
   command: multiWayTable
   activation: factorsP(3)
   install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
-  order: 1111
+  order: 1117
   module: core
   legacy_ids:
   - multiWayTable
@@ -1218,7 +1218,7 @@ items:
   command: enterTable
   activation: ''
   install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
-  order: 1112
+  order: 1118
   module: core
   legacy_ids:
   - enterTable
@@ -1228,7 +1228,7 @@ items:
   command: singleSampleTTest
   activation: numericP()
   install: ''
-  order: 1113
+  order: 1119
   module: core
   legacy_ids:
   - singleSampleTTest
@@ -1238,7 +1238,7 @@ items:
   command: independentSamplesTTest
   activation: numericP() && twoLevelFactorsP()
   install: ''
-  order: 1114
+  order: 1120
   module: core
   legacy_ids:
   - independentSamplesTTest
@@ -1248,7 +1248,7 @@ items:
   command: pairedTTest
   activation: numericP(2)
   install: ''
-  order: 1115
+  order: 1121
   module: core
   legacy_ids:
   - pairedTTest
@@ -1258,7 +1258,7 @@ items:
   command: oneWayAnova
   activation: numericP() && factorsP()
   install: packageAvailable('multcomp') && packageAvailable('abind')
-  order: 1116
+  order: 1122
   module: core
   legacy_ids:
   - oneWayAnova
@@ -1268,7 +1268,7 @@ items:
   command: multiWayAnova
   activation: numericP() && factorsP()
   install: ''
-  order: 1117
+  order: 1123
   module: core
   legacy_ids:
   - multiWayAnova
@@ -1278,7 +1278,7 @@ items:
   command: oneWayRepeatedMeasures
   activation: numericP(2)
   install: ''
-  order: 1118
+  order: 1124
   module: core
   legacy_ids:
   - oneWayRepeatedMeasures
@@ -1288,7 +1288,7 @@ items:
   command: twoWayRepeatedMeasures
   activation: numericP(4)
   install: ''
-  order: 1119
+  order: 1125
   module: core
   legacy_ids:
   - twoWayRepeatedMeasures
@@ -1298,7 +1298,7 @@ items:
   command: singleProportionTest
   activation: twoLevelFactorsP()
   install: ''
-  order: 1120
+  order: 1126
   module: core
   legacy_ids:
   - singleProportionTest
@@ -1308,7 +1308,7 @@ items:
   command: twoSampleProportionsTest
   activation: twoLevelFactorsP(2)
   install: packageAvailable('abind')
-  order: 1121
+  order: 1127
   module: core
   legacy_ids:
   - twoSampleProportionsTest
@@ -1318,7 +1318,7 @@ items:
   command: sigmaTestMenu
   activation: numericP()
   install: ''
-  order: 1122
+  order: 1128
   module: core
   legacy_ids:
   - sigmaTestMenu
@@ -1328,7 +1328,7 @@ items:
   command: twoVariancesFTest
   activation: numericP() && twoLevelFactorsP()
   install: ''
-  order: 1123
+  order: 1129
   module: core
   legacy_ids:
   - twoVariancesFTest
@@ -1338,7 +1338,7 @@ items:
   command: BartlettTest
   activation: numericP() && factorsP()
   install: ''
-  order: 1124
+  order: 1130
   module: core
   legacy_ids:
   - BartlettTest
@@ -1348,7 +1348,7 @@ items:
   command: LeveneTest
   activation: numericP() && factorsP()
   install: packageAvailable('car')
-  order: 1125
+  order: 1131
   module: core
   legacy_ids:
   - LeveneTest
@@ -1358,7 +1358,7 @@ items:
   command: twoSampleWilcoxonTest
   activation: numericP() && twoLevelFactorsP()
   install: ''
-  order: 1126
+  order: 1132
   module: core
   legacy_ids:
   - twoSampleWilcoxonTest
@@ -1368,7 +1368,7 @@ items:
   command: onesampleWilcoxonTest
   activation: numericP()
   install: ''
-  order: 1127
+  order: 1133
   module: core
   legacy_ids:
   - onesampleWilcoxonTest
@@ -1378,7 +1378,7 @@ items:
   command: pairedWilcoxonTest
   activation: numericP(2)
   install: ''
-  order: 1128
+  order: 1134
   module: core
   legacy_ids:
   - pairedWilcoxonTest
@@ -1388,7 +1388,7 @@ items:
   command: KruskalWallisTest
   activation: numericP() && factorsP()
   install: ''
-  order: 1129
+  order: 1135
   module: core
   legacy_ids:
   - KruskalWallisTest
@@ -1398,7 +1398,7 @@ items:
   command: FriedmanTest
   activation: numericP(2)
   install: ''
-  order: 1130
+  order: 1136
   module: core
   legacy_ids:
   - FriedmanTest
@@ -1408,7 +1408,7 @@ items:
   command: Reliability
   activation: numericP(3)
   install: packageAvailable('RcmdrMisc')
-  order: 1131
+  order: 1137
   module: core
   legacy_ids:
   - Reliability
@@ -1418,7 +1418,7 @@ items:
   command: principalComponents
   activation: numericP(2)
   install: ''
-  order: 1132
+  order: 1138
   module: core
   legacy_ids:
   - principalComponents
@@ -1428,7 +1428,7 @@ items:
   command: factorAnalysis
   activation: numericP(3)
   install: ''
-  order: 1133
+  order: 1139
   module: core
   legacy_ids:
   - factorAnalysis
@@ -1438,7 +1438,7 @@ items:
   command: CFA
   activation: numericP(3)
   install: packageAvailable('sem')
-  order: 1134
+  order: 1140
   module: core
   legacy_ids:
   - CFA
@@ -1448,7 +1448,7 @@ items:
   command: kmeansClustering
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1135
+  order: 1141
   module: core
   legacy_ids:
   - kmeansClustering
@@ -1458,7 +1458,7 @@ items:
   command: hierarchicalCluster
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1136
+  order: 1142
   module: core
   legacy_ids:
   - hierarchicalCluster
@@ -1468,7 +1468,7 @@ items:
   command: hclustSummary
   activation: hclustSolutionsP()
   install: packageAvailable('RcmdrMisc')
-  order: 1137
+  order: 1143
   module: core
   legacy_ids:
   - hclustSummary
@@ -1478,7 +1478,7 @@ items:
   command: appendHclustGroup
   activation: hclustSolutionsP()
   install: packageAvailable('RcmdrMisc')
-  order: 1138
+  order: 1144
   module: core
   legacy_ids:
   - appendHclustGroup
@@ -1488,7 +1488,7 @@ items:
   command: linearRegressionModel
   activation: numericP(2)
   install: ''
-  order: 1140
+  order: 1146
   module: core
   legacy_ids:
   - linearRegressionModel
@@ -1498,7 +1498,7 @@ items:
   command: linearModel
   activation: numericP()
   install: ''
-  order: 1141
+  order: 1147
   module: core
   legacy_ids:
   - linearModel
@@ -1508,7 +1508,7 @@ items:
   command: generalizedLinearModel
   activation: activeDataSetP()
   install: ''
-  order: 1142
+  order: 1148
   module: core
   legacy_ids:
   - generalizedLinearModel
@@ -1518,7 +1518,7 @@ items:
   command: multinomialLogitModel
   activation: factorsP()
   install: packageAvailable('nnet')
-  order: 1143
+  order: 1149
   module: core
   legacy_ids:
   - multinomialLogitModel
@@ -1528,7 +1528,7 @@ items:
   command: ordinalRegressionModel
   activation: factorsP()
   install: packageAvailable('MASS')
-  order: 1144
+  order: 1150
   module: core
   legacy_ids:
   - ordinalRegressionModel
@@ -1538,7 +1538,7 @@ items:
   command: linearMixedModel
   activation: numericP()
   install: packageAvailable('lme4')
-  order: 1145
+  order: 1151
   module: core
   legacy_ids:
   - linearMixedModel
@@ -1548,7 +1548,7 @@ items:
   command: generalizedLinearMixedModel
   activation: activeDataSetP()
   install: packageAvailable('lme4')
-  order: 1146
+  order: 1152
   module: core
   legacy_ids:
   - generalizedLinearMixedModel
@@ -1558,13 +1558,13 @@ items:
   command: setPalette
   activation: ''
   install: ''
-  order: 1156
+  order: 1162
   module: core
   legacy_ids:
   - setPalette
 - kind: separator
   parent: menu.graphs
-  order: 1157
+  order: 1163
   module: core
 - id: item.core.menu_graphs.index_plot
   parent: menu.graphs
@@ -1572,7 +1572,7 @@ items:
   command: indexPlot
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1158
+  order: 1164
   module: core
   legacy_ids:
   - indexPlot
@@ -1582,7 +1582,7 @@ items:
   command: DotPlot
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1159
+  order: 1165
   module: core
   legacy_ids:
   - DotPlot
@@ -1592,7 +1592,7 @@ items:
   command: Histogram
   activation: numericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1160
+  order: 1166
   module: core
   legacy_ids:
   - Histogram
@@ -1602,7 +1602,7 @@ items:
   command: DiscretePlot
   activation: discreteNumericP()
   install: packageAvailable('RcmdrMisc')
-  order: 1161
+  order: 1167
   module: core
   legacy_ids:
   - DiscretePlot
@@ -1612,7 +1612,7 @@ items:
   command: DensityPlot
   activation: numericP()
   install: ''
-  order: 1162
+  order: 1168
   module: core
   legacy_ids:
   - DensityPlot
@@ -1622,7 +1622,7 @@ items:
   command: stemAndLeaf
   activation: numericP()
   install: packageAvailable('aplpack')
-  order: 1163
+  order: 1169
   module: core
   legacy_ids:
   - stemAndLeaf
@@ -1632,7 +1632,7 @@ items:
   command: boxPlot
   activation: numericP()
   install: ''
-  order: 1164
+  order: 1170
   module: core
   legacy_ids:
   - boxPlot
@@ -1642,7 +1642,7 @@ items:
   command: QQPlot
   activation: numericP()
   install: packageAvailable('car')
-  order: 1165
+  order: 1171
   module: core
   legacy_ids:
   - QQPlot
@@ -1652,13 +1652,13 @@ items:
   command: Symbox
   activation: numericP()
   install: packageAvailable('car')
-  order: 1166
+  order: 1172
   module: core
   legacy_ids:
   - Symbox
 - kind: separator
   parent: menu.graphs
-  order: 1167
+  order: 1173
   module: core
 - id: item.core.menu_graphs.scatter_plot
   parent: menu.graphs
@@ -1666,7 +1666,7 @@ items:
   command: scatterPlot
   activation: numericP(2)
   install: packageAvailable('car')
-  order: 1168
+  order: 1174
   module: core
   legacy_ids:
   - scatterPlot
@@ -1676,7 +1676,7 @@ items:
   command: scatterPlotMatrix
   activation: numericP(3)
   install: packageAvailable('car')
-  order: 1169
+  order: 1175
   module: core
   legacy_ids:
   - scatterPlotMatrix
@@ -1686,7 +1686,7 @@ items:
   command: linePlot
   activation: numericP(2)
   install: packageAvailable('RcmdrMisc')
-  order: 1170
+  order: 1176
   module: core
   legacy_ids:
   - linePlot
@@ -1696,7 +1696,7 @@ items:
   command: Xyplot
   activation: numericP(2)
   install: ''
-  order: 1171
+  order: 1177
   module: core
   legacy_ids:
   - Xyplot
@@ -1706,7 +1706,7 @@ items:
   command: PlotMeans
   activation: numericP() && factorsP()
   install: packageAvailable('RcmdrMisc')
-  order: 1172
+  order: 1178
   module: core
   legacy_ids:
   - PlotMeans
@@ -1716,13 +1716,13 @@ items:
   command: stripChart
   activation: numericP()
   install: ''
-  order: 1173
+  order: 1179
   module: core
   legacy_ids:
   - stripChart
 - kind: separator
   parent: menu.graphs
-  order: 1174
+  order: 1180
   module: core
 - id: item.core.menu_graphs.bar_graph
   parent: menu.graphs
@@ -1730,7 +1730,7 @@ items:
   command: barGraph
   activation: factorsP()
   install: ''
-  order: 1175
+  order: 1181
   module: core
   legacy_ids:
   - barGraph
@@ -1740,13 +1740,13 @@ items:
   command: pieChart
   activation: factorsP()
   install: packageAvailable('colorspace')
-  order: 1176
+  order: 1182
   module: core
   legacy_ids:
   - pieChart
 - kind: separator
   parent: menu.graphs
-  order: 1177
+  order: 1183
   module: core
 - id: item.core.menu_graphs_three_dplot_menu.scatter3_d
   parent: menu.graphs.three_dplot_menu
@@ -1754,7 +1754,7 @@ items:
   command: Scatter3D
   activation: numericP(3)
   install: packageAvailable('rgl')
-  order: 1178
+  order: 1184
   module: core
   legacy_ids:
   - Scatter3D
@@ -1764,7 +1764,7 @@ items:
   command: Identify3D
   activation: rglLoaded() && 0 != rgl.cur() && !is.null(getRcmdr('Identify3d'))
   install: packageAvailable('rgl')
-  order: 1179
+  order: 1185
   module: core
   legacy_ids:
   - Identify3D
@@ -1774,7 +1774,7 @@ items:
   command: saveRglGraph
   activation: rglLoaded() && 0 != rgl.cur()
   install: packageAvailable('rgl')
-  order: 1180
+  order: 1186
   module: core
   legacy_ids:
   - saveRglGraph
@@ -1784,7 +1784,7 @@ items:
   command: saveBitmap
   activation: dev.cur() != 1
   install: ''
-  order: 1182
+  order: 1188
   module: core
   legacy_ids:
   - saveBitmap
@@ -1794,7 +1794,7 @@ items:
   command: savePDF
   activation: dev.cur() != 1
   install: ''
-  order: 1183
+  order: 1189
   module: core
   legacy_ids:
   - savePDF
@@ -1804,7 +1804,7 @@ items:
   command: saveRglGraph
   activation: rglLoaded() && 0 != rgl.cur()
   install: packageAvailable('rgl')
-  order: 1184
+  order: 1190
   module: core
   legacy_ids:
   - saveRglGraph
@@ -1814,7 +1814,7 @@ items:
   command: selectActiveModel
   activation: modelsP()
   install: ''
-  order: 1187
+  order: 1193
   module: core
   legacy_ids:
   - selectActiveModel
@@ -1824,7 +1824,7 @@ items:
   command: summarizeModel
   activation: modelCapability('sum')
   install: ''
-  order: 1188
+  order: 1194
   module: core
   legacy_ids:
   - summarizeModel
@@ -1834,7 +1834,7 @@ items:
   command: compareCoefficients
   activation: modelCapability('compc') && modelsP(2)
   install: ''
-  order: 1189
+  order: 1195
   module: core
   legacy_ids:
   - compareCoefficients
@@ -1844,13 +1844,13 @@ items:
   command: addObservationStatistics
   activation: activeModelP()
   install: ''
-  order: 1190
+  order: 1196
   module: core
   legacy_ids:
   - addObservationStatistics
 - kind: separator
   parent: menu.analyze.models
-  order: 1191
+  order: 1197
   module: core
 - id: item.core.menu_analyze_models.aic
   parent: menu.analyze.models
@@ -1858,7 +1858,7 @@ items:
   command: aic
   activation: modelCapability('aic')
   install: ''
-  order: 1192
+  order: 1198
   module: core
   legacy_ids:
   - aic
@@ -1868,7 +1868,7 @@ items:
   command: bic
   activation: modelCapability('bic')
   install: ''
-  order: 1193
+  order: 1199
   module: core
   legacy_ids:
   - bic
@@ -1878,7 +1878,7 @@ items:
   command: stepwiseRegression
   activation: modelCapability('stp')
   install: packageAvailable('RcmdrMisc') && packageAvailable('MASS')
-  order: 1194
+  order: 1200
   module: core
   legacy_ids:
   - stepwiseRegression
@@ -1888,13 +1888,13 @@ items:
   command: subsetRegression
   activation: modelCapability('sub')
   install: packageAvailable('leaps')
-  order: 1195
+  order: 1201
   module: core
   legacy_ids:
   - subsetRegression
 - kind: separator
   parent: menu.analyze.models
-  order: 1196
+  order: 1202
   module: core
 - id: item.core.menu_analyze_models.confidence_intervals
   parent: menu.analyze.models
@@ -1902,7 +1902,7 @@ items:
   command: confidenceIntervals
   activation: modelCapability('con')
   install: packageAvailable('MASS') && packageAvailable('abind')
-  order: 1197
+  order: 1203
   module: core
   legacy_ids:
   - confidenceIntervals
@@ -1912,7 +1912,7 @@ items:
   command: Bootstrap
   activation: modelCapability('boot')
   install: packageAvailable('boot')
-  order: 1198
+  order: 1204
   module: core
   legacy_ids:
   - Bootstrap
@@ -1922,7 +1922,7 @@ items:
   command: DeltaMethodConfInt
   activation: modelCapability('del')
   install: getRcmdr('capabilities')$tktable
-  order: 1199
+  order: 1205
   module: core
   legacy_ids:
   - DeltaMethodConfInt
@@ -1932,7 +1932,7 @@ items:
   command: anovaTable
   activation: modelCapability('aov') || modelCapability('Aov')
   install: packageAvailable('car')
-  order: 1201
+  order: 1207
   module: core
   legacy_ids:
   - anovaTable
@@ -1942,7 +1942,7 @@ items:
   command: compareModels
   activation: modelCapability('compm') && modelsP(2)
   install: ''
-  order: 1202
+  order: 1208
   module: core
   legacy_ids:
   - compareModels
@@ -1952,13 +1952,13 @@ items:
   command: testLinearHypothesis
   activation: modelCapability('lin')
   install: packageAvailable('car')
-  order: 1203
+  order: 1209
   module: core
   legacy_ids:
   - testLinearHypothesis
 - kind: separator
   parent: menu.analyze.models
-  order: 1204
+  order: 1210
   module: core
 - id: item.core.menu_analyze_models_diagnostics_menu.vif
   parent: menu.analyze.models.diagnostics_menu
@@ -1966,7 +1966,7 @@ items:
   command: VIF
   activation: modelCapability('vif')
   install: packageAvailable('car')
-  order: 1206
+  order: 1212
   module: core
   legacy_ids:
   - VIF
@@ -1976,7 +1976,7 @@ items:
   command: BreuschPaganTest
   activation: modelCapability('bpt')
   install: packageAvailable('lmtest')
-  order: 1207
+  order: 1213
   module: core
   legacy_ids:
   - BreuschPaganTest
@@ -1986,7 +1986,7 @@ items:
   command: DurbinWatsonTest
   activation: modelCapability('dwt')
   install: packageAvailable('lmtest')
-  order: 1208
+  order: 1214
   module: core
   legacy_ids:
   - DurbinWatsonTest
@@ -1996,7 +1996,7 @@ items:
   command: RESETtest
   activation: modelCapability('rse')
   install: packageAvailable('lmtest')
-  order: 1209
+  order: 1215
   module: core
   legacy_ids:
   - RESETtest
@@ -2006,7 +2006,7 @@ items:
   command: OutlierTest
   activation: modelCapability('bon')
   install: packageAvailable('car')
-  order: 1210
+  order: 1216
   module: core
   legacy_ids:
   - OutlierTest
@@ -2016,7 +2016,7 @@ items:
   command: transformResponse
   activation: modelCapability('tranr')
   install: packageAvailable('car')
-  order: 1211
+  order: 1217
   module: core
   legacy_ids:
   - transformResponse
@@ -2026,7 +2026,7 @@ items:
   command: plotModel
   activation: modelCapability('plt')
   install: ''
-  order: 1213
+  order: 1219
   module: core
   legacy_ids:
   - plotModel
@@ -2036,7 +2036,7 @@ items:
   command: residualQQPlot
   activation: modelCapability('qqp')
   install: packageAvailable('car')
-  order: 1214
+  order: 1220
   module: core
   legacy_ids:
   - residualQQPlot
@@ -2046,7 +2046,7 @@ items:
   command: CRPlots
   activation: modelCapability('crp')
   install: packageAvailable('car')
-  order: 1215
+  order: 1221
   module: core
   legacy_ids:
   - CRPlots
@@ -2056,7 +2056,7 @@ items:
   command: CRPlot3D
   activation: modelCapability('crp3d') && PredictorsP(2, 'numeric') && PredictorsP(3)
   install: packageAvailable('car')
-  order: 1216
+  order: 1222
   module: core
   legacy_ids:
   - CRPlot3D
@@ -2066,7 +2066,7 @@ items:
   command: AVPlots
   activation: modelCapability('avp')
   install: packageAvailable('car')
-  order: 1217
+  order: 1223
   module: core
   legacy_ids:
   - AVPlots
@@ -2076,7 +2076,7 @@ items:
   command: AVPlot3D
   activation: modelCapability('avp3d') && CoefficientsP(3)
   install: packageAvailable('car')
-  order: 1218
+  order: 1224
   module: core
   legacy_ids:
   - AVPlot3D
@@ -2086,7 +2086,7 @@ items:
   command: InfluencePlot
   activation: modelCapability('infp')
   install: packageAvailable('car')
-  order: 1219
+  order: 1225
   module: core
   legacy_ids:
   - InfluencePlot
@@ -2096,7 +2096,7 @@ items:
   command: InfluenceIndexPlot
   activation: modelCapability('infp')
   install: packageAvailable('car')
-  order: 1220
+  order: 1226
   module: core
   legacy_ids:
   - InfluenceIndexPlot
@@ -2106,7 +2106,7 @@ items:
   command: effectPlots
   activation: modelCapability('effp')
   install: packageAvailable('effects')
-  order: 1221
+  order: 1227
   module: core
   legacy_ids:
   - effectPlots
@@ -2116,7 +2116,7 @@ items:
   command: predictorEffectPlots
   activation: modelCapability('effp')
   install: packageAvailable('effects')
-  order: 1222
+  order: 1228
   module: core
   legacy_ids:
   - predictorEffectPlots
@@ -2126,7 +2126,7 @@ items:
   command: setRandomSeed
   activation: ''
   install: ''
-  order: 1224
+  order: 1230
   module: core
   legacy_ids:
   - setRandomSeed
@@ -2136,7 +2136,7 @@ items:
   command: normalQuantiles
   activation: ''
   install: ''
-  order: 1226
+  order: 1232
   module: core
   legacy_ids:
   - normalQuantiles
@@ -2146,7 +2146,7 @@ items:
   command: normalProbabilities
   activation: ''
   install: ''
-  order: 1227
+  order: 1233
   module: core
   legacy_ids:
   - normalProbabilities
@@ -2156,7 +2156,7 @@ items:
   command: normalDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1228
+  order: 1234
   module: core
   legacy_ids:
   - normalDistributionPlot
@@ -2166,7 +2166,7 @@ items:
   command: normalDistributionSamples
   activation: ''
   install: ''
-  order: 1229
+  order: 1235
   module: core
   legacy_ids:
   - normalDistributionSamples
@@ -2176,7 +2176,7 @@ items:
   command: tQuantiles
   activation: ''
   install: ''
-  order: 1231
+  order: 1237
   module: core
   legacy_ids:
   - tQuantiles
@@ -2186,7 +2186,7 @@ items:
   command: tProbabilities
   activation: ''
   install: ''
-  order: 1232
+  order: 1238
   module: core
   legacy_ids:
   - tProbabilities
@@ -2196,7 +2196,7 @@ items:
   command: tDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1233
+  order: 1239
   module: core
   legacy_ids:
   - tDistributionPlot
@@ -2206,7 +2206,7 @@ items:
   command: tDistributionSamples
   activation: ''
   install: ''
-  order: 1234
+  order: 1240
   module: core
   legacy_ids:
   - tDistributionSamples
@@ -2216,7 +2216,7 @@ items:
   command: chisqQuantiles
   activation: ''
   install: ''
-  order: 1236
+  order: 1242
   module: core
   legacy_ids:
   - chisqQuantiles
@@ -2226,7 +2226,7 @@ items:
   command: chisqProbabilities
   activation: ''
   install: ''
-  order: 1237
+  order: 1243
   module: core
   legacy_ids:
   - chisqProbabilities
@@ -2236,7 +2236,7 @@ items:
   command: chisqDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1238
+  order: 1244
   module: core
   legacy_ids:
   - chisqDistributionPlot
@@ -2246,7 +2246,7 @@ items:
   command: chisqDistributionSamples
   activation: ''
   install: ''
-  order: 1239
+  order: 1245
   module: core
   legacy_ids:
   - chisqDistributionSamples
@@ -2256,7 +2256,7 @@ items:
   command: FQuantiles
   activation: ''
   install: ''
-  order: 1241
+  order: 1247
   module: core
   legacy_ids:
   - FQuantiles
@@ -2266,7 +2266,7 @@ items:
   command: FProbabilities
   activation: ''
   install: ''
-  order: 1242
+  order: 1248
   module: core
   legacy_ids:
   - FProbabilities
@@ -2276,7 +2276,7 @@ items:
   command: FDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1243
+  order: 1249
   module: core
   legacy_ids:
   - FDistributionPlot
@@ -2286,7 +2286,7 @@ items:
   command: FDistributionSamples
   activation: ''
   install: ''
-  order: 1244
+  order: 1250
   module: core
   legacy_ids:
   - FDistributionSamples
@@ -2296,7 +2296,7 @@ items:
   command: exponentialQuantiles
   activation: ''
   install: ''
-  order: 1246
+  order: 1252
   module: core
   legacy_ids:
   - exponentialQuantiles
@@ -2306,7 +2306,7 @@ items:
   command: exponentialProbabilities
   activation: ''
   install: ''
-  order: 1247
+  order: 1253
   module: core
   legacy_ids:
   - exponentialProbabilities
@@ -2316,7 +2316,7 @@ items:
   command: exponentialDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1248
+  order: 1254
   module: core
   legacy_ids:
   - exponentialDistributionPlot
@@ -2326,7 +2326,7 @@ items:
   command: exponentialDistributionSamples
   activation: ''
   install: ''
-  order: 1249
+  order: 1255
   module: core
   legacy_ids:
   - exponentialDistributionSamples
@@ -2336,7 +2336,7 @@ items:
   command: uniformQuantiles
   activation: ''
   install: ''
-  order: 1251
+  order: 1257
   module: core
   legacy_ids:
   - uniformQuantiles
@@ -2346,7 +2346,7 @@ items:
   command: uniformProbabilities
   activation: ''
   install: ''
-  order: 1252
+  order: 1258
   module: core
   legacy_ids:
   - uniformProbabilities
@@ -2356,7 +2356,7 @@ items:
   command: uniformDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1253
+  order: 1259
   module: core
   legacy_ids:
   - uniformDistributionPlot
@@ -2366,7 +2366,7 @@ items:
   command: uniformDistributionSamples
   activation: ''
   install: ''
-  order: 1254
+  order: 1260
   module: core
   legacy_ids:
   - uniformDistributionSamples
@@ -2376,7 +2376,7 @@ items:
   command: betaQuantiles
   activation: ''
   install: ''
-  order: 1256
+  order: 1262
   module: core
   legacy_ids:
   - betaQuantiles
@@ -2386,7 +2386,7 @@ items:
   command: betaProbabilities
   activation: ''
   install: ''
-  order: 1257
+  order: 1263
   module: core
   legacy_ids:
   - betaProbabilities
@@ -2396,7 +2396,7 @@ items:
   command: betaDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1258
+  order: 1264
   module: core
   legacy_ids:
   - betaDistributionPlot
@@ -2406,7 +2406,7 @@ items:
   command: betaDistributionSamples
   activation: ''
   install: ''
-  order: 1259
+  order: 1265
   module: core
   legacy_ids:
   - betaDistributionSamples
@@ -2416,7 +2416,7 @@ items:
   command: CauchyQuantiles
   activation: ''
   install: ''
-  order: 1261
+  order: 1267
   module: core
   legacy_ids:
   - CauchyQuantiles
@@ -2426,7 +2426,7 @@ items:
   command: CauchyProbabilities
   activation: ''
   install: ''
-  order: 1262
+  order: 1268
   module: core
   legacy_ids:
   - CauchyProbabilities
@@ -2436,7 +2436,7 @@ items:
   command: CauchyDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1263
+  order: 1269
   module: core
   legacy_ids:
   - CauchyDistributionPlot
@@ -2446,7 +2446,7 @@ items:
   command: CauchyDistributionSamples
   activation: ''
   install: ''
-  order: 1264
+  order: 1270
   module: core
   legacy_ids:
   - CauchyDistributionSamples
@@ -2456,7 +2456,7 @@ items:
   command: logisticQuantiles
   activation: ''
   install: ''
-  order: 1266
+  order: 1272
   module: core
   legacy_ids:
   - logisticQuantiles
@@ -2466,7 +2466,7 @@ items:
   command: logisticProbabilities
   activation: ''
   install: ''
-  order: 1267
+  order: 1273
   module: core
   legacy_ids:
   - logisticProbabilities
@@ -2476,7 +2476,7 @@ items:
   command: logisticDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1268
+  order: 1274
   module: core
   legacy_ids:
   - logisticDistributionPlot
@@ -2486,7 +2486,7 @@ items:
   command: logisticDistributionSamples
   activation: ''
   install: ''
-  order: 1269
+  order: 1275
   module: core
   legacy_ids:
   - logisticDistributionSamples
@@ -2496,7 +2496,7 @@ items:
   command: lognormalQuantiles
   activation: ''
   install: ''
-  order: 1271
+  order: 1277
   module: core
   legacy_ids:
   - lognormalQuantiles
@@ -2506,7 +2506,7 @@ items:
   command: lognormalProbabilities
   activation: ''
   install: ''
-  order: 1272
+  order: 1278
   module: core
   legacy_ids:
   - lognormalProbabilities
@@ -2516,7 +2516,7 @@ items:
   command: lognormalDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1273
+  order: 1279
   module: core
   legacy_ids:
   - lognormalDistributionPlot
@@ -2526,7 +2526,7 @@ items:
   command: lognormalDistributionSamples
   activation: ''
   install: ''
-  order: 1274
+  order: 1280
   module: core
   legacy_ids:
   - lognormalDistributionSamples
@@ -2536,7 +2536,7 @@ items:
   command: gammaQuantiles
   activation: ''
   install: ''
-  order: 1276
+  order: 1282
   module: core
   legacy_ids:
   - gammaQuantiles
@@ -2546,7 +2546,7 @@ items:
   command: gammaProbabilities
   activation: ''
   install: ''
-  order: 1277
+  order: 1283
   module: core
   legacy_ids:
   - gammaProbabilities
@@ -2556,7 +2556,7 @@ items:
   command: gammaDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1278
+  order: 1284
   module: core
   legacy_ids:
   - gammaDistributionPlot
@@ -2566,7 +2566,7 @@ items:
   command: gammaDistributionSamples
   activation: ''
   install: ''
-  order: 1279
+  order: 1285
   module: core
   legacy_ids:
   - gammaDistributionSamples
@@ -2576,7 +2576,7 @@ items:
   command: WeibullQuantiles
   activation: ''
   install: ''
-  order: 1281
+  order: 1287
   module: core
   legacy_ids:
   - WeibullQuantiles
@@ -2586,7 +2586,7 @@ items:
   command: WeibullProbabilities
   activation: ''
   install: ''
-  order: 1282
+  order: 1288
   module: core
   legacy_ids:
   - WeibullProbabilities
@@ -2596,7 +2596,7 @@ items:
   command: WeibullDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1283
+  order: 1289
   module: core
   legacy_ids:
   - WeibullDistributionPlot
@@ -2606,7 +2606,7 @@ items:
   command: WeibullDistributionSamples
   activation: ''
   install: ''
-  order: 1284
+  order: 1290
   module: core
   legacy_ids:
   - WeibullDistributionSamples
@@ -2616,7 +2616,7 @@ items:
   command: GumbelQuantiles
   activation: ''
   install: packageAvailable('VGAM')
-  order: 1286
+  order: 1292
   module: core
   legacy_ids:
   - GumbelQuantiles
@@ -2626,7 +2626,7 @@ items:
   command: GumbelProbabilities
   activation: ''
   install: packageAvailable('VGAM')
-  order: 1287
+  order: 1293
   module: core
   legacy_ids:
   - GumbelProbabilities
@@ -2636,7 +2636,7 @@ items:
   command: GumbelDistributionPlot
   activation: ''
   install: packageAvailable('VGAM')
-  order: 1288
+  order: 1294
   module: core
   legacy_ids:
   - GumbelDistributionPlot
@@ -2646,7 +2646,7 @@ items:
   command: GumbelDistributionSamples
   activation: ''
   install: packageAvailable('VGAM')
-  order: 1289
+  order: 1295
   module: core
   legacy_ids:
   - GumbelDistributionSamples
@@ -2656,7 +2656,7 @@ items:
   command: binomialQuantiles
   activation: ''
   install: ''
-  order: 1291
+  order: 1297
   module: core
   legacy_ids:
   - binomialQuantiles
@@ -2666,7 +2666,7 @@ items:
   command: binomialProbabilities
   activation: ''
   install: ''
-  order: 1292
+  order: 1298
   module: core
   legacy_ids:
   - binomialProbabilities
@@ -2676,7 +2676,7 @@ items:
   command: binomialMass
   activation: ''
   install: ''
-  order: 1293
+  order: 1299
   module: core
   legacy_ids:
   - binomialMass
@@ -2686,7 +2686,7 @@ items:
   command: binomialDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1294
+  order: 1300
   module: core
   legacy_ids:
   - binomialDistributionPlot
@@ -2696,7 +2696,7 @@ items:
   command: binomialDistributionSamples
   activation: ''
   install: ''
-  order: 1295
+  order: 1301
   module: core
   legacy_ids:
   - binomialDistributionSamples
@@ -2706,7 +2706,7 @@ items:
   command: PoissonQuantiles
   activation: ''
   install: ''
-  order: 1297
+  order: 1303
   module: core
   legacy_ids:
   - PoissonQuantiles
@@ -2716,7 +2716,7 @@ items:
   command: PoissonProbabilities
   activation: ''
   install: ''
-  order: 1298
+  order: 1304
   module: core
   legacy_ids:
   - PoissonProbabilities
@@ -2726,7 +2726,7 @@ items:
   command: PoissonMass
   activation: ''
   install: ''
-  order: 1299
+  order: 1305
   module: core
   legacy_ids:
   - PoissonMass
@@ -2736,7 +2736,7 @@ items:
   command: PoissonDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1300
+  order: 1306
   module: core
   legacy_ids:
   - PoissonDistributionPlot
@@ -2746,7 +2746,7 @@ items:
   command: PoissonDistributionSamples
   activation: ''
   install: ''
-  order: 1301
+  order: 1307
   module: core
   legacy_ids:
   - PoissonDistributionSamples
@@ -2756,7 +2756,7 @@ items:
   command: geomQuantiles
   activation: ''
   install: ''
-  order: 1303
+  order: 1309
   module: core
   legacy_ids:
   - geomQuantiles
@@ -2766,7 +2766,7 @@ items:
   command: geomProbabilities
   activation: ''
   install: ''
-  order: 1304
+  order: 1310
   module: core
   legacy_ids:
   - geomProbabilities
@@ -2776,7 +2776,7 @@ items:
   command: geomMass
   activation: ''
   install: ''
-  order: 1305
+  order: 1311
   module: core
   legacy_ids:
   - geomMass
@@ -2786,7 +2786,7 @@ items:
   command: geomDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1306
+  order: 1312
   module: core
   legacy_ids:
   - geomDistributionPlot
@@ -2796,7 +2796,7 @@ items:
   command: geomDistributionSamples
   activation: ''
   install: ''
-  order: 1307
+  order: 1313
   module: core
   legacy_ids:
   - geomDistributionSamples
@@ -2806,7 +2806,7 @@ items:
   command: hyperQuantiles
   activation: ''
   install: ''
-  order: 1309
+  order: 1315
   module: core
   legacy_ids:
   - hyperQuantiles
@@ -2816,7 +2816,7 @@ items:
   command: hyperProbabilities
   activation: ''
   install: ''
-  order: 1310
+  order: 1316
   module: core
   legacy_ids:
   - hyperProbabilities
@@ -2826,7 +2826,7 @@ items:
   command: hyperMass
   activation: ''
   install: ''
-  order: 1311
+  order: 1317
   module: core
   legacy_ids:
   - hyperMass
@@ -2836,7 +2836,7 @@ items:
   command: hyperDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1312
+  order: 1318
   module: core
   legacy_ids:
   - hyperDistributionPlot
@@ -2846,7 +2846,7 @@ items:
   command: hyperDistributionSamples
   activation: ''
   install: ''
-  order: 1313
+  order: 1319
   module: core
   legacy_ids:
   - hyperDistributionSamples
@@ -2856,7 +2856,7 @@ items:
   command: negbinomialQuantiles
   activation: ''
   install: ''
-  order: 1315
+  order: 1321
   module: core
   legacy_ids:
   - negbinomialQuantiles
@@ -2866,7 +2866,7 @@ items:
   command: negbinomialProbabilities
   activation: ''
   install: ''
-  order: 1316
+  order: 1322
   module: core
   legacy_ids:
   - negbinomialProbabilities
@@ -2876,7 +2876,7 @@ items:
   command: negbinomialMass
   activation: ''
   install: ''
-  order: 1317
+  order: 1323
   module: core
   legacy_ids:
   - negbinomialMass
@@ -2886,7 +2886,7 @@ items:
   command: negbinomialDistributionPlot
   activation: ''
   install: packageAvailable('RcmdrMisc')
-  order: 1318
+  order: 1324
   module: core
   legacy_ids:
   - negbinomialDistributionPlot
@@ -2896,7 +2896,7 @@ items:
   command: negbinomialDistributionSamples
   activation: ''
   install: ''
-  order: 1319
+  order: 1325
   module: core
   legacy_ids:
   - negbinomialDistributionSamples
@@ -2906,7 +2906,7 @@ items:
   command: loadPackages
   activation: ''
   install: ''
-  order: 1323
+  order: 1329
   module: core
   legacy_ids:
   - loadPackages
@@ -2916,7 +2916,7 @@ items:
   command: loadPlugins
   activation: length(listPlugins()) > 0
   install: ''
-  order: 1324
+  order: 1330
   module: core
   legacy_ids:
   - loadPlugins
@@ -2926,17 +2926,27 @@ items:
   command: Options
   activation: ''
   install: ''
-  order: 1325
+  order: 1331
   module: core
   legacy_ids:
   - Options
+- id: item.core.menu_utilities.session_checkpoint
+  parent: menu.utilities
+  label: Session checkpoints...
+  command: sessionCheckpoint
+  activation: ''
+  install: ''
+  order: 1332
+  module: core
+  legacy_ids:
+  - sessionCheckpoint
 - id: item.core.menu_utilities.save_options
   parent: menu.utilities
   label: Save Rcmdr options...
   command: saveOptions
   activation: ''
   install: ''
-  order: 1326
+  order: 1333
   module: core
   legacy_ids:
   - saveOptions
@@ -2946,7 +2956,7 @@ items:
   command: appNap
   activation: ''
   install: RappP()  && mavericksP()
-  order: 1327
+  order: 1334
   module: core
   legacy_ids:
   - appNap
@@ -2956,7 +2966,7 @@ items:
   command: installSoftware
   activation: ''
   install: any(!unlist(getRcmdr('capabilities')))
-  order: 1328
+  order: 1335
   module: core
   legacy_ids:
   - installSoftware
@@ -2966,7 +2976,7 @@ items:
   command: helpCenter
   activation: ''
   install: ''
-  order: 1330
+  order: 1337
   module: core
   legacy_ids:
   - helpCenter
@@ -2976,7 +2986,7 @@ items:
   command: helpSearch
   activation: ''
   install: ''
-  order: 1331
+  order: 1338
   module: core
   legacy_ids:
   - helpSearch
@@ -2986,7 +2996,7 @@ items:
   command: helpTutorials
   activation: ''
   install: ''
-  order: 1332
+  order: 1339
   module: core
   legacy_ids:
   - helpTutorials
@@ -2996,7 +3006,7 @@ items:
   command: helpTour
   activation: ''
   install: ''
-  order: 1333
+  order: 1340
   module: core
   legacy_ids:
   - helpTour
@@ -3006,7 +3016,7 @@ items:
   command: helpGlossary
   activation: ''
   install: ''
-  order: 1334
+  order: 1341
   module: core
   legacy_ids:
   - helpGlossary
@@ -3016,7 +3026,7 @@ items:
   command: helpShortcuts
   activation: ''
   install: ''
-  order: 1335
+  order: 1342
   module: core
   legacy_ids:
   - helpShortcuts
@@ -3026,7 +3036,7 @@ items:
   command: helpPluginsTopic
   activation: ''
   install: ''
-  order: 1336
+  order: 1343
   module: core
   legacy_ids:
   - helpPluginsTopic
@@ -3036,13 +3046,13 @@ items:
   command: helpDiagnostics
   activation: ''
   install: ''
-  order: 1337
+  order: 1344
   module: core
   legacy_ids:
   - helpDiagnostics
 - kind: separator
   parent: menu.help
-  order: 1338
+  order: 1345
   module: core
 - id: item.core.menu_help.help_commander
   parent: menu.help
@@ -3050,7 +3060,7 @@ items:
   command: helpCommander
   activation: ''
   install: ''
-  order: 1339
+  order: 1346
   module: core
   legacy_ids:
   - helpCommander
@@ -3060,7 +3070,7 @@ items:
   command: browseManual
   activation: ''
   install: ''
-  order: 1340
+  order: 1347
   module: core
   legacy_ids:
   - browseManual
@@ -3070,7 +3080,7 @@ items:
   command: browseEnglishManual
   activation: ''
   install: manualTranslationP()
-  order: 1341
+  order: 1348
   module: core
   legacy_ids:
   - browseEnglishManual
@@ -3080,7 +3090,7 @@ items:
   command: browseRcmdrWebsite
   activation: ''
   install: ''
-  order: 1342
+  order: 1349
   module: core
   legacy_ids:
   - browseRcmdrWebsite
@@ -3090,7 +3100,7 @@ items:
   command: helpAboutCommander
   activation: ''
   install: ''
-  order: 1343
+  order: 1350
   module: core
   legacy_ids:
   - helpAboutCommander
@@ -3100,13 +3110,13 @@ items:
   command: browseRcmdrHexSticker
   activation: ''
   install: ''
-  order: 1344
+  order: 1351
   module: core
   legacy_ids:
   - browseRcmdrHexSticker
 - kind: separator
   parent: menu.help
-  order: 1345
+  order: 1352
   module: core
 - id: item.core.menu_help.help_data_set
   parent: menu.help
@@ -3114,13 +3124,13 @@ items:
   command: helpDataSet
   activation: activeDataSetP()
   install: ''
-  order: 1346
+  order: 1353
   module: core
   legacy_ids:
   - helpDataSet
 - kind: separator
   parent: menu.help
-  order: 1347
+  order: 1354
   module: core
 - id: item.core.menu_help.start_help
   parent: menu.help
@@ -3128,7 +3138,7 @@ items:
   command: startHelp
   activation: ''
   install: ''
-  order: 1348
+  order: 1355
   module: core
   legacy_ids:
   - startHelp
@@ -3138,7 +3148,7 @@ items:
   command: browseRWebsite
   activation: ''
   install: ''
-  order: 1349
+  order: 1356
   module: core
   legacy_ids:
   - browseRWebsite
@@ -3148,10 +3158,50 @@ items:
   command: browseRMarkdown
   activation: ''
   install: ''
-  order: 1350
+  order: 1357
   module: core
   legacy_ids:
   - browseRMarkdown
+- id: file.new.project
+  parent: menu.file.new
+  label: Project...
+  command: projectNew
+  activation: ''
+  install: ''
+  order: 5
+  module: core
+  legacy_ids:
+  - projectNew
+- id: file.open.project
+  parent: menu.file.open
+  label: Project...
+  command: projectOpen
+  activation: ''
+  install: ''
+  order: 5
+  module: core
+  legacy_ids:
+  - projectOpen
+- id: file.save.project
+  parent: menu.file.save
+  label: Project...
+  command: projectSave
+  activation: ''
+  install: ''
+  order: 5
+  module: core
+  legacy_ids:
+  - projectSave
+- id: file.save.project_as
+  parent: menu.file.save.as
+  label: Project as...
+  command: projectSaveAs
+  activation: ''
+  install: ''
+  order: 5
+  module: core
+  legacy_ids:
+  - projectSaveAs
 - id: file.save.script
   parent: menu.file.save
   label: Script...
@@ -3242,6 +3292,16 @@ items:
   module: core
   legacy_ids:
   - exportReport
+- id: file.export.project_bundle
+  parent: menu.file.export
+  label: Project bundle...
+  command: projectBundle
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - projectBundle
 - id: file.save.workspace
   parent: menu.file.save
   label: Workspace...

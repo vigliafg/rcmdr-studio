@@ -13,7 +13,7 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.21 Wave 6.5 (Menu platform).** The core exposes 230 dialogs and,
+> **Status: 2.0 Wave 7 (Platform release).** The core exposes 230 dialogs and,
 > with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
 > package ships a Studio shell with a Home tab, command palette, structured
 > command history, live R-command preview in dialogs, isolated previews,
@@ -44,7 +44,8 @@ report workspaces, and a Classic mode for compatibility.
 > dropdowns, curated workflow groups, a single File > Save with one item per
 > format, and stable `menu_id` / `item_id` identifiers backed by
 > `inst/menus/core.yml` and first-party module fragments. The platform wave
-> remains. The remaining
+> adds versioned projects, autosave/recovery, bundles, session checkpoints,
+> a plugin SDK v2, health/diagnostics and a benchmark suite. The remaining
 > disabled core entries are the three lifecycle commands, the nine
 > browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
 > implement every plugin-specific entry. The package includes a searchable
@@ -141,6 +142,10 @@ RcmdrShiny::run(env = env)
 | Horizontal menubar with hierarchical, workflow-grouped menus | done |
 | Stable `menu_id` / `item_id` registry and first-party module fragments | done |
 | One File > Save with sub-items per format | done |
+| Versioned `.rcmdrproj` projects, autosave and recovery | done |
+| Project bundle export and session checkpoints | done |
+| Plugin SDK v2 with components, presets, workflows and templates | done |
+| Health panel, extended diagnostics and benchmark suite | done |
 | Command palette (`Ctrl+K`) over menus, help, data, variables and history | done |
 | Structured command history with rerun, dialog reopening and script/report insertion | done |
 | Live R-command preview, "To script" and named dialog presets | done |

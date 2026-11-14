@@ -111,6 +111,24 @@ item  exampleMenu  command  "Example plot..."  examplePlot  "activeDataSetP()"  
 item  topMenu      cascade  "Example"         exampleMenu  ""  ""
 ```
 
+## SDK v2
+
+`plugin_api_version()` is `2`. `RcmdrShiny.plugin()` accepts `api_version` and
+records a `module_id`; `plugin_contract()` lists the stable fields. The
+extension hooks are additive:
+
+- `plugin_ui_component(name, render = ...)` registers a UI factory;
+- `plugin_register_preset(dialog, name, values)` adds a global preset;
+- `plugin_register_workflow(workflow)` adds a guided workflow;
+- `plugin_register_chart_type(chart_type)` adds a chart type;
+- `plugin_register_report_template(template)` adds a report template;
+- `plugin_help_try_it(topic, examples)` appends runnable examples;
+- `plugin_dialog_preview(spec)` renders a dialog body without a session.
+
+A plugin cannot replace a built-in workflow, chart type or report template by
+id. Presets merge with session presets, and the session wins. Loading can be
+queued with `options(RcmdrShiny.lazy_plugins = TRUE)`.
+
 ## Help topics
 
 Add `inst/help/index.yml` and Markdown topics; the loader discovers them

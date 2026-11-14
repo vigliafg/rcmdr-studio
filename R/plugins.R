@@ -16,6 +16,34 @@
 .plugin_registry$plugins <- list()
 .plugin_registry$version <- 0L
 
+# Lazy loading and catalogue caches.  The registry version is the cache key:
+# registering or unloading a plugin invalidates every derived catalogue with a
+# single integer comparison.
+.plugin_registry$pending <- list()
+.plugin_catalog_cache <- new.env(parent = emptyenv())
+.plugin_catalog_cache$version <- NULL
+.plugin_catalog_cache$value <- list()
+
+plugin_catalog_reset <- function() {
+  .plugin_catalog_cache$version <- NULL
+  .plugin_catalog_cache$value <- list()
+  invisible(NULL)
+}
+
+plugin_catalog_cached <- function(name, build) {
+  version <- .plugin_registry$version
+  if (!identical(.plugin_catalog_cache$version, version)) {
+    .plugin_catalog_cache$version <- version
+    .plugin_catalog_cache$value <- list()
+  }
+  if (!is.null(.plugin_catalog_cache$value[[name]])) {
+    return(.plugin_catalog_cache$value[[name]])
+  }
+  value <- build()
+  .plugin_catalog_cache$value[[name]] <- value
+  value
+}
+
 # Predicates provided by the core activation environment.  Plugin predicates
 # may not shadow these unless the plugin is registered with `replace = TRUE`.
 .base_predicate_names <- c(
@@ -82,9 +110,16 @@ RcmdrShiny.plugin <- function(name, menus = NULL, dialogs = list(),
                               commands = list(), description = NULL,
                               version = NULL, tcltk = FALSE,
                               predicates = list(), replace = FALSE,
-                              help = NULL, aliases = NULL) {
+                              help = NULL, aliases = NULL,
+                              api_version = NULL) {
   if (!is.character(name) || length(name) != 1L || !nzchar(name)) {
     stop("Plugin `name` must be a single non-empty string.", call. = FALSE)
+  }
+  api_version <- as.integer(api_version %||% plugin_api_version())
+  if (is.na(api_version) || api_version < 1L ||
+      api_version > plugin_api_version()) {
+    stop(sprintf("Unsupported plugin API version: %s", api_version),
+         call. = FALSE)
   }
 
   if (is.character(menus) && length(menus) == 1L) {
@@ -189,7 +224,9 @@ RcmdrShiny.plugin <- function(name, menus = NULL, dialogs = list(),
     tcltk = isTRUE(tcltk),
     predicates = predicates,
     help = help,
-    aliases = aliases
+    aliases = aliases,
+    api_version = api_version,
+    module_id = plugin_module_id(name)
   )
   if (isTRUE(tcltk)) {
     warning(
@@ -201,6 +238,7 @@ RcmdrShiny.plugin <- function(name, menus = NULL, dialogs = list(),
 
   .plugin_registry$plugins[[name]] <- plugin
   .plugin_registry$version <- .plugin_registry$version + 1L
+  plugin_catalog_reset()
   .implemented_commands_cache$names <- NULL
   .implemented_commands_cache$dialog_ids <- NULL
   .implemented_commands_cache$dialog_revision <- NULL
@@ -235,7 +273,10 @@ unload_plugins <- function() {
     try(help_unregister(name), silent = TRUE)
   }
   .plugin_registry$plugins <- list()
+  .plugin_registry$pending <- list()
   .plugin_registry$version <- .plugin_registry$version + 1L
+  if (is.function(plugin_extensions_reset)) plugin_extensions_reset()
+  plugin_catalog_reset()
   .implemented_commands_cache$names <- NULL
   .implemented_commands_cache$dialog_ids <- NULL
   .implemented_commands_cache$dialog_revision <- NULL
@@ -359,8 +400,17 @@ load_plugin_namespace <- function(namespace, package) {
 
 #' Load plugins from files or packages
 #' @keywords internal
-load_plugins <- function(plugins) {
+load_plugins <- function(plugins, lazy = NULL) {
   if (is.null(plugins)) return(invisible(list_plugins()))
+  if (is.null(lazy)) lazy <- isTRUE(getOption("RcmdrShiny.lazy_plugins", FALSE))
+  if (isTRUE(lazy)) {
+    .plugin_registry$pending <- c(.plugin_registry$pending, as.list(plugins))
+    return(invisible(list_plugins()))
+  }
+  load_plugins_now(plugins)
+}
+
+load_plugins_now <- function(plugins) {
   for (plugin in plugins) {
     if (is.character(plugin) && length(plugin) == 1L && file.exists(plugin)) {
       load_plugin(plugin)
@@ -376,9 +426,34 @@ load_plugins <- function(plugins) {
   invisible(list_plugins())
 }
 
+#' Load any plugin left by lazy loading
+#' @keywords internal
+plugins_ensure_loaded <- function() {
+  pending <- .plugin_registry$pending
+  if (length(pending) == 0L) return(invisible(FALSE))
+  .plugin_registry$pending <- list()
+  load_plugins_now(pending)
+  invisible(TRUE)
+}
+
+#' Pending plugins queued for lazy loading
+#' @keywords internal
+plugins_pending <- function() {
+  vapply(.plugin_registry$pending, function(plugin) {
+    if (is.character(plugin) && length(plugin) == 1L) plugin else "<inline>"
+  }, character(1))
+}
+
 #' Menu definitions including plugin menus
 #' @keywords internal
 plugin_menu_definitions <- function() {
+  plugins_ensure_loaded()
+  plugin_catalog_cached("menus", function() {
+    plugin_menu_definitions_build()
+  })
+}
+
+plugin_menu_definitions_build <- function() {
   definitions <- read_rcmdr_menus()
   for (plugin in .plugin_registry$plugins) {
     if (!is.null(plugin$menus)) {
@@ -400,6 +475,7 @@ plugin_menu_definitions <- function() {
 #' Predicates supplied by registered plugins
 #' @keywords internal
 plugin_predicates <- function() {
+  plugins_ensure_loaded()
   predicates <- list()
   for (plugin in .plugin_registry$plugins) {
     for (name in names(plugin$predicates)) {
@@ -411,6 +487,7 @@ plugin_predicates <- function() {
 
 #' @keywords internal
 plugin_commands <- function() {
+  plugins_ensure_loaded()
   commands <- list()
   for (plugin in .plugin_registry$plugins) {
     for (name in names(plugin$commands)) {
@@ -427,6 +504,7 @@ plugin_commands <- function() {
 
 #' @keywords internal
 plugin_dialogs <- function() {
+  plugins_ensure_loaded()
   dialogs <- list()
   for (plugin in .plugin_registry$plugins) {
     for (name in names(plugin$dialogs)) {
@@ -445,6 +523,7 @@ plugin_dialogs <- function() {
 #' @return A named character vector.
 #' @keywords internal
 plugin_aliases <- function() {
+  plugins_ensure_loaded()
   aliases <- character()
   for (plugin in .plugin_registry$plugins) {
     for (alias in names(plugin$aliases %||% character())) {

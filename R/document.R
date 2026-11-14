@@ -1217,6 +1217,7 @@ document_knit_record <- function(state, format, file = NULL, url = NULL,
     duration_ms = duration_ms
   )
   history <- c(list(entry), state$knit_history %||% list())
-  state$knit_history <- utils::head(history, 20L)
+  limit <- as.integer(state$options$knit_history_length %||% 20L)
+  state$knit_history <- utils::head(history, limit)
   invisible(state$knit_history)
 }

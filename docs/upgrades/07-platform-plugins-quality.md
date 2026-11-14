@@ -1,6 +1,6 @@
 # Onda 7 — Piattaforma, progetto, plugin e qualità
 
-**Stato:** in corso — P7.1 completato
+**Stato:** completata — RcmdrShiny Studio 2.0.0
 **Dipende da:** Onde 0–6 e Onda 6.5 (menu platform)
 **Sblocca:** RcmdrShiny Studio 2.0 stabile e manutenibile  
 **Documento padre:** [`README.md`](README.md)
@@ -346,25 +346,25 @@ Estendere `R/diagnostics.R`:
 
 ## 11. Checklist di chiusura
 
-- [ ] Schema progetto.
-- [ ] Save/load.
-- [ ] Recent projects.
-- [ ] Autosave/recovery.
-- [ ] Export bundle.
-- [ ] Home progetti.
-- [ ] Checkpoint sessione.
-- [ ] Recovery prompt.
-- [ ] Lazy plugin/cataloghi.
-- [ ] Cache help/menu.
-- [ ] Benchmark suite.
-- [ ] Trimming e cap.
-- [ ] API plugin v2.
-- [ ] Nuovi hook.
-- [ ] Documentazione plugin.
-- [ ] Test 15 plugin.
-- [ ] Health panel.
-- [ ] Diagnostics esteso.
-- [ ] Matrice test.
-- [ ] Visual regression.
-- [ ] Accessibility checklist.
-- [ ] Release checklist.
+- [x] Schema progetto.
+- [x] Save/load.
+- [x] Recent projects.
+- [x] Autosave/recovery.
+- [x] Export bundle.
+- [x] Home progetti.
+- [x] Checkpoint sessione.
+- [x] Recovery prompt.
+- [x] Lazy plugin/cataloghi.
+- [x] Cache help/menu.
+- [x] Benchmark suite.
+- [x] Trimming e cap.
+- [x] API plugin v2.
+- [x] Nuovi hook.
+- [x] Documentazione plugin.
+- [x] Test 15 plugin.
+- [x] Health panel.
+- [x] Diagnostics esteso.
+- [x] Matrice test.
+- [x] Visual regression.
+- [x] Accessibility checklist.
+- [x] Release checklist.

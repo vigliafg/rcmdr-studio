@@ -395,10 +395,21 @@ menu_registry_module_files <- function() {
   if (length(registered) == 0L) return(character())
 
   # First-party modules keep their fragment next to the plugin package.  In
-  # the source tree they are under plugins/<pkg>/inst/menus; installed packages
-  # expose the same path through system.file().
+  # the source tree they are under <root>/plugins/<pkg>/inst/menus; installed
+  # packages expose the same path through system.file().  The source root is
+  # derived from the core file so that the lookup also works from tests and
+  # from a working directory other than the package root.
+  core_file <- menu_registry_default_file()
+  source_root <- if (nzchar(core_file) &&
+                     grepl("inst/menus/core\\.yml$", core_file)) {
+    dirname(dirname(dirname(core_file)))
+  } else {
+    getwd()
+  }
   files <- unlist(lapply(registered, function(package) {
     candidates <- c(
+      file.path(source_root, "plugins", package, "inst", "menus",
+                "module.yml"),
       file.path("plugins", package, "inst", "menus", "module.yml"),
       file.path(getwd(), "plugins", package, "inst", "menus", "module.yml"),
       system.file("menus", "module.yml", package = package)
@@ -444,6 +455,7 @@ menu_registry_core_ids <- function(registry) {
 }
 
 menu_registry_cached <- function(force = FALSE) {
+  if (is.function(plugins_ensure_loaded)) plugins_ensure_loaded()
   core_file <- menu_registry_default_file()
   module_files <- menu_registry_module_files()
   stamps <- file.info(c(core_file, module_files))$mtime
@@ -879,44 +891,48 @@ menu_registry_curate <- function(registry) {
   }
 
   move_labels(
-    c("newDataSet", "newRmd", "newRnw"), "menu.file.new",
-    labels = c(newDataSet = "Data set...", newRmd = "R Markdown document...",
-               newRnw = "knitr document..."),
-    order = c(newDataSet = 10L, newRmd = 20L, newRnw = 30L)
+    c("projectNew", "newDataSet", "newRmd", "newRnw"), "menu.file.new",
+    labels = c(projectNew = "Project...", newDataSet = "Data set...",
+               newRmd = "R Markdown document...", newRnw = "knitr document..."),
+    order = c(projectNew = 5L, newDataSet = 10L, newRmd = 20L, newRnw = 30L)
   )
   move_labels(
-    c("loadLog", "loadRmd", "loadRnw", "loadDataSet", "loadDataFromPackage"),
+    c("projectOpen", "loadLog", "loadRmd", "loadRnw", "loadDataSet",
+      "loadDataFromPackage"),
     "menu.file.open",
-    labels = c(loadLog = "Script...", loadRmd = "R Markdown...",
-               loadRnw = "knitr...", loadDataSet = "Workspace...",
+    labels = c(projectOpen = "Project...", loadLog = "Script...",
+               loadRmd = "R Markdown...", loadRnw = "knitr...",
+               loadDataSet = "Workspace...",
                loadDataFromPackage = "Data set from package..."),
-    order = c(loadLog = 10L, loadRmd = 20L, loadRnw = 30L,
+    order = c(projectOpen = 5L, loadLog = 10L, loadRmd = 20L, loadRnw = 30L,
               loadDataSet = 40L, loadDataFromPackage = 50L)
   )
   move_labels(
-    c("saveDataSet", "saveLog", "saveRmd", "saveRnw", "saveWorkspace"),
+    c("projectSave", "saveDataSet", "saveLog", "saveRmd", "saveRnw",
+      "saveWorkspace"),
     "menu.file.save",
-    labels = c(saveDataSet = "Data set...", saveLog = "Script...",
-               saveRmd = "Report (R Markdown)...",
-               saveRnw = "Report (knitr)...",
-               saveWorkspace = "Workspace..."),
-    order = c(saveDataSet = 10L, saveLog = 20L, saveRmd = 30L,
-              saveRnw = 40L, saveWorkspace = 50L)
+    labels = c(projectSave = "Project...", saveDataSet = "Data set...",
+               saveLog = "Script...", saveRmd = "Report (R Markdown)...",
+               saveRnw = "Report (knitr)...", saveWorkspace = "Workspace..."),
+    order = c(projectSave = 5L, saveDataSet = 10L, saveLog = 20L,
+              saveRmd = 30L, saveRnw = 40L, saveWorkspace = 50L)
   )
   move_labels(
-    c("saveLogAs", "saveRmdAs", "saveRnwAs", "saveWorkspaceAs",
-      "saveOutputAs"),
+    c("projectSaveAs", "saveLogAs", "saveRmdAs", "saveRnwAs",
+      "saveWorkspaceAs", "saveOutputAs"),
     "menu.file.save.as",
-    labels = c(saveLogAs = "Script as...", saveRmdAs = "R Markdown as...",
-               saveRnwAs = "knitr as...", saveWorkspaceAs = "Workspace as...",
+    labels = c(projectSaveAs = "Project as...", saveLogAs = "Script as...",
+               saveRmdAs = "R Markdown as...", saveRnwAs = "knitr as...",
+               saveWorkspaceAs = "Workspace as...",
                saveOutputAs = "Output as..."),
-    order = c(saveLogAs = 10L, saveRmdAs = 20L, saveRnwAs = 30L,
-              saveWorkspaceAs = 40L, saveOutputAs = 50L)
+    order = c(projectSaveAs = 5L, saveLogAs = 10L, saveRmdAs = 20L,
+              saveRnwAs = 30L, saveWorkspaceAs = 40L, saveOutputAs = 50L)
   )
   move_labels(
-    c("saveOutput", "exportReport"), "menu.file.export",
-    labels = c(saveOutput = "Output...", exportReport = "Report bundle..."),
-    order = c(saveOutput = 10L, exportReport = 20L)
+    c("saveOutput", "exportReport", "projectBundle"), "menu.file.export",
+    labels = c(saveOutput = "Output...", exportReport = "Report bundle...",
+               projectBundle = "Project bundle..."),
+    order = c(saveOutput = 10L, exportReport = 20L, projectBundle = 30L)
   )
   registry$groups[["menu.file.save.as"]]$order <- 60L
   if (!is.null(registry$groups[["menu.file.exit_menu"]])) {
@@ -936,7 +952,12 @@ menu_registry_curate <- function(registry) {
     saveWorkspaceAs = "file.save.workspace_as",
     saveOutputAs = "file.save.output_as",
     saveOutput = "file.export.output",
-    exportReport = "file.export.report"
+    exportReport = "file.export.report",
+    projectNew = "file.new.project",
+    projectOpen = "file.open.project",
+    projectSave = "file.save.project",
+    projectSaveAs = "file.save.project_as",
+    projectBundle = "file.export.project_bundle"
   )
   for (id in names(registry$items)) {
     item <- registry$items[[id]]

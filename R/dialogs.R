@@ -48,7 +48,12 @@ base_dialog_catalog <- function() {
       Setwd = setwd_dialog(),
       loadDataSet = load_dataset_dialog(),
       loadLog = load_script_dialog(),
-      exportReport = export_report_dialog()
+      exportReport = export_report_dialog(),
+      projectNew = project_new_dialog(),
+      projectOpen = project_open_dialog(),
+      projectSaveAs = project_save_as_dialog(),
+      projectBundle = project_bundle_dialog(),
+      sessionCheckpoint = session_checkpoint_dialog()
     ),
     document_dialogs(),
     data_studio_dialogs(),
@@ -163,6 +168,26 @@ base_direct_commands <- function() {
     },
     saveRmd = function(state) document_save_current(state, "rmd"),
     saveRnw = function(state) document_save_current(state, "rnw"),
+    projectSave = function(state) {
+      if (is.null(state$project_path) || !nzchar(state$project_path)) {
+        if (is.function(state$open_dialog)) state$open_dialog("projectSaveAs")
+        return(invisible(NULL))
+      }
+      path <- tryCatch(project_save(state), error = function(e) e)
+      if (inherits(path, "error")) {
+        if (!is.null(state$session)) {
+          shiny::showNotification(conditionMessage(path), type = "error")
+        }
+        return(invisible(NULL))
+      }
+      if (!is.null(state$session)) {
+        shiny::showNotification(
+          sprintf(tr("Saved project %s."), basename(path)),
+          type = "message", duration = 4
+        )
+      }
+      invisible(path)
+    },
     editMarkdown = function(state) {
       document_switch_mode(state, "rmd")
       invisible(NULL)
@@ -326,7 +351,8 @@ base_direct_commands <- function() {
       open_help_topic(state, "plugins")
     },
     helpDiagnostics = function(state) {
-      report <- tryCatch(format_diagnostics(), error = function(e) {
+      report <- tryCatch(format_diagnostics(diagnostics_report(state)),
+                         error = function(e) {
         paste("Diagnostics unavailable:", conditionMessage(e))
       })
       showModal(modalDialog(

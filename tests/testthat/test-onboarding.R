@@ -44,8 +44,8 @@ test_that("the checklist starts empty and tracks the session", {
 
   progress <- onboarding_progress(state)
   expect_equal(progress$done, 4L)
-  expect_equal(progress$total, 4L)
-  expect_equal(progress$percent, 100L)
+  expect_equal(progress$total, 5L)
+  expect_equal(progress$percent, 80L)
 })
 
 test_that("the checklist card shows completed and unavailable items", {
@@ -53,6 +53,11 @@ test_that("the checklist card shows completed and unavailable items", {
   html <- as.character(onboarding_checklist_ui(state))
   expect_match(html, "First steps")
   expect_match(html, "home_check_import")
-  expect_match(html, "unavailable")
+  expect_match(html, "home_check_project")
   expect_match(html, "progress-bar")
+
+  set_feature(state, "project", FALSE)
+  disabled <- as.character(onboarding_checklist_ui(state))
+  expect_match(disabled, "unavailable")
+  expect_false(grepl("home_check_project", disabled, fixed = TRUE))
 })

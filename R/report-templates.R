@@ -29,7 +29,7 @@ report_template_header <- function(title, output = "html_document") {
 #' @return A named list of template descriptors.  Every descriptor has `id`,
 #'   `title`, `description`, `mode` and `build(dataset, title)`.
 #' @keywords internal
-report_templates <- function() {
+report_templates_builtin <- function() {
   list(
     analysis = list(
       id = "analysis",
@@ -261,4 +261,15 @@ report_template_gallery_ui <- function(compact = FALSE) {
       )
     })
   )
+}
+
+
+# Plugin report templates are additive.  A built-in template always wins by id.
+report_templates <- function() {
+  registry <- report_templates_builtin()
+  extras <- tryCatch(plugin_report_templates(), error = function(e) list())
+  for (id in names(extras)) {
+    if (!id %in% names(registry)) registry[[id]] <- extras[[id]]
+  }
+  registry
 }

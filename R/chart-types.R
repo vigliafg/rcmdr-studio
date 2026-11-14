@@ -27,7 +27,7 @@ chart_type <- function(type) {
 #' The registry is rebuilt on demand so translated labels follow the current
 #' language and optional engines are discovered at runtime.
 #' @keywords internal
-chart_types <- function() {
+chart_types_builtin <- function() {
   list(
     histogram = list(
       label = tr("Histogram"),
@@ -499,4 +499,15 @@ chart_type_choices <- function() {
   types <- chart_types()
   labels <- vapply(types, function(info) info$label, character(1))
   stats::setNames(names(types), unname(labels))
+}
+
+
+# Plugin chart types are additive.  A built-in type always wins by id.
+chart_types <- function() {
+  registry <- chart_types_builtin()
+  extras <- tryCatch(plugin_chart_types(), error = function(e) list())
+  for (id in names(extras)) {
+    if (!id %in% names(registry)) registry[[id]] <- extras[[id]]
+  }
+  registry
 }

@@ -259,6 +259,7 @@ script_run_cell <- function(state, cell) {
     time = Sys.time()
   )
   state$script_outputs[[cell$id[[1L]]]] <- entry
+  if (is.function(session_trim)) session_trim(state)
   entry
 }
 

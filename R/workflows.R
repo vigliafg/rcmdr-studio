@@ -64,7 +64,7 @@ first_factor <- function(state) {
 
 #' Built-in workflows
 #' @keywords internal
-workflow_registry <- function() {
+workflow_registry_builtin <- function() {
   list(
     describe = workflow_spec(
       id = "describe",
@@ -728,4 +728,17 @@ workflow_panel_ui <- function(state) {
       )
     }
   )
+}
+
+
+# Plugin workflows extend the built-in registry.  A plugin cannot replace a
+# built-in workflow by id; it can only add a new one.  This keeps the documented
+# onboarding paths stable.
+workflow_registry <- function() {
+  registry <- workflow_registry_builtin()
+  extras <- tryCatch(plugin_workflows(), error = function(e) list())
+  for (id in names(extras)) {
+    if (!id %in% names(registry)) registry[[id]] <- extras[[id]]
+  }
+  registry
 }

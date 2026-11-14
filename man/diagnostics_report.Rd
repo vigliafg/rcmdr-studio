@@ -9,11 +9,12 @@ generated commands.  The report contains no data, script or environment
 contents.
 }
 \usage{
-diagnostics_report()
+diagnostics_report(state = NULL)
 
 format_diagnostics(report = diagnostics_report())
 }
 \arguments{
+  \item{state}{Optional application state.}
   \item{report}{A report returned by \code{diagnostics_report()}.}
 }
 \value{

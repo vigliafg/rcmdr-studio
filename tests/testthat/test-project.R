@@ -297,3 +297,202 @@ test_that("path helpers keep project paths relative and contained", {
   expect_equal(project_assets_dir(file.path(root, "work.rcmdrproj")),
                file.path(root, "assets"))
 })
+
+# -- P7.2 to P7.5: persistence, recent projects, autosave and bundle --------
+
+test_project_state <- function() {
+  state <- AppState(new.env())
+  state$project_recent_file <- tempfile(fileext = ".rds")
+  state$env$iris <- datasets::iris
+  dataset_register(state, "iris", source = "session")
+  state$active_dataset <- "iris"
+  state$data_dictionary$iris <- list(
+    Sepal.Length = list(label = "Lunghezza sepalo", units = "cm")
+  )
+  state$documents <- list(
+    `document-0001` = list(
+      id = "document-0001", title = "Report", path = NULL, mode = "rmd",
+      text = "# Report\n", dirty = FALSE, last_saved = NULL,
+      autosave_path = NULL, autosave_time = NULL
+    )
+  )
+  state$active_document <- "document-0001"
+  state$document <- state$documents[[1L]]
+  plot_file <- tempfile(fileext = ".png")
+  writeLines("not-a-real-png", plot_file)
+  state$plots <- list(list(
+    id = "plot-0001", index = 1L, file = plot_file, url = NULL,
+    code = "hist(iris$Sepal.Length)", recorded = NULL, time = Sys.time(),
+    spec = list(type = "histogram"), title = "Istogramma",
+    tags = character(), pinned = TRUE, interactive_code = NULL
+  ))
+  state$plot_counter <- 1L
+  state$dialog_presets <- list(numericalSummaries = list(
+    Default = list(mean = TRUE)
+  ))
+  state$menu_favorites <- c("numericalSummaries", "Histogram")
+  state$options$theme <- "dark"
+  state
+}
+
+test_that("a project saves, reopens and restores the session", {
+  state <- test_project_state()
+  root <- tempfile("rcmdr-project-save-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  path <- file.path(root, "analysis.rcmdrproj")
+
+  expect_equal(project_save(state, path), project_normalize_path(path))
+  expect_true(file.exists(path))
+  expect_true(file.exists(file.path(root, "data", "iris.csv")))
+  expect_true(file.exists(file.path(root, "assets", "plot-0001.png")))
+  expect_false(state$project_dirty)
+  state_touch(state)
+  expect_true(state$project_dirty)
+  project_save(state, path)
+  expect_false(state$project_dirty)
+
+  project <- project_open(path)
+  expect_equal(project$version, project_schema_version())
+  expect_equal(project$datasets[[1L]]$source, "data/iris.csv")
+  expect_true(project$datasets[[1L]]$include)
+  expect_equal(project$documents[[1L]]$mode, "rmd")
+  expect_equal(project$plots[[1L]]$file, "assets/plot-0001.png")
+  expect_equal(project$options$theme, "dark")
+
+  restored <- AppState(new.env())
+  project_load(restored, path)
+  expect_equal(restored$active_dataset, "iris")
+  expect_equal(nrow(restored$env$iris), 150L)
+  expect_equal(attr(restored$env$iris$Sepal.Length, "label"),
+               "Lunghezza sepalo")
+  expect_equal(restored$documents[[1L]]$text, "# Report\n")
+  expect_equal(restored$active_document, "document-0001")
+  expect_equal(restored$plot_counter, 1L)
+  expect_true(file.exists(restored$plots[[1L]]$file))
+  expect_equal(restored$menu_favorites,
+               c("numericalSummaries", "Histogram"))
+  expect_equal(restored$dialog_presets$numericalSummaries$Default$mean, TRUE)
+  expect_equal(restored$options$theme, "dark")
+  expect_equal(restored$project_path, project_normalize_path(path))
+})
+
+test_that("save as changes the project path and title", {
+  state <- test_project_state()
+  root <- tempfile("rcmdr-project-as-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  first <- project_save(state, file.path(root, "first"))
+  expect_true(grepl("\\.rcmdrproj$", first))
+  second <- project_save_as(state, file.path(root, "second.rcmdrproj"))
+  expect_equal(state$project_path, project_normalize_path(second))
+  expect_equal(state$project_title, "second")
+  expect_true(file.exists(first))
+  expect_true(file.exists(second))
+})
+
+test_that("history is included only when requested", {
+  state <- test_project_state()
+  state$history <- list(history_entry("hist-0001", Sys.time(), "script",
+                                      "summary(iris)"))
+  state$history_counter <- 1L
+  root <- tempfile("rcmdr-project-history-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+
+  plain <- project_open(project_save(state, file.path(root, "plain.rcmdrproj")))
+  expect_false(isTRUE(plain$history$include))
+  expect_null(plain$history$entries)
+
+  full_path <- project_save(state, file.path(root, "full.rcmdrproj"),
+                            include_history = TRUE)
+  full <- project_open(full_path)
+  expect_true(isTRUE(full$history$include))
+  expect_equal(full$history$entries[[1L]]$command, "summary(iris)")
+
+  restored <- AppState(new.env())
+  project_load(restored, full_path)
+  expect_true(any(vapply(restored$history, function(entry) {
+    identical(entry$command, "summary(iris)")
+  }, logical(1))))
+})
+
+test_that("recent projects are ordered, deduplicated and removable", {
+  file <- tempfile(fileext = ".rds")
+  on.exit(unlink(file), add = TRUE)
+  root <- tempfile("rcmdr-recent-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  first <- file.path(root, "first.rcmdrproj")
+  second <- file.path(root, "second.rcmdrproj")
+  writeLines("version: 1", first)
+  writeLines("version: 1", second)
+
+  project_recent_add(first, "First", file = file)
+  project_recent_add(second, "Second", file = file)
+  project_recent_add(first, "First again", file = file)
+  table <- project_recent(file = file)
+  expect_equal(nrow(table), 2L)
+  expect_equal(table$path[[1L]], project_normalize_path(first))
+  expect_true(all(table$exists))
+
+  project_recent_remove(first, file = file)
+  expect_equal(project_recent(file = file)$path, project_normalize_path(second))
+})
+
+test_that("autosave and recovery keep the original project path", {
+  state <- test_project_state()
+  root <- tempfile("rcmdr-project-recovery-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  path <- project_save(state, file.path(root, "work.rcmdrproj"))
+  autosave <- paste0(path, ".autosave")
+
+  state$project_dirty <- TRUE
+  expect_true(project_autosave(state))
+  expect_true(file.exists(autosave))
+  info <- project_recovery_info(path)
+  expect_true(info$available)
+  expect_true(file.exists(info$autosave))
+
+  Sys.setFileTime(autosave, Sys.time() + 10)
+  expect_true(project_recovery_info(path)$newer)
+
+  recovered <- AppState(new.env())
+  project_recover(recovered, path)
+  expect_equal(recovered$project_path, project_normalize_path(path))
+  expect_true(recovered$project_dirty)
+  expect_equal(recovered$active_dataset, "iris")
+
+  project_remove_autosave(recovered)
+  expect_false(file.exists(autosave))
+})
+
+test_that("a bundle contains the project, its data and its plots", {
+  state <- test_project_state()
+  root <- tempfile("rcmdr-project-bundle-")
+  dir.create(root, recursive = TRUE)
+  on.exit(unlink(root, recursive = TRUE), add = TRUE)
+  archive <- file.path(root, "bundle.tar.gz")
+
+  expect_equal(project_export_bundle(state, archive),
+               project_normalize_path(archive))
+  expect_true(file.exists(archive))
+  listing <- utils::untar(archive, list = TRUE)
+  expect_true(any(grepl("project\\.rcmdrproj$", listing)))
+  expect_true(any(grepl("README\\.txt$", listing)))
+  expect_true(any(grepl("data/iris\\.csv$", listing)))
+  expect_true(any(grepl("assets/plot-0001\\.png$", listing)))
+})
+
+test_that("a project can be reset without touching the session data", {
+  state <- test_project_state()
+  title <- project_reset(state, title = "New analysis")
+  expect_equal(title, "New analysis")
+  expect_true(state$project_dirty)
+  expect_null(state$project_path)
+  expect_true(exists("iris", envir = state$env, inherits = FALSE))
+  summary <- project_summary(state)
+  expect_equal(summary$title, "New analysis")
+  expect_equal(summary$datasets, length(state$datasets))
+})

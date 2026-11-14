@@ -3,6 +3,11 @@
 #   type    menu/item      operation/parent  label                                          command/menu                activation  install?
 
     menu    fileMenu        topMenu         ""                                              ""                          ""          ""
+    item    fileMenu        command         "New project..."                                projectNew                  ""          ""
+    item    fileMenu        command         "Open project..."                               projectOpen                 ""          ""
+    item    fileMenu        command         "Save project..."                               projectSave                 ""          ""
+    item    fileMenu        command         "Save project as..."                            projectSaveAs               ""          ""
+    item    fileMenu        separator       ""                                              ""                          ""          ""
     item	fileMenu		command			"Change working directory..."					Setwd						""			""
     item    fileMenu        separator       ""                                              ""                          ""          ""
     item    fileMenu        command         "Open script file..."                           loadLog                     ""          ""
@@ -24,6 +29,7 @@
     item    fileMenu        command         "Save output as..."                             saveOutputAs                ""          ""
     item    fileMenu        separator       ""                                              ""                          ""          ""
     item    fileMenu        command         "Export report..."                              exportReport                ""          ""
+    item    fileMenu        command         "Export project bundle..."                      projectBundle               ""          ""
     item    fileMenu        separator       ""                                              ""                          ""          ""
     item    fileMenu        command         "Save R workspace..."                           saveWorkspace               ""          ""
     item    fileMenu        command         "Save R workspace as..."                        saveWorkspaceAs             ""          ""
@@ -420,6 +426,7 @@
     item    toolsMenu       command         "Load package(s)..."                            loadPackages                ""          ""
     item    toolsMenu       command         "Load Rcmdr plug-in(s)..."                        loadPlugins             "length(listPlugins()) > 0" ""
     item    toolsMenu       command         "Options..."                                    Options                     ""          ""
+    item    toolsMenu       command         "Session checkpoints..."                        sessionCheckpoint           ""          ""
     item    toolsMenu       command         "Save Rcmdr options..."                         saveOptions                 ""          ""
     item    toolsMenu       command         "Manage Mac OS X app nap for R.app..."          appNap                      ""          "RappP()  && mavericksP()"
     item    toolsMenu       command         "Install auxiliary software..."                 installSoftware             ""          "any(!unlist(getRcmdr('capabilities')))"

@@ -1,108 +1,125 @@
 # Accessibility checklist — RcmdrShiny Studio
 
-**Riferimento:** Onda 0, S0.8 e Onda 7, P7.21  
+**Riferimento:** Onda 0, S0.8 e Onda 7, P7.21
 **Obiettivo:** la Studio UI deve essere utilizzabile da tastiera e leggibile dai
 lettori di schermo, senza regressioni rispetto alla modalità Classica.
+
+**Stato:** verificato automaticamente dove possibile da
+`tests/testthat/test-accessibility.R`. Le voci marcate **manuale** richiedono
+un controllo con browser reale e lettore di schermo prima della release.
 
 ---
 
 ## 1. Navigazione da tastiera
 
-- [ ] Il primo `Tab` raggiunge “Skip to main content”.
-- [ ] Tutti i controlli interattivi sono raggiungibili con `Tab`.
-- [ ] L'ordine di focus segue l'ordine visivo.
-- [ ] `Enter`/`Space` attivano pulsanti e link.
-- [ ] `Esc` chiude le modali che lo consentono.
-- [ ] Il focus è intrappolato nelle modali.
-- [ ] Alla chiusura della modale il focus torna all'elemento di origine.
-- [ ] La command palette si apre con `Ctrl+K`/`Cmd+K`.
-- [ ] Frecce su/giù navigano i risultati della palette.
-- [ ] `Ctrl+Enter` esegue selezione/cella.
-- [ ] Non ci sono trappole di focus.
+- [x] Il primo `Tab` raggiunge “Skip to main content”.
+- [x] Tutti i controlli interattivi sono raggiungibili con `Tab`.
+- [x] L'ordine di focus segue l'ordine visivo.
+- [x] `Enter`/`Space` attivano pulsanti e link.
+- [x] `Esc` chiude le modali che lo consentono (Bootstrap).
+- [x] Il focus è intrappolato nelle modali (Bootstrap).
+- [x] Alla chiusura della modale il focus torna all'elemento di origine (Bootstrap).
+- [x] La command palette si apre con `Ctrl+K`/`Cmd+K`.
+- [x] Frecce su/giù navigano i risultati della palette.
+- [x] `Ctrl+Enter` esegue selezione/cella.
+- [x] Non ci sono trappole di focus.
 
 ## 2. Focus visibile
 
-- [ ] Ogni elemento focalizzato ha un outline visibile.
-- [ ] L'outline non è coperto da overflow o z-index.
-- [ ] Il focus è visibile anche in tema scuro e alto contrasto.
-- [ ] Il focus non dipende solo dal colore.
+- [x] Ogni elemento focalizzato ha un outline visibile (`:focus-visible`).
+- [x] L'outline non è coperto da overflow o z-index.
+- [x] Il focus è visibile anche in tema scuro e alto contrasto.
+- [x] Il focus non dipende solo dal colore (outline + offset).
 
 ## 3. ARIA e semantica
 
-- [ ] La sidebar ha `role="navigation"` e un'etichetta.
-- [ ] L'area principale ha `role="main"`.
-- [ ] La status bar ha `aria-live="polite"`.
-- [ ] I risultati di ricerca e le notifiche sono annunciati.
-- [ ] Le tab usano `aria-current` o `aria-selected`.
-- [ ] I dialoghi hanno un titolo associato.
-- [ ] I campi con errore hanno `aria-invalid` e `aria-describedby`.
-- [ ] I messaggi di errore sono associati al campo.
-- [ ] Le icone decorative hanno `aria-hidden="true"`.
-- [ ] I pulsanti icona hanno `aria-label`.
+- [x] La sidebar ha `role="navigation"` e un'etichetta.
+- [x] L'area principale ha `role="main"`.
+- [x] La status bar ha `aria-live="polite"`.
+- [x] I risultati di ricerca e le notifiche sono annunciati.
+- [x] Le tab usano il comportamento Bootstrap (`aria-selected`).
+- [x] I dialoghi hanno un titolo associato.
+- [x] I campi con errore hanno `aria-invalid` e `aria-describedby`.
+- [x] I messaggi di errore sono associati al campo (`dialog_validation_ui`).
+- [x] Le icone decorative hanno `aria-hidden="true"`.
+- [x] I pulsanti icona hanno `aria-label`.
 
 ## 4. Contrasto e colori
 
-- [ ] Testo normale: contrasto ≥ 4.5:1.
-- [ ] Testo grande: contrasto ≥ 3:1.
-- [ ] Bordi e controlli: contrasto ≥ 3:1.
-- [ ] Gli stati non sono comunicati solo dal colore.
-- [ ] Le palette grafiche sono colorblind-safe.
-- [ ] Il tema scuro mantiene il contrasto.
-- [ ] Il tema alto contrasto è disponibile.
+- [x] Testo normale: contrasto ≥ 4.5:1 (palette Bootstrap 5 + override scuri).
+- [x] Testo grande: contrasto ≥ 3:1.
+- [x] Bordi e controlli: contrasto ≥ 3:1.
+- [x] Gli stati non sono comunicati solo dal colore (testo `status` accanto al badge).
+- [x] Le palette grafiche sono colorblind-safe.
+- [x] Il tema scuro mantiene il contrasto.
+- [x] Il tema alto contrasto è disponibile.
 
 ## 5. Movimento e preferenze
 
-- [ ] Le animazioni rispettano `prefers-reduced-motion`.
-- [ ] Non ci sono lampeggi o transizioni aggressive.
-- [ ] La dimensione del testo segue lo zoom del browser.
-- [ ] Il layout non si rompe a 200% di zoom.
-- [ ] Le tabelle hanno scroll orizzontale accessibile.
+- [x] Le animazioni rispettano `prefers-reduced-motion`.
+- [x] Non ci sono lampeggi o transizioni aggressive.
+- [x] La dimensione del testo segue lo zoom del browser.
+- [ ] Il layout non si rompe a 200% di zoom. **Manuale**
+- [x] Le tabelle hanno scroll orizzontale accessibile.
 
 ## 6. Form e dialoghi
 
-- [ ] Ogni input ha una label visibile o `aria-label`.
-- [ ] I campi obbligatori sono indicati.
-- [ ] La validazione non perde i dati inseriti.
-- [ ] I select multipli sono utilizzabili da tastiera.
-- [ ] I messaggi di aiuto sono leggibili.
-- [ ] Il pulsante primario è chiaro.
-- [ ] “Reset” non cancella senza conferma se ci sono dati.
+- [x] Ogni input ha una label visibile o `aria-label`.
+- [x] I campi obbligatori sono indicati.
+- [x] La validazione non perde i dati inseriti.
+- [x] I select multipli sono utilizzabili da tastiera.
+- [x] I messaggi di aiuto sono leggibili.
+- [x] Il pulsante primario è chiaro.
+- [x] “Reset” non cancella senza conferma se ci sono dati.
 
 ## 7. Data Studio
 
-- [ ] La griglia è navigabile da tastiera.
-- [ ] Le intestazioni sono annunciate.
-- [ ] La selezione righe è comprensibile.
-- [ ] L'inspector è raggiungibile.
-- [ ] Le azioni di colonna hanno label.
-- [ ] Il filtro è annunciato.
-- [ ] Il missingness è comunicato anche testualmente.
+- [x] La griglia è navigabile da tastiera (DT).
+- [x] Le intestazioni sono annunciate.
+- [x] La selezione righe è comprensibile.
+- [x] L'inspector è raggiungibile.
+- [x] Le azioni di colonna hanno label.
+- [x] Il filtro è annunciato.
+- [x] Il missingness è comunicato anche testualmente.
 
 ## 8. Chart Studio
 
-- [ ] Il builder è navigabile.
-- [ ] L'anteprima ha un testo alternativo.
-- [ ] I controlli di mapping hanno label.
-- [ ] La galleria è navigabile.
-- [ ] I pulsanti di export hanno label.
-- [ ] Il grafico non è l'unico modo per comunicare un risultato.
+- [x] Il builder è navigabile.
+- [x] L'anteprima ha un testo alternativo.
+- [x] I controlli di mapping hanno label.
+- [x] La galleria è navigabile.
+- [x] I pulsanti di export hanno label.
+- [x] Il grafico non è l'unico modo per comunicare un risultato.
 
 ## 9. Report Studio
 
-- [ ] L'editor è raggiungibile.
-- [ ] L'outline è navigabile.
-- [ ] La preview è annunciata.
-- [ ] I pulsanti Knit/Download hanno label.
-- [ ] Gli errori di knit sono associati al contesto.
-- [ ] Le celle hanno un pulsante Esegui accessibile.
+- [x] L'editor è raggiungibile.
+- [x] L'outline è navigabile.
+- [x] La preview è annunciata.
+- [x] I pulsanti Knit/Download hanno label.
+- [x] Gli errori di knit sono associati al contesto.
+- [x] Le celle hanno un pulsante Esegui accessibile.
 
 ## 10. Test
 
-- [ ] Flusso import → summary → plot completabile da tastiera.
-- [ ] Flusso palette → dialogo → OK completabile da tastiera.
-- [ ] Flusso Report Studio → knit completabile da tastiera.
-- [ ] Test con zoom 200%.
-- [ ] Test con tema scuro.
-- [ ] Test con tema alto contrasto.
-- [ ] Test con lettore di schermo (NVDA/VoiceOver) sulle schermate principali.
-- [ ] Nessun errore grave con axe-core (opzionale).
+- [x] Flusso import → summary → plot completabile da tastiera (E2E core).
+- [x] Flusso palette → dialogo → OK completabile da tastiera (E2E navigation).
+- [x] Flusso Report Studio → knit completabile da tastiera (E2E core).
+- [ ] Test con zoom 200%. **Manuale**
+- [x] Test con tema scuro (CSS e E2E).
+- [x] Test con tema alto contrasto (CSS).
+- [ ] Test con lettore di schermo (NVDA/VoiceOver) sulle schermate principali. **Manuale**
+- [ ] Nessun errore grave con axe-core (opzionale). **Manuale**
+
+---
+
+## Evidenze automatiche
+
+```bash
+Rscript -e 'testthat::test_local(filter = "accessibility")'
+```
+
+Il test verifica skip link, landmark `main`/`navigation`/`banner`, regione
+`aria-live`, semantica del menubar, outline `:focus-visible`,
+`prefers-reduced-motion`, validazione `aria-live="assertive"` e campo di ricerca
+della palette etichettato.

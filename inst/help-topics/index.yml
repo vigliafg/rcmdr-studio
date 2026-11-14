@@ -76,6 +76,10 @@ topics:
     file: topics/menu-structure.md
     category: workbench
     order: 50
+  - id: projects
+    file: topics/projects.md
+    category: workbench
+    order: 52
   - id: exporting-results
     file: topics/exporting-results.md
     category: data

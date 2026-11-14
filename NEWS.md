@@ -1,3 +1,29 @@
+# RcmdrShiny Studio 2.0.0
+
+## Wave 7 — Platform, projects, plugins and quality
+
+- **Projects**: versioned `.rcmdrproj` files save data set sources, documents,
+  models, plots, presets, favourites and options. Save, open, save as, recent
+  projects, atomic autosave and a recovery prompt on start-up.
+- **Bundles**: `File > Export > Project bundle...` creates a self-contained
+  `.tar.gz` (or `.zip`) with the project, included data and plots.
+- **Session checkpoints**: store the active data set, active model and open
+  documents; restoring never re-runs a command.
+- **Project schema**: entry constructors, pure validation, normalisation,
+  v0→v1 migration and path helpers that keep files inside the project folder.
+- **Performance**: lazy plugin queues, menu/help/plugin catalogue caches,
+  a benchmark suite and caps for cell outputs, knit history and plot gallery.
+- **Plugin SDK v2**: versioned internal contract (`plugin_api_version()`,
+  `plugin_contract()`), additive components, presets, workflows, chart types,
+  report templates and help examples. The 15 first-party modules are covered by
+  a contract test.
+- **Health and diagnostics**: Home health panel with versions, optional
+  packages, plugins, caches, project state and last error; diagnostics now
+  include UI mode, feature flags, project, history and caches, with a
+  pre-filled issue URL.
+- **Quality**: test matrix, visual snapshot (optional), accessibility audit and
+  a Studio release checklist.
+
 # RcmdrShiny Studio 1.21.0
 
 ## Wave 6.5 — Menu platform and stable ids

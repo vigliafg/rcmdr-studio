@@ -169,6 +169,887 @@ project_payload <- function(project) {
   project[setdiff(names(project), "path")]
 }
 
+# -- persistence -------------------------------------------------------------
+
+#' Project file name from a title
+#' @keywords internal
+project_file_name <- function(title = NULL) {
+  title <- trimws(as.character(title %||% ""))
+  if (!nzchar(title)) title <- "project"
+  title <- gsub("[^A-Za-z0-9._ -]+", "-", title)
+  title <- gsub("[[:space:]]+", "-", title)
+  paste0(title, ".", project_extension())
+}
+
+#' Sanitise a data set name for a file inside the project
+#' @keywords internal
+project_safe_name <- function(name) {
+  name <- gsub("[^A-Za-z0-9._-]+", "_", as.character(name %||% ""))
+  name <- gsub("^[._-]+|[._-]+$", "", name)
+  if (!nzchar(name)) "dataset" else name
+}
+
+#' Serialise a project to YAML
+#' @keywords internal
+project_to_yaml <- function(project) {
+  if (!requireNamespace("yaml", quietly = TRUE)) {
+    stop("The 'yaml' package is required to save a project.", call. = FALSE)
+  }
+  yaml::as.yaml(project_payload(project))
+}
+
+#' Parse a project from YAML
+#' @keywords internal
+project_from_yaml <- function(text) {
+  if (!requireNamespace("yaml", quietly = TRUE)) {
+    stop("The 'yaml' package is required to open a project.", call. = FALSE)
+  }
+  value <- tryCatch(
+    yaml::yaml.load(paste(text, collapse = "\n"), eval.expr = FALSE),
+    error = function(e) {
+      stop(sprintf("The project file is not valid YAML: %s",
+                   conditionMessage(e)), call. = FALSE)
+    }
+  )
+  if (!is.list(value)) {
+    stop("The project file does not contain a project object.", call. = FALSE)
+  }
+  value
+}
+
+#' Write a project atomically
+#'
+#' @param project Project list.
+#' @param path Destination file.
+#' @keywords internal
+project_write_file <- function(project, path) {
+  text <- project_to_yaml(project)
+  directory <- dirname(path)
+  dir.create(directory, recursive = TRUE, showWarnings = FALSE)
+  temporary <- tempfile("rcmdr-project-", tmpdir = directory)
+  on.exit(unlink(temporary), add = TRUE)
+  writeLines(text, temporary, useBytes = TRUE)
+  if (file.exists(path)) {
+    backup <- paste0(path, ".bak")
+    try(file.copy(path, backup, overwrite = TRUE), silent = TRUE)
+  }
+  if (!file.rename(temporary, path)) {
+    unlink(path)
+    if (!file.rename(temporary, path)) {
+      stop(sprintf("Could not write the project file: %s", path),
+           call. = FALSE)
+    }
+  }
+  invisible(path)
+}
+
+#' Read a project from disk
+#'
+#' @param path Project file.
+#' @return A migrated, validated project.
+#' @keywords internal
+project_read <- function(path) {
+  if (!project_is_string(path, allow_empty = FALSE) ||
+      !file.exists(path)) {
+    stop(sprintf("Project file not found: %s", as.character(path)),
+         call. = FALSE)
+  }
+  text <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  project <- project_from_yaml(text)
+  project <- project_migrate(project)
+  project_validate_or_stop(project)
+  project$path <- project_normalize_path(path.expand(path))
+  project
+}
+
+#' Open a project
+#'
+#' Alias of [project_read()] kept as the public task name from the plan.
+#' @keywords internal
+project_open <- function(path) project_read(path)
+
+#' Write a project payload and its referenced files
+#'
+#' Internal workhorse shared by save, autosave and bundle export.  It never
+#' changes the session metadata.
+#'
+#' @param state Application state.
+#' @param path Destination project file.
+#' @param include_history Whether to include the command history.
+#' @return The written project, invisibly.
+#' @keywords internal
+project_write <- function(state, path, include_history = NULL) {
+  path <- project_normalize_path(path.expand(path))
+  project <- project_build(state, path, include_history = include_history)
+  directory <- dirname(path)
+
+  # Included data sets are written next to the project.
+  for (i in seq_along(project$datasets)) {
+    entry <- project$datasets[[i]]
+    if (!isTRUE(entry$include)) next
+    data <- get0(entry$name, envir = state$env, inherits = FALSE)
+    if (!is.data.frame(data)) next
+    destination <- file.path(directory, entry$source)
+    dir.create(dirname(destination), recursive = TRUE, showWarnings = FALSE)
+    utils::write.csv(data, destination, row.names = FALSE, na = "")
+    project$datasets[[i]]$source <- entry$source
+  }
+
+  # Plots are copied into assets/ under their stable id.
+  sources <- attr(project, "plot_sources") %||% character()
+  for (i in seq_along(project$plots)) {
+    entry <- project$plots[[i]]
+    source <- sources[[entry$id]] %||% ""
+    destination <- file.path(directory, entry$file %||% "")
+    dir.create(dirname(destination), recursive = TRUE, showWarnings = FALSE)
+    if (nzchar(source) && file.exists(source)) {
+      try(file.copy(source, destination, overwrite = TRUE), silent = TRUE)
+    }
+    project$plots[[i]]$file <- entry$file
+  }
+  attr(project, "plot_sources") <- NULL
+
+  project_write_file(project, path)
+  invisible(project)
+}
+
+#' Build the project payload from the session
+#'
+#' @param state Application state.
+#' @param path Destination path, used to relativise sources.
+#' @param include_history Whether to include the command history.
+#' @keywords internal
+project_build <- function(state, path = NULL,
+                          include_history = NULL) {
+  root <- if (is.null(path)) NULL else dirname(path)
+  project <- project_new(path = path)
+  project$title <- state$project_title %||% ""
+  project$created <- state$project_created %||% project$created
+  project$modified <- project_timestamp()
+
+  registry <- tryCatch(dataset_registry(state), error = function(e) NULL)
+  dataset_names <- if (!is.null(registry) && nrow(registry) > 0L) {
+    registry$name
+  } else {
+    names(state$datasets %||% list())
+  }
+  datasets <- list()
+  for (name in dataset_names) {
+    data <- get0(name, envir = state$env, inherits = FALSE)
+    if (!is.data.frame(data)) next
+    meta <- (state$datasets %||% list())[[name]] %||% list()
+    source <- meta$source %||% ""
+    include <- FALSE
+    if (!nzchar(source) || !file.exists(source) ||
+        identical(source, "session") || identical(source, "command")) {
+      source <- file.path("data", paste0(project_safe_name(name), ".csv"))
+      include <- TRUE
+    } else if (!is.null(root)) {
+      source <- project_relative_path(source, root)
+    }
+    datasets[[length(datasets) + 1L]] <- project_dataset(
+      name = name,
+      source = source,
+      include = include,
+      active = identical(name, state$active_dataset),
+      dictionary = (state$data_dictionary %||% list())[[name]] %||% list()
+    )
+  }
+  project$datasets <- datasets
+
+  models <- tryCatch(model_registry(state), error = function(e) NULL)
+  entries <- list()
+  if (!is.null(models) && nrow(models) > 0L) {
+    for (i in seq_len(nrow(models))) {
+      row <- models[i, , drop = FALSE]
+      entries[[length(entries) + 1L]] <- project_model_entry(
+        row$name[[1L]], row$class[[1L]],
+        formula = row$formula[[1L]] %||% NULL,
+        data = row$data[[1L]] %||% NULL
+      )
+    }
+  }
+  project$models <- entries
+  project$active_model <- state$active_model
+
+  documents <- list()
+  source_documents <- state$documents %||% list()
+  if (length(source_documents) == 0L &&
+      nzchar(document_text(state) %||% "")) {
+    source_documents <- list(list(
+      id = "document-0001",
+      title = "Untitled document",
+      path = document_path(state),
+      mode = document_mode(state),
+      text = document_text(state)
+    ))
+  }
+  for (document in source_documents) {
+    doc_path <- document$path %||% NULL
+    if (!is.null(doc_path) && nzchar(doc_path) && !is.null(root)) {
+      doc_path <- project_relative_path(doc_path, root)
+    }
+    documents[[length(documents) + 1L]] <- project_document_entry(
+      id = document$id %||% sprintf("document-%04d", length(documents) + 1L),
+      path = doc_path,
+      mode = document$mode %||% "r",
+      text = document$text %||% "",
+      active = identical(document$id, state$active_document)
+    )
+  }
+  project$documents <- documents
+  project$active_document <- state$active_document
+
+  plots <- list()
+  plot_sources <- character()
+  for (plot in state$plots %||% list()) {
+    id <- plot$id %||% sprintf("plot-%04d", length(plots) + 1L)
+    file <- plot$file %||% ""
+    extension <- if (nzchar(file)) tools::file_ext(file) else "png"
+    if (!nzchar(extension)) extension <- "png"
+    plot_sources[[id]] <- file
+    plots[[length(plots) + 1L]] <- project_plot_entry(
+      id = id,
+      file = file.path("assets", paste0(project_safe_name(id), ".", extension)),
+      title = plot$title %||% NULL,
+      spec = plot$spec %||% NULL,
+      pinned = isTRUE(plot$pinned)
+    )
+  }
+  project$plots <- plots
+  attr(project, "plot_sources") <- plot_sources
+
+  project$presets <- state$dialog_presets %||% list()
+  project$favorites <- state$menu_favorites %||% character()
+  project$options <- project_options(
+    ui_mode = ui_mode(state),
+    theme = state$options$theme %||% "system",
+    language = state$options$language %||% current_language()
+  )
+  include <- include_history %||% isTRUE(state$options$project_history)
+  project$history <- list(include = isTRUE(include))
+  if (isTRUE(include)) {
+    project$history$entries <- lapply(state$history %||% list(), function(entry) {
+      list(
+        time = format(entry$time %||% Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+        source = entry$source %||% "script",
+        command = entry$command %||% "",
+        dialog_id = entry$dialog_id %||% NULL
+      )
+    })
+  }
+
+  project
+}
+
+#' Save the session to a project file
+#'
+#' @param state Application state.
+#' @param path Destination.  Defaults to the current project path.
+#' @param include_history Include the structured command history.
+#' @return The project path, invisibly.
+#' @keywords internal
+project_save <- function(state, path = NULL, include_history = NULL) {
+  path <- path %||% state$project_path
+  if (!project_is_string(path, allow_empty = FALSE)) {
+    stop("Choose a project file first.", call. = FALSE)
+  }
+  path <- project_normalize_path(path.expand(path))
+  if (!grepl(paste0("\\.", project_extension(), "$"), path,
+             ignore.case = TRUE)) {
+    path <- paste0(path, ".", project_extension())
+  }
+  if (is.null(state$project_title) || !nzchar(state$project_title)) {
+    state$project_title <- sub(paste0("\\.", project_extension(), "$"), "",
+                               basename(path))
+  }
+  project <- project_write(state, path, include_history = include_history)
+
+  state$project_path <- path
+  state$project_title <- project$title %||% basename(path)
+  state$project_created <- project$created
+  state$project_modified <- project$modified
+  state$project_models <- project$models
+  state$project_autosave_time <- NULL
+  project_remove_autosave(state)
+  project_recent_add(path, state$project_title,
+                     file = state$project_recent_file)
+  state_touch(state)
+  state$project_dirty <- FALSE
+  invisible(path)
+}
+
+#' Save a project under a new path
+#' @keywords internal
+project_save_as <- function(state, path, include_history = NULL) {
+  state$project_title <- sub(paste0("\\.", project_extension(), "$"), "",
+                             basename(path))
+  project_save(state, path = path, include_history = include_history)
+}
+
+#' Read a data file referenced by a project
+#' @keywords internal
+project_read_dataset <- function(path) {
+  if (!file.exists(path)) {
+    stop(sprintf("Data file not found: %s", path), call. = FALSE)
+  }
+  extension <- tolower(tools::file_ext(path))
+  data <- switch(
+    extension,
+    csv = utils::read.csv(path, stringsAsFactors = TRUE, check.names = FALSE),
+    tsv = utils::read.delim(path, stringsAsFactors = TRUE, check.names = FALSE),
+    txt = utils::read.table(path, header = TRUE, stringsAsFactors = TRUE),
+    rds = readRDS(path),
+    rda = ,
+    rdata = {
+      environment <- new.env(parent = emptyenv())
+      loaded <- load(path, envir = environment)
+      frames <- Filter(function(name) {
+        is.data.frame(get(name, envir = environment, inherits = FALSE))
+      }, loaded)
+      if (length(frames) == 0L) {
+        stop(sprintf("No data frame in %s.", path), call. = FALSE)
+      }
+      get(frames[[1L]], envir = environment, inherits = FALSE)
+    },
+    stop(sprintf("Unsupported data format: .%s", extension), call. = FALSE)
+  )
+  if (!is.data.frame(data)) {
+    stop(sprintf("The file does not contain a data frame: %s", path),
+         call. = FALSE)
+  }
+  data
+}
+
+#' Apply a project to a session
+#'
+#' Restores data sets, documents, plots, presets, favourites and options.  The
+#' statistical objects that the project only describes (models) must still
+#' exist in the evaluation environment; their active selection is restored when
+#' they do.
+#'
+#' @param state Application state.
+#' @param project A validated project.
+#' @param path Project path, used to resolve relative files.
+#' @return The project, invisibly.
+#' @keywords internal
+project_apply <- function(state, project, path = NULL) {
+  project <- project_migrate(project)
+  project_validate_or_stop(project)
+  path <- path %||% project$path %||% state$project_path
+  root <- if (is.null(path)) getwd() else dirname(path)
+  warnings <- character()
+
+  for (entry in project$datasets) {
+    source <- project_resolve_path(entry$source, root)
+    data <- tryCatch(project_read_dataset(source), error = function(e) e)
+    if (inherits(data, "error")) {
+      warnings <- c(warnings, conditionMessage(data))
+      next
+    }
+    assign(entry$name, data, envir = state$env)
+    dataset_register(state, entry$name, source = source, refresh = TRUE)
+    dictionary <- entry$dictionary %||% list()
+    if (length(dictionary) > 0L) {
+      state$data_dictionary[[entry$name]] <- dictionary
+      for (variable in names(dictionary)) {
+        if (!variable %in% names(data)) next
+        info <- dictionary[[variable]]
+        column <- data[[variable]]
+        for (field in c("label", "units", "description")) {
+          if (!is.null(info[[field]])) attr(column, field) <- info[[field]]
+        }
+        data[[variable]] <- column
+      }
+      assign(entry$name, data, envir = state$env)
+    }
+    if (isTRUE(entry$active)) state$active_dataset <- entry$name
+  }
+  if (is.null(state$active_dataset) && length(project$datasets) > 0L) {
+    first <- project$datasets[[1L]]$name %||% NULL
+    if (!is.null(first) && exists(first, envir = state$env, inherits = FALSE)) {
+      state$active_dataset <- first
+    }
+  }
+  if (!is.null(state$active_dataset) &&
+      !exists(state$active_dataset, envir = state$env, inherits = FALSE)) {
+    state$active_dataset <- NULL
+  }
+
+  state$project_models <- project$models
+  if (!is.null(project$active_model) &&
+      exists(project$active_model, envir = state$env, inherits = FALSE)) {
+    state$active_model <- project$active_model
+  } else {
+    state$active_model <- NULL
+  }
+
+  state$documents <- list()
+  document_counter <- 0L
+  for (entry in project$documents) {
+    id <- entry$id
+    document <- list(
+      id = id,
+      title = if (!is.null(entry$path) && nzchar(entry$path)) {
+        basename(entry$path)
+      } else {
+        tr("Untitled document")
+      },
+      path = if (!is.null(entry$path)) {
+        project_resolve_path(entry$path, root)
+      } else {
+        NULL
+      },
+      mode = entry$mode %||% "r",
+      text = paste(entry$text %||% "", collapse = "\n"),
+      dirty = FALSE,
+      last_saved = Sys.time(),
+      autosave_path = NULL,
+      autosave_time = NULL
+    )
+    state$documents[[id]] <- document
+    suffix <- suppressWarnings(as.integer(sub("^.*-", "", id)))
+    if (!is.na(suffix)) document_counter <- max(document_counter, suffix)
+  }
+  state$document_counter <- document_counter
+  state$active_document <- project$active_document
+  if (is.null(state$active_document) && length(state$documents) > 0L) {
+    state$active_document <- names(state$documents)[[1L]]
+  }
+  if (!is.null(state$active_document) &&
+      !state$active_document %in% names(state$documents)) {
+    state$active_document <- if (length(state$documents) > 0L) {
+      names(state$documents)[[1L]]
+    } else {
+      NULL
+    }
+  }
+  if (!is.null(state$active_document)) {
+    state$document <- state$documents[[state$active_document]]
+    document_enable_options(state, state$document$mode %||% "r")
+  } else {
+    state$document <- list(text = "", path = NULL, mode = "r",
+                           title = tr("Untitled document"), dirty = FALSE)
+  }
+
+  state$plots <- list()
+  plot_counter <- 0L
+  for (entry in project$plots) {
+    index <- length(state$plots) + 1L
+    file <- if (!is.null(entry$file)) {
+      project_resolve_path(entry$file, root)
+    } else {
+      NULL
+    }
+    state$plots[[index]] <- list(
+      id = entry$id,
+      index = index,
+      file = file,
+      url = NULL,
+      code = NULL,
+      recorded = NULL,
+      time = Sys.time(),
+      spec = entry$spec %||% NULL,
+      title = entry$title %||% NULL,
+      tags = character(),
+      pinned = isTRUE(entry$pinned),
+      interactive_code = NULL
+    )
+    suffix <- suppressWarnings(as.integer(sub("^.*-", "", entry$id)))
+    if (!is.na(suffix)) plot_counter <- max(plot_counter, suffix)
+  }
+  state$plot_counter <- plot_counter
+
+  state$dialog_presets <- project$presets %||% list()
+  state$menu_favorites <- project$favorites %||% character()
+  options <- project$options %||% list()
+  if (!is.null(options$ui_mode)) state$options$ui_mode <- options$ui_mode
+  if (!is.null(options$theme)) state$options$theme <- options$theme
+  if (!is.null(options$language)) {
+    state$options$language <- options$language
+    try(i18n_set_language(options$language), silent = TRUE)
+  }
+
+  if (isTRUE(project$history$include) &&
+      length(project$history$entries %||% list()) > 0L) {
+    entries <- lapply(project$history$entries, function(entry) {
+      list(
+        id = history_next_id(state),
+        time = tryCatch(
+          as.POSIXct(entry$time, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+          error = function(e) Sys.time()
+        ),
+        source = entry$source %||% "script",
+        command = entry$command %||% "",
+        dialog_id = entry$dialog_id %||% NULL,
+        dialog_memory = NULL,
+        status = "ok",
+        output = character(),
+        messages = character(),
+        warnings = character(),
+        error = NULL,
+        plot_id = NULL,
+        duration_ms = NA_real_
+      )
+    })
+    state$history <- c(entries, state$history %||% list())
+    state$history <- utils::head(state$history,
+                                 as.integer(state$options$history_length %||%
+                                              200L))
+  }
+
+  state$project_path <- if (!is.null(path)) {
+    project_normalize_path(path.expand(path))
+  } else {
+    NULL
+  }
+  state$project_title <- project$title %||%
+    basename(state$project_path %||% "project")
+  state$project_created <- project$created
+  state$project_modified <- project$modified
+  state$project_autosave_time <- NULL
+  state$project_last_error <- if (length(warnings) > 0L) {
+    paste(unique(warnings), collapse = "\n")
+  } else {
+    NULL
+  }
+  if (!is.null(state$project_path)) {
+    project_recent_add(state$project_path, state$project_title,
+                       file = state$project_recent_file)
+  }
+  state_touch(state)
+  state$project_dirty <- FALSE
+  invisible(project)
+}
+
+#' Open a project into a session
+#' @keywords internal
+project_load <- function(state, path) {
+  project <- project_read(path)
+  project_apply(state, project, path = project$path %||% path)
+  invisible(project)
+}
+
+# -- recent projects ---------------------------------------------------------
+
+#' File that stores the recent project list
+#' @keywords internal
+project_recent_file <- function(path = NULL) {
+  if (!is.null(path) && nzchar(path)) return(path)
+  override <- Sys.getenv("RCMDRSHINY_PROJECTS", unset = "")
+  if (nzchar(override)) return(override)
+  override <- getOption("RcmdrShiny.projects")
+  if (!is.null(override) && nzchar(override)) return(override)
+  file.path(dirname(preferences_default_file()), "projects.rds")
+}
+
+#' Recent projects
+#'
+#' @param limit Maximum number of entries.
+#' @param path Optional override of the recent-projects file.
+#' @return A data frame with `path`, `title`, `modified` and `exists`.
+#' @keywords internal
+project_recent <- function(limit = 8L, path = NULL, file = NULL) {
+  file <- project_recent_file(file %||% path)
+  entries <- if (file.exists(file)) {
+    tryCatch(readRDS(file), error = function(e) list())
+  } else {
+    list()
+  }
+  if (!is.list(entries) || length(entries) == 0L) {
+    return(data.frame(path = character(), title = character(),
+                      modified = character(), exists = logical(),
+                      stringsAsFactors = FALSE))
+  }
+  rows <- lapply(entries, function(entry) {
+    entry_path <- as.character(entry$path %||% "")
+    if (!nzchar(entry_path)) return(NULL)
+    data.frame(
+      path = entry_path,
+      title = as.character(entry$title %||% basename(entry_path)),
+      modified = as.character(entry$modified %||% ""),
+      exists = file.exists(entry_path),
+      stringsAsFactors = FALSE
+    )
+  })
+  rows <- Filter(Negate(is.null), rows)
+  if (length(rows) == 0L) {
+    return(data.frame(path = character(), title = character(),
+                      modified = character(), exists = logical(),
+                      stringsAsFactors = FALSE))
+  }
+  table <- do.call(rbind, rows)
+  utils::head(table, as.integer(limit %||% 8L))
+}
+
+project_recent_write <- function(entries, path = NULL) {
+  file <- project_recent_file(path)
+  dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+  temporary <- tempfile("rcmdr-projects-", tmpdir = dirname(file))
+  on.exit(unlink(temporary), add = TRUE)
+  saveRDS(entries, temporary)
+  if (file.exists(file)) {
+    try(file.copy(file, paste0(file, ".bak"), overwrite = TRUE),
+        silent = TRUE)
+  }
+  if (!file.rename(temporary, file)) {
+    unlink(file)
+    if (!file.rename(temporary, file)) {
+      stop("Could not write the recent projects list.", call. = FALSE)
+    }
+  }
+  invisible(file)
+}
+
+#' Record a project in the recent list
+#' @keywords internal
+project_recent_add <- function(path, title = NULL, limit = 8L,
+                               file = NULL) {
+  if (!project_is_string(path, allow_empty = FALSE)) return(invisible(FALSE))
+  path <- project_normalize_path(path.expand(path))
+  existing <- project_recent(limit = 1000L, path = file)
+  entries <- list(list(
+    path = path,
+    title = title %||% basename(path),
+    modified = project_timestamp()
+  ))
+  for (i in seq_len(nrow(existing))) {
+    if (!identical(existing$path[[i]], path)) {
+      entries[[length(entries) + 1L]] <- list(
+        path = existing$path[[i]],
+        title = existing$title[[i]],
+        modified = existing$modified[[i]]
+      )
+    }
+  }
+  project_recent_write(utils::head(entries, as.integer(limit %||% 8L)), file)
+  invisible(TRUE)
+}
+
+#' Remove a project from the recent list
+#' @keywords internal
+project_recent_remove <- function(path, file = NULL) {
+  existing <- project_recent(limit = 1000L, path = file)
+  keep <- existing$path != project_normalize_path(path.expand(path))
+  entries <- lapply(which(keep), function(i) {
+    list(path = existing$path[[i]], title = existing$title[[i]],
+         modified = existing$modified[[i]])
+  })
+  project_recent_write(entries, file)
+  invisible(TRUE)
+}
+
+# -- autosave and recovery ---------------------------------------------------
+
+#' Autosave path for the current project
+#' @keywords internal
+project_autosave_path <- function(state) {
+  path <- state$project_path
+  if (!is.null(path) && nzchar(path)) {
+    return(paste0(path, ".autosave"))
+  }
+  directory <- file.path(dirname(project_recent_file()), "autosave")
+  dir.create(directory, recursive = TRUE, showWarnings = FALSE)
+  name <- project_safe_name(state$project_title %||% "untitled")
+  file.path(directory, paste0(name, ".", project_extension(), ".autosave"))
+}
+
+#' Autosave the current session
+#' @keywords internal
+project_autosave <- function(state) {
+  if (!isTRUE(state$options$project_autosave)) return(invisible(FALSE))
+  if (is.null(state$project_path) && !isTRUE(state$project_dirty)) {
+    return(invisible(FALSE))
+  }
+  path <- project_autosave_path(state)
+  result <- tryCatch(
+    project_write(state, path),
+    error = function(e) e
+  )
+  if (inherits(result, "error")) {
+    state$project_last_error <- conditionMessage(result)
+    return(invisible(FALSE))
+  }
+  state$project_autosave_time <- Sys.time()
+  invisible(TRUE)
+}
+
+#' Remove the autosave file of the current project
+#' @keywords internal
+project_remove_autosave <- function(state) {
+  path <- state$project_path
+  if (is.null(path) || !nzchar(path)) return(invisible(FALSE))
+  autosave <- paste0(path, ".autosave")
+  if (file.exists(autosave)) unlink(autosave)
+  state$project_autosave_time <- NULL
+  invisible(TRUE)
+}
+
+#' Describe the recovery state of a project
+#'
+#' @param path Project file.
+#' @return A list with `available`, `newer`, the two paths and their times.
+#' @keywords internal
+project_recovery_info <- function(path) {
+  path <- project_normalize_path(path.expand(path))
+  autosave <- paste0(path, ".autosave")
+  info <- list(
+    path = path,
+    autosave = autosave,
+    available = file.exists(autosave),
+    project_time = if (file.exists(path)) file.info(path)$mtime else NA,
+    autosave_time = if (file.exists(autosave)) file.info(autosave)$mtime else NA,
+    newer = FALSE,
+    project_size = if (file.exists(path)) file.info(path)$size else NA_real_,
+    autosave_size = if (file.exists(autosave)) {
+      file.info(autosave)$size
+    } else {
+      NA_real_
+    }
+  )
+  info$newer <- isTRUE(info$available) &&
+    (!isTRUE(file.exists(path)) ||
+       (isTRUE(info$autosave_time > info$project_time)))
+  info
+}
+
+#' Recover the autosave of a project
+#'
+#' The original project path is kept, so the next explicit save replaces the
+#' project and removes the autosave.
+#'
+#' @keywords internal
+project_recover <- function(state, path) {
+  path <- project_normalize_path(path.expand(path))
+  autosave <- paste0(path, ".autosave")
+  source <- if (file.exists(autosave)) autosave else path
+  project <- project_read(source)
+  project_apply(state, project, path = path)
+  state$project_dirty <- TRUE
+  state$project_autosave_time <- if (file.exists(autosave)) {
+    file.info(autosave)$mtime
+  } else {
+    NULL
+  }
+  invisible(project)
+}
+
+# -- export bundle -----------------------------------------------------------
+
+#' Export a project bundle
+#'
+#' Writes a self-contained archive with the project file, its included data and
+#' its plots.  `.tar.gz` is handled by base R; `.zip` needs an external `zip`
+#' executable.
+#'
+#' @param state Application state.
+#' @param file Destination archive.
+#' @return The archive path, invisibly.
+#' @keywords internal
+project_export_bundle <- function(state, file = NULL) {
+  file <- file %||% file.path(getwd(), project_file_name(
+    state$project_title %||% "project-bundle"
+  ))
+  file <- project_normalize_path(path.expand(file))
+  extension <- tolower(tools::file_ext(file))
+
+  staging <- tempfile("rcmdr-bundle-")
+  dir.create(staging, recursive = TRUE)
+  on.exit(unlink(staging, recursive = TRUE), add = TRUE)
+  target <- file.path(staging, project_file_name(
+    state$project_title %||% "project"
+  ))
+  project_write(state, target)
+  writeLines(c(
+    "RcmdrShiny Studio project bundle",
+    "",
+    "project.rcmdrproj  the session description",
+    "data/              included data sets",
+    "assets/            plots copied from the gallery",
+    "",
+    "Open the .rcmdrproj file from RcmdrShiny Studio."
+  ), file.path(staging, "README.txt"))
+
+  files <- list.files(staging, all.files = TRUE, no.. = TRUE,
+                      recursive = TRUE, full.names = TRUE)
+  files <- files[file.info(files)$isdir %in% FALSE]
+  relative <- substring(files, nchar(staging) + 2L)
+  dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+
+  if (identical(extension, "zip")) {
+    if (!nzchar(Sys.which("zip"))) {
+      stop("Creating a .zip bundle needs the 'zip' executable; use .tar.gz.",
+           call. = FALSE)
+    }
+    old <- setwd(staging)
+    on.exit(setwd(old), add = TRUE)
+    status <- utils::zip(file, files = relative, flags = "-r9X")
+    if (!identical(status, 0L)) {
+      stop("The zip command failed.", call. = FALSE)
+    }
+  } else {
+    old <- setwd(staging)
+    on.exit(setwd(old), add = TRUE)
+    utils::tar(file, files = relative, tar = "internal",
+               compression = "gzip", compression_level = 6)
+  }
+  invisible(file)
+}
+
+# -- session metadata --------------------------------------------------------
+
+#' Mark the project as changed
+#' @keywords internal
+project_mark_dirty <- function(state) {
+  if (!is.null(state$project_path)) state$project_dirty <- TRUE
+  invisible(state$project_dirty)
+}
+
+#' Reset project metadata for a new project
+#' @keywords internal
+project_reset <- function(state, path = NULL, title = NULL) {
+  now <- project_timestamp()
+  state$project_path <- if (is.null(path)) NULL else {
+    project_normalize_path(path.expand(path))
+  }
+  state$project_title <- title %||%
+    if (!is.null(state$project_path)) {
+      sub(paste0("\\.", project_extension(), "$"), "",
+          basename(state$project_path))
+    } else {
+      tr("Untitled project")
+    }
+  state$project_created <- now
+  state$project_modified <- now
+  state$project_dirty <- TRUE
+  state$project_models <- list()
+  state$project_autosave_time <- NULL
+  if (!is.null(state$project_path)) {
+    project_recent_add(state$project_path, state$project_title,
+                       file = state$project_recent_file)
+  }
+  state_touch(state)
+  invisible(state$project_title)
+}
+
+#' Session project summary
+#' @keywords internal
+project_summary <- function(state) {
+  list(
+    path = state$project_path,
+    title = state$project_title %||% tr("Untitled project"),
+    created = state$project_created,
+    modified = state$project_modified,
+    dirty = isTRUE(state$project_dirty),
+    datasets = length(state$datasets %||% list()),
+    documents = length(state$documents %||% list()),
+    plots = length(state$plots %||% list()),
+    active_dataset = state$active_dataset,
+    active_model = state$active_model,
+    autosave = state$project_autosave_time
+  )
+}
+
 # -- validation --------------------------------------------------------------
 
 project_schema_keys <- function() {
@@ -533,11 +1414,26 @@ project_validate <- function(project, strict = TRUE) {
     if (!is.list(history)) {
       add_problem("'history' must be a list.")
     } else {
-      for (name in setdiff(names(history), "include")) {
+      for (name in setdiff(names(history), c("include", "entries"))) {
         add_warning("Unknown history field '%s'.", name)
       }
       if (!is.null(history$include) && !project_is_flag(history$include)) {
         add_problem("'history$include' must be TRUE or FALSE.")
+      }
+      if (!is.null(history$entries)) {
+        if (!is.list(history$entries)) {
+          add_problem("'history$entries' must be a list.")
+        } else {
+          for (i in seq_along(history$entries)) {
+            entry <- history$entries[[i]]
+            if (!is.list(entry)) {
+              add_problem("history entry %d must be a list.", i)
+            } else if (!project_is_string(entry$command,
+                                          allow_empty = FALSE)) {
+              add_problem("history entry %d has no command.", i)
+            }
+          }
+        }
       }
     }
   }
@@ -600,7 +1496,8 @@ project_normalize <- function(project) {
   project$plots <- project_fill_names(project$plots, "id")
 
   favorites <- project$favorites
-  if (is.null(favorites)) {
+  if (is.null(favorites) ||
+      (is.list(favorites) && length(favorites) == 0L)) {
     project$favorites <- character()
   } else if (is.character(favorites)) {
     project$favorites <- unique(favorites[!is.na(favorites) & nzchar(favorites)])

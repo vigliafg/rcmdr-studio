@@ -10,7 +10,12 @@ dialog_presets_version <- function() 1L
 #' @keywords internal
 dialog_presets_for <- function(state, id) {
   if (is.null(id) || !nzchar(id)) return(list())
-  state$dialog_presets[[id]] %||% list()
+  presets <- tryCatch(plugin_presets_for(id), error = function(e) list())
+  session <- state$dialog_presets[[id]] %||% list()
+  if (length(session) > 0L) {
+    for (name in names(session)) presets[[name]] <- session[[name]]
+  }
+  presets
 }
 
 #' Save a preset for a dialog
@@ -44,8 +49,9 @@ dialog_preset_delete <- function(state, id, name) {
 #' Read a preset
 #' @keywords internal
 dialog_preset_get <- function(state, id, name) {
-  presets <- state$dialog_presets[[id]] %||% list()
-  presets[[name]] %||% NULL
+  session <- (state$dialog_presets[[id]] %||% list())[[name]]
+  if (!is.null(session)) return(session)
+  tryCatch(plugin_presets_for(id)[[name]], error = function(e) NULL)
 }
 
 #' Export presets as a portable list

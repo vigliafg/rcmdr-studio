@@ -267,37 +267,37 @@ stabili per menu e voci. I command ID del motore restano invariati.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| P7.1 | Schema progetto | [x] | Schema, validazione, migrazione e path helper in `R/project.R`; 88 test |
-| P7.2 | Save/load progetto | [ ] | |
-| P7.3 | Recent projects | [ ] | |
-| P7.4 | Autosave/recovery | [ ] | |
-| P7.5 | Export bundle | [ ] | |
-| P7.6 | Home progetti | [ ] | |
-| P7.7 | Checkpoint sessione | [ ] | |
-| P7.8 | Recovery prompt | [ ] | |
-| P7.9 | Lazy plugin/cataloghi | [ ] | |
-| P7.10 | Cache help/menu | [ ] | |
-| P7.11 | Benchmark suite | [ ] | |
-| P7.12 | Trimming e cap | [ ] | |
-| P7.13 | API plugin v2 | [ ] | |
-| P7.14 | Nuovi hook | [ ] | |
-| P7.15 | Documentazione plugin | [ ] | |
-| P7.16 | Test 15 plugin | [ ] | |
-| P7.17 | Health panel | [ ] | |
-| P7.18 | Diagnostics esteso | [ ] | |
-| P7.19 | Matrice test | [ ] | |
-| P7.20 | Visual regression | [ ] | |
-| P7.21 | Accessibility checklist | [ ] | |
-| P7.22 | Release checklist Studio | [ ] | |
+| P7.1 | Schema progetto | [x] | Schema, validazione, migrazione in `R/project.R` |
+| P7.2 | Save/load progetto | [x] | Save/load YAML, migrazione, normalizzazione, round trip |
+| P7.3 | Recent projects | [x] | Progetti recenti in `projects.rds`, Home card |
+| P7.4 | Autosave/recovery | [x] | Autosave atomico `.autosave`, recovery info |
+| P7.5 | Export bundle | [x] | Bundle `.tar.gz`/`.zip` con dati e plot |
+| P7.6 | Home progetti | [x] | Home progetti: new/open/save/bundle/recenti |
+| P7.7 | Checkpoint sessione | [x] | Checkpoint di sessione con restore e cap |
+| P7.8 | Recovery prompt | [x] | Prompt di recupero all avvio |
+| P7.9 | Lazy plugin/cataloghi | [x] | Coda plugin lazy e cache del catalogo |
+| P7.10 | Cache help/menu | [x] | Cache menu, help e plugin con statistiche |
+| P7.11 | Benchmark suite | [x] | Suite benchmark e budget documentati |
+| P7.12 | Trimming e cap | [x] | Cap per output, celle, knit, plot e checkpoint |
+| P7.13 | API plugin v2 | [x] | `plugin_api_version()`, `plugin_contract()`, `api_version` |
+| P7.14 | Nuovi hook | [x] | Componenti, preset, workflow, chart, template, help examples |
+| P7.15 | Documentazione plugin | [x] | Vignetta plugin e topic aggiornati |
+| P7.16 | Test 15 plugin | [x] | Contratto sui 15 moduli, nessuna chiave duplicata |
+| P7.17 | Health panel | [x] | Health panel con versioni, plugin, cache e progetto |
+| P7.18 | Diagnostics esteso | [x] | Diagnostics esteso e URL issue precompilato |
+| P7.19 | Matrice test | [x] | Matrice test in `docs/upgrades/TEST-MATRIX.md` |
+| P7.20 | Visual regression | [x] | Snapshot vdiffr opzionale per il grafico di riferimento |
+| P7.21 | Accessibility checklist | [x] | Audit accessibilita e test automatici |
+| P7.22 | Release checklist Studio | [x] | Release checklist Studio 2.0 |
 
 ### Chiusura Onda 7
 
-- [ ] Progetto salvabile e recuperabile.
-- [ ] Bundle esportabile.
-- [ ] Performance entro budget.
-- [ ] Plugin SDK v2 documentato e testato.
-- [ ] Health e diagnostics.
-- [ ] Release criteria soddisfatti.
+- [x] Progetto salvabile e recuperabile.
+- [x] Bundle esportabile.
+- [x] Performance entro budget.
+- [x] Plugin SDK v2 documentato e testato.
+- [x] Health e diagnostics.
+- [x] Release criteria soddisfatti (core; `R CMD check` plugin in release).
 
 ---
 
@@ -364,4 +364,11 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              `R/project.R` con costruttori di voce, validazione pura,
              migrazione v0→v1, normalizzazione e helper di path relativi
              contenuti nel progetto. 88 test dedicati; suite 3020 pass.
+2026-11-14 — Onda 7 completata: progetto `.rcmdrproj` con save/load,
+             recenti, autosave/recovery e bundle; checkpoint di sessione;
+             cache e lazy loading; SDK plugin v2 con hook additivi; health
+             panel e diagnostics esteso; matrice test, visual snapshot,
+             audit accessibilita e release checklist Studio 2.0.
+             Suite 3328 pass, `R CMD check` 2.0.0 OK, E2E core/menu/navigation/
+             progetto verdi, benchmark entro budget.
 ```
