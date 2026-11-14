@@ -37,6 +37,9 @@ selezione → grafico (Onda 2); workflow e palette evoluta (Onda 5); progetto
 | Hash | Messaggio | Note |
 |---|---|---|
 | `ec733cd` | feat: Wave 1 Data Studio | Commit principale dell'Onda 1 |
+| `2b4153d` | docs: add Wave 1 Data Studio handoff diary | Diario |
+| `9800602` | docs: mark Wave 1 diary as handed off | Handoff |
+| `7e3e817` | fix: keep the delete-rows selection in the dialog | Selezione righe nel dialogo |
 | `011b405` | docs: mark Wave 0 diary as handed off | Ultimo commit Onda 0 |
 
 Il commit principale include anche il logging delle modifiche cella come
