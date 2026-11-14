@@ -235,6 +235,34 @@ colonna Note.
 
 ---
 
+## Onda 6.5 — Piattaforma menu e ID stabili
+
+Direttiva: plugin first-party, menubar orizzontale in stile SPSS/Minitab, ID
+stabili per menu e voci. I command ID del motore restano invariati.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| M6.5.1 | Schema, costruttori e validatore ID | [ ] | `R/menu-registry.R` |
+| M6.5.2 | Registry core e mappatura voci | [ ] | `inst/menus/core.yml` |
+| M6.5.3 | Frammenti menu dei 15 moduli | [ ] | `plugins/*/inst/menus/module.yml` |
+| M6.5.4 | Loader, merge e migrazione preferiti | [ ] | `R/menus.R`, `R/preferences.R` |
+| M6.5.5 | Menubar UI, tastiera, ARIA, responsive | [ ] | `R/app.R`, CSS/JS |
+| M6.5.6 | Palette, breadcrumb, help e ricerca | [ ] | `R/command-palette.R`, `R/help.R` |
+| M6.5.7 | Test golden, E2E, documentazione e vignetta | [ ] | `tests/`, `vignettes/` |
+
+### Chiusura Onda 6.5
+
+- [ ] Nessun ID posizionale (`menu_item_N`) nel DOM.
+- [ ] `menu_id` e `item_id` unici, stabili e validati.
+- [ ] Tutti i `command_id` esistenti ancora raggiungibili.
+- [ ] Preferiti, recenti ed espansione migrati.
+- [ ] Menubar accessibile e responsive.
+- [ ] 15 moduli first-party caricati dal nuovo registry.
+- [ ] Palette, breadcrumb e help allineati.
+- [ ] E2E e test golden verdi.
+
+---
+
 ## Onda 7 — Piattaforma, plugin, qualità
 
 | ID | Task | Stato | Note |

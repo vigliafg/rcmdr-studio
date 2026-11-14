@@ -1,7 +1,7 @@
 # Onda 7 — Piattaforma, progetto, plugin e qualità
 
 **Stato:** da implementare  
-**Dipende da:** Onde 0–6  
+**Dipende da:** Onde 0–6 e Onda 6.5 (menu platform)
 **Sblocca:** RcmdrShiny Studio 2.0 stabile e manutenibile  
 **Documento padre:** [`README.md`](README.md)
 
@@ -190,10 +190,13 @@ project_export_bundle(state, file)
 
 ### 5.1 Principi
 
-- additivo: nessuna rottura dell'API 1.x;
-- versionato: `plugin_api_version`;
-- documentato: vignetta e reference;
-- testato: tutti i 15 plugin.
+- **first-party:** i 15 plugin sono mantenuti dall'autore e versionati con
+  l'app; non c'è compatibilità esterna da preservare;
+- **interno e versionato:** `module_id`, frammento menu e contratto dei
+  dialoghi/comandi, documentato nella vignetta;
+- **ID stabili:** `menu_id` e `item_id` dell'Onda 6.5, command ID invariati;
+- **testato:** tutti i 15 moduli con test di integrazione first-party, non di
+  compatibilità esterna.
 
 ### 5.2 Nuove estensioni
 
@@ -209,11 +212,12 @@ plugin_help_try_it(topic_id, examples)
 
 ### 5.3 Compatibilità
 
-- `RcmdrShiny.plugin()` continua a funzionare;
-- `plugin_dialog()` accetta i nuovi campi opzionali;
-- i plugin esistenti non devono cambiare;
-- test di regressione per ognuno dei 15 plugin;
-- avviso chiaro per plugin Tk legacy.
+- `RcmdrShiny.plugin()` resta il punto di registrazione interno;
+- `plugin_dialog()` accetta i campi dell'Onda 6.5;
+- i 15 moduli vengono aggiornati insieme al core, senza strato di
+  compatibilità esterna;
+- test di integrazione per ognuno dei 15 moduli;
+- i comandi Tk legacy restano non eseguibili, con avviso esplicito.
 
 ### 5.4 Task
 

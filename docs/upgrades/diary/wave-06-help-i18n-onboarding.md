@@ -3,7 +3,7 @@
 **Data:** 2026-11-14  
 **Stato:** completata  
 **Ondata precedente:** `wave-05-navigation-dialogs-workflows.md`  
-**Ondata successiva:** Onda 7 — Piattaforma, plugin, qualità  
+**Ondata successiva:** Onda 6.5 — Piattaforma menu e ID stabili
 **Documento di settore:** [`../06-help-i18n-onboarding.md`](../06-help-i18n-onboarding.md)  
 **Checklist:** [`../CHECKLIST.md`](../CHECKLIST.md)
 
@@ -205,13 +205,24 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. Leggere questo diario, `../07-platform-plugins-quality.md` e
-   `../CHECKLIST.md`.
+1. Leggere questo diario, `../06.5-menu-platform.md` e `../CHECKLIST.md`.
 2. Eseguire `Rscript -e 'testthat::test_local()'` per confermare la baseline
    (atteso: **2888 pass, 0 fail, 15 skip**).
-3. Avviare l'Onda 7 dal task **P7.1 — Schema progetto**.
+3. Avviare l'Onda 6.5 dal task **M6.5.1 — Schema, costruttori e validatore ID**.
 
 ### Task dell'ondata successiva
+
+| ID | Task | Priorità | Note |
+|---|---|---|---|
+| M6.5.1 | Schema, costruttori e validatore ID | Alta | `R/menu-registry.R` |
+| M6.5.2 | Registry core e mappatura voci | Alta | `inst/menus/core.yml` |
+| M6.5.3 | Frammenti menu dei 15 moduli | Alta | `plugins/*/inst/menus/module.yml` |
+| M6.5.4 | Loader, merge e migrazione preferiti | Alta | `R/menus.R` |
+| M6.5.5 | Menubar UI, tastiera, ARIA, responsive | Alta | `R/app.R` |
+| M6.5.6 | Palette, breadcrumb, help e ricerca | Media | |
+| M6.5.7 | Test golden, E2E, documentazione | Alta | |
+
+### Onda 7 dopo l'Onda 6.5
 
 | ID | Task | Priorità | Note |
 |---|---|---|---|
