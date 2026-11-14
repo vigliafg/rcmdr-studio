@@ -122,8 +122,8 @@ console_studio_ui <- function() {
         class = "rcmdr-console-input",
         htmltools::tags$div(
           class = "d-flex gap-1 align-items-end",
-          textInput(
-            "console_input", NULL, width = "100%",
+          textAreaInput(
+            "console_input", NULL, width = "100%", rows = 2, resize = "vertical",
             placeholder = tr("Type an R command and press Enter")
           ),
           actionButton("console_prev", "\u2191", title = tr("Previous command"),
