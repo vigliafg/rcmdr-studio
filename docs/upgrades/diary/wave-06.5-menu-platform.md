@@ -54,7 +54,7 @@ Tutti i task M6.5.1–M6.5.7 sono chiusi.
 
 | Hash | Messaggio | Note |
 |---|---|---|
-| `da compilare` | feat: Wave 6.5 menu platform and stable ids | Commit principale |
+| `4952414` | feat: Wave 6.5 menu platform and stable ids | Commit principale |
 | `4173539` | docs: add Wave 6.5 menu platform plan | Piano approvato |
 
 ---
