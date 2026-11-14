@@ -1,0 +1,142 @@
+version: 1
+module: teachingdemos
+groups:
+- id: menu.utilities.demos
+  parent: menu.utilities
+  label: Demos
+  order: 5001
+  module: teachingdemos
+  legacy_ids:
+  - demosMenu
+- id: menu.analyze.distributions.visual_menu
+  parent: menu.analyze.distributions
+  label: Visualize distributions
+  order: 5002
+  module: teachingdemos
+  legacy_ids:
+  - visualMenu
+items:
+- id: item.teachingdemos.menu_utilities_demos.central_limit_theorem
+  parent: menu.utilities.demos
+  label: Central limit theorem...
+  command: centralLimitTheorem
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5001
+  module: teachingdemos
+  legacy_ids:
+  - centralLimitTheorem
+- id: item.teachingdemos.menu_utilities_demos.simulate_confidence_intervals
+  parent: menu.utilities.demos
+  label: Confidence interval for the mean...
+  command: simulateConfidenceIntervals
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5002
+  module: teachingdemos
+  legacy_ids:
+  - simulateConfidenceIntervals
+- id: item.teachingdemos.menu_utilities_demos.power_example
+  parent: menu.utilities.demos
+  label: Power of the test
+  command: powerExample
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5003
+  module: teachingdemos
+  legacy_ids:
+  - powerExample
+- id: item.teachingdemos.menu_utilities_demos.flip_coin
+  parent: menu.utilities.demos
+  label: Flip a coin
+  command: flipCoin
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5004
+  module: teachingdemos
+  legacy_ids:
+  - flipCoin
+- id: item.teachingdemos.menu_utilities_demos.roll_die
+  parent: menu.utilities.demos
+  label: Roll a die
+  command: rollDie
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5005
+  module: teachingdemos
+  legacy_ids:
+  - rollDie
+- id: item.teachingdemos.menu_utilities_demos.linear_regression_example
+  parent: menu.utilities.demos
+  label: Simple linear regression
+  command: linearRegressionExample
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5006
+  module: teachingdemos
+  legacy_ids:
+  - linearRegressionExample
+- id: item.teachingdemos.menu_utilities_demos.correlation_example
+  parent: menu.utilities.demos
+  label: Simple correlation
+  command: correlationExample
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5007
+  module: teachingdemos
+  legacy_ids:
+  - correlationExample
+- id: item.teachingdemos.menu_analyze_distributions_visual_menu.vis_binom
+  parent: menu.analyze.distributions.visual_menu
+  label: Binomial distributions
+  command: visBinom
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5009
+  module: teachingdemos
+  legacy_ids:
+  - visBinom
+- id: item.teachingdemos.menu_analyze_distributions_visual_menu.vis_normal
+  parent: menu.analyze.distributions.visual_menu
+  label: Normal distributions
+  command: visNormal
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5010
+  module: teachingdemos
+  legacy_ids:
+  - visNormal
+- id: item.teachingdemos.menu_analyze_distributions_visual_menu.vist
+  parent: menu.analyze.distributions.visual_menu
+  label: t distributions
+  command: vist
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5011
+  module: teachingdemos
+  legacy_ids:
+  - vist
+- id: item.teachingdemos.menu_analyze_distributions_visual_menu.vis_gamma
+  parent: menu.analyze.distributions.visual_menu
+  label: Gamma distributions
+  command: visGamma
+  activation: ''
+  install: packageAvailable('TeachingDemos')
+  order: 5012
+  module: teachingdemos
+  legacy_ids:
+  - visGamma
+removes:
+- target: normalDistributionPlot
+  module: teachingdemos
+  kind: command
+  source_module: core
+- target: tDistributionPlot
+  module: teachingdemos
+  kind: command
+  source_module: core
+- target: gammaDistributionPlot
+  module: teachingdemos
+  kind: command
+  source_module: core
+

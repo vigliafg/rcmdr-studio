@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
 Title: A Browser-Native Statistical Workbench Inspired by the R Commander
-Version: 1.20.0
+Version: 1.21.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),
@@ -29,7 +29,8 @@ Description: A local, browser-based statistical workbench inspired by the
     orchestrate existing dialogs, and contextual variable suggestions, an
     offline help centre with a full-text index, filters, runnable examples,
     contextual error-to-topic links, a glossary and a first-run tour, plus a
-    live language switch and a classic compatibility mode.
+    live language switch, a curated multi-level menubar with stable menu and
+    item identifiers, and a classic compatibility mode.
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends: R (>= 4.1.0)

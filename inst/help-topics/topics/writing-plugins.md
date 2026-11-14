@@ -28,7 +28,8 @@ RcmdrShinyPlugin.Example/
 │  ├─ plugin.R
 │  ├─ dialogs.R
 │  └─ commands.R
-├─ inst/etc/rcmdrshiny-menus.txt
+├─ inst/menus/module.yml
+├─ inst/etc/rcmdrshiny-menus.txt   # legacy migration source
 ├─ inst/help/index.yml
 ├─ man/
 └─ tests/testthat/
@@ -99,8 +100,10 @@ returned, so keep them short and readable.
 
 ## Menu file
 
-The format is the Rcmdr menu format: one row per menu or item, whitespace
-separated, with quoted labels.
+The 15 bundled plugins are first-party modules and use `inst/menus/module.yml`
+with stable `menu_id` / `item_id` values; see `topic:menu-structure`. The legacy
+format below is still read for script-only plugins and for migration: one row
+per menu or item, whitespace separated, with quoted labels.
 
 ```text
 menu  exampleMenu  topMenu  ""  ""  ""  ""

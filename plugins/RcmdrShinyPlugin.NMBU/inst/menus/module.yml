@@ -1,0 +1,980 @@
+version: 1
+module: nmbu
+groups:
+- id: menu.analyze.means_menu.tt_menu
+  parent: menu.analyze.means_menu
+  label: t-tests   (NMBU)
+  order: 5001
+  module: nmbu
+  legacy_ids:
+  - ttMenu
+- id: menu.analyze.means_menu.z_menu
+  parent: menu.analyze.means_menu
+  label: z-tests   (NMBU)
+  order: 5002
+  module: nmbu
+  legacy_ids:
+  - zMenu
+- id: menu.analyze.models.stepwise_menu
+  parent: menu.analyze.models
+  label: F-based stepwise/subset   (NMBU)
+  order: 5003
+  module: nmbu
+  legacy_ids:
+  - stepwiseMenu
+- id: menu.analyze.da_menu
+  parent: menu.analyze
+  label: Discriminant analysis   (NMBU)
+  order: 5004
+  module: nmbu
+  legacy_ids:
+  - daMenu
+items:
+- id: item.nmbu.menu_analyze_proportions_menu.proportion_test
+  parent: menu.analyze.proportions_menu
+  label: Single-sample proportion test (success,failure) ...
+  command: proportionTest
+  activation: ''
+  install: ''
+  order: 5001
+  module: nmbu
+  legacy_ids:
+  - proportionTest
+- id: item.nmbu.menu_analyze_proportions_menu.two_proportion_test
+  parent: menu.analyze.proportions_menu
+  label: Two-sample proportion test (success,failure) ...
+  command: twoProportionTest
+  activation: ''
+  install: ''
+  order: 5002
+  module: nmbu
+  legacy_ids:
+  - twoProportionTest
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.single_sample_ttest_nmbu
+  parent: menu.analyze.means_menu.tt_menu
+  label: Single-sample t-test...
+  command: singleSampleTTestNMBU
+  activation: numericP()
+  install: ''
+  order: 5004
+  module: nmbu
+  legacy_ids:
+  - singleSampleTTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.independent_samples_ttest_nmbu
+  parent: menu.analyze.means_menu.tt_menu
+  label: Two Sample t-test...
+  command: independentSamplesTTestNMBU
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 5005
+  module: nmbu
+  legacy_ids:
+  - independentSamplesTTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.paired_ttest_nmbu
+  parent: menu.analyze.means_menu.tt_menu
+  label: Paired t-test...
+  command: pairedTTestNMBU
+  activation: numericP(2)
+  install: ''
+  order: 5006
+  module: nmbu
+  legacy_ids:
+  - pairedTTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.two_samples_ttest
+  parent: menu.analyze.means_menu.tt_menu
+  label: Two Sample t-test (unstacked)...
+  command: twoSamplesTTest
+  activation: numericP(2)
+  install: ''
+  order: 5007
+  module: nmbu
+  legacy_ids:
+  - twoSamplesTTest
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.one_samples_ttest_sum
+  parent: menu.analyze.means_menu.tt_menu
+  label: One Sample t-test (summarized data)...
+  command: oneSamplesTTestSum
+  activation: ''
+  install: ''
+  order: 5008
+  module: nmbu
+  legacy_ids:
+  - oneSamplesTTestSum
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.two_samples_ttest_sum
+  parent: menu.analyze.means_menu.tt_menu
+  label: Two Sample t-test (summarized data)...
+  command: twoSamplesTTestSum
+  activation: ''
+  install: ''
+  order: 5009
+  module: nmbu
+  legacy_ids:
+  - twoSamplesTTestSum
+- id: item.nmbu.menu_analyze_means_menu_tt_menu.power_ttest
+  parent: menu.analyze.means_menu.tt_menu
+  label: Power calculations for t tests...
+  command: powerTtest
+  activation: ''
+  install: ''
+  order: 5010
+  module: nmbu
+  legacy_ids:
+  - powerTtest
+- id: item.nmbu.menu_analyze_means_menu_z_menu.single_sample_ztest_nmbu
+  parent: menu.analyze.means_menu.z_menu
+  label: Single-sample z-test...
+  command: singleSampleZTestNMBU
+  activation: numericP()
+  install: ''
+  order: 5012
+  module: nmbu
+  legacy_ids:
+  - singleSampleZTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_z_menu.independent_samples_ztest_nmbu
+  parent: menu.analyze.means_menu.z_menu
+  label: Two Sample z-test...
+  command: independentSamplesZTestNMBU
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 5013
+  module: nmbu
+  legacy_ids:
+  - independentSamplesZTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_z_menu.paired_ztest_nmbu
+  parent: menu.analyze.means_menu.z_menu
+  label: Paired z-test...
+  command: pairedZTestNMBU
+  activation: numericP(2)
+  install: ''
+  order: 5014
+  module: nmbu
+  legacy_ids:
+  - pairedZTestNMBU
+- id: item.nmbu.menu_analyze_means_menu_z_menu.two_samples_ztest
+  parent: menu.analyze.means_menu.z_menu
+  label: Two Sample z-test (unstacked)...
+  command: twoSamplesZTest
+  activation: numericP(2)
+  install: ''
+  order: 5015
+  module: nmbu
+  legacy_ids:
+  - twoSamplesZTest
+- id: item.nmbu.menu_analyze_means_menu_z_menu.one_samples_ztest_sum
+  parent: menu.analyze.means_menu.z_menu
+  label: One Sample z-test (summarized data)...
+  command: oneSamplesZTestSum
+  activation: ''
+  install: ''
+  order: 5016
+  module: nmbu
+  legacy_ids:
+  - oneSamplesZTestSum
+- id: item.nmbu.menu_analyze_means_menu_z_menu.two_samples_ztest_sum
+  parent: menu.analyze.means_menu.z_menu
+  label: Two Sample z-test (summarized data)...
+  command: twoSamplesZTestSum
+  activation: ''
+  install: ''
+  order: 5017
+  module: nmbu
+  legacy_ids:
+  - twoSamplesZTestSum
+- id: item.nmbu.menu_analyze_means_menu.one_way_anova_nmbu
+  parent: menu.analyze.means_menu
+  label: One-way ANOVA...
+  command: oneWayAnovaNMBU
+  activation: numericP() && factorsP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5018
+  module: nmbu
+  legacy_ids:
+  - oneWayAnovaNMBU
+- id: item.nmbu.menu_analyze_means_menu.multi_way_anova_nmbu
+  parent: menu.analyze.means_menu
+  label: Multi-way ANOVA...
+  command: multiWayAnovaNMBU
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5019
+  module: nmbu
+  legacy_ids:
+  - multiWayAnovaNMBU
+- id: item.nmbu.menu_analyze_stat_models_menu.simplex_analysis
+  parent: menu.analyze.stat_models_menu
+  label: Simplex mixture model...
+  command: simplex.analysis
+  activation: numericP(4)
+  install: ''
+  order: 5020
+  module: nmbu
+  legacy_ids:
+  - simplex.analysis
+- id: item.nmbu.menu_analyze_stat_models_menu.multinomial_logit_model_nmbu
+  parent: menu.analyze.stat_models_menu
+  label: Multinomial logit model...
+  command: multinomialLogitModelNMBU
+  activation: factorsP()
+  install: packageAvailable('nnet')
+  order: 5021
+  module: nmbu
+  legacy_ids:
+  - multinomialLogitModelNMBU
+- id: item.nmbu.menu_analyze_stat_models_menu.ordinal_regression_model_nmbu
+  parent: menu.analyze.stat_models_menu
+  label: Ordinal regression model...
+  command: ordinalRegressionModelNMBU
+  activation: factorsP()
+  install: packageAvailable('MASS')
+  order: 5022
+  module: nmbu
+  legacy_ids:
+  - ordinalRegressionModelNMBU
+- id: item.nmbu.menu_analyze_stat_models_menu.generalized_linear_model_nmbu
+  parent: menu.analyze.stat_models_menu
+  label: Generalized linear model...
+  command: generalizedLinearModelNMBU
+  activation: activeDataSetP()
+  install: ''
+  order: 5023
+  module: nmbu
+  legacy_ids:
+  - generalizedLinearModelNMBU
+- id: item.nmbu.menu_analyze_stat_models_menu.principal_components_stat
+  parent: menu.analyze.stat_models_menu
+  label: Principal component analysis...
+  command: principalComponentsStat
+  activation: numericP(2)
+  install: ''
+  order: 5024
+  module: nmbu
+  legacy_ids:
+  - principalComponentsStat
+- id: item.nmbu.menu_analyze_stat_models_menu.pls_regression_model
+  parent: menu.analyze.stat_models_menu
+  label: Multivariate regression...
+  command: plsRegressionModel
+  activation: variablesP(2)
+  install: packageAvailable('pls')
+  order: 5025
+  module: nmbu
+  legacy_ids:
+  - plsRegressionModel
+- id: item.nmbu.menu_analyze_stat_models_menu.linear_model_nmbu
+  parent: menu.analyze.stat_models_menu
+  label: Linear model...
+  command: linearModelNMBU
+  activation: variablesP(2)
+  install: ''
+  order: 5026
+  module: nmbu
+  legacy_ids:
+  - linearModelNMBU
+- id: item.nmbu.menu_analyze_dimensional_menu.rel_comp
+  parent: menu.analyze.dimensional_menu
+  label: Relevant component analysis
+  command: RelComp
+  activation: numericP(2)
+  install: ''
+  order: 5027
+  module: nmbu
+  legacy_ids:
+  - RelComp
+- id: item.nmbu.menu_analyze_models.add_observation_statistics_nmbu
+  parent: menu.analyze.models
+  label: Add observation statistics to data...
+  command: addObservationStatisticsNMBU
+  activation: activeModelP() && !pcaP()
+  install: ''
+  order: 5029
+  module: nmbu
+  legacy_ids:
+  - addObservationStatisticsNMBU
+- id: item.nmbu.menu_analyze_models.predict_regression_model
+  parent: menu.analyze.models
+  label: Prediction ...
+  command: predictRegressionModel
+  activation: lmmP() || lmP() || plsP() || daP() || glmP()
+  install: ''
+  order: 5030
+  module: nmbu
+  legacy_ids:
+  - predictRegressionModel
+- id: item.nmbu.menu_analyze_models.coef_nmbu
+  parent: menu.analyze.models
+  label: Regression coefficients ...
+  command: coefNMBU
+  activation: lmmP() || lmP() || plsP() || daP() || glmP()
+  install: ''
+  order: 5031
+  module: nmbu
+  legacy_ids:
+  - coefNMBU
+- id: item.nmbu.menu_analyze_models.da_coef
+  parent: menu.analyze.models
+  label: Discriminant scores ...
+  command: DA.coef
+  activation: daP()
+  install: ''
+  order: 5032
+  module: nmbu
+  legacy_ids:
+  - DA.coef
+- id: item.nmbu.menu_analyze_models.hclust_list
+  parent: menu.analyze.models
+  label: Hierarchical merging ...
+  command: hclust.list
+  activation: clustP()
+  install: ''
+  order: 5033
+  module: nmbu
+  legacy_ids:
+  - hclust.list
+- id: item.nmbu.menu_analyze_models.contrast_gui
+  parent: menu.analyze.models
+  label: Test contrast in ANOVA ...
+  command: contrastGUI
+  activation: lmmP() || aovP()
+  install: ''
+  order: 5034
+  module: nmbu
+  legacy_ids:
+  - contrastGUI
+- id: item.nmbu.menu_analyze_models.post_hoc_gui
+  parent: menu.analyze.models
+  label: Post hoc pair-wise tests ...
+  command: postHocGUI
+  activation: (lmmP() || aovP() || glmP()) && contP()
+  install: ''
+  order: 5035
+  module: nmbu
+  legacy_ids:
+  - postHocGUI
+- kind: separator
+  parent: menu.analyze.models
+  order: 5036
+  module: nmbu
+- id: item.nmbu.menu_analyze_models_stepwise_menu.forward_add
+  parent: menu.analyze.models.stepwise_menu
+  label: Forward...
+  command: forwardAdd
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5037
+  module: nmbu
+  legacy_ids:
+  - forwardAdd
+- id: item.nmbu.menu_analyze_models_stepwise_menu.backward_drop
+  parent: menu.analyze.models.stepwise_menu
+  label: Backward...
+  command: backwardDrop
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5038
+  module: nmbu
+  legacy_ids:
+  - backwardDrop
+- id: item.nmbu.menu_analyze_models_stepwise_menu.forward_backward
+  parent: menu.analyze.models.stepwise_menu
+  label: Forward/backward...
+  command: forwardBackward
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5039
+  module: nmbu
+  legacy_ids:
+  - forwardBackward
+- id: item.nmbu.menu_analyze_models_stepwise_menu.backward_forward
+  parent: menu.analyze.models.stepwise_menu
+  label: Backward/forward...
+  command: backwardForward
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5040
+  module: nmbu
+  legacy_ids:
+  - backwardForward
+- id: item.nmbu.menu_analyze_models_stepwise_menu.best_subsets
+  parent: menu.analyze.models.stepwise_menu
+  label: Best subsets...
+  command: bestSubsets
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5041
+  module: nmbu
+  legacy_ids:
+  - bestSubsets
+- id: item.nmbu.menu_analyze_models_stepwise_menu.wide_forward_add
+  parent: menu.analyze.models.stepwise_menu
+  label: Forward (wide data set)...
+  command: wideForwardAdd
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5042
+  module: nmbu
+  legacy_ids:
+  - wideForwardAdd
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.plot_model_nmbu
+  parent: menu.analyze.models.models_graphs_menu
+  label: Basic diagnostic plots
+  command: plotModelNMBU
+  activation: lmmP() || lmP() || glmP()
+  install: ''
+  order: 5043
+  module: nmbu
+  legacy_ids:
+  - plotModelNMBU
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.residual_qqplot
+  parent: menu.analyze.models.models_graphs_menu
+  label: Residual quantile-comparison plot...
+  command: residualQQPlot
+  activation: lmmP() || lmP()
+  install: packageAvailable('car')
+  order: 5044
+  module: nmbu
+  legacy_ids:
+  - residualQQPlot
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.crplots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Component+residual plots
+  command: CRPlots
+  activation: (lmmP() || lmP() || glmP())
+  install: packageAvailable('car')
+  order: 5045
+  module: nmbu
+  legacy_ids:
+  - CRPlots
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.avplots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Added-variable plots
+  command: AVPlots
+  activation: (lmmP() || lmP() || glmP())
+  install: packageAvailable('car')
+  order: 5046
+  module: nmbu
+  legacy_ids:
+  - AVPlots
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.influence_plot
+  parent: menu.analyze.models.models_graphs_menu
+  label: Influence plot
+  command: InfluencePlot
+  activation: (lmmP() || lmP() || glmP())
+  install: packageAvailable('car')
+  order: 5047
+  module: nmbu
+  legacy_ids:
+  - InfluencePlot
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.effect_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Effect plots
+  command: effectPlots
+  activation: (lmmP() || lmP() || glmP()) || polrP() || multinomP()
+  install: packageAvailable('effects')
+  order: 5048
+  module: nmbu
+  legacy_ids:
+  - effectPlots
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.principal_component_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: PCA/PCR/PLS plots
+  command: principalComponentPlots
+  activation: pcaP()||plsP()
+  install: ''
+  order: 5049
+  module: nmbu
+  legacy_ids:
+  - principalComponentPlots
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.discriminant_plot
+  parent: menu.analyze.models.models_graphs_menu
+  label: 2D discriminant plot
+  command: discriminantPlot
+  activation: daP()
+  install: ''
+  order: 5050
+  module: nmbu
+  legacy_ids:
+  - discriminantPlot
+- id: item.nmbu.menu_analyze_models_models_graphs_menu.mixture_gui
+  parent: menu.analyze.models.models_graphs_menu
+  label: Mixture model response surface...
+  command: mixtureGUI
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5051
+  module: nmbu
+  legacy_ids:
+  - mixtureGUI
+- id: item.nmbu.menu_data_variables_menu.mean_center
+  parent: menu.data.variables_menu
+  label: Mean center variables...
+  command: meanCenter
+  activation: numericP()
+  install: ''
+  order: 5052
+  module: nmbu
+  legacy_ids:
+  - meanCenter
+- id: item.nmbu.menu_data_variables_menu.sort_data
+  parent: menu.data.variables_menu
+  label: Sort data...
+  command: sortData
+  activation: numericP()
+  install: ''
+  order: 5053
+  module: nmbu
+  legacy_ids:
+  - sortData
+- id: item.nmbu.menu_analyze_summaries_menu.covariance_matrix
+  parent: menu.analyze.summaries_menu
+  label: Covariance/correlation matrix...
+  command: covarianceMatrix
+  activation: numericP(2)
+  install: ''
+  order: 5054
+  module: nmbu
+  legacy_ids:
+  - covarianceMatrix
+- id: item.nmbu.menu_analyze_summaries_menu.numerical_summaries_nmbu
+  parent: menu.analyze.summaries_menu
+  label: Numerical summaries...
+  command: numericalSummariesNMBU
+  activation: numericP()
+  install: packageAvailable('abind')
+  order: 5055
+  module: nmbu
+  legacy_ids:
+  - numericalSummariesNMBU
+- id: item.nmbu.menu_analyze_summaries_menu.tally_gui
+  parent: menu.analyze.summaries_menu
+  label: Tally of discrete variable...
+  command: tally.GUI
+  activation: numericP()
+  install: ''
+  order: 5056
+  module: nmbu
+  legacy_ids:
+  - tally.GUI
+- id: item.nmbu.menu_analyze_da_menu.discriminant_analysis
+  parent: menu.analyze.da_menu
+  label: LDA/QDA...
+  command: discriminantAnalysis
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5058
+  module: nmbu
+  legacy_ids:
+  - discriminantAnalysis
+- id: item.nmbu.menu_analyze_dimensional_menu_cluster_menu.hierarchical_cluster_variable
+  parent: menu.analyze.dimensional_menu.cluster_menu
+  label: Hierarchical cluster analysis (variables)...
+  command: hierarchicalClusterVariable
+  activation: numericP()
+  install: ''
+  order: 5059
+  module: nmbu
+  legacy_ids:
+  - hierarchicalClusterVariable
+- id: item.nmbu.menu_graphs.line_plot_nmbu
+  parent: menu.graphs
+  label: Line and point plot...
+  command: linePlotNMBU
+  activation: numericP()
+  install: ''
+  order: 5060
+  module: nmbu
+  legacy_ids:
+  - linePlotNMBU
+- id: item.nmbu.menu_graphs.dotplot_gui
+  parent: menu.graphs
+  label: Dotplot...
+  command: dotplotGUI
+  activation: numericP()
+  install: ''
+  order: 5061
+  module: nmbu
+  legacy_ids:
+  - dotplotGUI
+- id: item.nmbu.menu_graphs.fitted_line_plot
+  parent: menu.graphs
+  label: Fitted regression plot...
+  command: fittedLinePlot
+  activation: numericP()
+  install: ''
+  order: 5062
+  module: nmbu
+  legacy_ids:
+  - fittedLinePlot
+- id: item.nmbu.menu_graphs.pie_chart_nmbu
+  parent: menu.graphs
+  label: Pie/Bar chart from summaries...
+  command: pieChartNMBU
+  activation: factorsP()
+  install: ''
+  order: 5063
+  module: nmbu
+  legacy_ids:
+  - pieChartNMBU
+- id: item.nmbu.menu_graphs.simplex_gui
+  parent: menu.graphs
+  label: Simplex mixture design plot...
+  command: simplexGUI
+  activation: numericP(3)
+  install: ''
+  order: 5064
+  module: nmbu
+  legacy_ids:
+  - simplexGUI
+- id: item.nmbu.menu_graphs.histogram_discrete
+  parent: menu.graphs
+  label: Histogram...
+  command: histogram_discrete
+  activation: numericP()
+  install: ''
+  order: 5065
+  module: nmbu
+  legacy_ids:
+  - histogram_discrete
+- kind: separator
+  parent: menu.graphs
+  order: 5066
+  module: nmbu
+- id: item.nmbu.menu_analyze_models_hypothesis_menu.anova_reg_gui
+  parent: menu.analyze.models.hypothesis_menu
+  label: ANOVA table for regression
+  command: anova_reg_GUI
+  activation: activeModelP()
+  install: ''
+  order: 5067
+  module: nmbu
+  legacy_ids:
+  - anova_reg_GUI
+- id: item.nmbu.menu_analyze_models_hypothesis_menu.cigrand_mean_nmbu
+  parent: menu.analyze.models.hypothesis_menu
+  label: CI for the model grand mean
+  command: CIgrandMeanNMBU
+  activation: lmmP() || lmP()
+  install: ''
+  order: 5068
+  module: nmbu
+  legacy_ids:
+  - CIgrandMeanNMBU
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.press_gui
+  parent: menu.analyze.models.diagnostics_menu
+  label: PRESS, R2pred, RMSEP
+  command: PRESS.GUI
+  activation: (lmmP() || lmP() || plsP())
+  install: packageAvailable('car')
+  order: 5069
+  module: nmbu
+  legacy_ids:
+  - PRESS.GUI
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.vif
+  parent: menu.analyze.models.diagnostics_menu
+  label: Variance-inflation factors
+  command: VIF
+  activation: (lmmP() || lmP() || glmP())
+  install: packageAvailable('car')
+  order: 5070
+  module: nmbu
+  legacy_ids:
+  - VIF
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.breusch_pagan_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Breusch-Pagan test for heteroscedasticity...
+  command: BreuschPaganTest
+  activation: lmmP() || lmP()
+  install: packageAvailable('lmtest')
+  order: 5071
+  module: nmbu
+  legacy_ids:
+  - BreuschPaganTest
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.durbin_watson_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Durbin-Watson test for autocorrelation...
+  command: DurbinWatsonTest
+  activation: lmmP() || lmP()
+  install: packageAvailable('lmtest')
+  order: 5072
+  module: nmbu
+  legacy_ids:
+  - DurbinWatsonTest
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.resettest
+  parent: menu.analyze.models.diagnostics_menu
+  label: RESET test for nonlinearity...
+  command: RESETtest
+  activation: lmmP() || lmP()
+  install: packageAvailable('lmtest')
+  order: 5073
+  module: nmbu
+  legacy_ids:
+  - RESETtest
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.outlier_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Bonferroni outlier test
+  command: OutlierTest
+  activation: (lmmP() || lmP() || glmP())
+  install: packageAvailable('car')
+  order: 5074
+  module: nmbu
+  legacy_ids:
+  - OutlierTest
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.deviance_tests_gui
+  parent: menu.analyze.models.diagnostics_menu
+  label: Deviance tests
+  command: deviance_tests_GUI
+  activation: activeModelP() && !pcaP()
+  install: ''
+  order: 5075
+  module: nmbu
+  legacy_ids:
+  - deviance_tests_GUI
+- id: item.nmbu.menu_analyze_models_diagnostics_menu.inv_xt_xgui
+  parent: menu.analyze.models.diagnostics_menu
+  label: Store and/or display (X'X)^-1
+  command: invXtXGUI
+  activation: activeModelP() && !pcaP()
+  install: ''
+  order: 5076
+  module: nmbu
+  legacy_ids:
+  - invXtXGUI
+- id: item.nmbu.menu_data.auto_import_gui
+  parent: menu.data
+  label: Automatic import from clipboard
+  command: auto.import.GUI
+  activation: ''
+  install: ''
+  order: 5077
+  module: nmbu
+  legacy_ids:
+  - auto.import.GUI
+- id: item.nmbu.menu_data.on_export
+  parent: menu.data
+  label: Export last result to clipboard
+  command: onExport
+  activation: ''
+  install: ''
+  order: 5078
+  module: nmbu
+  legacy_ids:
+  - onExport
+- id: item.nmbu.menu_data.create_sequence
+  parent: menu.data
+  label: Create data sequence
+  command: createSequence
+  activation: ''
+  install: ''
+  order: 5079
+  module: nmbu
+  legacy_ids:
+  - createSequence
+- kind: separator
+  parent: menu.data
+  order: 5080
+  module: nmbu
+- id: item.nmbu.menu_analyze_tables_menu.two_way_table_nmbu
+  parent: menu.analyze.tables_menu
+  label: Two-way table from counts...
+  command: twoWayTableNMBU
+  activation: factorsP(2) && numericP()
+  install: packageAvailable('abind')
+  order: 5081
+  module: nmbu
+  legacy_ids:
+  - twoWayTableNMBU
+- id: item.nmbu.menu_analyze_tables_menu.enter_table_nmbu
+  parent: menu.analyze.tables_menu
+  label: Enter and analyze two-way table...
+  command: enterTableNMBU
+  activation: ''
+  install: packageAvailable('abind')
+  order: 5082
+  module: nmbu
+  legacy_ids:
+  - enterTableNMBU
+- id: item.nmbu.menu_data_active_menu.delete_active_data_set
+  parent: menu.data.active_menu
+  label: Delete active data set...
+  command: deleteActiveDataSet
+  activation: dataSetsP()
+  install: ''
+  order: 5083
+  module: nmbu
+  legacy_ids:
+  - deleteActiveDataSet
+- id: item.nmbu.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_distribution_plot_nmbu
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Plot binomial distribution... (NMBU)
+  command: binomialDistributionPlotNMBU
+  activation: ''
+  install: ''
+  order: 5084
+  module: nmbu
+  legacy_ids:
+  - binomialDistributionPlotNMBU
+- id: item.nmbu.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_distribution_plot_nmbu
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Plot Poisson distribution... (NMBU)
+  command: PoissonDistributionPlotNMBU
+  activation: ''
+  install: ''
+  order: 5085
+  module: nmbu
+  legacy_ids:
+  - PoissonDistributionPlotNMBU
+- id: item.nmbu.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_distribution_plot_nmbu
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Plot hypergeometric distribution... (NMBU)
+  command: hyperDistributionPlotNMBU
+  activation: ''
+  install: ''
+  order: 5086
+  module: nmbu
+  legacy_ids:
+  - hyperDistributionPlotNMBU
+- id: item.nmbu.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_distribution_plot_nmbu
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Plot negative binomial distribution... (NMBU)
+  command: negbinomialDistributionPlotNMBU
+  activation: ''
+  install: ''
+  order: 5087
+  module: nmbu
+  legacy_ids:
+  - negbinomialDistributionPlotNMBU
+- id: item.nmbu.menu_analyze_distributions_discrete_menu_geometric_menu.geom_distribution_plot_nmbu
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Plot geometric distribution... (NMBU)
+  command: geomDistributionPlotNMBU
+  activation: ''
+  install: ''
+  order: 5088
+  module: nmbu
+  legacy_ids:
+  - geomDistributionPlotNMBU
+removes:
+- target: principalComponents
+  module: nmbu
+  kind: command
+  source_module: core
+- target: binomialDistributionPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: PoissonDistributionPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: hyperDistributionPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: negbinomialDistributionPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: geometricDistributionPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: Histogram
+  module: nmbu
+  kind: command
+  source_module: core
+- target: singleSampleTTest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: independentSamplesTTest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: pairedTTest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: numericalSummaries
+  module: nmbu
+  kind: command
+  source_module: core
+- target: ordinalRegressionModel
+  module: nmbu
+  kind: command
+  source_module: core
+- target: multinomialLogitModel
+  module: nmbu
+  kind: command
+  source_module: core
+- target: enterTable
+  module: nmbu
+  kind: command
+  source_module: core
+- target: generalizedLinearModel
+  module: nmbu
+  kind: command
+  source_module: core
+- target: plotModel
+  module: nmbu
+  kind: command
+  source_module: core
+- target: residualQQPlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: CRPlots
+  module: nmbu
+  kind: command
+  source_module: core
+- target: AVPlots
+  module: nmbu
+  kind: command
+  source_module: core
+- target: InfluencePlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: effectPlots
+  module: nmbu
+  kind: command
+  source_module: core
+- target: linePlot
+  module: nmbu
+  kind: command
+  source_module: core
+- target: linearModel
+  module: nmbu
+  kind: command
+  source_module: core
+- target: addObservationStatistics
+  module: nmbu
+  kind: command
+  source_module: core
+- target: oneWayAnova
+  module: nmbu
+  kind: command
+  source_module: core
+- target: multiWayAnova
+  module: nmbu
+  kind: command
+  source_module: core
+- target: VIF
+  module: nmbu
+  kind: command
+  source_module: core
+- target: BreuschPaganTest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: DurbinWatsonTest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: RESETtest
+  module: nmbu
+  kind: command
+  source_module: core
+- target: OutlierTest
+  module: nmbu
+  kind: command
+  source_module: core
+

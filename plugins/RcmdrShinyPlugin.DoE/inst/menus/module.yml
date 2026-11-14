@@ -1,0 +1,823 @@
+version: 1
+module: doe
+groups:
+- id: menu.analyze.design
+  parent: menu.analyze
+  label: Design
+  order: 5001
+  module: doe
+  legacy_ids:
+  - designMenu
+- id: menu.analyze.design.import_do_emenu
+  parent: menu.analyze.design
+  label: Import
+  order: 5002
+  module: doe
+  legacy_ids:
+  - importDoEMenu
+- id: menu.analyze.design.export_do_emenu
+  parent: menu.analyze.design
+  label: Export
+  order: 5003
+  module: doe
+  legacy_ids:
+  - exportDoEMenu
+- id: menu.analyze.design.design_create_menu
+  parent: menu.analyze.design
+  label: Create design
+  order: 5004
+  module: doe
+  legacy_ids:
+  - designCreateMenu
+- id: menu.analyze.design.design_inspect_menu
+  parent: menu.analyze.design
+  label: Inspect design
+  order: 5005
+  module: doe
+  legacy_ids:
+  - designInspectMenu
+- id: menu.analyze.design.design_utility_menu
+  parent: menu.analyze.design
+  label: Modify design
+  order: 5006
+  module: doe
+  legacy_ids:
+  - designUtilityMenu
+- id: menu.analyze.design.design_anal_menu
+  parent: menu.analyze.design
+  label: Analyze design
+  order: 5007
+  module: doe
+  legacy_ids:
+  - designAnalMenu
+- id: menu.analyze.design.sep_menu
+  parent: menu.analyze.design
+  label: '-----------------------------------'
+  order: 5008
+  module: doe
+  legacy_ids:
+  - sepMenu
+- id: menu.analyze.design.design_help_menu
+  parent: menu.analyze.design
+  label: Help on Experimental Design...
+  order: 5009
+  module: doe
+  legacy_ids:
+  - designHelpMenu
+- id: menu.analyze.design.design_use_help_menu
+  parent: menu.analyze.design
+  label: Help on Using the Design Menu ...
+  order: 5010
+  module: doe
+  legacy_ids:
+  - designUseHelpMenu
+- id: menu.analyze.design.about_design
+  parent: menu.analyze.design
+  label: About RcmdrPlugin.DoE
+  order: 5011
+  module: doe
+  legacy_ids:
+  - aboutDesign
+items:
+- id: item.doe.menu_analyze_design_import_do_emenu.setwd
+  parent: menu.analyze.design.import_do_emenu
+  label: Change working directory...
+  command: Setwd
+  activation: ''
+  install: ''
+  order: 5002
+  module: doe
+  legacy_ids:
+  - Setwd
+- id: item.doe.menu_analyze_design_import_do_emenu.loadworkspace
+  parent: menu.analyze.design.import_do_emenu
+  label: Load R workspace...
+  command: loadworkspace
+  activation: ''
+  install: ''
+  order: 5003
+  module: doe
+  legacy_ids:
+  - loadworkspace
+- id: item.doe.menu_analyze_design_import_do_emenu.menu_import
+  parent: menu.analyze.design.import_do_emenu
+  label: Load experiment from R workspace ...
+  command: Menu.import
+  activation: existDesigns()
+  install: ''
+  order: 5004
+  module: doe
+  legacy_ids:
+  - Menu.import
+- id: item.doe.menu_analyze_design_import_do_emenu.menu_importrdacsv
+  parent: menu.analyze.design.import_do_emenu
+  label: Re-Import experiment from csv and rda files ...
+  command: Menu.importrdacsv
+  activation: ''
+  install: ''
+  order: 5005
+  module: doe
+  legacy_ids:
+  - Menu.importrdacsv
+- id: item.doe.menu_analyze_design_import_do_emenu.help_import
+  parent: menu.analyze.design.import_do_emenu
+  label: Info ...
+  command: helpImport
+  activation: ''
+  install: ''
+  order: 5006
+  module: doe
+  legacy_ids:
+  - helpImport
+- id: item.doe.menu_analyze_design_export_do_emenu.setwd
+  parent: menu.analyze.design.export_do_emenu
+  label: Change working directory...
+  command: Setwd
+  activation: ''
+  install: ''
+  order: 5008
+  module: doe
+  legacy_ids:
+  - Setwd
+- id: item.doe.menu_analyze_design_export_do_emenu.save_log_as
+  parent: menu.analyze.design.export_do_emenu
+  label: Save script as ...
+  command: saveLogAs
+  activation: ''
+  install: ''
+  order: 5009
+  module: doe
+  legacy_ids:
+  - saveLogAs
+- id: item.doe.menu_analyze_design_export_do_emenu.save_output_as
+  parent: menu.analyze.design.export_do_emenu
+  label: Save output as ...
+  command: saveOutputAs
+  activation: ''
+  install: ''
+  order: 5010
+  module: doe
+  legacy_ids:
+  - saveOutputAs
+- id: item.doe.menu_analyze_design_export_do_emenu.save_workspace_as
+  parent: menu.analyze.design.export_do_emenu
+  label: Save R workspace as ...
+  command: saveWorkspaceAs
+  activation: ''
+  install: ''
+  order: 5011
+  module: doe
+  legacy_ids:
+  - saveWorkspaceAs
+- id: item.doe.menu_analyze_design_export_do_emenu.menu_export
+  parent: menu.analyze.design.export_do_emenu
+  label: Export experiment ...
+  command: Menu.export
+  activation: existDesigns()
+  install: ''
+  order: 5012
+  module: doe
+  legacy_ids:
+  - Menu.export
+- id: item.doe.menu_analyze_design_export_do_emenu.help_export
+  parent: menu.analyze.design.export_do_emenu
+  label: Info ...
+  command: helpExport
+  activation: ''
+  install: ''
+  order: 5013
+  module: doe
+  legacy_ids:
+  - helpExport
+- id: item.doe.menu_analyze_design_design_create_menu.dc
+  parent: menu.analyze.design.design_create_menu
+  label: '----------- 2-level ------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5016
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.menu_pb2level
+  parent: menu.analyze.design.design_create_menu
+  label: Screening design ...
+  command: Menu.pb2level
+  activation: ''
+  install: ''
+  order: 5017
+  module: doe
+  legacy_ids:
+  - Menu.pb2level
+- id: item.doe.menu_analyze_design_design_create_menu.menu_fr_f2level
+  parent: menu.analyze.design.design_create_menu
+  label: Regular (Fractional) Factorial ...
+  command: Menu.FrF2level
+  activation: ''
+  install: ''
+  order: 5018
+  module: doe
+  legacy_ids:
+  - Menu.FrF2level
+- id: item.doe.menu_analyze_design_design_create_menu.menu_loadcatlg
+  parent: menu.analyze.design.design_create_menu
+  label: 'Experts: load additional catalogue ...'
+  command: Menu.loadcatlg
+  activation: ''
+  install: packageAvailable('FrF2.catlg128')
+  order: 5019
+  module: doe
+  legacy_ids:
+  - Menu.loadcatlg
+- id: item.doe.menu_analyze_design_design_create_menu.dc_2
+  parent: menu.analyze.design.design_create_menu
+  label: '----------- General ------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5020
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.menu_fac
+  parent: menu.analyze.design.design_create_menu
+  label: General Full Factorial Experiments ...
+  command: Menu.fac
+  activation: ''
+  install: ''
+  order: 5021
+  module: doe
+  legacy_ids:
+  - Menu.fac
+- id: item.doe.menu_analyze_design_design_create_menu.menu_oa
+  parent: menu.analyze.design.design_create_menu
+  label: General orthogonal arrays ...
+  command: Menu.oa
+  activation: ''
+  install: ''
+  order: 5022
+  module: doe
+  legacy_ids:
+  - Menu.oa
+- id: item.doe.menu_analyze_design_design_create_menu.dc_3
+  parent: menu.analyze.design.design_create_menu
+  label: '----------- D-optimal ------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5023
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.menu_cand
+  parent: menu.analyze.design.design_create_menu
+  label: Candidate design ...
+  command: Menu.cand
+  activation: ''
+  install: ''
+  order: 5024
+  module: doe
+  legacy_ids:
+  - Menu.cand
+- id: item.doe.menu_analyze_design_design_create_menu.menu_dopt
+  parent: menu.analyze.design.design_create_menu
+  label: D-optimal design ...
+  command: Menu.Dopt
+  activation: '!is.null(ActiveDataSet())'
+  install: ''
+  order: 5025
+  module: doe
+  legacy_ids:
+  - Menu.Dopt
+- id: item.doe.menu_analyze_design_design_create_menu.dc_4
+  parent: menu.analyze.design.design_create_menu
+  label: '----------- Combine ------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5026
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.menu_param
+  parent: menu.analyze.design.design_create_menu
+  label: Taguchi inner-outer array ...
+  command: Menu.param
+  activation: exist2Designs()
+  install: ''
+  order: 5027
+  module: doe
+  legacy_ids:
+  - Menu.param
+- id: item.doe.menu_analyze_design_design_create_menu.dc_5
+  parent: menu.analyze.design.design_create_menu
+  label: '----------- Quantitative --------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5028
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.menu_ccd
+  parent: menu.analyze.design.design_create_menu
+  label: Central composite ...
+  command: Menu.ccd
+  activation: ''
+  install: ''
+  order: 5029
+  module: doe
+  legacy_ids:
+  - Menu.ccd
+- id: item.doe.menu_analyze_design_design_create_menu.menu_bbd
+  parent: menu.analyze.design.design_create_menu
+  label: Box-Behnken ...
+  command: Menu.bbd
+  activation: ''
+  install: ''
+  order: 5030
+  module: doe
+  legacy_ids:
+  - Menu.bbd
+- id: item.doe.menu_analyze_design_design_create_menu.menu_lhs
+  parent: menu.analyze.design.design_create_menu
+  label: Space filling latin hypercube  ...
+  command: Menu.lhs
+  activation: ''
+  install: ''
+  order: 5031
+  module: doe
+  legacy_ids:
+  - Menu.lhs
+- id: item.doe.menu_analyze_design_design_create_menu.dc_6
+  parent: menu.analyze.design.design_create_menu
+  label: '--------------- Info ------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5032
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_create_menu.help2level
+  parent: menu.analyze.design.design_create_menu
+  label: Info 2-level designs
+  command: help2level
+  activation: ''
+  install: ''
+  order: 5033
+  module: doe
+  legacy_ids:
+  - help2level
+- id: item.doe.menu_analyze_design_design_create_menu.helpgeneral
+  parent: menu.analyze.design.design_create_menu
+  label: Info general designs
+  command: helpgeneral
+  activation: ''
+  install: ''
+  order: 5034
+  module: doe
+  legacy_ids:
+  - helpgeneral
+- id: item.doe.menu_analyze_design_design_create_menu.helpquant
+  parent: menu.analyze.design.design_create_menu
+  label: Info quantitative designs
+  command: helpquant
+  activation: ''
+  install: ''
+  order: 5035
+  module: doe
+  legacy_ids:
+  - helpquant
+- id: item.doe.menu_analyze_design_design_create_menu.help_dopt
+  parent: menu.analyze.design.design_create_menu
+  label: Info D-optimal designs
+  command: helpDopt
+  activation: ''
+  install: ''
+  order: 5036
+  module: doe
+  legacy_ids:
+  - helpDopt
+- id: item.doe.menu_analyze_design_design_inspect_menu.menu_display
+  parent: menu.analyze.design.design_inspect_menu
+  label: Display active design ...
+  command: Menu.display
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5038
+  module: doe
+  legacy_ids:
+  - Menu.display
+- id: item.doe.menu_analyze_design_design_inspect_menu.summarize_design
+  parent: menu.analyze.design.design_inspect_menu
+  label: Summarize active design
+  command: summarize.design
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5039
+  module: doe
+  legacy_ids:
+  - summarize.design
+- id: item.doe.menu_analyze_design_design_inspect_menu.menu_plot
+  parent: menu.analyze.design.design_inspect_menu
+  label: Plot active design ...
+  command: Menu.plot
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5040
+  module: doe
+  legacy_ids:
+  - Menu.plot
+- id: item.doe.menu_analyze_design_design_inspect_menu.menu_tab
+  parent: menu.analyze.design.design_inspect_menu
+  label: Tabulate active design ...
+  command: Menu.tab
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5041
+  module: doe
+  legacy_ids:
+  - Menu.tab
+- id: item.doe.menu_analyze_design_design_inspect_menu.design_info_design
+  parent: menu.analyze.design.design_inspect_menu
+  label: 'Experts: display design.info for active design'
+  command: design.info.design
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5042
+  module: doe
+  legacy_ids:
+  - design.info.design
+- id: item.doe.menu_analyze_design_design_inspect_menu.help_inspect
+  parent: menu.analyze.design.design_inspect_menu
+  label: Info ...
+  command: helpInspect
+  activation: ''
+  install: ''
+  order: 5043
+  module: doe
+  legacy_ids:
+  - helpInspect
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_addresponse
+  parent: menu.analyze.design.design_utility_menu
+  label: Add response variable(s) ...
+  command: Menu.addresponse
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5044
+  module: doe
+  legacy_ids:
+  - Menu.addresponse
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_responses
+  parent: menu.analyze.design.design_utility_menu
+  label: Select / Deselect response variables ...
+  command: Menu.responses
+  activation: activeDataSetDesignP()
+  install: ''
+  order: 5045
+  module: doe
+  legacy_ids:
+  - Menu.responses
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_colremove
+  parent: menu.analyze.design.design_utility_menu
+  label: Remove column(s) ...
+  command: Menu.colremove
+  activation: activeDataSetDesignRemovableP()
+  install: ''
+  order: 5046
+  module: doe
+  legacy_ids:
+  - Menu.colremove
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_changecontr
+  parent: menu.analyze.design.design_utility_menu
+  label: Change factor contrast(s) ...
+  command: Menu.changecontr
+  activation: activeDataSetDesignQualP()
+  install: ''
+  order: 5047
+  module: doe
+  legacy_ids:
+  - Menu.changecontr
+- id: item.doe.menu_analyze_design_design_utility_menu.dc
+  parent: menu.analyze.design.design_utility_menu
+  label: '----------------------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5048
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_wide
+  parent: menu.analyze.design.design_utility_menu
+  label: Change from long to wide format ...
+  command: Menu.wide
+  activation: activeDataSetDesignLongToWide()
+  install: ''
+  order: 5049
+  module: doe
+  legacy_ids:
+  - Menu.wide
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_aggregate
+  parent: menu.analyze.design.design_utility_menu
+  label: Aggregate design ...
+  command: Menu.aggregate
+  activation: activeDataSetDesignWide()
+  install: ''
+  order: 5050
+  module: doe
+  legacy_ids:
+  - Menu.aggregate
+- id: item.doe.menu_analyze_design_design_utility_menu.dc_2
+  parent: menu.analyze.design.design_utility_menu
+  label: '----------------------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5051
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_addcenter
+  parent: menu.analyze.design.design_utility_menu
+  label: Add center points ...
+  command: Menu.addcenter
+  activation: activeDataSetDesign2Pwoc()
+  install: ''
+  order: 5052
+  module: doe
+  legacy_ids:
+  - Menu.addcenter
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_ccd
+  parent: menu.analyze.design.design_utility_menu
+  label: Add star portion for central composite design ...
+  command: Menu.ccd
+  activation: activeDataSetDesign2Pnoccd()
+  install: ''
+  order: 5053
+  module: doe
+  legacy_ids:
+  - Menu.ccd
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_pickcube
+  parent: menu.analyze.design.design_utility_menu
+  label: Remove star portion from central composite design ...
+  command: Menu.pickcube
+  activation: activeDataSetDesignccd()
+  install: ''
+  order: 5054
+  module: doe
+  legacy_ids:
+  - Menu.pickcube
+- id: item.doe.menu_analyze_design_design_utility_menu.menu_augmentlhs
+  parent: menu.analyze.design.design_utility_menu
+  label: Augment lhs design ...
+  command: Menu.augmentlhs
+  activation: activeDataSetDesignlhs()
+  install: ''
+  order: 5055
+  module: doe
+  legacy_ids:
+  - Menu.augmentlhs
+- id: item.doe.menu_analyze_design_design_utility_menu.dc_3
+  parent: menu.analyze.design.design_utility_menu
+  label: '----------------------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5056
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_utility_menu.help_modify
+  parent: menu.analyze.design.design_utility_menu
+  label: Info ...
+  command: helpModify
+  activation: ''
+  install: ''
+  order: 5057
+  module: doe
+  legacy_ids:
+  - helpModify
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_model
+  parent: menu.analyze.design.design_anal_menu
+  label: Default linear model ...
+  command: Menu.model
+  activation: activeDataSetDesignPResp() & !activeDataSetDesignparamlong()
+  install: ''
+  order: 5060
+  module: doe
+  legacy_ids:
+  - Menu.model
+- id: item.doe.menu_analyze_design_design_anal_menu.dc
+  parent: menu.analyze.design.design_anal_menu
+  label: '--------- General factorial designs ---------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5061
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_plot_means_do_e
+  parent: menu.analyze.design.design_anal_menu
+  label: Main Effects and Interaction Plots ...
+  command: Menu.PlotMeansDoE
+  activation: numericP() && factorsP() && activeDataSetDesignPResp()
+  install: ''
+  order: 5062
+  module: doe
+  legacy_ids:
+  - Menu.PlotMeansDoE
+- id: item.doe.menu_analyze_design_design_anal_menu.dc_2
+  parent: menu.analyze.design.design_anal_menu
+  label: '--------- 2-level designs ---------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5063
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_effect_plots
+  parent: menu.analyze.design.design_anal_menu
+  label: Effects (Half) Normal Plots ...
+  command: Menu.EffectPlots
+  activation: activeDataSetDesign2PResp()
+  install: ''
+  order: 5064
+  module: doe
+  legacy_ids:
+  - Menu.EffectPlots
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_iaplot
+  parent: menu.analyze.design.design_anal_menu
+  label: Main Effects and Interaction Plots ...
+  command: Menu.IAPlot
+  activation: activeDataSetDesign2PResp()
+  install: ''
+  order: 5065
+  module: doe
+  legacy_ids:
+  - Menu.IAPlot
+- id: item.doe.menu_analyze_design_design_anal_menu.dc_3
+  parent: menu.analyze.design.design_anal_menu
+  label: '--------- Quantitative factors ----------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5066
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_rsmmodel
+  parent: menu.analyze.design.design_anal_menu
+  label: Response surface model ...
+  command: Menu.rsmmodel
+  activation: activeDataSetDesignPResp() & !activeDataSetDesignparamlong()
+  install: ''
+  order: 5067
+  module: doe
+  legacy_ids:
+  - Menu.rsmmodel
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_steepest
+  parent: menu.analyze.design.design_anal_menu
+  label: Steepest slope ...
+  command: Menu.steepest
+  activation: activeModelRSM()
+  install: ''
+  order: 5068
+  module: doe
+  legacy_ids:
+  - Menu.steepest
+- id: item.doe.menu_analyze_design_design_anal_menu.menu_contour
+  parent: menu.analyze.design.design_anal_menu
+  label: Response surface plots ...
+  command: Menu.contour
+  activation: activeModelLM()
+  install: ''
+  order: 5069
+  module: doe
+  legacy_ids:
+  - Menu.contour
+- id: item.doe.menu_analyze_design_design_anal_menu.dc_4
+  parent: menu.analyze.design.design_anal_menu
+  label: '-----------------------------------------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5070
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_anal_menu.help_analyze
+  parent: menu.analyze.design.design_anal_menu
+  label: Info ...
+  command: helpAnalyze
+  activation: ''
+  install: ''
+  order: 5071
+  module: doe
+  legacy_ids:
+  - helpAnalyze
+- id: item.doe.menu_analyze_design_design_help_menu.dc
+  parent: menu.analyze.design.design_help_menu
+  label: '------- Info on selected statistical topics --------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5073
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_help_menu.display_glossary
+  parent: menu.analyze.design.design_help_menu
+  label: Glossary for 2-level designs ...
+  command: displayGlossary
+  activation: ''
+  install: ''
+  order: 5074
+  module: doe
+  legacy_ids:
+  - displayGlossary
+- id: item.doe.menu_analyze_design_design_help_menu.help2level
+  parent: menu.analyze.design.design_help_menu
+  label: 2-level screening designs vs. regular fractional factorial designs ...
+  command: help2level
+  activation: ''
+  install: ''
+  order: 5075
+  module: doe
+  legacy_ids:
+  - help2level
+- id: item.doe.menu_analyze_design_design_help_menu.displayblock
+  parent: menu.analyze.design.design_help_menu
+  label: Blocking of 2-level designs ...
+  command: displayblock
+  activation: ''
+  install: ''
+  order: 5076
+  module: doe
+  legacy_ids:
+  - displayblock
+- id: item.doe.menu_analyze_design_design_help_menu.displaysplitplot
+  parent: menu.analyze.design.design_help_menu
+  label: 2-level split-plot designs ...
+  command: displaysplitplot
+  activation: ''
+  install: ''
+  order: 5077
+  module: doe
+  legacy_ids:
+  - displaysplitplot
+- id: item.doe.menu_analyze_design_design_help_menu.display_central_composite_designs
+  parent: menu.analyze.design.design_help_menu
+  label: Central composite designs ...
+  command: displayCentralCompositeDesigns
+  activation: ''
+  install: ''
+  order: 5078
+  module: doe
+  legacy_ids:
+  - displayCentralCompositeDesigns
+- id: item.doe.menu_analyze_design_design_use_help_menu.dc
+  parent: menu.analyze.design.design_use_help_menu
+  label: '------- Info on using the Design menu --------'
+  command: dc
+  activation: 'FALSE'
+  install: ''
+  order: 5080
+  module: doe
+  legacy_ids:
+  - dc
+- id: item.doe.menu_analyze_design_design_use_help_menu.help_menus
+  parent: menu.analyze.design.design_use_help_menu
+  label: How to make menus behave appropriately ...
+  command: helpMenus
+  activation: ''
+  install: ''
+  order: 5081
+  module: doe
+  legacy_ids:
+  - helpMenus
+- id: item.doe.menu_analyze_design_design_use_help_menu.help_exp_imp
+  parent: menu.analyze.design.design_use_help_menu
+  label: Export/import help ...
+  command: helpExpImp
+  activation: ''
+  install: ''
+  order: 5082
+  module: doe
+  legacy_ids:
+  - helpExpImp
+- id: item.doe.menu_analyze_design_about_design.helpabout
+  parent: menu.analyze.design.about_design
+  label: About RcmdrPlugin.DoE
+  command: helpabout
+  activation: ''
+  install: ''
+  order: 5084
+  module: doe
+  legacy_ids:
+  - helpabout
+removes: []
+

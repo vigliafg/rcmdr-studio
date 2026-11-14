@@ -1,0 +1,16 @@
+version: 1
+module: pcarobust
+groups: []
+items:
+- id: item.pcarobust.menu_analyze_dimensional_menu.pca_robust
+  parent: menu.analyze.dimensional_menu
+  label: Robust Principal Component Analysis
+  command: pcaRobust
+  activation: activeDataSetP() && numericP(2)
+  install: packageAvailable('rrcov')
+  order: 5001
+  module: pcarobust
+  legacy_ids:
+  - pcaRobust
+removes: []
+

@@ -57,7 +57,7 @@ test_that("menu expansion persists in the state", {
 test_that("the command breadcrumb follows the menu tree", {
   path <- menu_command_path("numericalSummaries")
   expect_true(length(path) >= 2L)
-  expect_true("Statistics" %in% path)
+  expect_true("Analyze" %in% path)
   expect_equal(menu_command_path("not-a-command"), character())
   expect_equal(dialog_breadcrumb_parts("numericalSummaries"), path)
 })

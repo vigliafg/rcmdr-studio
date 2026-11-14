@@ -21,6 +21,13 @@ An RcmdrShiny plugin adds menus, direct commands and Shiny dialogs.  Plugins can
 be delivered as a single R script or, preferably, as an R package named
 `RcmdrShinyPlugin.<Name>`.
 
+Starting with Wave 6.5, the 15 bundled plugins are **first-party modules**:
+they are maintained and versioned with the application and target the internal
+module contract. There is no external compatibility promise. New menus use the
+stable `menu_id` / `item_id` registry described in
+`vignette("menu-platform")`; the legacy `menus.txt` reader remains for the
+migration and for script-only plugins.
+
 # Package layout
 
 ```text
@@ -29,7 +36,8 @@ RcmdrShinyPlugin.Export/
 ├─ NAMESPACE
 ├─ R/plugin.R
 ├─ R/dialogs.R
-├─ inst/etc/rcmdrshiny-menus.txt
+├─ inst/etc/rcmdrshiny-menus.txt   # legacy migration source
+├─ inst/menus/module.yml            # stable registry fragment
 ├─ man/
 └─ tests/testthat/
 ```

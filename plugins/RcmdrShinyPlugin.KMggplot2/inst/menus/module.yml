@@ -1,0 +1,307 @@
+version: 1
+module: kmggplot2
+groups:
+- id: menu.graphs.km
+  parent: menu.graphs
+  label: KMggplot2
+  order: 5001
+  module: kmggplot2
+  legacy_ids:
+  - kmg2Menu
+- id: menu.graphs.km.kmg2dh_menu
+  parent: menu.graphs.km
+  label: Data handling...
+  order: 5002
+  module: kmggplot2
+  legacy_ids:
+  - kmg2dhMenu
+- id: menu.graphs.km.kmg2d_menu
+  parent: menu.graphs.km
+  label: Plot distribution...
+  order: 5003
+  module: kmggplot2
+  legacy_ids:
+  - kmg2dMenu
+items:
+- id: item.kmggplot2.menu_graphs_km.window_km
+  parent: menu.graphs.km
+  label: Kaplan-Meier plot...
+  command: windowKM
+  activation: numericP()
+  install: packageAvailable('survival')
+  order: 5002
+  module: kmggplot2
+  legacy_ids:
+  - windowKM
+- id: item.kmggplot2.menu_graphs_km.window_hist
+  parent: menu.graphs.km
+  label: Histogram...
+  command: windowHist
+  activation: nonFactorsP()
+  install: packageAvailable('ggplot2')
+  order: 5003
+  module: kmggplot2
+  legacy_ids:
+  - windowHist
+- id: item.kmggplot2.menu_graphs_km.window_qq
+  parent: menu.graphs.km
+  label: Q-Q plot...
+  command: windowQQ
+  activation: nonFactorsP()
+  install: packageAvailable('ggplot2')
+  order: 5004
+  module: kmggplot2
+  legacy_ids:
+  - windowQQ
+- id: item.kmggplot2.menu_graphs_km.window_box
+  parent: menu.graphs.km
+  label: Box plot / Violin plot / Confidence interval...
+  command: windowBox
+  activation: nonFactorsP()
+  install: packageAvailable('ggplot2')
+  order: 5005
+  module: kmggplot2
+  legacy_ids:
+  - windowBox
+- id: item.kmggplot2.menu_graphs_km.window_scatter
+  parent: menu.graphs.km
+  label: Scatter plot...
+  command: windowScatter
+  activation: nonFactorsP(2)
+  install: packageAvailable('ggplot2')
+  order: 5006
+  module: kmggplot2
+  legacy_ids:
+  - windowScatter
+- id: item.kmggplot2.menu_graphs_km.window_scattermat
+  parent: menu.graphs.km
+  label: Scatter matrix...
+  command: windowScattermat
+  activation: nonFactorsP(3)
+  install: packageAvailable('ggplot2')
+  order: 5007
+  module: kmggplot2
+  legacy_ids:
+  - windowScattermat
+- id: item.kmggplot2.menu_graphs_km.window_line
+  parent: menu.graphs.km
+  label: Line chart...
+  command: windowLine
+  activation: nonFactorsP(2)
+  install: packageAvailable('ggplot2')
+  order: 5008
+  module: kmggplot2
+  legacy_ids:
+  - windowLine
+- id: item.kmggplot2.menu_graphs_km.window_pie
+  parent: menu.graphs.km
+  label: Pie chart...
+  command: windowPie
+  activation: factorsP()
+  install: packageAvailable('ggplot2')
+  order: 5009
+  module: kmggplot2
+  legacy_ids:
+  - windowPie
+- id: item.kmggplot2.menu_graphs_km.window_discretebar
+  parent: menu.graphs.km
+  label: Bar chart for discrete variables...
+  command: windowDiscretebar
+  activation: factorsP()
+  install: packageAvailable('ggplot2')
+  order: 5010
+  module: kmggplot2
+  legacy_ids:
+  - windowDiscretebar
+- id: item.kmggplot2.menu_graphs_km.window_contour
+  parent: menu.graphs.km
+  label: Contour plot...
+  command: windowContour
+  activation: nonFactorsP(3)
+  install: packageAvailable('ggplot2')
+  order: 5011
+  module: kmggplot2
+  legacy_ids:
+  - windowContour
+- id: item.kmggplot2.menu_graphs_km_kmg2dh_menu.window_factorize
+  parent: menu.graphs.km.kmg2dh_menu
+  label: Factorizing numeric variables...
+  command: windowFactorize
+  activation: nonFactorsP()
+  install: packageAvailable('ggplot2')
+  order: 5013
+  module: kmggplot2
+  legacy_ids:
+  - windowFactorize
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_norm
+  parent: menu.graphs.km.kmg2d_menu
+  label: Normal distribution...
+  command: windowDistNorm
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5015
+  module: kmggplot2
+  legacy_ids:
+  - windowDistNorm
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_t
+  parent: menu.graphs.km.kmg2d_menu
+  label: t distribution...
+  command: windowDistT
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5016
+  module: kmggplot2
+  legacy_ids:
+  - windowDistT
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_chisq
+  parent: menu.graphs.km.kmg2d_menu
+  label: Chi-square distribution...
+  command: windowDistChisq
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5017
+  module: kmggplot2
+  legacy_ids:
+  - windowDistChisq
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_f
+  parent: menu.graphs.km.kmg2d_menu
+  label: F distribution...
+  command: windowDistF
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5018
+  module: kmggplot2
+  legacy_ids:
+  - windowDistF
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_exp
+  parent: menu.graphs.km.kmg2d_menu
+  label: Exponential distribution...
+  command: windowDistExp
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5019
+  module: kmggplot2
+  legacy_ids:
+  - windowDistExp
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_unif
+  parent: menu.graphs.km.kmg2d_menu
+  label: Uniform distribution...
+  command: windowDistUnif
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5020
+  module: kmggplot2
+  legacy_ids:
+  - windowDistUnif
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_beta
+  parent: menu.graphs.km.kmg2d_menu
+  label: Beta distribution...
+  command: windowDistBeta
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5021
+  module: kmggplot2
+  legacy_ids:
+  - windowDistBeta
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_cauchy
+  parent: menu.graphs.km.kmg2d_menu
+  label: Cauchy distribution...
+  command: windowDistCauchy
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5022
+  module: kmggplot2
+  legacy_ids:
+  - windowDistCauchy
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_logis
+  parent: menu.graphs.km.kmg2d_menu
+  label: Logistic distribution...
+  command: windowDistLogis
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5023
+  module: kmggplot2
+  legacy_ids:
+  - windowDistLogis
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_lnorm
+  parent: menu.graphs.km.kmg2d_menu
+  label: Log-normal distribution...
+  command: windowDistLnorm
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5024
+  module: kmggplot2
+  legacy_ids:
+  - windowDistLnorm
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_gamma
+  parent: menu.graphs.km.kmg2d_menu
+  label: Gamma distribution...
+  command: windowDistGamma
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5025
+  module: kmggplot2
+  legacy_ids:
+  - windowDistGamma
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_weibull
+  parent: menu.graphs.km.kmg2d_menu
+  label: Weibull distribution...
+  command: windowDistWeibull
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5026
+  module: kmggplot2
+  legacy_ids:
+  - windowDistWeibull
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_binom
+  parent: menu.graphs.km.kmg2d_menu
+  label: Binomial distribution...
+  command: windowDistBinom
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5027
+  module: kmggplot2
+  legacy_ids:
+  - windowDistBinom
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_pois
+  parent: menu.graphs.km.kmg2d_menu
+  label: Poisson distribution...
+  command: windowDistPois
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5028
+  module: kmggplot2
+  legacy_ids:
+  - windowDistPois
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_geom
+  parent: menu.graphs.km.kmg2d_menu
+  label: Geometric distribution...
+  command: windowDistGeom
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5029
+  module: kmggplot2
+  legacy_ids:
+  - windowDistGeom
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_hyper
+  parent: menu.graphs.km.kmg2d_menu
+  label: Hypergeometric distribution...
+  command: windowDistHyper
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5030
+  module: kmggplot2
+  legacy_ids:
+  - windowDistHyper
+- id: item.kmggplot2.menu_graphs_km_kmg2d_menu.window_dist_nbinom
+  parent: menu.graphs.km.kmg2d_menu
+  label: Negative binomial distribution...
+  command: windowDistNbinom
+  activation: ''
+  install: packageAvailable('ggplot2')
+  order: 5031
+  module: kmggplot2
+  legacy_ids:
+  - windowDistNbinom
+removes: []
+

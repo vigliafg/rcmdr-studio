@@ -1,0 +1,76 @@
+---
+title: "Menu platform and stable ids"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Menu platform and stable ids}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(RcmdrShiny)
+```
+
+The Wave 6.5 menu platform replaces the positional Rcmdr menu tree with a
+curated, multi-level menubar. The statistical commands are unchanged; only the
+layout and the interface identifiers change.
+
+## Inspect the tree
+
+```{r tree}
+tree <- menu_tree()
+vapply(tree, function(node) node$label, character(1))
+```
+
+Each group carries a `menu_id`; each leaf carries an `item_id`, a stable DOM
+key and the original `command`:
+
+```{r leaves}
+leaves <- menu_leaves(tree)
+head(leaves[, c("item_id", "menu_id", "command", "path")], 5)
+```
+
+A dialogue, the palette and the history still use the command id. The stable
+item id is what the DOM, favourites and tests can rely on when the menu is
+reordered.
+
+## One Save, many formats
+
+```{r save}
+save <- leaves[grepl("^File > Save", leaves$path), c("item_id", "label",
+                                                      "command")]
+save
+```
+
+## Validate a fragment
+
+```{r validate}
+registry <- RcmdrShiny:::menu_registry_load(
+  RcmdrShiny:::menu_registry_default_file(), module = "core"
+)
+RcmdrShiny:::menu_registry_validate(registry)$ok
+```
+
+The validator checks unique ids, existing parents, cycles and command
+references. First-party module fragments live in
+`plugins/<module>/inst/menus/module.yml` and are merged after the core.
+
+## Migrate old preferences
+
+Expanded menu ids are migrated on load:
+
+```{r migration}
+RcmdrShiny:::menu_migrate_ids(c("fileMenu", "statisticsMenu", "modelsMenu"))
+```
+
+Favourites and recents remain keyed by the stable command id, so they survive
+the layout change without a mapping.
+
+## Module contract
+
+The first-party modules are versioned with the application. A module fragment
+declares groups and items with `module_id`, `menu_id` and `item_id`; it may
+remove individual core commands it replaces, but it does not delete a whole
+core menu. This keeps the help centre, tour and diagnostics available in every
+module combination.

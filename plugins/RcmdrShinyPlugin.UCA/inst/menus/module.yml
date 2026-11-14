@@ -1,0 +1,394 @@
+version: 1
+module: uca
+groups:
+- id: menu.analyze.models.predict_menu
+  parent: menu.analyze.models
+  label: Predict using active model
+  order: 5001
+  module: uca
+  legacy_ids:
+  - predictMenu
+- id: menu.analyze.quality
+  parent: menu.analyze
+  label: Quality Control
+  order: 5002
+  module: uca
+  legacy_ids:
+  - QCMenu
+- id: menu.analyze.quality.qcamenu
+  parent: menu.analyze.quality
+  label: Attributes
+  order: 5003
+  module: uca
+  legacy_ids:
+  - QCAMenu
+- id: menu.analyze.quality.qcamenu.pchart_menu
+  parent: menu.analyze.quality.qcamenu
+  label: p-chart (proportion)
+  order: 5004
+  module: uca
+  legacy_ids:
+  - pchartMenu
+- id: menu.analyze.quality.qcamenu.npchart_menu
+  parent: menu.analyze.quality.qcamenu
+  label: np-chart (count)
+  order: 5005
+  module: uca
+  legacy_ids:
+  - npchartMenu
+- id: menu.analyze.quality.qccmenu
+  parent: menu.analyze.quality
+  label: Counts
+  order: 5006
+  module: uca
+  legacy_ids:
+  - QCCMenu
+- id: menu.analyze.quality.qccmenu.uchart_menu
+  parent: menu.analyze.quality.qccmenu
+  label: u-chart (average rate)
+  order: 5007
+  module: uca
+  legacy_ids:
+  - uchartMenu
+- id: menu.analyze.quality.qccmenu.cchart_menu
+  parent: menu.analyze.quality.qccmenu
+  label: c-chart (rate)
+  order: 5008
+  module: uca
+  legacy_ids:
+  - cchartMenu
+- id: menu.analyze.quality.qcvmenu
+  parent: menu.analyze.quality
+  label: Continuous
+  order: 5009
+  module: uca
+  legacy_ids:
+  - QCVMenu
+- id: menu.analyze.quality.qcvmenu.qcmeans_menu
+  parent: menu.analyze.quality.qcvmenu
+  label: Means
+  order: 5010
+  module: uca
+  legacy_ids:
+  - qcmeansMenu
+- id: menu.analyze.quality.qcvmenu.qc_rmenu
+  parent: menu.analyze.quality.qcvmenu
+  label: Range
+  order: 5011
+  module: uca
+  legacy_ids:
+  - qcRMenu
+- id: menu.analyze.quality.qcvmenu.qc_smenu
+  parent: menu.analyze.quality.qcvmenu
+  label: Standard deviation
+  order: 5012
+  module: uca
+  legacy_ids:
+  - qcSMenu
+items:
+- id: item.uca.menu_analyze_variances_menu.sigma_test
+  parent: menu.analyze.variances_menu
+  label: Single-Sample Variance Test...
+  command: sigmaTest
+  activation: numericP()
+  install: ''
+  order: 5001
+  module: uca
+  legacy_ids:
+  - sigmaTest
+- id: item.uca.menu_analyze_nonparametric_menu.randomness_ftest
+  parent: menu.analyze.nonparametric_menu
+  label: Randomness test for two level factor...
+  command: randomnessFTest
+  activation: twoLevelFactorsP()
+  install: ''
+  order: 5002
+  module: uca
+  legacy_ids:
+  - randomnessFTest
+- id: item.uca.menu_analyze_nonparametric_menu.randomness_ntest
+  parent: menu.analyze.nonparametric_menu
+  label: Randomness test for numeric variable...
+  command: randomnessNTest
+  activation: numericP()
+  install: ''
+  order: 5003
+  module: uca
+  legacy_ids:
+  - randomnessNTest
+- kind: separator
+  parent: menu.analyze.models
+  order: 5004
+  module: uca
+- id: item.uca.menu_analyze_models_predict_menu.input2predict
+  parent: menu.analyze.models.predict_menu
+  label: Input data and predict...
+  command: input2predict
+  activation: activeModelP()
+  install: ''
+  order: 5006
+  module: uca
+  legacy_ids:
+  - input2predict
+- id: item.uca.menu_analyze_models_predict_menu.predict4dataset
+  parent: menu.analyze.models.predict_menu
+  label: Predict values for existing dataset...
+  command: predict4dataset
+  activation: activeModelP()
+  install: ''
+  order: 5007
+  module: uca
+  legacy_ids:
+  - predict4dataset
+- id: item.uca.menu_analyze_quality.paretochart_menu
+  parent: menu.analyze.quality
+  label: Pareto chart
+  command: paretochartMenu
+  activation: factorsP()
+  install: ''
+  order: 5009
+  module: uca
+  legacy_ids:
+  - paretochartMenu
+- id: item.uca.menu_analyze_quality_qcamenu_pchart_menu.pchart1_menu
+  parent: menu.analyze.quality.qcamenu.pchart_menu
+  label: Phase I...
+  command: pchart1Menu
+  activation: numericP()
+  install: ''
+  order: 5012
+  module: uca
+  legacy_ids:
+  - pchart1Menu
+- id: item.uca.menu_analyze_quality_qcamenu_pchart_menu.pchart2_menu
+  parent: menu.analyze.quality.qcamenu.pchart_menu
+  label: Phase II from data...
+  command: pchart2Menu
+  activation: numericP()
+  install: ''
+  order: 5013
+  module: uca
+  legacy_ids:
+  - pchart2Menu
+- id: item.uca.menu_analyze_quality_qcamenu_pchart_menu.pchartp_menu
+  parent: menu.analyze.quality.qcamenu.pchart_menu
+  label: Phase II from parameter...
+  command: pchartpMenu
+  activation: numericP()
+  install: ''
+  order: 5014
+  module: uca
+  legacy_ids:
+  - pchartpMenu
+- id: item.uca.menu_analyze_quality_qcamenu_npchart_menu.npchart1_menu
+  parent: menu.analyze.quality.qcamenu.npchart_menu
+  label: Phase I...
+  command: npchart1Menu
+  activation: numericP()
+  install: ''
+  order: 5016
+  module: uca
+  legacy_ids:
+  - npchart1Menu
+- id: item.uca.menu_analyze_quality_qcamenu_npchart_menu.npchart2_menu
+  parent: menu.analyze.quality.qcamenu.npchart_menu
+  label: Phase II from data...
+  command: npchart2Menu
+  activation: numericP()
+  install: ''
+  order: 5017
+  module: uca
+  legacy_ids:
+  - npchart2Menu
+- id: item.uca.menu_analyze_quality_qcamenu_npchart_menu.npchartp_menu
+  parent: menu.analyze.quality.qcamenu.npchart_menu
+  label: Phase II from parameter...
+  command: npchartpMenu
+  activation: numericP()
+  install: ''
+  order: 5018
+  module: uca
+  legacy_ids:
+  - npchartpMenu
+- id: item.uca.menu_analyze_quality_qccmenu_uchart_menu.uchart1_menu
+  parent: menu.analyze.quality.qccmenu.uchart_menu
+  label: Phase I...
+  command: uchart1Menu
+  activation: numericP()
+  install: ''
+  order: 5021
+  module: uca
+  legacy_ids:
+  - uchart1Menu
+- id: item.uca.menu_analyze_quality_qccmenu_uchart_menu.uchart2_menu
+  parent: menu.analyze.quality.qccmenu.uchart_menu
+  label: Phase II from data...
+  command: uchart2Menu
+  activation: numericP()
+  install: ''
+  order: 5022
+  module: uca
+  legacy_ids:
+  - uchart2Menu
+- id: item.uca.menu_analyze_quality_qccmenu_uchart_menu.uchartp_menu
+  parent: menu.analyze.quality.qccmenu.uchart_menu
+  label: Phase II from parameter...
+  command: uchartpMenu
+  activation: numericP()
+  install: ''
+  order: 5023
+  module: uca
+  legacy_ids:
+  - uchartpMenu
+- id: item.uca.menu_analyze_quality_qccmenu_cchart_menu.cchart1_menu
+  parent: menu.analyze.quality.qccmenu.cchart_menu
+  label: Phase I...
+  command: cchart1Menu
+  activation: numericP()
+  install: ''
+  order: 5025
+  module: uca
+  legacy_ids:
+  - cchart1Menu
+- id: item.uca.menu_analyze_quality_qccmenu_cchart_menu.cchart2_menu
+  parent: menu.analyze.quality.qccmenu.cchart_menu
+  label: Phase II from data...
+  command: cchart2Menu
+  activation: numericP()
+  install: ''
+  order: 5026
+  module: uca
+  legacy_ids:
+  - cchart2Menu
+- id: item.uca.menu_analyze_quality_qccmenu_cchart_menu.cchartp_menu
+  parent: menu.analyze.quality.qccmenu.cchart_menu
+  label: Phase II from parameter...
+  command: cchartpMenu
+  activation: numericP()
+  install: ''
+  order: 5027
+  module: uca
+  legacy_ids:
+  - cchartpMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qcmeans_menu.xbar1mc_menu
+  parent: menu.analyze.quality.qcvmenu.qcmeans_menu
+  label: Phase I (multiple columns)...
+  command: xbar1mcMenu
+  activation: numericP()
+  install: ''
+  order: 5030
+  module: uca
+  legacy_ids:
+  - xbar1mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qcmeans_menu.xbar2mc_menu
+  parent: menu.analyze.quality.qcvmenu.qcmeans_menu
+  label: Phase II from data (multiple columns)...
+  command: xbar2mcMenu
+  activation: numericP()
+  install: ''
+  order: 5031
+  module: uca
+  legacy_ids:
+  - xbar2mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qcmeans_menu.xbarpmc_menu
+  parent: menu.analyze.quality.qcvmenu.qcmeans_menu
+  label: Phase II from parameters (multiple columns)...
+  command: xbarpmcMenu
+  activation: numericP()
+  install: ''
+  order: 5032
+  module: uca
+  legacy_ids:
+  - xbarpmcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_rmenu.r1mc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_rmenu
+  label: Phase I (multiple columns)...
+  command: R1mcMenu
+  activation: numericP()
+  install: ''
+  order: 5034
+  module: uca
+  legacy_ids:
+  - R1mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_rmenu.r2mc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_rmenu
+  label: Phase II from data (multiple columns)...
+  command: R2mcMenu
+  activation: numericP()
+  install: ''
+  order: 5035
+  module: uca
+  legacy_ids:
+  - R2mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_rmenu.rpmc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_rmenu
+  label: Phase II from parameters (multiple columns)...
+  command: RpmcMenu
+  activation: numericP()
+  install: ''
+  order: 5036
+  module: uca
+  legacy_ids:
+  - RpmcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_smenu.s1mc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_smenu
+  label: Phase I (multiple columns)...
+  command: S1mcMenu
+  activation: numericP()
+  install: ''
+  order: 5038
+  module: uca
+  legacy_ids:
+  - S1mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_smenu.s2mc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_smenu
+  label: Phase II from data (multiple columns)...
+  command: S2mcMenu
+  activation: numericP()
+  install: ''
+  order: 5039
+  module: uca
+  legacy_ids:
+  - S2mcMenu
+- id: item.uca.menu_analyze_quality_qcvmenu_qc_smenu.spmc_menu
+  parent: menu.analyze.quality.qcvmenu.qc_smenu
+  label: Phase II from parameters (multiple columns)...
+  command: SpmcMenu
+  activation: numericP()
+  install: ''
+  order: 5040
+  module: uca
+  legacy_ids:
+  - SpmcMenu
+- id: item.uca.menu_help.browse_rucawebsite
+  parent: menu.help
+  label: R-UCA project website
+  command: browseRUCAWebsite
+  activation: ''
+  install: ''
+  order: 5041
+  module: uca
+  legacy_ids:
+  - browseRUCAWebsite
+- id: item.uca.menu_help.browse_rcmdr_plugin_uca
+  parent: menu.help
+  label: RcmdrPlugin.UCA package website
+  command: browseRcmdrPluginUCA
+  activation: ''
+  install: ''
+  order: 5042
+  module: uca
+  legacy_ids:
+  - browseRcmdrPluginUCA
+- id: item.uca.menu_help.check_rucaversion
+  parent: menu.help
+  label: Check R-UCA package version
+  command: checkRUCAversion
+  activation: ''
+  install: ''
+  order: 5043
+  module: uca
+  legacy_ids:
+  - checkRUCAversion
+removes: []
+

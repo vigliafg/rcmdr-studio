@@ -13,7 +13,7 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 1.20 Wave 6 (Help, i18n and onboarding).** The core exposes 230 dialogs and,
+> **Status: 1.21 Wave 6.5 (Menu platform).** The core exposes 230 dialogs and,
 > with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
 > package ships a Studio shell with a Home tab, command palette, structured
 > command history, live R-command preview in dialogs, isolated previews,
@@ -40,7 +40,11 @@ report workspaces, and a Classic mode for compatibility.
 > contextual error-to-topic links, a glossary, a four-step first-run tour and a
 > Home checklist. Italian covers 27 core topics and the Studio's own interface
 > strings, and the language switch re-renders the shell without a restart. The
-> platform wave remains. The remaining
+> menu platform adds a horizontal SPSS/Minitab-style menubar with hierarchical
+> dropdowns, curated workflow groups, a single File > Save with one item per
+> format, and stable `menu_id` / `item_id` identifiers backed by
+> `inst/menus/core.yml` and first-party module fragments. The platform wave
+> remains. The remaining
 > disabled core entries are the three lifecycle commands, the nine
 > browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
 > implement every plugin-specific entry. The package includes a searchable
@@ -134,6 +138,9 @@ RcmdrShiny::run(env = env)
 | rgl 3D scene rendered with `rglwidget()` | done |
 | Studio shell with Home, Charts and Console workspaces | done |
 | Classic mode preserving the 1.13 layout | done |
+| Horizontal menubar with hierarchical, workflow-grouped menus | done |
+| Stable `menu_id` / `item_id` registry and first-party module fragments | done |
+| One File > Save with sub-items per format | done |
 | Command palette (`Ctrl+K`) over menus, help, data, variables and history | done |
 | Structured command history with rerun, dialog reopening and script/report insertion | done |
 | Live R-command preview, "To script" and named dialog presets | done |

@@ -1,0 +1,43 @@
+version: 1
+module: export
+groups:
+- id: menu.file.export
+  parent: menu.file
+  label: Export
+  order: 5001
+  module: export
+  legacy_ids:
+  - exportMenu
+items:
+- id: item.export.menu_file_export.xtable_export
+  parent: menu.file.export
+  label: LaTeX or HTML... (xtable)
+  command: xtableExport
+  activation: ''
+  install: packageAvailable('xtable')
+  order: 5001
+  module: export
+  legacy_ids:
+  - xtableExport
+- id: item.export.menu_file_export.latex_export
+  parent: menu.file.export
+  label: LaTeX... (Hmisc)
+  command: latexExport
+  activation: ''
+  install: packageAvailable('Hmisc')
+  order: 5002
+  module: export
+  legacy_ids:
+  - latexExport
+- id: item.export.menu_file_export.formatdf_export
+  parent: menu.file.export
+  label: Format data frame or matrix...
+  command: formatdfExport
+  activation: ''
+  install: packageAvailable('Hmisc')
+  order: 5003
+  module: export
+  legacy_ids:
+  - formatdfExport
+removes: []
+

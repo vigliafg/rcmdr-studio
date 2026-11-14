@@ -201,7 +201,11 @@ merge_menu_definitions <- function(definitions, additions, source = NULL) {
 #' @return A list of top-level menu nodes.
 #' @export
 menu_tree <- function(definitions = NULL) {
-  if (is.null(definitions)) definitions <- plugin_menu_definitions()
+  if (is.null(definitions)) {
+    registry <- tryCatch(menu_registry_cached(), error = function(e) NULL)
+    if (!is.null(registry)) return(menu_registry_tree(registry))
+    definitions <- plugin_menu_definitions()
+  }
   counter <- new.env(parent = emptyenv())
   counter$n <- 0L
   build_menu_children(definitions, "topMenu", path = character(), counter = counter)
@@ -264,6 +268,9 @@ menu_leaves <- function(tree) {
       } else if (node$type == "item") {
         rows[[length(rows) + 1L]] <<- data.frame(
           key = node$key,
+          item_id = node$item_id %||% node$command,
+          menu_id = node$menu_id %||% NA_character_,
+          module_id = node$module_id %||% "core",
           command = node$command,
           label = node$label,
           path = paste(node$path, collapse = " > "),
@@ -277,7 +284,8 @@ menu_leaves <- function(tree) {
   walk(tree)
   if (length(rows) == 0L) {
     return(data.frame(
-      key = character(), command = character(), label = character(),
+      key = character(), item_id = character(), menu_id = character(),
+      module_id = character(), command = character(), label = character(),
       path = character(), activation = character(), install = character(),
       stringsAsFactors = FALSE
     ))
@@ -299,6 +307,45 @@ menu_ui <- function(tree, status = function(node) "enabled",
     class = "rcmdr-menu",
     lapply(tree, menu_node_ui, status = status, favorites = favorites,
            expanded = expanded, query = query)
+  )
+}
+
+#' Render the top-level menubar
+#'
+#' @param tree Menu tree returned by [menu_tree()].
+#' @param status Function returning the state of a leaf.
+#' @param favorites Favourite command ids.
+#' @param expanded Expanded nested menu ids.
+#' @param query Optional search query.
+#' @keywords internal
+menubar_ui <- function(tree, status = function(node) "enabled",
+                       favorites = character(), expanded = NULL,
+                       query = "") {
+  htmltools::tags$nav(
+    class = "rcmdr-menubar",
+    role = "navigation",
+    `aria-label` = tr("Application menus"),
+    lapply(tree, menubar_top_ui, status = status, favorites = favorites,
+           expanded = expanded, query = query)
+  )
+}
+
+menubar_top_ui <- function(node, status = function(node) "enabled",
+                           favorites = character(), expanded = NULL,
+                           query = "") {
+  if (identical(node$type, "separator")) return(NULL)
+  if (!identical(node$type, "menu")) {
+    return(menu_node_ui(node, status = status, favorites = favorites,
+                        expanded = expanded, query = query))
+  }
+  htmltools::tags$details(
+    class = "rcmdr-menubar-group",
+    htmltools::tags$summary(menu_label(node$label)),
+    htmltools::tags$div(
+      class = "rcmdr-menubar-dropdown",
+      lapply(node$children, menu_node_ui, status = status,
+             favorites = favorites, expanded = expanded, query = query)
+    )
   )
 }
 

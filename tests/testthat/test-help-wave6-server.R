@@ -77,7 +77,7 @@ test_that("changing the language re-renders menus and help", {
     session$setInputs(language = "it")
     session$flushReact()
     expect_equal(current_language(), "it")
-    menus <- htmltools::renderTags(output$menus)$html
+    menus <- htmltools::renderTags(output$menubar)$html
     expect_match(menus, "Dati")
     session$setInputs(help_query = "regressione logistica")
     results <- htmltools::renderTags(output$help_results)$html

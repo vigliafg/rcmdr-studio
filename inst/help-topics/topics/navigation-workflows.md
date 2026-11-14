@@ -8,7 +8,7 @@ aliases: [navigation, workflows, command-palette, dialog-presets]
 dialogs: []
 commands: []
 packages: [RcmdrMisc]
-related: [workbench, report-studio, data-studio, keyboard-shortcuts]
+related: [menu-structure, workbench, report-studio, data-studio, keyboard-shortcuts]
 language: en
 status: documented
 ---
@@ -38,13 +38,19 @@ for a workflow. A disabled row explains why it cannot run.
 
 Use the arrow keys to move and `Enter` to act; `Esc` closes the palette.
 
-## Favourites, recents and menu search
+## Menubar, favourites and search
+
+The main navigation is the horizontal menubar: **File**, **Edit**, **Data**,
+**Transform**, **Analyze**, **Graphs**, **Reports**, **Utilities** and
+**Help**. Each top-level entry opens a dropdown with nested submenus, grouped
+by workflow. For example, **File > Save** contains one item per format (data
+set, script, R Markdown report, knitr report, workspace) instead of a flat list
+of near-duplicate Save commands. See [Menu structure](topic:menu-structure).
 
 Every menu row has a star. A starred command appears under **Favourites** at the
-top of the sidebar, and the last commands appear under **Recent**. The search
-box filters the whole menu and highlights the matching text. **Expand all** and
-**Collapse all** change the tree; the expanded groups are remembered between
-sessions.
+top of the sidebar, and the last commands appear under **Recent**. The sidebar
+search box filters the whole menu, including translated labels, and
+highlights the matching text.
 
 Favourites, recents, expanded groups, dialog presets, language and theme are
 stored in a small `preferences.rds` file under the user configuration

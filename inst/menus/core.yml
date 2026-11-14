@@ -1,0 +1,3276 @@
+version: 1
+module: core
+groups:
+- id: menu.file
+  parent: ''
+  label: File
+  order: 10
+  module: core
+  legacy_ids:
+  - fileMenu
+- id: menu.file.exit_menu
+  parent: menu.file
+  label: Exit
+  order: 90
+  module: core
+  legacy_ids:
+  - exitMenu
+- id: menu.edit
+  parent: ''
+  label: Edit
+  order: 20
+  module: core
+  legacy_ids:
+  - editMenu
+- id: menu.data
+  parent: ''
+  label: Data
+  order: 30
+  module: core
+  legacy_ids:
+  - dataMenu
+- id: menu.data.import_menu
+  parent: menu.data
+  label: Import data
+  order: 1005
+  module: core
+  legacy_ids:
+  - importMenu
+- id: menu.data.packages_menu
+  parent: menu.data
+  label: Data in packages
+  order: 1006
+  module: core
+  legacy_ids:
+  - packagesMenu
+- id: menu.data.active_menu
+  parent: menu.data
+  label: Active data set
+  order: 1007
+  module: core
+  legacy_ids:
+  - activeMenu
+- id: menu.data.variables_menu
+  parent: menu.transform
+  label: Variables
+  order: 10
+  module: core
+  legacy_ids:
+  - variablesMenu
+- id: menu.analyze
+  parent: ''
+  label: Analyze
+  order: 40
+  module: core
+  legacy_ids:
+  - statisticsMenu
+- id: menu.analyze.summaries_menu
+  parent: menu.analyze
+  label: Summaries
+  order: 1010
+  module: core
+  legacy_ids:
+  - summariesMenu
+- id: menu.analyze.tables_menu
+  parent: menu.analyze
+  label: Contingency tables
+  order: 1011
+  module: core
+  legacy_ids:
+  - tablesMenu
+- id: menu.analyze.means_menu
+  parent: menu.analyze
+  label: Means
+  order: 1012
+  module: core
+  legacy_ids:
+  - meansMenu
+- id: menu.analyze.proportions_menu
+  parent: menu.analyze
+  label: Proportions
+  order: 1013
+  module: core
+  legacy_ids:
+  - proportionsMenu
+- id: menu.analyze.variances_menu
+  parent: menu.analyze
+  label: Variances
+  order: 1014
+  module: core
+  legacy_ids:
+  - variancesMenu
+- id: menu.analyze.nonparametric_menu
+  parent: menu.analyze
+  label: Nonparametric tests
+  order: 1015
+  module: core
+  legacy_ids:
+  - nonparametricMenu
+- id: menu.analyze.dimensional_menu
+  parent: menu.analyze
+  label: Dimensional analysis
+  order: 1016
+  module: core
+  legacy_ids:
+  - dimensionalMenu
+- id: menu.analyze.dimensional_menu.cluster_menu
+  parent: menu.analyze.dimensional_menu
+  label: Cluster analysis
+  order: 1017
+  module: core
+  legacy_ids:
+  - clusterMenu
+- id: menu.analyze.stat_models_menu
+  parent: menu.analyze
+  label: Fit models
+  order: 1018
+  module: core
+  legacy_ids:
+  - statModelsMenu
+- id: menu.graphs
+  parent: ''
+  label: Graphs
+  order: 50
+  module: core
+  legacy_ids:
+  - graphsMenu
+- id: menu.graphs.three_dplot_menu
+  parent: menu.graphs
+  label: 3D graph
+  order: 1020
+  module: core
+  legacy_ids:
+  - ThreeDPlotMenu
+- id: menu.graphs.save_graphs_menu
+  parent: menu.graphs
+  label: Save graph to file
+  order: 1021
+  module: core
+  legacy_ids:
+  - saveGraphsMenu
+- id: menu.analyze.models
+  parent: menu.analyze
+  label: Models
+  order: 1022
+  module: core
+  legacy_ids:
+  - modelsMenu
+- id: menu.analyze.models.hypothesis_menu
+  parent: menu.analyze.models
+  label: Hypothesis tests
+  order: 1023
+  module: core
+  legacy_ids:
+  - hypothesisMenu
+- id: menu.analyze.models.diagnostics_menu
+  parent: menu.analyze.models
+  label: Numerical diagnostics
+  order: 1024
+  module: core
+  legacy_ids:
+  - diagnosticsMenu
+- id: menu.analyze.models.models_graphs_menu
+  parent: menu.analyze.models
+  label: Graphs
+  order: 1025
+  module: core
+  legacy_ids:
+  - modelsGraphsMenu
+- id: menu.analyze.distributions
+  parent: menu.analyze
+  label: Distributions
+  order: 1026
+  module: core
+  legacy_ids:
+  - distributionsMenu
+- id: menu.analyze.distributions.continuous_menu
+  parent: menu.analyze.distributions
+  label: Continuous distributions
+  order: 1027
+  module: core
+  legacy_ids:
+  - continuousMenu
+- id: menu.analyze.distributions.discrete_menu
+  parent: menu.analyze.distributions
+  label: Discrete distributions
+  order: 1028
+  module: core
+  legacy_ids:
+  - discreteMenu
+- id: menu.analyze.distributions.continuous_menu.normal_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Normal distribution
+  order: 1029
+  module: core
+  legacy_ids:
+  - normalMenu
+- id: menu.analyze.distributions.continuous_menu.t_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: t distribution
+  order: 1030
+  module: core
+  legacy_ids:
+  - tMenu
+- id: menu.analyze.distributions.continuous_menu.chisq_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Chi-squared distribution
+  order: 1031
+  module: core
+  legacy_ids:
+  - chisqMenu
+- id: menu.analyze.distributions.continuous_menu.fmenu
+  parent: menu.analyze.distributions.continuous_menu
+  label: F distribution
+  order: 1032
+  module: core
+  legacy_ids:
+  - FMenu
+- id: menu.analyze.distributions.continuous_menu.exponential_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Exponential distribution
+  order: 1033
+  module: core
+  legacy_ids:
+  - exponentialMenu
+- id: menu.analyze.distributions.continuous_menu.uniform_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Uniform distribution
+  order: 1034
+  module: core
+  legacy_ids:
+  - uniformMenu
+- id: menu.analyze.distributions.continuous_menu.beta_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Beta distribution
+  order: 1035
+  module: core
+  legacy_ids:
+  - betaMenu
+- id: menu.analyze.distributions.continuous_menu.cauchy_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Cauchy distribution
+  order: 1036
+  module: core
+  legacy_ids:
+  - CauchyMenu
+- id: menu.analyze.distributions.continuous_menu.logistic_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Logistic distribution
+  order: 1037
+  module: core
+  legacy_ids:
+  - logisticMenu
+- id: menu.analyze.distributions.continuous_menu.lognormal_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Lognormal distribution
+  order: 1038
+  module: core
+  legacy_ids:
+  - lognormalMenu
+- id: menu.analyze.distributions.continuous_menu.gamma_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Gamma distribution
+  order: 1039
+  module: core
+  legacy_ids:
+  - gammaMenu
+- id: menu.analyze.distributions.continuous_menu.weibull_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Weibull distribution
+  order: 1040
+  module: core
+  legacy_ids:
+  - WeibullMenu
+- id: menu.analyze.distributions.continuous_menu.gumbel_menu
+  parent: menu.analyze.distributions.continuous_menu
+  label: Gumbel distribution
+  order: 1041
+  module: core
+  legacy_ids:
+  - GumbelMenu
+- id: menu.analyze.distributions.discrete_menu.binomial_menu
+  parent: menu.analyze.distributions.discrete_menu
+  label: Binomial distribution
+  order: 1042
+  module: core
+  legacy_ids:
+  - binomialMenu
+- id: menu.analyze.distributions.discrete_menu.poisson_menu
+  parent: menu.analyze.distributions.discrete_menu
+  label: Poisson distribution
+  order: 1043
+  module: core
+  legacy_ids:
+  - PoissonMenu
+- id: menu.analyze.distributions.discrete_menu.geometric_menu
+  parent: menu.analyze.distributions.discrete_menu
+  label: Geometric distribution
+  order: 1044
+  module: core
+  legacy_ids:
+  - geometricMenu
+- id: menu.analyze.distributions.discrete_menu.hyper_menu
+  parent: menu.analyze.distributions.discrete_menu
+  label: Hypergeometric distribution
+  order: 1045
+  module: core
+  legacy_ids:
+  - hyperMenu
+- id: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  parent: menu.analyze.distributions.discrete_menu
+  label: Negative binomial distribution
+  order: 1046
+  module: core
+  legacy_ids:
+  - negbinomialMenu
+- id: menu.utilities
+  parent: ''
+  label: Utilities
+  order: 80
+  module: core
+  legacy_ids:
+  - toolsMenu
+- id: menu.help
+  parent: ''
+  label: Help
+  order: 90
+  module: core
+  legacy_ids:
+  - helpMenu
+- id: menu.transform
+  parent: ''
+  label: Transform
+  order: 35
+  module: core
+  legacy_ids: []
+- id: menu.reports
+  parent: ''
+  label: Reports
+  order: 60
+  module: core
+  legacy_ids: []
+- id: menu.reports.author
+  parent: menu.reports
+  label: Author
+  order: 20
+  module: core
+  legacy_ids: []
+- id: menu.reports.knit
+  parent: menu.reports
+  label: Knit
+  order: 30
+  module: core
+  legacy_ids: []
+- id: menu.file.new
+  parent: menu.file
+  label: New
+  order: 10
+  module: core
+  legacy_ids: []
+- id: menu.file.open
+  parent: menu.file
+  label: Open
+  order: 20
+  module: core
+  legacy_ids: []
+- id: menu.file.save
+  parent: menu.file
+  label: Save
+  order: 30
+  module: core
+  legacy_ids: []
+- id: menu.file.save.as
+  parent: menu.file.save
+  label: Save as
+  order: 60
+  module: core
+  legacy_ids: []
+- id: menu.file.export
+  parent: menu.file
+  label: Export
+  order: 40
+  module: core
+  legacy_ids: []
+items:
+- id: item.core.menu_file.setwd
+  parent: menu.file
+  label: Change working directory...
+  command: Setwd
+  activation: ''
+  install: ''
+  order: 1001
+  module: core
+  legacy_ids:
+  - Setwd
+- id: item.core.menu_file.load_log
+  parent: menu.file.open
+  label: Script...
+  command: loadLog
+  activation: ''
+  install: ''
+  order: 10
+  module: core
+  legacy_ids:
+  - loadLog
+- id: item.core.menu_file.load_rmd
+  parent: menu.file.open
+  label: R Markdown...
+  command: loadRmd
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - loadRmd
+- id: item.core.menu_file.load_rnw
+  parent: menu.file.open
+  label: knitr...
+  command: loadRnw
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - loadRnw
+- id: item.core.menu_file.new_rmd
+  parent: menu.file.new
+  label: R Markdown document...
+  command: newRmd
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - newRmd
+- id: item.core.menu_file.new_rnw
+  parent: menu.file.new
+  label: knitr document...
+  command: newRnw
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - newRnw
+- id: item.core.menu_file.compile_rmd
+  parent: menu.reports.knit
+  label: Knit document...
+  command: compileRmd
+  activation: ''
+  install: ''
+  order: 1015
+  module: core
+  legacy_ids:
+  - compileRmd
+- id: item.core.menu_file.set_bibliography
+  parent: menu.reports.author
+  label: Document bibliography...
+  command: setBibliography
+  activation: ''
+  install: ''
+  order: 1016
+  module: core
+  legacy_ids:
+  - setBibliography
+- id: item.core.menu_file_exit_menu.close_commander
+  parent: menu.file.exit_menu
+  label: From Commander
+  command: CloseCommander
+  activation: ''
+  install: ''
+  order: 1026
+  module: core
+  legacy_ids:
+  - CloseCommander
+- id: item.core.menu_file_exit_menu.close_commander_and_r
+  parent: menu.file.exit_menu
+  label: From Commander and R
+  command: closeCommanderAndR
+  activation: ''
+  install: ''
+  order: 1027
+  module: core
+  legacy_ids:
+  - closeCommanderAndR
+- id: item.core.menu_file_exit_menu.restart_commander
+  parent: menu.file.exit_menu
+  label: Restart the Commander
+  command: restartCommander
+  activation: ''
+  install: ''
+  order: 1028
+  module: core
+  legacy_ids:
+  - restartCommander
+- id: item.core.menu_edit.edit_markdown
+  parent: menu.reports.author
+  label: Edit R Markdown document
+  command: editMarkdown
+  activation: ''
+  install: ''
+  order: 1031
+  module: core
+  legacy_ids:
+  - editMarkdown
+- id: item.core.menu_edit.edit_knitr
+  parent: menu.reports.author
+  label: Edit knitr document
+  command: editKnitr
+  activation: ''
+  install: ''
+  order: 1032
+  module: core
+  legacy_ids:
+  - editKnitr
+- id: item.core.menu_edit.remove_last_rmd_block
+  parent: menu.reports.author
+  label: Remove last Markdown command block
+  command: removeLastRmdBlock
+  activation: ''
+  install: ''
+  order: 1033
+  module: core
+  legacy_ids:
+  - removeLastRmdBlock
+- id: item.core.menu_edit.remove_last_rmd_section
+  parent: menu.reports.author
+  label: Remove last Markdown section title
+  command: removeLastRmdSection
+  activation: ''
+  install: ''
+  order: 1034
+  module: core
+  legacy_ids:
+  - removeLastRmdSection
+- id: item.core.menu_edit.remove_last_rnw_block
+  parent: menu.reports.author
+  label: Remove last knitr command block
+  command: removeLastRnwBlock
+  activation: ''
+  install: ''
+  order: 1035
+  module: core
+  legacy_ids:
+  - removeLastRnwBlock
+- id: item.core.menu_edit.insert_section
+  parent: menu.reports.author
+  label: Insert section...
+  command: insertSection
+  activation: ''
+  install: ''
+  order: 1036
+  module: core
+  legacy_ids:
+  - insertSection
+- id: item.core.menu_edit.insert_chunk
+  parent: menu.reports.author
+  label: Insert chunk...
+  command: insertChunk
+  activation: ''
+  install: ''
+  order: 1037
+  module: core
+  legacy_ids:
+  - insertChunk
+- kind: separator
+  parent: menu.edit
+  order: 1038
+  module: core
+- id: item.core.menu_edit.on_cut
+  parent: menu.edit
+  label: Cut
+  command: onCut
+  activation: ''
+  install: ''
+  order: 1039
+  module: core
+  legacy_ids:
+  - onCut
+- id: item.core.menu_edit.on_copy
+  parent: menu.edit
+  label: Copy
+  command: onCopy
+  activation: ''
+  install: ''
+  order: 1040
+  module: core
+  legacy_ids:
+  - onCopy
+- id: item.core.menu_edit.on_paste
+  parent: menu.edit
+  label: Paste
+  command: onPaste
+  activation: ''
+  install: ''
+  order: 1041
+  module: core
+  legacy_ids:
+  - onPaste
+- id: item.core.menu_edit.on_delete
+  parent: menu.edit
+  label: Delete
+  command: onDelete
+  activation: ''
+  install: ''
+  order: 1042
+  module: core
+  legacy_ids:
+  - onDelete
+- kind: separator
+  parent: menu.edit
+  order: 1043
+  module: core
+- id: item.core.menu_edit.on_find
+  parent: menu.edit
+  label: Find...
+  command: onFind
+  activation: ''
+  install: ''
+  order: 1044
+  module: core
+  legacy_ids:
+  - onFind
+- id: item.core.menu_edit.on_select_all
+  parent: menu.edit
+  label: Select all
+  command: onSelectAll
+  activation: ''
+  install: ''
+  order: 1045
+  module: core
+  legacy_ids:
+  - onSelectAll
+- kind: separator
+  parent: menu.edit
+  order: 1046
+  module: core
+- id: item.core.menu_edit.on_undo
+  parent: menu.edit
+  label: Undo
+  command: onUndo
+  activation: ''
+  install: ''
+  order: 1047
+  module: core
+  legacy_ids:
+  - onUndo
+- id: item.core.menu_edit.on_redo
+  parent: menu.edit
+  label: Redo
+  command: onRedo
+  activation: ''
+  install: ''
+  order: 1048
+  module: core
+  legacy_ids:
+  - onRedo
+- kind: separator
+  parent: menu.edit
+  order: 1049
+  module: core
+- id: item.core.menu_edit.on_clear
+  parent: menu.edit
+  label: Clear window
+  command: onClear
+  activation: ''
+  install: ''
+  order: 1050
+  module: core
+  legacy_ids:
+  - onClear
+- id: item.core.menu_data.new_data_set
+  parent: menu.file.new
+  label: Data set...
+  command: newDataSet
+  activation: ''
+  install: getRcmdr('editDataset.threshold') > 0
+  order: 10
+  module: core
+  legacy_ids:
+  - newDataSet
+- id: item.core.menu_data.load_data_set
+  parent: menu.file.open
+  label: Workspace...
+  command: loadDataSet
+  activation: ''
+  install: ''
+  order: 40
+  module: core
+  legacy_ids:
+  - loadDataSet
+- id: item.core.menu_data.merge_data_sets
+  parent: menu.data
+  label: Merge data sets...
+  command: mergeDataSets
+  activation: dataSetsP(2)
+  install: packageAvailable('car') && packageAvailable('RcmdrMisc')
+  order: 1054
+  module: core
+  legacy_ids:
+  - mergeDataSets
+- kind: separator
+  parent: menu.data
+  order: 1055
+  module: core
+- id: item.core.menu_data_import_menu.read_data_set
+  parent: menu.data.import_menu
+  label: from text file, clipboard, or URL...
+  command: readDataSet
+  activation: ''
+  install: ''
+  order: 1056
+  module: core
+  legacy_ids:
+  - readDataSet
+- id: item.core.menu_data_import_menu.import_spss
+  parent: menu.data.import_menu
+  label: from SPSS data set...
+  command: importSPSS
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 1057
+  module: core
+  legacy_ids:
+  - importSPSS
+- id: item.core.menu_data_import_menu.import_sas
+  parent: menu.data.import_menu
+  label: from SAS xport file...
+  command: importSAS
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 1058
+  module: core
+  legacy_ids:
+  - importSAS
+- id: item.core.menu_data_import_menu.import_sasb7dat
+  parent: menu.data.import_menu
+  label: from SAS b7dat file...
+  command: importSASb7dat
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1059
+  module: core
+  legacy_ids:
+  - importSASb7dat
+- id: item.core.menu_data_import_menu.import_minitab
+  parent: menu.data.import_menu
+  label: from Minitab data set...
+  command: importMinitab
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 1060
+  module: core
+  legacy_ids:
+  - importMinitab
+- id: item.core.menu_data_import_menu.import_stata
+  parent: menu.data.import_menu
+  label: from STATA data set...
+  command: importSTATA
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 1061
+  module: core
+  legacy_ids:
+  - importSTATA
+- id: item.core.menu_data_import_menu.import_excel
+  parent: menu.data.import_menu
+  label: from Excel file...
+  command: importExcel
+  activation: ''
+  install: packageAvailable('readxl')
+  order: 1062
+  module: core
+  legacy_ids:
+  - importExcel
+- id: item.core.menu_data_packages_menu.list_data_sets_in_packages
+  parent: menu.data.packages_menu
+  label: List data sets in packages
+  command: listDataSetsInPackages
+  activation: ''
+  install: ''
+  order: 1064
+  module: core
+  legacy_ids:
+  - listDataSetsInPackages
+- id: item.core.menu_data_packages_menu.read_data_from_package
+  parent: menu.data.packages_menu
+  label: Read data set from an attached package...
+  command: readDataFromPackage
+  activation: ''
+  install: ''
+  order: 1065
+  module: core
+  legacy_ids:
+  - readDataFromPackage
+- id: item.core.menu_data_active_menu.view_data
+  parent: menu.data.active_menu
+  label: View data...
+  command: viewData
+  activation: activeDataSetP()
+  install: ''
+  order: 1067
+  module: core
+  legacy_ids:
+  - viewData
+- id: item.core.menu_data_active_menu.select_active_data_set
+  parent: menu.data.active_menu
+  label: Select active data set...
+  command: selectActiveDataSet
+  activation: dataSetsP()
+  install: ''
+  order: 1068
+  module: core
+  legacy_ids:
+  - selectActiveDataSet
+- id: item.core.menu_data_active_menu.refresh_active_data_set
+  parent: menu.data.active_menu
+  label: Refresh active data set
+  command: refreshActiveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1069
+  module: core
+  legacy_ids:
+  - refreshActiveDataSet
+- id: item.core.menu_data_active_menu.help_data_set
+  parent: menu.data.active_menu
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1070
+  module: core
+  legacy_ids:
+  - helpDataSet
+- id: item.core.menu_data_active_menu.variables_data_set
+  parent: menu.data.active_menu
+  label: Variables in active data set
+  command: variablesDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1071
+  module: core
+  legacy_ids:
+  - variablesDataSet
+- id: item.core.menu_data_active_menu.set_case_names
+  parent: menu.data.active_menu
+  label: Set case names...
+  command: setCaseNames
+  activation: activeDataSetP()
+  install: ''
+  order: 1072
+  module: core
+  legacy_ids:
+  - setCaseNames
+- id: item.core.menu_data_active_menu.subset_data_set
+  parent: menu.data.active_menu
+  label: Subset active data set...
+  command: subsetDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1073
+  module: core
+  legacy_ids:
+  - subsetDataSet
+- id: item.core.menu_data_active_menu.sort_data_set
+  parent: menu.data.active_menu
+  label: Sort active data set...
+  command: sortDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1074
+  module: core
+  legacy_ids:
+  - sortDataSet
+- id: item.core.menu_data_active_menu.aggregate
+  parent: menu.data.active_menu
+  label: Aggregate variables in active data set...
+  command: Aggregate
+  activation: activeDataSetP() && factorsP()
+  install: ''
+  order: 1075
+  module: core
+  legacy_ids:
+  - Aggregate
+- id: item.core.menu_data_active_menu.select_rows
+  parent: menu.data.active_menu
+  label: Select row(s) from active data set...
+  command: SelectRows
+  activation: activeDataSetP()
+  install: ''
+  order: 1076
+  module: core
+  legacy_ids:
+  - SelectRows
+- id: item.core.menu_data_active_menu.remove_rows
+  parent: menu.data.active_menu
+  label: Remove row(s) from active data set...
+  command: RemoveRows
+  activation: activeDataSetP()
+  install: ''
+  order: 1077
+  module: core
+  legacy_ids:
+  - RemoveRows
+- id: item.core.menu_data_active_menu.stack
+  parent: menu.data.active_menu
+  label: Stack variables in active data set...
+  command: Stack
+  activation: activeDataSetP() && numericP(2)
+  install: ''
+  order: 1078
+  module: core
+  legacy_ids:
+  - Stack
+- id: item.core.menu_data_active_menu.filter_na
+  parent: menu.data.active_menu
+  label: Remove cases with missing data...
+  command: filterNA
+  activation: activeDataSetP()
+  install: ''
+  order: 1079
+  module: core
+  legacy_ids:
+  - filterNA
+- id: item.core.menu_data_active_menu.reshape_long2_wide
+  parent: menu.data.active_menu
+  label: Reshape data set from long to wide format...
+  command: reshapeLong2Wide
+  activation: activeDataSetP()
+  install: ''
+  order: 1080
+  module: core
+  legacy_ids:
+  - reshapeLong2Wide
+- id: item.core.menu_data_active_menu.reshape_wide2_long
+  parent: menu.data.active_menu
+  label: Reshape data set from wide to long format...
+  command: reshapeWide2Long
+  activation: activeDataSetP()
+  install: ''
+  order: 1081
+  module: core
+  legacy_ids:
+  - reshapeWide2Long
+- id: item.core.menu_data_active_menu.convert_strings2_factors
+  parent: menu.data.active_menu
+  label: Convert all character variables to factors
+  command: convertStrings2Factors
+  activation: characterP()
+  install: ''
+  order: 1082
+  module: core
+  legacy_ids:
+  - convertStrings2Factors
+- id: item.core.menu_data_active_menu.export_data_set
+  parent: menu.data.active_menu
+  label: Export active data set...
+  command: exportDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1084
+  module: core
+  legacy_ids:
+  - exportDataSet
+- id: item.core.menu_data_variables_menu.recode_dialog
+  parent: menu.data.variables_menu
+  label: Recode variables...
+  command: RecodeDialog
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 1086
+  module: core
+  legacy_ids:
+  - RecodeDialog
+- id: item.core.menu_data_variables_menu.compute
+  parent: menu.data.variables_menu
+  label: Compute new variable...
+  command: Compute
+  activation: activeDataSetP()
+  install: ''
+  order: 1087
+  module: core
+  legacy_ids:
+  - Compute
+- id: item.core.menu_data_variables_menu.add_obs_numbers
+  parent: menu.data.variables_menu
+  label: Add observation numbers to data set
+  command: addObsNumbers
+  activation: activeDataSetP()
+  install: ''
+  order: 1088
+  module: core
+  legacy_ids:
+  - addObsNumbers
+- id: item.core.menu_data_variables_menu.standardize
+  parent: menu.data.variables_menu
+  label: Standardize variables...
+  command: standardize
+  activation: numericP()
+  install: ''
+  order: 1089
+  module: core
+  legacy_ids:
+  - standardize
+- id: item.core.menu_data_variables_menu.numeric_to_factor
+  parent: menu.data.variables_menu
+  label: Convert numeric variables to factors...
+  command: numericToFactor
+  activation: numericP()
+  install: ''
+  order: 1090
+  module: core
+  legacy_ids:
+  - numericToFactor
+- id: item.core.menu_data_variables_menu.character_to_factor
+  parent: menu.data.variables_menu
+  label: Convert character variables to factors...
+  command: characterToFactor
+  activation: characterP()
+  install: ''
+  order: 1091
+  module: core
+  legacy_ids:
+  - characterToFactor
+- id: item.core.menu_data_variables_menu.bin_variable
+  parent: menu.data.variables_menu
+  label: Bin numeric variable...
+  command: binVariable
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1092
+  module: core
+  legacy_ids:
+  - binVariable
+- id: item.core.menu_data_variables_menu.reorder_factor
+  parent: menu.data.variables_menu
+  label: Reorder factor levels...
+  command: reorderFactor
+  activation: factorsP()
+  install: ''
+  order: 1093
+  module: core
+  legacy_ids:
+  - reorderFactor
+- id: item.core.menu_data_variables_menu.drop_unused_factor_levels
+  parent: menu.data.variables_menu
+  label: Drop unused factor levels...
+  command: dropUnusedFactorLevels
+  activation: factorsP()
+  install: ''
+  order: 1094
+  module: core
+  legacy_ids:
+  - dropUnusedFactorLevels
+- id: item.core.menu_data_variables_menu.set_contrasts
+  parent: menu.data.variables_menu
+  label: Define contrasts for a factor...
+  command: setContrasts
+  activation: factorsP()
+  install: ''
+  order: 1095
+  module: core
+  legacy_ids:
+  - setContrasts
+- id: item.core.menu_data_variables_menu.rename_variables
+  parent: menu.data.variables_menu
+  label: Rename variables...
+  command: renameVariables
+  activation: activeDataSetP()
+  install: ''
+  order: 1096
+  module: core
+  legacy_ids:
+  - renameVariables
+- id: item.core.menu_data_variables_menu.delete_variable
+  parent: menu.data.variables_menu
+  label: Delete variables from data set ...
+  command: deleteVariable
+  activation: activeDataSetP()
+  install: ''
+  order: 1097
+  module: core
+  legacy_ids:
+  - deleteVariable
+- id: item.core.menu_analyze_summaries_menu.summarize_data_set
+  parent: menu.analyze.summaries_menu
+  label: Active data set
+  command: summarizeDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1100
+  module: core
+  legacy_ids:
+  - summarizeDataSet
+- id: item.core.menu_analyze_summaries_menu.numerical_summaries
+  parent: menu.analyze.summaries_menu
+  label: Numerical summaries...
+  command: numericalSummaries
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 1101
+  module: core
+  legacy_ids:
+  - numericalSummaries
+- id: item.core.menu_analyze_summaries_menu.frequency_distribution
+  parent: menu.analyze.summaries_menu
+  label: Frequency distributions...
+  command: frequencyDistribution
+  activation: factorsP()
+  install: ''
+  order: 1102
+  module: core
+  legacy_ids:
+  - frequencyDistribution
+- id: item.core.menu_analyze_summaries_menu.count_missing
+  parent: menu.analyze.summaries_menu
+  label: Count missing observations
+  command: countMissing
+  activation: activeDataSetP()
+  install: ''
+  order: 1103
+  module: core
+  legacy_ids:
+  - countMissing
+- id: item.core.menu_analyze_summaries_menu.statistics_table
+  parent: menu.analyze.summaries_menu
+  label: Table of statistics...
+  command: statisticsTable
+  activation: numericP() && factorsP()
+  install: ''
+  order: 1104
+  module: core
+  legacy_ids:
+  - statisticsTable
+- id: item.core.menu_analyze_summaries_menu.correlation_matrix
+  parent: menu.analyze.summaries_menu
+  label: Correlation matrix...
+  command: correlationMatrix
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 1105
+  module: core
+  legacy_ids:
+  - correlationMatrix
+- id: item.core.menu_analyze_summaries_menu.correlation_test
+  parent: menu.analyze.summaries_menu
+  label: Correlation test...
+  command: correlationTest
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 1106
+  module: core
+  legacy_ids:
+  - correlationTest
+- id: item.core.menu_analyze_summaries_menu.normality_test
+  parent: menu.analyze.summaries_menu
+  label: Test of normality...
+  command: NormalityTest
+  activation: numericP()
+  install: packageAvailable('nortest')
+  order: 1107
+  module: core
+  legacy_ids:
+  - NormalityTest
+- id: item.core.menu_analyze_summaries_menu.transform_variables
+  parent: menu.analyze.summaries_menu
+  label: Transform toward normality...
+  command: transformVariables
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 1108
+  module: core
+  legacy_ids:
+  - transformVariables
+- id: item.core.menu_analyze_tables_menu.two_way_table
+  parent: menu.analyze.tables_menu
+  label: Two-way table...
+  command: twoWayTable
+  activation: factorsP(2)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 1109
+  module: core
+  legacy_ids:
+  - twoWayTable
+- id: item.core.menu_analyze_tables_menu.two_way_table_from_counts
+  parent: menu.analyze.tables_menu
+  label: Two-way table from counts...
+  command: twoWayTableFromCounts
+  activation: factorsP(2) && numericPositiveP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 1110
+  module: core
+  legacy_ids:
+  - twoWayTableFromCounts
+- id: item.core.menu_analyze_tables_menu.multi_way_table
+  parent: menu.analyze.tables_menu
+  label: Multi-way table...
+  command: multiWayTable
+  activation: factorsP(3)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 1111
+  module: core
+  legacy_ids:
+  - multiWayTable
+- id: item.core.menu_analyze_tables_menu.enter_table
+  parent: menu.analyze.tables_menu
+  label: Enter and analyze two-way table...
+  command: enterTable
+  activation: ''
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 1112
+  module: core
+  legacy_ids:
+  - enterTable
+- id: item.core.menu_analyze_means_menu.single_sample_ttest
+  parent: menu.analyze.means_menu
+  label: Single-sample t-test...
+  command: singleSampleTTest
+  activation: numericP()
+  install: ''
+  order: 1113
+  module: core
+  legacy_ids:
+  - singleSampleTTest
+- id: item.core.menu_analyze_means_menu.independent_samples_ttest
+  parent: menu.analyze.means_menu
+  label: Independent samples t-test...
+  command: independentSamplesTTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 1114
+  module: core
+  legacy_ids:
+  - independentSamplesTTest
+- id: item.core.menu_analyze_means_menu.paired_ttest
+  parent: menu.analyze.means_menu
+  label: Paired t-test...
+  command: pairedTTest
+  activation: numericP(2)
+  install: ''
+  order: 1115
+  module: core
+  legacy_ids:
+  - pairedTTest
+- id: item.core.menu_analyze_means_menu.one_way_anova
+  parent: menu.analyze.means_menu
+  label: One-way ANOVA...
+  command: oneWayAnova
+  activation: numericP() && factorsP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 1116
+  module: core
+  legacy_ids:
+  - oneWayAnova
+- id: item.core.menu_analyze_means_menu.multi_way_anova
+  parent: menu.analyze.means_menu
+  label: Multi-way ANOVA...
+  command: multiWayAnova
+  activation: numericP() && factorsP()
+  install: ''
+  order: 1117
+  module: core
+  legacy_ids:
+  - multiWayAnova
+- id: item.core.menu_analyze_means_menu.one_way_repeated_measures
+  parent: menu.analyze.means_menu
+  label: One-factor repeated-measures ANOVA/ANCOVA...
+  command: oneWayRepeatedMeasures
+  activation: numericP(2)
+  install: ''
+  order: 1118
+  module: core
+  legacy_ids:
+  - oneWayRepeatedMeasures
+- id: item.core.menu_analyze_means_menu.two_way_repeated_measures
+  parent: menu.analyze.means_menu
+  label: Two-factor repeated-measures ANOVA/ANCOVA...
+  command: twoWayRepeatedMeasures
+  activation: numericP(4)
+  install: ''
+  order: 1119
+  module: core
+  legacy_ids:
+  - twoWayRepeatedMeasures
+- id: item.core.menu_analyze_proportions_menu.single_proportion_test
+  parent: menu.analyze.proportions_menu
+  label: Single-sample proportion test...
+  command: singleProportionTest
+  activation: twoLevelFactorsP()
+  install: ''
+  order: 1120
+  module: core
+  legacy_ids:
+  - singleProportionTest
+- id: item.core.menu_analyze_proportions_menu.two_sample_proportions_test
+  parent: menu.analyze.proportions_menu
+  label: Two-sample proportions test...
+  command: twoSampleProportionsTest
+  activation: twoLevelFactorsP(2)
+  install: packageAvailable('abind')
+  order: 1121
+  module: core
+  legacy_ids:
+  - twoSampleProportionsTest
+- id: item.core.menu_analyze_variances_menu.sigma_test_menu
+  parent: menu.analyze.variances_menu
+  label: Single-Sample Variance Test...
+  command: sigmaTestMenu
+  activation: numericP()
+  install: ''
+  order: 1122
+  module: core
+  legacy_ids:
+  - sigmaTestMenu
+- id: item.core.menu_analyze_variances_menu.two_variances_ftest
+  parent: menu.analyze.variances_menu
+  label: Two-variances F-test...
+  command: twoVariancesFTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 1123
+  module: core
+  legacy_ids:
+  - twoVariancesFTest
+- id: item.core.menu_analyze_variances_menu.bartlett_test
+  parent: menu.analyze.variances_menu
+  label: Bartlett's test...
+  command: BartlettTest
+  activation: numericP() && factorsP()
+  install: ''
+  order: 1124
+  module: core
+  legacy_ids:
+  - BartlettTest
+- id: item.core.menu_analyze_variances_menu.levene_test
+  parent: menu.analyze.variances_menu
+  label: Levene's test...
+  command: LeveneTest
+  activation: numericP() && factorsP()
+  install: packageAvailable('car')
+  order: 1125
+  module: core
+  legacy_ids:
+  - LeveneTest
+- id: item.core.menu_analyze_nonparametric_menu.two_sample_wilcoxon_test
+  parent: menu.analyze.nonparametric_menu
+  label: Two-sample Wilcoxon test...
+  command: twoSampleWilcoxonTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 1126
+  module: core
+  legacy_ids:
+  - twoSampleWilcoxonTest
+- id: item.core.menu_analyze_nonparametric_menu.onesample_wilcoxon_test
+  parent: menu.analyze.nonparametric_menu
+  label: Single-sample Wilcoxon test...
+  command: onesampleWilcoxonTest
+  activation: numericP()
+  install: ''
+  order: 1127
+  module: core
+  legacy_ids:
+  - onesampleWilcoxonTest
+- id: item.core.menu_analyze_nonparametric_menu.paired_wilcoxon_test
+  parent: menu.analyze.nonparametric_menu
+  label: Paired-samples Wilcoxon test...
+  command: pairedWilcoxonTest
+  activation: numericP(2)
+  install: ''
+  order: 1128
+  module: core
+  legacy_ids:
+  - pairedWilcoxonTest
+- id: item.core.menu_analyze_nonparametric_menu.kruskal_wallis_test
+  parent: menu.analyze.nonparametric_menu
+  label: Kruskal-Wallis test...
+  command: KruskalWallisTest
+  activation: numericP() && factorsP()
+  install: ''
+  order: 1129
+  module: core
+  legacy_ids:
+  - KruskalWallisTest
+- id: item.core.menu_analyze_nonparametric_menu.friedman_test
+  parent: menu.analyze.nonparametric_menu
+  label: Friedman rank-sum test...
+  command: FriedmanTest
+  activation: numericP(2)
+  install: ''
+  order: 1130
+  module: core
+  legacy_ids:
+  - FriedmanTest
+- id: item.core.menu_analyze_dimensional_menu.reliability
+  parent: menu.analyze.dimensional_menu
+  label: Scale reliability...
+  command: Reliability
+  activation: numericP(3)
+  install: packageAvailable('RcmdrMisc')
+  order: 1131
+  module: core
+  legacy_ids:
+  - Reliability
+- id: item.core.menu_analyze_dimensional_menu.principal_components
+  parent: menu.analyze.dimensional_menu
+  label: Principal-components analysis...
+  command: principalComponents
+  activation: numericP(2)
+  install: ''
+  order: 1132
+  module: core
+  legacy_ids:
+  - principalComponents
+- id: item.core.menu_analyze_dimensional_menu.factor_analysis
+  parent: menu.analyze.dimensional_menu
+  label: Factor analysis...
+  command: factorAnalysis
+  activation: numericP(3)
+  install: ''
+  order: 1133
+  module: core
+  legacy_ids:
+  - factorAnalysis
+- id: item.core.menu_analyze_dimensional_menu.cfa
+  parent: menu.analyze.dimensional_menu
+  label: Confirmatory factor analysis...
+  command: CFA
+  activation: numericP(3)
+  install: packageAvailable('sem')
+  order: 1134
+  module: core
+  legacy_ids:
+  - CFA
+- id: item.core.menu_analyze_dimensional_menu_cluster_menu.kmeans_clustering
+  parent: menu.analyze.dimensional_menu.cluster_menu
+  label: k-means cluster analysis...
+  command: kmeansClustering
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1135
+  module: core
+  legacy_ids:
+  - kmeansClustering
+- id: item.core.menu_analyze_dimensional_menu_cluster_menu.hierarchical_cluster
+  parent: menu.analyze.dimensional_menu.cluster_menu
+  label: Hierarchical cluster analysis...
+  command: hierarchicalCluster
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1136
+  module: core
+  legacy_ids:
+  - hierarchicalCluster
+- id: item.core.menu_analyze_dimensional_menu_cluster_menu.hclust_summary
+  parent: menu.analyze.dimensional_menu.cluster_menu
+  label: Summarize hierarchical clustering...
+  command: hclustSummary
+  activation: hclustSolutionsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1137
+  module: core
+  legacy_ids:
+  - hclustSummary
+- id: item.core.menu_analyze_dimensional_menu_cluster_menu.append_hclust_group
+  parent: menu.analyze.dimensional_menu.cluster_menu
+  label: Add hierarchical clustering to data set...
+  command: appendHclustGroup
+  activation: hclustSolutionsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1138
+  module: core
+  legacy_ids:
+  - appendHclustGroup
+- id: item.core.menu_analyze_stat_models_menu.linear_regression_model
+  parent: menu.analyze.stat_models_menu
+  label: Linear regression...
+  command: linearRegressionModel
+  activation: numericP(2)
+  install: ''
+  order: 1140
+  module: core
+  legacy_ids:
+  - linearRegressionModel
+- id: item.core.menu_analyze_stat_models_menu.linear_model
+  parent: menu.analyze.stat_models_menu
+  label: Linear model...
+  command: linearModel
+  activation: numericP()
+  install: ''
+  order: 1141
+  module: core
+  legacy_ids:
+  - linearModel
+- id: item.core.menu_analyze_stat_models_menu.generalized_linear_model
+  parent: menu.analyze.stat_models_menu
+  label: Generalized linear model...
+  command: generalizedLinearModel
+  activation: activeDataSetP()
+  install: ''
+  order: 1142
+  module: core
+  legacy_ids:
+  - generalizedLinearModel
+- id: item.core.menu_analyze_stat_models_menu.multinomial_logit_model
+  parent: menu.analyze.stat_models_menu
+  label: Multinomial logit model...
+  command: multinomialLogitModel
+  activation: factorsP()
+  install: packageAvailable('nnet')
+  order: 1143
+  module: core
+  legacy_ids:
+  - multinomialLogitModel
+- id: item.core.menu_analyze_stat_models_menu.ordinal_regression_model
+  parent: menu.analyze.stat_models_menu
+  label: Ordinal regression model...
+  command: ordinalRegressionModel
+  activation: factorsP()
+  install: packageAvailable('MASS')
+  order: 1144
+  module: core
+  legacy_ids:
+  - ordinalRegressionModel
+- id: item.core.menu_analyze_stat_models_menu.linear_mixed_model
+  parent: menu.analyze.stat_models_menu
+  label: Linear mixed model...
+  command: linearMixedModel
+  activation: numericP()
+  install: packageAvailable('lme4')
+  order: 1145
+  module: core
+  legacy_ids:
+  - linearMixedModel
+- id: item.core.menu_analyze_stat_models_menu.generalized_linear_mixed_model
+  parent: menu.analyze.stat_models_menu
+  label: Generalized linear mixed model...
+  command: generalizedLinearMixedModel
+  activation: activeDataSetP()
+  install: packageAvailable('lme4')
+  order: 1146
+  module: core
+  legacy_ids:
+  - generalizedLinearMixedModel
+- id: item.core.menu_graphs.set_palette
+  parent: menu.graphs
+  label: Color palette...
+  command: setPalette
+  activation: ''
+  install: ''
+  order: 1156
+  module: core
+  legacy_ids:
+  - setPalette
+- kind: separator
+  parent: menu.graphs
+  order: 1157
+  module: core
+- id: item.core.menu_graphs.index_plot
+  parent: menu.graphs
+  label: Index plot...
+  command: indexPlot
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1158
+  module: core
+  legacy_ids:
+  - indexPlot
+- id: item.core.menu_graphs.dot_plot
+  parent: menu.graphs
+  label: Dot plot...
+  command: DotPlot
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1159
+  module: core
+  legacy_ids:
+  - DotPlot
+- id: item.core.menu_graphs.histogram
+  parent: menu.graphs
+  label: Histogram...
+  command: Histogram
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1160
+  module: core
+  legacy_ids:
+  - Histogram
+- id: item.core.menu_graphs.discrete_plot
+  parent: menu.graphs
+  label: Plot discrete numeric variable...
+  command: DiscretePlot
+  activation: discreteNumericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1161
+  module: core
+  legacy_ids:
+  - DiscretePlot
+- id: item.core.menu_graphs.density_plot
+  parent: menu.graphs
+  label: Density estimate...
+  command: DensityPlot
+  activation: numericP()
+  install: ''
+  order: 1162
+  module: core
+  legacy_ids:
+  - DensityPlot
+- id: item.core.menu_graphs.stem_and_leaf
+  parent: menu.graphs
+  label: Stem-and-leaf display...
+  command: stemAndLeaf
+  activation: numericP()
+  install: packageAvailable('aplpack')
+  order: 1163
+  module: core
+  legacy_ids:
+  - stemAndLeaf
+- id: item.core.menu_graphs.box_plot
+  parent: menu.graphs
+  label: Boxplot...
+  command: boxPlot
+  activation: numericP()
+  install: ''
+  order: 1164
+  module: core
+  legacy_ids:
+  - boxPlot
+- id: item.core.menu_graphs.qqplot
+  parent: menu.graphs
+  label: Quantile-comparison plot...
+  command: QQPlot
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 1165
+  module: core
+  legacy_ids:
+  - QQPlot
+- id: item.core.menu_graphs.symbox
+  parent: menu.graphs
+  label: Symmetry boxplot...
+  command: Symbox
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 1166
+  module: core
+  legacy_ids:
+  - Symbox
+- kind: separator
+  parent: menu.graphs
+  order: 1167
+  module: core
+- id: item.core.menu_graphs.scatter_plot
+  parent: menu.graphs
+  label: Scatterplot...
+  command: scatterPlot
+  activation: numericP(2)
+  install: packageAvailable('car')
+  order: 1168
+  module: core
+  legacy_ids:
+  - scatterPlot
+- id: item.core.menu_graphs.scatter_plot_matrix
+  parent: menu.graphs
+  label: Scatterplot matrix...
+  command: scatterPlotMatrix
+  activation: numericP(3)
+  install: packageAvailable('car')
+  order: 1169
+  module: core
+  legacy_ids:
+  - scatterPlotMatrix
+- id: item.core.menu_graphs.line_plot
+  parent: menu.graphs
+  label: Line graph...
+  command: linePlot
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 1170
+  module: core
+  legacy_ids:
+  - linePlot
+- id: item.core.menu_graphs.xyplot
+  parent: menu.graphs
+  label: XY conditioning plot...
+  command: Xyplot
+  activation: numericP(2)
+  install: ''
+  order: 1171
+  module: core
+  legacy_ids:
+  - Xyplot
+- id: item.core.menu_graphs.plot_means
+  parent: menu.graphs
+  label: Plot of means...
+  command: PlotMeans
+  activation: numericP() && factorsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 1172
+  module: core
+  legacy_ids:
+  - PlotMeans
+- id: item.core.menu_graphs.strip_chart
+  parent: menu.graphs
+  label: Strip chart...
+  command: stripChart
+  activation: numericP()
+  install: ''
+  order: 1173
+  module: core
+  legacy_ids:
+  - stripChart
+- kind: separator
+  parent: menu.graphs
+  order: 1174
+  module: core
+- id: item.core.menu_graphs.bar_graph
+  parent: menu.graphs
+  label: Bar graph...
+  command: barGraph
+  activation: factorsP()
+  install: ''
+  order: 1175
+  module: core
+  legacy_ids:
+  - barGraph
+- id: item.core.menu_graphs.pie_chart
+  parent: menu.graphs
+  label: Pie chart...
+  command: pieChart
+  activation: factorsP()
+  install: packageAvailable('colorspace')
+  order: 1176
+  module: core
+  legacy_ids:
+  - pieChart
+- kind: separator
+  parent: menu.graphs
+  order: 1177
+  module: core
+- id: item.core.menu_graphs_three_dplot_menu.scatter3_d
+  parent: menu.graphs.three_dplot_menu
+  label: 3D scatterplot...
+  command: Scatter3D
+  activation: numericP(3)
+  install: packageAvailable('rgl')
+  order: 1178
+  module: core
+  legacy_ids:
+  - Scatter3D
+- id: item.core.menu_graphs_three_dplot_menu.identify3_d
+  parent: menu.graphs.three_dplot_menu
+  label: Identify observations with mouse
+  command: Identify3D
+  activation: rglLoaded() && 0 != rgl.cur() && !is.null(getRcmdr('Identify3d'))
+  install: packageAvailable('rgl')
+  order: 1179
+  module: core
+  legacy_ids:
+  - Identify3D
+- id: item.core.menu_graphs_three_dplot_menu.save_rgl_graph
+  parent: menu.graphs.three_dplot_menu
+  label: Save graph to file
+  command: saveRglGraph
+  activation: rglLoaded() && 0 != rgl.cur()
+  install: packageAvailable('rgl')
+  order: 1180
+  module: core
+  legacy_ids:
+  - saveRglGraph
+- id: item.core.menu_graphs_save_graphs_menu.save_bitmap
+  parent: menu.graphs.save_graphs_menu
+  label: as bitmap...
+  command: saveBitmap
+  activation: dev.cur() != 1
+  install: ''
+  order: 1182
+  module: core
+  legacy_ids:
+  - saveBitmap
+- id: item.core.menu_graphs_save_graphs_menu.save_pdf
+  parent: menu.graphs.save_graphs_menu
+  label: as PDF/Postscript/EPS...
+  command: savePDF
+  activation: dev.cur() != 1
+  install: ''
+  order: 1183
+  module: core
+  legacy_ids:
+  - savePDF
+- id: item.core.menu_graphs_save_graphs_menu.save_rgl_graph
+  parent: menu.graphs.save_graphs_menu
+  label: 3D RGL graph...
+  command: saveRglGraph
+  activation: rglLoaded() && 0 != rgl.cur()
+  install: packageAvailable('rgl')
+  order: 1184
+  module: core
+  legacy_ids:
+  - saveRglGraph
+- id: item.core.menu_analyze_models.select_active_model
+  parent: menu.analyze.models
+  label: Select active model...
+  command: selectActiveModel
+  activation: modelsP()
+  install: ''
+  order: 1187
+  module: core
+  legacy_ids:
+  - selectActiveModel
+- id: item.core.menu_analyze_models.summarize_model
+  parent: menu.analyze.models
+  label: Summarize model
+  command: summarizeModel
+  activation: modelCapability('sum')
+  install: ''
+  order: 1188
+  module: core
+  legacy_ids:
+  - summarizeModel
+- id: item.core.menu_analyze_models.compare_coefficients
+  parent: menu.analyze.models
+  label: Compare model coefficients...
+  command: compareCoefficients
+  activation: modelCapability('compc') && modelsP(2)
+  install: ''
+  order: 1189
+  module: core
+  legacy_ids:
+  - compareCoefficients
+- id: item.core.menu_analyze_models.add_observation_statistics
+  parent: menu.analyze.models
+  label: Add observation statistics to data...
+  command: addObservationStatistics
+  activation: activeModelP()
+  install: ''
+  order: 1190
+  module: core
+  legacy_ids:
+  - addObservationStatistics
+- kind: separator
+  parent: menu.analyze.models
+  order: 1191
+  module: core
+- id: item.core.menu_analyze_models.aic
+  parent: menu.analyze.models
+  label: Akaike Information Criterion (AIC)
+  command: aic
+  activation: modelCapability('aic')
+  install: ''
+  order: 1192
+  module: core
+  legacy_ids:
+  - aic
+- id: item.core.menu_analyze_models.bic
+  parent: menu.analyze.models
+  label: Bayesian Information Criterion (BIC)
+  command: bic
+  activation: modelCapability('bic')
+  install: ''
+  order: 1193
+  module: core
+  legacy_ids:
+  - bic
+- id: item.core.menu_analyze_models.stepwise_regression
+  parent: menu.analyze.models
+  label: Stepwise model selection...
+  command: stepwiseRegression
+  activation: modelCapability('stp')
+  install: packageAvailable('RcmdrMisc') && packageAvailable('MASS')
+  order: 1194
+  module: core
+  legacy_ids:
+  - stepwiseRegression
+- id: item.core.menu_analyze_models.subset_regression
+  parent: menu.analyze.models
+  label: Subset model selection...
+  command: subsetRegression
+  activation: modelCapability('sub')
+  install: packageAvailable('leaps')
+  order: 1195
+  module: core
+  legacy_ids:
+  - subsetRegression
+- kind: separator
+  parent: menu.analyze.models
+  order: 1196
+  module: core
+- id: item.core.menu_analyze_models.confidence_intervals
+  parent: menu.analyze.models
+  label: Confidence intervals...
+  command: confidenceIntervals
+  activation: modelCapability('con')
+  install: packageAvailable('MASS') && packageAvailable('abind')
+  order: 1197
+  module: core
+  legacy_ids:
+  - confidenceIntervals
+- id: item.core.menu_analyze_models.bootstrap
+  parent: menu.analyze.models
+  label: Bootstrap confidence intervals...
+  command: Bootstrap
+  activation: modelCapability('boot')
+  install: packageAvailable('boot')
+  order: 1198
+  module: core
+  legacy_ids:
+  - Bootstrap
+- id: item.core.menu_analyze_models.delta_method_conf_int
+  parent: menu.analyze.models
+  label: Delta method confidence interval...
+  command: DeltaMethodConfInt
+  activation: modelCapability('del')
+  install: getRcmdr('capabilities')$tktable
+  order: 1199
+  module: core
+  legacy_ids:
+  - DeltaMethodConfInt
+- id: item.core.menu_analyze_models_hypothesis_menu.anova_table
+  parent: menu.analyze.models.hypothesis_menu
+  label: ANOVA table...
+  command: anovaTable
+  activation: modelCapability('aov') || modelCapability('Aov')
+  install: packageAvailable('car')
+  order: 1201
+  module: core
+  legacy_ids:
+  - anovaTable
+- id: item.core.menu_analyze_models_hypothesis_menu.compare_models
+  parent: menu.analyze.models.hypothesis_menu
+  label: Compare two models...
+  command: compareModels
+  activation: modelCapability('compm') && modelsP(2)
+  install: ''
+  order: 1202
+  module: core
+  legacy_ids:
+  - compareModels
+- id: item.core.menu_analyze_models_hypothesis_menu.test_linear_hypothesis
+  parent: menu.analyze.models.hypothesis_menu
+  label: Linear hypothesis...
+  command: testLinearHypothesis
+  activation: modelCapability('lin')
+  install: packageAvailable('car')
+  order: 1203
+  module: core
+  legacy_ids:
+  - testLinearHypothesis
+- kind: separator
+  parent: menu.analyze.models
+  order: 1204
+  module: core
+- id: item.core.menu_analyze_models_diagnostics_menu.vif
+  parent: menu.analyze.models.diagnostics_menu
+  label: Variance-inflation factors
+  command: VIF
+  activation: modelCapability('vif')
+  install: packageAvailable('car')
+  order: 1206
+  module: core
+  legacy_ids:
+  - VIF
+- id: item.core.menu_analyze_models_diagnostics_menu.breusch_pagan_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Breusch-Pagan test for heteroscedasticity...
+  command: BreuschPaganTest
+  activation: modelCapability('bpt')
+  install: packageAvailable('lmtest')
+  order: 1207
+  module: core
+  legacy_ids:
+  - BreuschPaganTest
+- id: item.core.menu_analyze_models_diagnostics_menu.durbin_watson_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Durbin-Watson test for autocorrelation...
+  command: DurbinWatsonTest
+  activation: modelCapability('dwt')
+  install: packageAvailable('lmtest')
+  order: 1208
+  module: core
+  legacy_ids:
+  - DurbinWatsonTest
+- id: item.core.menu_analyze_models_diagnostics_menu.resettest
+  parent: menu.analyze.models.diagnostics_menu
+  label: RESET test for nonlinearity...
+  command: RESETtest
+  activation: modelCapability('rse')
+  install: packageAvailable('lmtest')
+  order: 1209
+  module: core
+  legacy_ids:
+  - RESETtest
+- id: item.core.menu_analyze_models_diagnostics_menu.outlier_test
+  parent: menu.analyze.models.diagnostics_menu
+  label: Bonferroni outlier test
+  command: OutlierTest
+  activation: modelCapability('bon')
+  install: packageAvailable('car')
+  order: 1210
+  module: core
+  legacy_ids:
+  - OutlierTest
+- id: item.core.menu_analyze_models_diagnostics_menu.transform_response
+  parent: menu.analyze.models.diagnostics_menu
+  label: Response transformation...
+  command: transformResponse
+  activation: modelCapability('tranr')
+  install: packageAvailable('car')
+  order: 1211
+  module: core
+  legacy_ids:
+  - transformResponse
+- id: item.core.menu_analyze_models_models_graphs_menu.plot_model
+  parent: menu.analyze.models.models_graphs_menu
+  label: Basic diagnostic plots
+  command: plotModel
+  activation: modelCapability('plt')
+  install: ''
+  order: 1213
+  module: core
+  legacy_ids:
+  - plotModel
+- id: item.core.menu_analyze_models_models_graphs_menu.residual_qqplot
+  parent: menu.analyze.models.models_graphs_menu
+  label: Residual quantile-comparison plot...
+  command: residualQQPlot
+  activation: modelCapability('qqp')
+  install: packageAvailable('car')
+  order: 1214
+  module: core
+  legacy_ids:
+  - residualQQPlot
+- id: item.core.menu_analyze_models_models_graphs_menu.crplots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Component+residual plots...
+  command: CRPlots
+  activation: modelCapability('crp')
+  install: packageAvailable('car')
+  order: 1215
+  module: core
+  legacy_ids:
+  - CRPlots
+- id: item.core.menu_analyze_models_models_graphs_menu.crplot3_d
+  parent: menu.analyze.models.models_graphs_menu
+  label: 3D Component+residual plot...
+  command: CRPlot3D
+  activation: modelCapability('crp3d') && PredictorsP(2, 'numeric') && PredictorsP(3)
+  install: packageAvailable('car')
+  order: 1216
+  module: core
+  legacy_ids:
+  - CRPlot3D
+- id: item.core.menu_analyze_models_models_graphs_menu.avplots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Added-variable plots...
+  command: AVPlots
+  activation: modelCapability('avp')
+  install: packageAvailable('car')
+  order: 1217
+  module: core
+  legacy_ids:
+  - AVPlots
+- id: item.core.menu_analyze_models_models_graphs_menu.avplot3_d
+  parent: menu.analyze.models.models_graphs_menu
+  label: 3D added-variable plot...
+  command: AVPlot3D
+  activation: modelCapability('avp3d') && CoefficientsP(3)
+  install: packageAvailable('car')
+  order: 1218
+  module: core
+  legacy_ids:
+  - AVPlot3D
+- id: item.core.menu_analyze_models_models_graphs_menu.influence_plot
+  parent: menu.analyze.models.models_graphs_menu
+  label: Influence plot...
+  command: InfluencePlot
+  activation: modelCapability('infp')
+  install: packageAvailable('car')
+  order: 1219
+  module: core
+  legacy_ids:
+  - InfluencePlot
+- id: item.core.menu_analyze_models_models_graphs_menu.influence_index_plot
+  parent: menu.analyze.models.models_graphs_menu
+  label: Influence index plot...
+  command: InfluenceIndexPlot
+  activation: modelCapability('infp')
+  install: packageAvailable('car')
+  order: 1220
+  module: core
+  legacy_ids:
+  - InfluenceIndexPlot
+- id: item.core.menu_analyze_models_models_graphs_menu.effect_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Effect plots...
+  command: effectPlots
+  activation: modelCapability('effp')
+  install: packageAvailable('effects')
+  order: 1221
+  module: core
+  legacy_ids:
+  - effectPlots
+- id: item.core.menu_analyze_models_models_graphs_menu.predictor_effect_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Predictor effect plots...
+  command: predictorEffectPlots
+  activation: modelCapability('effp')
+  install: packageAvailable('effects')
+  order: 1222
+  module: core
+  legacy_ids:
+  - predictorEffectPlots
+- id: item.core.menu_analyze_distributions.set_random_seed
+  parent: menu.analyze.distributions
+  label: Set random number generator seed...
+  command: setRandomSeed
+  activation: ''
+  install: ''
+  order: 1224
+  module: core
+  legacy_ids:
+  - setRandomSeed
+- id: item.core.menu_analyze_distributions_continuous_menu_normal_menu.normal_quantiles
+  parent: menu.analyze.distributions.continuous_menu.normal_menu
+  label: Normal quantiles...
+  command: normalQuantiles
+  activation: ''
+  install: ''
+  order: 1226
+  module: core
+  legacy_ids:
+  - normalQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_normal_menu.normal_probabilities
+  parent: menu.analyze.distributions.continuous_menu.normal_menu
+  label: Normal probabilities...
+  command: normalProbabilities
+  activation: ''
+  install: ''
+  order: 1227
+  module: core
+  legacy_ids:
+  - normalProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_normal_menu.normal_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.normal_menu
+  label: Plot normal distribution...
+  command: normalDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1228
+  module: core
+  legacy_ids:
+  - normalDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_normal_menu.normal_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.normal_menu
+  label: Sample from normal distribution...
+  command: normalDistributionSamples
+  activation: ''
+  install: ''
+  order: 1229
+  module: core
+  legacy_ids:
+  - normalDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_t_menu.t_quantiles
+  parent: menu.analyze.distributions.continuous_menu.t_menu
+  label: t quantiles...
+  command: tQuantiles
+  activation: ''
+  install: ''
+  order: 1231
+  module: core
+  legacy_ids:
+  - tQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_t_menu.t_probabilities
+  parent: menu.analyze.distributions.continuous_menu.t_menu
+  label: t probabilities...
+  command: tProbabilities
+  activation: ''
+  install: ''
+  order: 1232
+  module: core
+  legacy_ids:
+  - tProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_t_menu.t_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.t_menu
+  label: Plot t distribution...
+  command: tDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1233
+  module: core
+  legacy_ids:
+  - tDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_t_menu.t_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.t_menu
+  label: Sample from t distribution...
+  command: tDistributionSamples
+  activation: ''
+  install: ''
+  order: 1234
+  module: core
+  legacy_ids:
+  - tDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_chisq_menu.chisq_quantiles
+  parent: menu.analyze.distributions.continuous_menu.chisq_menu
+  label: Chi-squared quantiles...
+  command: chisqQuantiles
+  activation: ''
+  install: ''
+  order: 1236
+  module: core
+  legacy_ids:
+  - chisqQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_chisq_menu.chisq_probabilities
+  parent: menu.analyze.distributions.continuous_menu.chisq_menu
+  label: Chi-squared probabilities...
+  command: chisqProbabilities
+  activation: ''
+  install: ''
+  order: 1237
+  module: core
+  legacy_ids:
+  - chisqProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_chisq_menu.chisq_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.chisq_menu
+  label: Plot chi-squared distribution...
+  command: chisqDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1238
+  module: core
+  legacy_ids:
+  - chisqDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_chisq_menu.chisq_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.chisq_menu
+  label: Sample from chi-squared distribution...
+  command: chisqDistributionSamples
+  activation: ''
+  install: ''
+  order: 1239
+  module: core
+  legacy_ids:
+  - chisqDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_fmenu.fquantiles
+  parent: menu.analyze.distributions.continuous_menu.fmenu
+  label: F quantiles...
+  command: FQuantiles
+  activation: ''
+  install: ''
+  order: 1241
+  module: core
+  legacy_ids:
+  - FQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_fmenu.fprobabilities
+  parent: menu.analyze.distributions.continuous_menu.fmenu
+  label: F probabilities...
+  command: FProbabilities
+  activation: ''
+  install: ''
+  order: 1242
+  module: core
+  legacy_ids:
+  - FProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_fmenu.fdistribution_plot
+  parent: menu.analyze.distributions.continuous_menu.fmenu
+  label: Plot F distribution...
+  command: FDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1243
+  module: core
+  legacy_ids:
+  - FDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_fmenu.fdistribution_samples
+  parent: menu.analyze.distributions.continuous_menu.fmenu
+  label: Sample from F distribution...
+  command: FDistributionSamples
+  activation: ''
+  install: ''
+  order: 1244
+  module: core
+  legacy_ids:
+  - FDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_exponential_menu.exponential_quantiles
+  parent: menu.analyze.distributions.continuous_menu.exponential_menu
+  label: Exponential quantiles...
+  command: exponentialQuantiles
+  activation: ''
+  install: ''
+  order: 1246
+  module: core
+  legacy_ids:
+  - exponentialQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_exponential_menu.exponential_probabilities
+  parent: menu.analyze.distributions.continuous_menu.exponential_menu
+  label: Exponential probabilities...
+  command: exponentialProbabilities
+  activation: ''
+  install: ''
+  order: 1247
+  module: core
+  legacy_ids:
+  - exponentialProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_exponential_menu.exponential_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.exponential_menu
+  label: Plot exponential distribution...
+  command: exponentialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1248
+  module: core
+  legacy_ids:
+  - exponentialDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_exponential_menu.exponential_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.exponential_menu
+  label: Sample from exponential distribution...
+  command: exponentialDistributionSamples
+  activation: ''
+  install: ''
+  order: 1249
+  module: core
+  legacy_ids:
+  - exponentialDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_uniform_menu.uniform_quantiles
+  parent: menu.analyze.distributions.continuous_menu.uniform_menu
+  label: Uniform quantiles...
+  command: uniformQuantiles
+  activation: ''
+  install: ''
+  order: 1251
+  module: core
+  legacy_ids:
+  - uniformQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_uniform_menu.uniform_probabilities
+  parent: menu.analyze.distributions.continuous_menu.uniform_menu
+  label: Uniform probabilities...
+  command: uniformProbabilities
+  activation: ''
+  install: ''
+  order: 1252
+  module: core
+  legacy_ids:
+  - uniformProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_uniform_menu.uniform_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.uniform_menu
+  label: Plot uniform distribution...
+  command: uniformDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1253
+  module: core
+  legacy_ids:
+  - uniformDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_uniform_menu.uniform_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.uniform_menu
+  label: Sample from uniform distribution...
+  command: uniformDistributionSamples
+  activation: ''
+  install: ''
+  order: 1254
+  module: core
+  legacy_ids:
+  - uniformDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_beta_menu.beta_quantiles
+  parent: menu.analyze.distributions.continuous_menu.beta_menu
+  label: Beta quantiles...
+  command: betaQuantiles
+  activation: ''
+  install: ''
+  order: 1256
+  module: core
+  legacy_ids:
+  - betaQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_beta_menu.beta_probabilities
+  parent: menu.analyze.distributions.continuous_menu.beta_menu
+  label: Beta probabilities...
+  command: betaProbabilities
+  activation: ''
+  install: ''
+  order: 1257
+  module: core
+  legacy_ids:
+  - betaProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_beta_menu.beta_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.beta_menu
+  label: Plot beta distribution...
+  command: betaDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1258
+  module: core
+  legacy_ids:
+  - betaDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_beta_menu.beta_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.beta_menu
+  label: Sample from beta distribution...
+  command: betaDistributionSamples
+  activation: ''
+  install: ''
+  order: 1259
+  module: core
+  legacy_ids:
+  - betaDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_cauchy_menu.cauchy_quantiles
+  parent: menu.analyze.distributions.continuous_menu.cauchy_menu
+  label: Cauchy quantiles...
+  command: CauchyQuantiles
+  activation: ''
+  install: ''
+  order: 1261
+  module: core
+  legacy_ids:
+  - CauchyQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_cauchy_menu.cauchy_probabilities
+  parent: menu.analyze.distributions.continuous_menu.cauchy_menu
+  label: Cauchy probabilities...
+  command: CauchyProbabilities
+  activation: ''
+  install: ''
+  order: 1262
+  module: core
+  legacy_ids:
+  - CauchyProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_cauchy_menu.cauchy_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.cauchy_menu
+  label: Plot Cauchy distribution...
+  command: CauchyDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1263
+  module: core
+  legacy_ids:
+  - CauchyDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_cauchy_menu.cauchy_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.cauchy_menu
+  label: Sample from Cauchy distribution...
+  command: CauchyDistributionSamples
+  activation: ''
+  install: ''
+  order: 1264
+  module: core
+  legacy_ids:
+  - CauchyDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_logistic_menu.logistic_quantiles
+  parent: menu.analyze.distributions.continuous_menu.logistic_menu
+  label: Logistic quantiles...
+  command: logisticQuantiles
+  activation: ''
+  install: ''
+  order: 1266
+  module: core
+  legacy_ids:
+  - logisticQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_logistic_menu.logistic_probabilities
+  parent: menu.analyze.distributions.continuous_menu.logistic_menu
+  label: Logistic probabilities...
+  command: logisticProbabilities
+  activation: ''
+  install: ''
+  order: 1267
+  module: core
+  legacy_ids:
+  - logisticProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_logistic_menu.logistic_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.logistic_menu
+  label: Plot logistic distribution...
+  command: logisticDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1268
+  module: core
+  legacy_ids:
+  - logisticDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_logistic_menu.logistic_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.logistic_menu
+  label: Sample from logistic distribution...
+  command: logisticDistributionSamples
+  activation: ''
+  install: ''
+  order: 1269
+  module: core
+  legacy_ids:
+  - logisticDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_lognormal_menu.lognormal_quantiles
+  parent: menu.analyze.distributions.continuous_menu.lognormal_menu
+  label: Lognormal quantiles...
+  command: lognormalQuantiles
+  activation: ''
+  install: ''
+  order: 1271
+  module: core
+  legacy_ids:
+  - lognormalQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_lognormal_menu.lognormal_probabilities
+  parent: menu.analyze.distributions.continuous_menu.lognormal_menu
+  label: Lognormal probabilities...
+  command: lognormalProbabilities
+  activation: ''
+  install: ''
+  order: 1272
+  module: core
+  legacy_ids:
+  - lognormalProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_lognormal_menu.lognormal_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.lognormal_menu
+  label: Plot lognormal distribution...
+  command: lognormalDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1273
+  module: core
+  legacy_ids:
+  - lognormalDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_lognormal_menu.lognormal_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.lognormal_menu
+  label: Sample from lognormal distribution...
+  command: lognormalDistributionSamples
+  activation: ''
+  install: ''
+  order: 1274
+  module: core
+  legacy_ids:
+  - lognormalDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_gamma_menu.gamma_quantiles
+  parent: menu.analyze.distributions.continuous_menu.gamma_menu
+  label: Gamma quantiles...
+  command: gammaQuantiles
+  activation: ''
+  install: ''
+  order: 1276
+  module: core
+  legacy_ids:
+  - gammaQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_gamma_menu.gamma_probabilities
+  parent: menu.analyze.distributions.continuous_menu.gamma_menu
+  label: Gamma probabilities...
+  command: gammaProbabilities
+  activation: ''
+  install: ''
+  order: 1277
+  module: core
+  legacy_ids:
+  - gammaProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_gamma_menu.gamma_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.gamma_menu
+  label: Plot gamma distribution...
+  command: gammaDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1278
+  module: core
+  legacy_ids:
+  - gammaDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_gamma_menu.gamma_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.gamma_menu
+  label: Sample from gamma distribution...
+  command: gammaDistributionSamples
+  activation: ''
+  install: ''
+  order: 1279
+  module: core
+  legacy_ids:
+  - gammaDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_weibull_menu.weibull_quantiles
+  parent: menu.analyze.distributions.continuous_menu.weibull_menu
+  label: Weibull quantiles...
+  command: WeibullQuantiles
+  activation: ''
+  install: ''
+  order: 1281
+  module: core
+  legacy_ids:
+  - WeibullQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_weibull_menu.weibull_probabilities
+  parent: menu.analyze.distributions.continuous_menu.weibull_menu
+  label: Weibull probabilities...
+  command: WeibullProbabilities
+  activation: ''
+  install: ''
+  order: 1282
+  module: core
+  legacy_ids:
+  - WeibullProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_weibull_menu.weibull_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.weibull_menu
+  label: Plot Weibull distribution...
+  command: WeibullDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1283
+  module: core
+  legacy_ids:
+  - WeibullDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_weibull_menu.weibull_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.weibull_menu
+  label: Sample from Weibull distribution...
+  command: WeibullDistributionSamples
+  activation: ''
+  install: ''
+  order: 1284
+  module: core
+  legacy_ids:
+  - WeibullDistributionSamples
+- id: item.core.menu_analyze_distributions_continuous_menu_gumbel_menu.gumbel_quantiles
+  parent: menu.analyze.distributions.continuous_menu.gumbel_menu
+  label: Gumbel quantiles...
+  command: GumbelQuantiles
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 1286
+  module: core
+  legacy_ids:
+  - GumbelQuantiles
+- id: item.core.menu_analyze_distributions_continuous_menu_gumbel_menu.gumbel_probabilities
+  parent: menu.analyze.distributions.continuous_menu.gumbel_menu
+  label: Gumbel probabilities...
+  command: GumbelProbabilities
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 1287
+  module: core
+  legacy_ids:
+  - GumbelProbabilities
+- id: item.core.menu_analyze_distributions_continuous_menu_gumbel_menu.gumbel_distribution_plot
+  parent: menu.analyze.distributions.continuous_menu.gumbel_menu
+  label: Plot Gumbel distribution...
+  command: GumbelDistributionPlot
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 1288
+  module: core
+  legacy_ids:
+  - GumbelDistributionPlot
+- id: item.core.menu_analyze_distributions_continuous_menu_gumbel_menu.gumbel_distribution_samples
+  parent: menu.analyze.distributions.continuous_menu.gumbel_menu
+  label: Sample from Gumbel distribution...
+  command: GumbelDistributionSamples
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 1289
+  module: core
+  legacy_ids:
+  - GumbelDistributionSamples
+- id: item.core.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_quantiles
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Binomial quantiles...
+  command: binomialQuantiles
+  activation: ''
+  install: ''
+  order: 1291
+  module: core
+  legacy_ids:
+  - binomialQuantiles
+- id: item.core.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_probabilities
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Binomial tail probabilities...
+  command: binomialProbabilities
+  activation: ''
+  install: ''
+  order: 1292
+  module: core
+  legacy_ids:
+  - binomialProbabilities
+- id: item.core.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_mass
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Binomial probabilities...
+  command: binomialMass
+  activation: ''
+  install: ''
+  order: 1293
+  module: core
+  legacy_ids:
+  - binomialMass
+- id: item.core.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_distribution_plot
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Plot binomial distribution...
+  command: binomialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1294
+  module: core
+  legacy_ids:
+  - binomialDistributionPlot
+- id: item.core.menu_analyze_distributions_discrete_menu_binomial_menu.binomial_distribution_samples
+  parent: menu.analyze.distributions.discrete_menu.binomial_menu
+  label: Sample from binomial distribution...
+  command: binomialDistributionSamples
+  activation: ''
+  install: ''
+  order: 1295
+  module: core
+  legacy_ids:
+  - binomialDistributionSamples
+- id: item.core.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_quantiles
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Poisson quantiles...
+  command: PoissonQuantiles
+  activation: ''
+  install: ''
+  order: 1297
+  module: core
+  legacy_ids:
+  - PoissonQuantiles
+- id: item.core.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_probabilities
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Poisson tail probabilities...
+  command: PoissonProbabilities
+  activation: ''
+  install: ''
+  order: 1298
+  module: core
+  legacy_ids:
+  - PoissonProbabilities
+- id: item.core.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_mass
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Poisson probabilities...
+  command: PoissonMass
+  activation: ''
+  install: ''
+  order: 1299
+  module: core
+  legacy_ids:
+  - PoissonMass
+- id: item.core.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_distribution_plot
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Plot Poisson distribution...
+  command: PoissonDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1300
+  module: core
+  legacy_ids:
+  - PoissonDistributionPlot
+- id: item.core.menu_analyze_distributions_discrete_menu_poisson_menu.poisson_distribution_samples
+  parent: menu.analyze.distributions.discrete_menu.poisson_menu
+  label: Sample from Poisson distribution...
+  command: PoissonDistributionSamples
+  activation: ''
+  install: ''
+  order: 1301
+  module: core
+  legacy_ids:
+  - PoissonDistributionSamples
+- id: item.core.menu_analyze_distributions_discrete_menu_geometric_menu.geom_quantiles
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Geometric quantiles...
+  command: geomQuantiles
+  activation: ''
+  install: ''
+  order: 1303
+  module: core
+  legacy_ids:
+  - geomQuantiles
+- id: item.core.menu_analyze_distributions_discrete_menu_geometric_menu.geom_probabilities
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Geometric tail probabilities...
+  command: geomProbabilities
+  activation: ''
+  install: ''
+  order: 1304
+  module: core
+  legacy_ids:
+  - geomProbabilities
+- id: item.core.menu_analyze_distributions_discrete_menu_geometric_menu.geom_mass
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Geometric probabilities...
+  command: geomMass
+  activation: ''
+  install: ''
+  order: 1305
+  module: core
+  legacy_ids:
+  - geomMass
+- id: item.core.menu_analyze_distributions_discrete_menu_geometric_menu.geom_distribution_plot
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Plot geometric distribution...
+  command: geomDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1306
+  module: core
+  legacy_ids:
+  - geomDistributionPlot
+- id: item.core.menu_analyze_distributions_discrete_menu_geometric_menu.geom_distribution_samples
+  parent: menu.analyze.distributions.discrete_menu.geometric_menu
+  label: Sample from geometric distribution...
+  command: geomDistributionSamples
+  activation: ''
+  install: ''
+  order: 1307
+  module: core
+  legacy_ids:
+  - geomDistributionSamples
+- id: item.core.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_quantiles
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Hypergeometric quantiles...
+  command: hyperQuantiles
+  activation: ''
+  install: ''
+  order: 1309
+  module: core
+  legacy_ids:
+  - hyperQuantiles
+- id: item.core.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_probabilities
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Hypergeometric tail probabilities...
+  command: hyperProbabilities
+  activation: ''
+  install: ''
+  order: 1310
+  module: core
+  legacy_ids:
+  - hyperProbabilities
+- id: item.core.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_mass
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Hypergeometric probabilities...
+  command: hyperMass
+  activation: ''
+  install: ''
+  order: 1311
+  module: core
+  legacy_ids:
+  - hyperMass
+- id: item.core.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_distribution_plot
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Plot hypergeometric distribution...
+  command: hyperDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1312
+  module: core
+  legacy_ids:
+  - hyperDistributionPlot
+- id: item.core.menu_analyze_distributions_discrete_menu_hyper_menu.hyper_distribution_samples
+  parent: menu.analyze.distributions.discrete_menu.hyper_menu
+  label: Sample from hypergeometric distribution...
+  command: hyperDistributionSamples
+  activation: ''
+  install: ''
+  order: 1313
+  module: core
+  legacy_ids:
+  - hyperDistributionSamples
+- id: item.core.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_quantiles
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Negative binomial quantiles...
+  command: negbinomialQuantiles
+  activation: ''
+  install: ''
+  order: 1315
+  module: core
+  legacy_ids:
+  - negbinomialQuantiles
+- id: item.core.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_probabilities
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Negative binomial tail probabilities...
+  command: negbinomialProbabilities
+  activation: ''
+  install: ''
+  order: 1316
+  module: core
+  legacy_ids:
+  - negbinomialProbabilities
+- id: item.core.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_mass
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Negative binomial probabilities...
+  command: negbinomialMass
+  activation: ''
+  install: ''
+  order: 1317
+  module: core
+  legacy_ids:
+  - negbinomialMass
+- id: item.core.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_distribution_plot
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Plot negative binomial distribution...
+  command: negbinomialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 1318
+  module: core
+  legacy_ids:
+  - negbinomialDistributionPlot
+- id: item.core.menu_analyze_distributions_discrete_menu_negbinomial_menu.negbinomial_distribution_samples
+  parent: menu.analyze.distributions.discrete_menu.negbinomial_menu
+  label: Sample from negative binomial distribution...
+  command: negbinomialDistributionSamples
+  activation: ''
+  install: ''
+  order: 1319
+  module: core
+  legacy_ids:
+  - negbinomialDistributionSamples
+- id: item.core.menu_utilities.load_packages
+  parent: menu.utilities
+  label: Load package(s)...
+  command: loadPackages
+  activation: ''
+  install: ''
+  order: 1323
+  module: core
+  legacy_ids:
+  - loadPackages
+- id: item.core.menu_utilities.load_plugins
+  parent: menu.utilities
+  label: Load Rcmdr plug-in(s)...
+  command: loadPlugins
+  activation: length(listPlugins()) > 0
+  install: ''
+  order: 1324
+  module: core
+  legacy_ids:
+  - loadPlugins
+- id: item.core.menu_utilities.options
+  parent: menu.utilities
+  label: Options...
+  command: Options
+  activation: ''
+  install: ''
+  order: 1325
+  module: core
+  legacy_ids:
+  - Options
+- id: item.core.menu_utilities.save_options
+  parent: menu.utilities
+  label: Save Rcmdr options...
+  command: saveOptions
+  activation: ''
+  install: ''
+  order: 1326
+  module: core
+  legacy_ids:
+  - saveOptions
+- id: item.core.menu_utilities.app_nap
+  parent: menu.utilities
+  label: Manage Mac OS X app nap for R.app...
+  command: appNap
+  activation: ''
+  install: RappP()  && mavericksP()
+  order: 1327
+  module: core
+  legacy_ids:
+  - appNap
+- id: item.core.menu_utilities.install_software
+  parent: menu.utilities
+  label: Install auxiliary software...
+  command: installSoftware
+  activation: ''
+  install: any(!unlist(getRcmdr('capabilities')))
+  order: 1328
+  module: core
+  legacy_ids:
+  - installSoftware
+- id: item.core.menu_help.help_center
+  parent: menu.help
+  label: Help centre
+  command: helpCenter
+  activation: ''
+  install: ''
+  order: 1330
+  module: core
+  legacy_ids:
+  - helpCenter
+- id: item.core.menu_help.help_search
+  parent: menu.help
+  label: Search help...
+  command: helpSearch
+  activation: ''
+  install: ''
+  order: 1331
+  module: core
+  legacy_ids:
+  - helpSearch
+- id: item.core.menu_help.help_tutorials
+  parent: menu.help
+  label: Tutorials
+  command: helpTutorials
+  activation: ''
+  install: ''
+  order: 1332
+  module: core
+  legacy_ids:
+  - helpTutorials
+- id: item.core.menu_help.help_tour
+  parent: menu.help
+  label: Guided tour
+  command: helpTour
+  activation: ''
+  install: ''
+  order: 1333
+  module: core
+  legacy_ids:
+  - helpTour
+- id: item.core.menu_help.help_glossary
+  parent: menu.help
+  label: Glossary
+  command: helpGlossary
+  activation: ''
+  install: ''
+  order: 1334
+  module: core
+  legacy_ids:
+  - helpGlossary
+- id: item.core.menu_help.help_shortcuts
+  parent: menu.help
+  label: Keyboard shortcuts
+  command: helpShortcuts
+  activation: ''
+  install: ''
+  order: 1335
+  module: core
+  legacy_ids:
+  - helpShortcuts
+- id: item.core.menu_help.help_plugins_topic
+  parent: menu.help
+  label: Plugin help
+  command: helpPluginsTopic
+  activation: ''
+  install: ''
+  order: 1336
+  module: core
+  legacy_ids:
+  - helpPluginsTopic
+- id: item.core.menu_help.help_diagnostics
+  parent: menu.help
+  label: Diagnostics
+  command: helpDiagnostics
+  activation: ''
+  install: ''
+  order: 1337
+  module: core
+  legacy_ids:
+  - helpDiagnostics
+- kind: separator
+  parent: menu.help
+  order: 1338
+  module: core
+- id: item.core.menu_help.help_commander
+  parent: menu.help
+  label: Commander help
+  command: helpCommander
+  activation: ''
+  install: ''
+  order: 1339
+  module: core
+  legacy_ids:
+  - helpCommander
+- id: item.core.menu_help.browse_manual
+  parent: menu.help
+  label: Introduction to the R Commander
+  command: browseManual
+  activation: ''
+  install: ''
+  order: 1340
+  module: core
+  legacy_ids:
+  - browseManual
+- id: item.core.menu_help.browse_english_manual
+  parent: menu.help
+  label: Introduction to the R Commander (English version)
+  command: browseEnglishManual
+  activation: ''
+  install: manualTranslationP()
+  order: 1341
+  module: core
+  legacy_ids:
+  - browseEnglishManual
+- id: item.core.menu_help.browse_rcmdr_website
+  parent: menu.help
+  label: R Commander website
+  command: browseRcmdrWebsite
+  activation: ''
+  install: ''
+  order: 1342
+  module: core
+  legacy_ids:
+  - browseRcmdrWebsite
+- id: item.core.menu_help.help_about_commander
+  parent: menu.help
+  label: About Rcmdr
+  command: helpAboutCommander
+  activation: ''
+  install: ''
+  order: 1343
+  module: core
+  legacy_ids:
+  - helpAboutCommander
+- id: item.core.menu_help.browse_rcmdr_hex_sticker
+  parent: menu.help
+  label: R Commander hex sticker
+  command: browseRcmdrHexSticker
+  activation: ''
+  install: ''
+  order: 1344
+  module: core
+  legacy_ids:
+  - browseRcmdrHexSticker
+- kind: separator
+  parent: menu.help
+  order: 1345
+  module: core
+- id: item.core.menu_help.help_data_set
+  parent: menu.help
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 1346
+  module: core
+  legacy_ids:
+  - helpDataSet
+- kind: separator
+  parent: menu.help
+  order: 1347
+  module: core
+- id: item.core.menu_help.start_help
+  parent: menu.help
+  label: Start R help system
+  command: startHelp
+  activation: ''
+  install: ''
+  order: 1348
+  module: core
+  legacy_ids:
+  - startHelp
+- id: item.core.menu_help.browse_rwebsite
+  parent: menu.help
+  label: R website
+  command: browseRWebsite
+  activation: ''
+  install: ''
+  order: 1349
+  module: core
+  legacy_ids:
+  - browseRWebsite
+- id: item.core.menu_help.browse_rmarkdown
+  parent: menu.help
+  label: Using R Markdown
+  command: browseRMarkdown
+  activation: ''
+  install: ''
+  order: 1350
+  module: core
+  legacy_ids:
+  - browseRMarkdown
+- id: file.save.script
+  parent: menu.file.save
+  label: Script...
+  command: saveLog
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - saveLog
+- id: file.save.script_as
+  parent: menu.file.save.as
+  label: Script as...
+  command: saveLogAs
+  activation: ''
+  install: ''
+  order: 10
+  module: core
+  legacy_ids:
+  - saveLogAs
+- id: file.save.rmd
+  parent: menu.file.save
+  label: Report (R Markdown)...
+  command: saveRmd
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - saveRmd
+- id: file.save.rnw
+  parent: menu.file.save
+  label: Report (knitr)...
+  command: saveRnw
+  activation: ''
+  install: ''
+  order: 40
+  module: core
+  legacy_ids:
+  - saveRnw
+- id: file.save.rmd_as
+  parent: menu.file.save.as
+  label: R Markdown as...
+  command: saveRmdAs
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - saveRmdAs
+- id: file.save.rnw_as
+  parent: menu.file.save.as
+  label: knitr as...
+  command: saveRnwAs
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - saveRnwAs
+- id: file.export.output
+  parent: menu.file.export
+  label: Output...
+  command: saveOutput
+  activation: ''
+  install: ''
+  order: 10
+  module: core
+  legacy_ids:
+  - saveOutput
+- id: file.save.output_as
+  parent: menu.file.save.as
+  label: Output as...
+  command: saveOutputAs
+  activation: ''
+  install: ''
+  order: 50
+  module: core
+  legacy_ids:
+  - saveOutputAs
+- id: file.export.report
+  parent: menu.file.export
+  label: Report bundle...
+  command: exportReport
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - exportReport
+- id: file.save.workspace
+  parent: menu.file.save
+  label: Workspace...
+  command: saveWorkspace
+  activation: ''
+  install: ''
+  order: 50
+  module: core
+  legacy_ids:
+  - saveWorkspace
+- id: file.save.workspace_as
+  parent: menu.file.save.as
+  label: Workspace as...
+  command: saveWorkspaceAs
+  activation: ''
+  install: ''
+  order: 40
+  module: core
+  legacy_ids:
+  - saveWorkspaceAs
+- id: file.save.data
+  parent: menu.file.save
+  label: Data set...
+  command: saveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 10
+  module: core
+  legacy_ids:
+  - saveDataSet
+removes: []
+

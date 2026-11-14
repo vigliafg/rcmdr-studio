@@ -21,14 +21,14 @@ test_that("plugin menus are inserted into existing menus and before Tools/Help",
   tree <- menu_tree()
   labels <- vapply(tree, function(node) node$label, character(1))
   expect_true("Wave 0" %in% labels)
-  expect_lt(match("Wave 0", labels), match("Tools", labels))
+  expect_lt(match("Wave 0", labels), match("Utilities", labels))
   expect_lt(match("Wave 0", labels), match("Help", labels))
 
   help_menu <- tree[[match("Help", labels)]]
   help_nodes <- Filter(function(node) identical(node$type, "item"),
                        help_menu$children)
   help_labels <- vapply(help_nodes, function(node) node$label, character(1))
-  expect_equal(tail(help_labels, 1L), "Wave 0 help entry")
+  expect_equal(unname(tail(help_labels, 1L)), "Wave 0 help entry")
 })
 
 test_that("plugin menu remove rows delete a menu and its children", {

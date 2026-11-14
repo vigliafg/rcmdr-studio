@@ -28,6 +28,20 @@ browser.
 | Chiudere un dialogo | `Esc` se consentito, altrimenti **Annulla** |
 | Saltare al contenuto principale | `Tab` dall'inizio pagina, poi `Invio` su "Salta al contenuto" |
 
+## Barra dei menu
+
+| Azione | Tasto |
+|---|---|
+| Passare tra i menu di primo livello | `Tab` / `Shift` + `Tab` |
+| Aprire o chiudere un menu | `Invio` o `Spazio` sulla sua etichetta |
+| Entrare in un sottomenu | `Tab` fino al sottomenu, poi `Invio` |
+| Chiudere il menu aperto | `Esc` o clic fuori dalla barra |
+| Raggiungere una voce | `Tab` fino alla voce, poi `Invio` |
+
+La barra dei menu è un albero nativo `<details>`: funziona senza mouse e su
+schermi piccoli scorre in orizzontale. La palette dei comandi resta la via più
+rapida da tastiera.
+
 ## Campi dei dialoghi
 
 - Le liste di variabili supportano `Ctrl`+clic e `Shift`+clic.

@@ -77,6 +77,7 @@ articles:
       - report-studio
       - workbench
       - navigation-workflows
+      - menu-platform
       - help-and-onboarding
   - title: Analysis
     contents:

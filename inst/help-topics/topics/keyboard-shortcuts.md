@@ -28,6 +28,20 @@ addition to the ones listed here.
 | Close a dialog | `Esc` when the dialog allows it, otherwise **Cancel** |
 | Skip to the main content | `Tab` from the top of the page, then `Enter` on "Skip to main content" |
 
+## Menubar
+
+| Action | Key |
+|---|---|
+| Move between top-level menus | `Tab` / `Shift` + `Tab` |
+| Open or close a menu | `Enter` or `Space` on its summary |
+| Move into a submenu | `Tab` to the submenu summary, then `Enter` |
+| Close the open menu | `Esc` or click outside the menubar |
+| Reach a leaf | `Tab` until the item, then `Enter` |
+
+The menubar is a native `<details>` tree, so it works without a mouse and on
+small screens, where it scrolls horizontally. The command palette remains the
+fastest keyboard path for a known command.
+
 ## Studio shortcuts
 
 | Action | Shortcut |

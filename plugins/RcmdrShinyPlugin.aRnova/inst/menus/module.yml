@@ -1,0 +1,86 @@
+version: 1
+module: arnova
+groups: []
+items:
+- id: item.arnova.menu_analyze_means_menu.one_way_anova
+  parent: menu.analyze.means_menu
+  label: One-way ANOVA...
+  command: oneWayAnova_
+  activation: numericP() && factorsP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5001
+  module: arnova
+  legacy_ids:
+  - oneWayAnova_
+- id: item.arnova.menu_analyze_means_menu.multi_way_anova
+  parent: menu.analyze.means_menu
+  label: Multi-way ANOVA...
+  command: multiWayAnova_
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5002
+  module: arnova
+  legacy_ids:
+  - multiWayAnova_
+- id: item.arnova.menu_analyze_means_menu.rep_meas_anova_setup
+  parent: menu.analyze.means_menu
+  label: Repeated-measures ANOVA...
+  command: repMeasAnovaSetup
+  activation: numericP()
+  install: ''
+  order: 5003
+  module: arnova
+  legacy_ids:
+  - repMeasAnovaSetup
+- id: item.arnova.menu_analyze_stat_models_menu.generalized_linear_model
+  parent: menu.analyze.stat_models_menu
+  label: Generalized linear model...
+  command: generalizedLinearModel_
+  activation: activeDataSetP()
+  install: ''
+  order: 5004
+  module: arnova
+  legacy_ids:
+  - generalizedLinearModel_
+- id: item.arnova.menu_analyze_stat_models_menu.multinomial_logit_model
+  parent: menu.analyze.stat_models_menu
+  label: Multinomial logit model...
+  command: multinomialLogitModel
+  activation: factorsP()
+  install: packageAvailable('nnet')
+  order: 5005
+  module: arnova
+  legacy_ids:
+  - multinomialLogitModel
+- id: item.arnova.menu_analyze_stat_models_menu.ordinal_regression_model
+  parent: menu.analyze.stat_models_menu
+  label: Ordinal regression model...
+  command: ordinalRegressionModel
+  activation: factorsP()
+  install: packageAvailable('MASS')
+  order: 5006
+  module: arnova
+  legacy_ids:
+  - ordinalRegressionModel
+removes:
+- target: generalizedLinearModel
+  module: arnova
+  kind: command
+  source_module: core
+- target: multinomialLogitModel
+  module: arnova
+  kind: command
+  source_module: core
+- target: ordinalRegressionModel
+  module: arnova
+  kind: command
+  source_module: core
+- target: oneWayAnova
+  module: arnova
+  kind: command
+  source_module: core
+- target: multiWayAnova
+  module: arnova
+  kind: command
+  source_module: core
+

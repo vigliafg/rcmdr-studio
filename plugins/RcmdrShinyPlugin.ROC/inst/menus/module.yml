@@ -1,0 +1,70 @@
+version: 1
+module: roc
+groups:
+- id: menu.analyze.roc
+  parent: menu.analyze
+  label: ROC
+  order: 5001
+  module: roc
+  legacy_ids:
+  - rocMenu
+- id: menu.analyze.roc.p_rocmenu
+  parent: menu.analyze.roc
+  label: pROC
+  order: 5002
+  module: roc
+  legacy_ids:
+  - pROCMenu
+items:
+- id: item.roc.menu_analyze_roc_p_rocmenu.fncvp_roc
+  parent: menu.analyze.roc.p_rocmenu
+  label: Plot ROC curve for data...
+  command: fncvpROC
+  activation: numericP() && twoLevelFactorsP()
+  install: packageAvailable('pROC')
+  order: 5003
+  module: roc
+  legacy_ids:
+  - fncvpROC
+- id: item.roc.menu_analyze_roc_p_rocmenu.fnc_pairedp_roc
+  parent: menu.analyze.roc.p_rocmenu
+  label: Paired ROC curves comparison...
+  command: fncPairedpROC
+  activation: numericP(2) && twoLevelFactorsP()
+  install: packageAvailable('pROC')
+  order: 5004
+  module: roc
+  legacy_ids:
+  - fncPairedpROC
+- id: item.roc.menu_analyze_roc_p_rocmenu.fnc_unpairedp_roc
+  parent: menu.analyze.roc.p_rocmenu
+  label: Unpaired ROC curves comparison...
+  command: fncUnpairedpROC
+  activation: numericP(2) && twoLevelFactorsP(2)
+  install: packageAvailable('pROC')
+  order: 5005
+  module: roc
+  legacy_ids:
+  - fncUnpairedpROC
+- id: item.roc.menu_analyze_roc_p_rocmenu.fnd_hosmer_lemeshow
+  parent: menu.analyze.roc.p_rocmenu
+  label: Hosmer-Lemeshow GOF test...
+  command: fndHosmerLemeshow
+  activation: glmP()
+  install: packageAvailable('ResourceSelection')
+  order: 5006
+  module: roc
+  legacy_ids:
+  - fndHosmerLemeshow
+- id: item.roc.menu_analyze_roc_p_rocmenu.fnc_lrp_roc
+  parent: menu.analyze.roc.p_rocmenu
+  label: Plot ROC curve for logistic regression model...
+  command: fncLRpROC
+  activation: glmP()
+  install: packageAvailable('pROC')
+  order: 5007
+  module: roc
+  legacy_ids:
+  - fncLRpROC
+removes: []
+

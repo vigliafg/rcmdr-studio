@@ -148,7 +148,7 @@ test_that("the menus disable commands that need a data set", {
   env <- new.env()
 
   shiny::testServer(app_server(env), {
-    html <- htmltools::renderTags(output$menus)$html
+    html <- htmltools::renderTags(output$menubar)$html
     expect_true(grepl("disabled", html, fixed = TRUE))
   })
 })

@@ -1,0 +1,123 @@
+version: 1
+module: factominer
+groups:
+- id: menu.analyze.factominer
+  parent: menu.analyze
+  label: FactoMineR
+  order: 5001
+  module: factominer
+  legacy_ids:
+  - FactoMineRMenu
+items:
+- id: item.factominer.menu_analyze_factominer.read_data_set_facto
+  parent: menu.analyze.factominer
+  label: Read Text Data From File, Clipboard, or URL
+  command: readDataSetFacto
+  activation: ''
+  install: ''
+  order: 5001
+  module: factominer
+  legacy_ids:
+  - readDataSetFacto
+- id: item.factominer.menu_analyze_factominer.facto_pca
+  parent: menu.analyze.factominer
+  label: Principal Component Analysis (PCA)
+  command: FactoPCA
+  activation: numericP(2)
+  install: ''
+  order: 5002
+  module: factominer
+  legacy_ids:
+  - FactoPCA
+- id: item.factominer.menu_analyze_factominer.facto_ca
+  parent: menu.analyze.factominer
+  label: Correspondence Analysis (CA)
+  command: FactoCA
+  activation: numericP(2)
+  install: ''
+  order: 5003
+  module: factominer
+  legacy_ids:
+  - FactoCA
+- id: item.factominer.menu_analyze_factominer.facto_mca
+  parent: menu.analyze.factominer
+  label: Multiple Correspondence Analysis (MCA)
+  command: FactoMCA
+  activation: factorsP(2)
+  install: ''
+  order: 5004
+  module: factominer
+  legacy_ids:
+  - FactoMCA
+- id: item.factominer.menu_analyze_factominer.facto_mfa
+  parent: menu.analyze.factominer
+  label: Multiple Factor Analysis (MFA)
+  command: FactoMFA
+  activation: numericP() || factorsP()
+  install: ''
+  order: 5005
+  module: factominer
+  legacy_ids:
+  - FactoMFA
+- id: item.factominer.menu_analyze_factominer.facto_dmfa
+  parent: menu.analyze.factominer
+  label: Dual Multiple Factor Analysis (DMFA)
+  command: FactoDMFA
+  activation: numericP(2) || factorsP()
+  install: ''
+  order: 5006
+  module: factominer
+  legacy_ids:
+  - FactoDMFA
+- id: item.factominer.menu_analyze_factominer.facto_famd
+  parent: menu.analyze.factominer
+  label: Factor Analysis of Mixed Data (FAMD)
+  command: FactoFAMD
+  activation: numericP() || factorsP()
+  install: ''
+  order: 5007
+  module: factominer
+  legacy_ids:
+  - FactoFAMD
+- id: item.factominer.menu_analyze_factominer.facto_hcpc
+  parent: menu.analyze.factominer
+  label: Hierarchical Clustering on Principal Components (HCPC)
+  command: FactoHCPC
+  activation: numericP() || factorsP()
+  install: ''
+  order: 5008
+  module: factominer
+  legacy_ids:
+  - FactoHCPC
+- id: item.factominer.menu_analyze_factominer.facto_gpa
+  parent: menu.analyze.factominer
+  label: General Procrustes Analysis (GPA)
+  command: FactoGPA
+  activation: numericP(2)
+  install: ''
+  order: 5009
+  module: factominer
+  legacy_ids:
+  - FactoGPA
+- id: item.factominer.menu_analyze_factominer.factocatdes
+  parent: menu.analyze.factominer
+  label: Description of categories
+  command: Factocatdes
+  activation: factorsP()
+  install: ''
+  order: 5010
+  module: factominer
+  legacy_ids:
+  - Factocatdes
+- id: item.factominer.menu_analyze_factominer.factoprefpls
+  parent: menu.analyze.factominer
+  label: Scatter plot with additional variables
+  command: Factoprefpls
+  activation: numericP(2)
+  install: ''
+  order: 5011
+  module: factominer
+  legacy_ids:
+  - Factoprefpls
+removes: []
+

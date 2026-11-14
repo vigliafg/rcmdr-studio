@@ -17,6 +17,37 @@ app_css <- function() {
       list-style: none; color: #23384f;
     }
     .rcmdr-menu-group > summary::-webkit-details-marker { display: none; }
+    .rcmdr-menubar { display: flex; align-items: stretch; gap: .1rem;
+      flex-wrap: nowrap; overflow-x: auto; overflow-y: visible;
+      background: #fff; border-bottom: 1px solid #dde2e8;
+      padding: .2rem .5rem; position: relative; z-index: 1040; }
+    .rcmdr-menubar-group { position: relative; }
+    .rcmdr-menubar-group > summary { list-style: none; cursor: pointer;
+      padding: .45rem .7rem; border-radius: .3rem; color: #1f3a5f;
+      font-weight: 500; white-space: nowrap; }
+    .rcmdr-menubar-group > summary::-webkit-details-marker { display: none; }
+    .rcmdr-menubar-group > summary:hover,
+    .rcmdr-menubar-group[open] > summary { background: #eaf1fa; }
+    .rcmdr-menubar-dropdown { position: absolute; top: calc(100% + .15rem);
+      left: 0; min-width: 270px; max-width: 420px; max-height: 75vh;
+      overflow-y: auto; background: #fff; border: 1px solid #dde2e8;
+      border-radius: .4rem; box-shadow: 0 .6rem 1.4rem rgba(31, 58, 95, .18);
+      padding: .35rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group { margin: .1rem 0; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group > summary {
+      padding: .32rem .45rem; border-radius: .25rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group > summary:hover {
+      background: #f2f6fb; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-children { padding-left: .55rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-row { padding-left: .15rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-item { white-space: normal; }
+    .rcmdr-menubar-toggle { display: none; }
+    @media (max-width: 991px) {
+      .rcmdr-menubar { overflow-x: auto; }
+      .rcmdr-menubar-group > summary { padding: .4rem .5rem; font-size: .92rem; }
+      .rcmdr-menubar-dropdown { position: fixed; left: .5rem; right: .5rem;
+        top: 7.5rem; max-width: none; min-width: 0; }
+    }
     .rcmdr-menu-group > summary:before { content: '\\25B8'; display: inline-block;
       width: 1em; transition: transform .1s; }
     .rcmdr-menu-group[open] > summary:before { transform: rotate(90deg); }
@@ -239,6 +270,14 @@ app_css <- function() {
     body.rcmdr-dark .rcmdr-help-result-title { color: #cfe0f3; }
     body.rcmdr-dark .rcmdr-help-category:hover,
     body.rcmdr-dark .rcmdr-help-category.active { background: #24303d; }
+    body.rcmdr-dark .rcmdr-menubar,
+    body.rcmdr-dark .rcmdr-menubar-dropdown { background: #1d242d;
+      border-color: #3a4047; }
+    body.rcmdr-dark .rcmdr-menubar-group > summary { color: #d7dde5; }
+    body.rcmdr-dark .rcmdr-menubar-group > summary:hover,
+    body.rcmdr-dark .rcmdr-menubar-group[open] > summary { background: #24303d; }
+    body.rcmdr-dark .rcmdr-menubar-dropdown .rcmdr-menu-group > summary:hover {
+      background: #24303d; }
     body.rcmdr-dark .rcmdr-menu-group > summary,
     body.rcmdr-dark .rcmdr-menu-item { color: #bfcbd9; }
     body.rcmdr-dark .rcmdr-menu-item.disabled { color: #5d6874; }
@@ -741,9 +780,22 @@ app_js <- function(lang = current_language()) {
         }
       } catch (e) {}
     });
+    document.addEventListener('click', function(event) {
+      var target = event.target;
+      if (target && target.closest && target.closest('.rcmdr-menubar')) return;
+      document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
+        el.open = false;
+      });
+    }, true);
     document.addEventListener('toggle', function(event) {
       var target = event.target;
-      if (!target || !target.matches || !target.matches('details[data-menu-id]')) return;
+      if (!target || !target.matches) return;
+      if (target.matches('.rcmdr-menubar-group') && target.open) {
+        document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
+          if (el !== target) el.open = false;
+        });
+      }
+      if (!target.matches('details[data-menu-id]')) return;
       Shiny.setInputValue('menu_group_toggle', {
         id: target.getAttribute('data-menu-id'),
         open: target.open
@@ -1188,6 +1240,7 @@ app_ui <- function() {
       href = "#main-content", tr("Skip to main content")
     ),
     uiOutput("app_topbar"),
+    uiOutput("menubar"),
     htmltools::div(
       class = "container-fluid",
       htmltools::div(
@@ -1353,6 +1406,20 @@ app_server <- function(env = globalenv()) {
 
     # -- menus --------------------------------------------------------------
 
+    output$menubar <- renderUI({
+      menu_revision()
+      language_revision()
+      tick()
+      menubar_ui(
+        tree,
+        function(node) {
+          command_status(state, node$command, node$activation, node$install)
+        },
+        favorites = menu_favorite_ids(state),
+        expanded = state$menu_expanded %||% character()
+      )
+    })
+
     output$menus <- renderUI({
       menu_revision()
       language_revision()
@@ -1360,18 +1427,7 @@ app_server <- function(env = globalenv()) {
       query <- trimws(input$menu_search %||% "")
       favorites <- menu_favorite_ids(state)
       if (!nzchar(query)) {
-        return(htmltools::tagList(
-          menu_sections_ui(state, leaves),
-          menu_ui(
-            tree,
-            function(node) {
-              command_status(state, node$command, node$activation,
-                             node$install)
-            },
-            favorites = favorites,
-            expanded = state$menu_expanded %||% character()
-          )
-        ))
+        return(menu_sections_ui(state, leaves))
       }
       translated <- vapply(leaves$label, menu_label, character(1))
       matches <- leaves[

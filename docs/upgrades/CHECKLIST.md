@@ -242,24 +242,24 @@ stabili per menu e voci. I command ID del motore restano invariati.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| M6.5.1 | Schema, costruttori e validatore ID | [ ] | `R/menu-registry.R` |
-| M6.5.2 | Registry core e mappatura voci | [ ] | `inst/menus/core.yml` |
-| M6.5.3 | Frammenti menu dei 15 moduli | [ ] | `plugins/*/inst/menus/module.yml` |
-| M6.5.4 | Loader, merge e migrazione preferiti | [ ] | `R/menus.R`, `R/preferences.R` |
-| M6.5.5 | Menubar UI, tastiera, ARIA, responsive | [ ] | `R/app.R`, CSS/JS |
-| M6.5.6 | Palette, breadcrumb, help e ricerca | [ ] | `R/command-palette.R`, `R/help.R` |
-| M6.5.7 | Test golden, E2E, documentazione e vignetta | [ ] | `tests/`, `vignettes/` |
+| M6.5.1 | Schema, costruttori e validatore ID | [x] | `R/menu-registry.R`: schema, costruttori, validazione, migrazione |
+| M6.5.2 | Registry core e mappatura voci | [x] | `inst/menus/core.yml`: 9 gruppi top-level, File > Save curato |
+| M6.5.3 | Frammenti menu dei 15 moduli | [x] | `plugins/*/inst/menus/module.yml`: 15 moduli, nessuna perdita comandi |
+| M6.5.4 | Loader, merge e migrazione preferiti | [x] | loader, merge, remove per comando, migrazione espansione |
+| M6.5.5 | Menubar UI, tastiera, ARIA, responsive | [x] | menubar `<details>` multilivello, tastiera, responsive, CSS dark |
+| M6.5.6 | Palette, breadcrumb, help e ricerca | [x] | palette/breadcrumb/help su path e ID nuovi |
+| M6.5.7 | Test golden, E2E, documentazione e vignetta | [x] | test registry/migrazione/E2E, topic e vignetta |
 
 ### Chiusura Onda 6.5
 
-- [ ] Nessun ID posizionale (`menu_item_N`) nel DOM.
-- [ ] `menu_id` e `item_id` unici, stabili e validati.
-- [ ] Tutti i `command_id` esistenti ancora raggiungibili.
-- [ ] Preferiti, recenti ed espansione migrati.
-- [ ] Menubar accessibile e responsive.
-- [ ] 15 moduli first-party caricati dal nuovo registry.
-- [ ] Palette, breadcrumb e help allineati.
-- [ ] E2E e test golden verdi.
+- [x] Nessun ID posizionale (`menu_item_N`) nel DOM.
+- [x] `menu_id` e `item_id` unici, stabili e validati.
+- [x] Tutti i `command_id` esistenti ancora raggiungibili.
+- [x] Preferiti, recenti ed espansione migrati.
+- [x] Menubar accessibile e responsive.
+- [x] 15 moduli first-party caricati dal nuovo registry.
+- [x] Palette, breadcrumb e help allineati.
+- [x] E2E e test golden verdi.
 
 ---
 
@@ -354,4 +354,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              i18n, 27 topic core italiani e overlay TSV per la UI, cambio
              lingua live con persistenza di lingua e tema. Nuovo topic
              `glossary` e vignetta `help-and-onboarding`.
+2026-11-14 — Onda 6.5 completata: menubar orizzontale a 9 gruppi con
+             sottomenu annidati, registry `inst/menus/core.yml`, frammenti
+             `plugins/*/inst/menus/module.yml`, `menu_id`/`item_id` stabili,
+             `File > Save` unico con sotto-voci per formato, migrazione
+             espansione, validazione e test golden di copertura comandi.
+             Nuovo topic `menu-structure` e vignetta `menu-platform`.
 ```

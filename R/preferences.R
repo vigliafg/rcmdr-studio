@@ -78,6 +78,10 @@ preferences_load <- function(state, path = preferences_file(state)) {
   state$menu_recents <- state$menu_recents[nzchar(state$menu_recents)]
   state$menu_expanded <- unique(as.character(value$expanded %||% character()))
   state$menu_expanded <- state$menu_expanded[nzchar(state$menu_expanded)]
+  if (length(state$menu_expanded) > 0L &&
+      is.function(menu_migrate_ids)) {
+    state$menu_expanded <- unique(menu_migrate_ids(state$menu_expanded))
+  }
   if (is.list(value$presets)) {
     state$dialog_presets <- value$presets
     state$dialog_presets_version <- as.integer(value$presets_version %||% 1L)

@@ -1,0 +1,5126 @@
+version: 1
+module: ezr
+groups:
+- id: menu.file
+  parent: ''
+  label: File
+  order: 10
+  module: ezr
+  legacy_ids:
+  - FileMenu
+- id: menu.data.import_menu
+  parent: menu.file
+  label: Import data
+  order: 5002
+  module: ezr
+  legacy_ids:
+  - ImportMenu
+- id: menu.file.exit_menu
+  parent: menu.file
+  label: Exit
+  order: 5003
+  module: ezr
+  legacy_ids:
+  - ExitMenu
+- id: menu.edit
+  parent: ''
+  label: Edit
+  order: 20
+  module: ezr
+  legacy_ids:
+  - EditMenu
+- id: menu.data
+  parent: ''
+  label: Data
+  order: 30
+  module: ezr
+  legacy_ids:
+  - DATA
+- id: menu.data.variables
+  parent: menu.data
+  label: Variables
+  order: 5006
+  module: ezr
+  legacy_ids:
+  - Variables
+- id: menu.data.rows
+  parent: menu.data
+  label: Rows
+  order: 5007
+  module: ezr
+  legacy_ids:
+  - Rows
+- id: menu.data.nadata
+  parent: menu.data
+  label: Missing observations
+  order: 5008
+  module: ezr
+  legacy_ids:
+  - NAdata
+- id: menu.data.data_save
+  parent: menu.data
+  label: Save or export active data set
+  order: 5009
+  module: ezr
+  legacy_ids:
+  - DataSave
+- id: menu.analyze
+  parent: ''
+  label: Analyze
+  order: 40
+  module: ezr
+  legacy_ids:
+  - StatMed
+- id: menu.analyze.discrete
+  parent: menu.analyze
+  label: Discrete variables
+  order: 5011
+  module: ezr
+  legacy_ids:
+  - Discrete
+- id: menu.analyze.continuous
+  parent: menu.analyze
+  label: Continuous variables
+  order: 5012
+  module: ezr
+  legacy_ids:
+  - Continuous
+- id: menu.analyze.non_para
+  parent: menu.analyze
+  label: 'Nonparametric tests '
+  order: 5013
+  module: ezr
+  legacy_ids:
+  - NonPara
+- id: menu.analyze.time_to_event
+  parent: menu.analyze
+  label: Survival analysis
+  order: 5014
+  module: ezr
+  legacy_ids:
+  - TimeToEvent
+- id: menu.analyze.test
+  parent: menu.analyze
+  label: Accuracy of diagnostic test
+  order: 5015
+  module: ezr
+  legacy_ids:
+  - Test
+- id: menu.analyze.matched_pair
+  parent: menu.analyze
+  label: Matched-pair analysis
+  order: 5016
+  module: ezr
+  legacy_ids:
+  - MatchedPair
+- id: menu.analyze.meta
+  parent: menu.analyze
+  label: Metaanalysis and metaregression
+  order: 5017
+  module: ezr
+  legacy_ids:
+  - Meta
+- id: menu.analyze.power
+  parent: menu.analyze
+  label: Calculate sample size
+  order: 5018
+  module: ezr
+  legacy_ids:
+  - Power
+- id: menu.graphs
+  parent: ''
+  label: Graphs
+  order: 50
+  module: ezr
+  legacy_ids:
+  - StatMedGraph
+- id: menu.utilities
+  parent: ''
+  label: Utilities
+  order: 80
+  module: ezr
+  legacy_ids:
+  - ToolsMenu
+- id: menu.help
+  parent: ''
+  label: Help
+  order: 90
+  module: ezr
+  legacy_ids:
+  - HelpMenu
+- id: menu.utilities.ezr_original
+  parent: menu.utilities
+  label: Original menu
+  order: 5022
+  module: ezr
+  legacy_ids:
+  - OriginalMenu
+- id: menu.utilities.ezr_original.file_menu2
+  parent: menu.utilities.ezr_original
+  label: File
+  order: 5023
+  module: ezr
+  legacy_ids:
+  - fileMenu2
+- id: menu.utilities.ezr_original.file_menu2.exit_menu2
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Exit
+  order: 5024
+  module: ezr
+  legacy_ids:
+  - exitMenu2
+- id: menu.utilities.ezr_original.edit_menu2
+  parent: menu.utilities.ezr_original
+  label: Edit
+  order: 5025
+  module: ezr
+  legacy_ids:
+  - editMenu2
+- id: menu.utilities.ezr_original.data_menu2
+  parent: menu.utilities.ezr_original
+  label: Data
+  order: 5026
+  module: ezr
+  legacy_ids:
+  - dataMenu2
+- id: menu.utilities.ezr_original.data_menu2.import_menu2
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Import data
+  order: 5027
+  module: ezr
+  legacy_ids:
+  - importMenu2
+- id: menu.utilities.ezr_original.data_menu2.packages_menu2
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Data in packages
+  order: 5028
+  module: ezr
+  legacy_ids:
+  - packagesMenu2
+- id: menu.utilities.ezr_original.data_menu2.active_menu2
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Active data set
+  order: 5029
+  module: ezr
+  legacy_ids:
+  - activeMenu2
+- id: menu.utilities.ezr_original.data_menu2.variables_menu2
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Manage variables in active data set
+  order: 5030
+  module: ezr
+  legacy_ids:
+  - variablesMenu2
+- id: menu.utilities.ezr_original.statistics_menu2
+  parent: menu.utilities.ezr_original
+  label: Statistics
+  order: 5031
+  module: ezr
+  legacy_ids:
+  - statisticsMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Summaries
+  order: 5032
+  module: ezr
+  legacy_ids:
+  - summariesMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.tables_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Contingency tables
+  order: 5033
+  module: ezr
+  legacy_ids:
+  - tablesMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Means
+  order: 5034
+  module: ezr
+  legacy_ids:
+  - meansMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.proportions_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Proportions
+  order: 5035
+  module: ezr
+  legacy_ids:
+  - proportionsMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.variances_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Variances
+  order: 5036
+  module: ezr
+  legacy_ids:
+  - variancesMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Nonparametric tests
+  order: 5037
+  module: ezr
+  legacy_ids:
+  - nonparametricMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Dimensional analysis
+  order: 5038
+  module: ezr
+  legacy_ids:
+  - dimensionalMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2.cluster_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  label: Cluster analysis
+  order: 5039
+  module: ezr
+  legacy_ids:
+  - clusterMenu2
+- id: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  parent: menu.utilities.ezr_original.statistics_menu2
+  label: Fit models
+  order: 5040
+  module: ezr
+  legacy_ids:
+  - statModelsMenu2
+- id: menu.utilities.ezr_original.graphs_menu2
+  parent: menu.utilities.ezr_original
+  label: Graphs
+  order: 5041
+  module: ezr
+  legacy_ids:
+  - graphsMenu2
+- id: menu.utilities.ezr_original.graphs_menu2.three_dplot_menu2
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: 3D graph
+  order: 5042
+  module: ezr
+  legacy_ids:
+  - ThreeDPlotMenu2
+- id: menu.utilities.ezr_original.graphs_menu2.save_graphs_menu2
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Save graph to file
+  order: 5043
+  module: ezr
+  legacy_ids:
+  - saveGraphsMenu2
+- id: menu.utilities.ezr_original.models_menu2
+  parent: menu.utilities.ezr_original
+  label: Models
+  order: 5044
+  module: ezr
+  legacy_ids:
+  - modelsMenu2
+- id: menu.utilities.ezr_original.models_menu2.hypothesis_menu2
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Hypothesis tests
+  order: 5045
+  module: ezr
+  legacy_ids:
+  - hypothesisMenu2
+- id: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Numerical diagnostics
+  order: 5046
+  module: ezr
+  legacy_ids:
+  - diagnosticsMenu2
+- id: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Graphs
+  order: 5047
+  module: ezr
+  legacy_ids:
+  - modelsGraphsMenu2
+- id: menu.utilities.ezr_original.distributions_menu2
+  parent: menu.utilities.ezr_original
+  label: Distributions
+  order: 5048
+  module: ezr
+  legacy_ids:
+  - distributionsMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2
+  label: Continuous distributions
+  order: 5049
+  module: ezr
+  legacy_ids:
+  - continuousMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2
+  label: Discrete distributions
+  order: 5050
+  module: ezr
+  legacy_ids:
+  - discreteMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.normal_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Normal distribution
+  order: 5051
+  module: ezr
+  legacy_ids:
+  - normalMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.t_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: t distribution
+  order: 5052
+  module: ezr
+  legacy_ids:
+  - tMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.chisq_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Chi-squared distribution
+  order: 5053
+  module: ezr
+  legacy_ids:
+  - chisqMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.fmenu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: F distribution
+  order: 5054
+  module: ezr
+  legacy_ids:
+  - FMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.exponential_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Exponential distribution
+  order: 5055
+  module: ezr
+  legacy_ids:
+  - exponentialMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.uniform_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Uniform distribution
+  order: 5056
+  module: ezr
+  legacy_ids:
+  - uniformMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.beta_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Beta distribution
+  order: 5057
+  module: ezr
+  legacy_ids:
+  - betaMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.cauchy_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Cauchy distribution
+  order: 5058
+  module: ezr
+  legacy_ids:
+  - CauchyMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.logistic_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Logistic distribution
+  order: 5059
+  module: ezr
+  legacy_ids:
+  - logisticMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.lognormal_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Lognormal distribution
+  order: 5060
+  module: ezr
+  legacy_ids:
+  - lognormalMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gamma_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Gamma distribution
+  order: 5061
+  module: ezr
+  legacy_ids:
+  - gammaMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.weibull_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Weibull distribution
+  order: 5062
+  module: ezr
+  legacy_ids:
+  - WeibullMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gumbel_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2
+  label: Gumbel distribution
+  order: 5063
+  module: ezr
+  legacy_ids:
+  - GumbelMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  label: Binomial distribution
+  order: 5064
+  module: ezr
+  legacy_ids:
+  - binomialMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  label: Poisson distribution
+  order: 5065
+  module: ezr
+  legacy_ids:
+  - PoissonMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  label: Geometric distribution
+  order: 5066
+  module: ezr
+  legacy_ids:
+  - geometricMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  label: Hypergeometric distribution
+  order: 5067
+  module: ezr
+  legacy_ids:
+  - hyperMenu2
+- id: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2
+  label: Negative binomial distribution
+  order: 5068
+  module: ezr
+  legacy_ids:
+  - negbinomialMenu2
+- id: menu.utilities.ezr_original.tools_menu2
+  parent: menu.utilities.ezr_original
+  label: Tools
+  order: 5069
+  module: ezr
+  legacy_ids:
+  - toolsMenu2
+- id: menu.utilities.ezr_original.help_menu2
+  parent: menu.utilities.ezr_original
+  label: Help
+  order: 5070
+  module: ezr
+  legacy_ids:
+  - helpMenu2
+items:
+- id: item.ezr.menu_file.new_data_set
+  parent: menu.file
+  label: New data set
+  command: newDataSet
+  activation: ''
+  install: getRcmdr('editDataset.threshold') > 0
+  order: 5002
+  module: ezr
+  legacy_ids:
+  - newDataSet
+- id: item.ezr.menu_file.stat_med_load_data_set
+  parent: menu.file
+  label: Load data set
+  command: StatMedLoadDataSet
+  activation: ''
+  install: ''
+  order: 5003
+  module: ezr
+  legacy_ids:
+  - StatMedLoadDataSet
+- id: item.ezr.menu_file.stat_med_load_cp932_data_set
+  parent: menu.file
+  label: Load CP932 data set
+  command: StatMedLoadCP932DataSet
+  activation: ''
+  install: ''
+  order: 5004
+  module: ezr
+  legacy_ids:
+  - StatMedLoadCP932DataSet
+- id: item.ezr.menu_data_import_menu.stat_med_read_data_set
+  parent: menu.data.import_menu
+  label: Read Text Data From File, Clipboard, or URL
+  command: StatMedReadDataSet
+  activation: ''
+  install: ''
+  order: 5006
+  module: ezr
+  legacy_ids:
+  - StatMedReadDataSet
+- id: item.ezr.menu_data_import_menu.stat_med_import_spss
+  parent: menu.data.import_menu
+  label: from SPSS data set
+  command: StatMedImportSPSS
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5007
+  module: ezr
+  legacy_ids:
+  - StatMedImportSPSS
+- id: item.ezr.menu_data_import_menu.stat_med_import_minitab
+  parent: menu.data.import_menu
+  label: from Minitab data set
+  command: StatMedImportMinitab
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5008
+  module: ezr
+  legacy_ids:
+  - StatMedImportMinitab
+- id: item.ezr.menu_data_import_menu.stat_med_import_stata
+  parent: menu.data.import_menu
+  label: from Stata data set
+  command: StatMedImportSTATA
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5009
+  module: ezr
+  legacy_ids:
+  - StatMedImportSTATA
+- id: item.ezr.menu_data_import_menu.import_excel
+  parent: menu.data.import_menu
+  label: from Excel data set
+  command: importExcel
+  activation: ''
+  install: packageAvailable('readxl')
+  order: 5010
+  module: ezr
+  legacy_ids:
+  - importExcel
+- id: item.ezr.menu_file.read_data_from_package
+  parent: menu.file
+  label: Read data set from an attached package
+  command: readDataFromPackage
+  activation: ''
+  install: ''
+  order: 5011
+  module: ezr
+  legacy_ids:
+  - readDataFromPackage
+- id: item.ezr.menu_file.stat_med_copy_dataset
+  parent: menu.file
+  label: Copy data set
+  command: StatMedCopyDataset
+  activation: dataSetsP()
+  install: ''
+  order: 5012
+  module: ezr
+  legacy_ids:
+  - StatMedCopyDataset
+- id: item.ezr.menu_file.stat_med_rename_dataset
+  parent: menu.file
+  label: Rename data set
+  command: StatMedRenameDataset
+  activation: dataSetsP()
+  install: ''
+  order: 5013
+  module: ezr
+  legacy_ids:
+  - StatMedRenameDataset
+- id: item.ezr.menu_file.stat_med_merge_datasets
+  parent: menu.file
+  label: Merge data sets
+  command: StatMedMergeDatasets
+  activation: dataSetsP(2)
+  install: ''
+  order: 5014
+  module: ezr
+  legacy_ids:
+  - StatMedMergeDatasets
+- id: item.ezr.menu_file.stat_med_train_test_split
+  parent: menu.file
+  label: Training-Test data split
+  command: StatMedTrainTestSplit
+  activation: dataSetsP()
+  install: ''
+  order: 5015
+  module: ezr
+  legacy_ids:
+  - StatMedTrainTestSplit
+- id: item.ezr.menu_file.stat_med_save_data_set
+  parent: menu.file
+  label: Save active data set
+  command: StatMedSaveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5016
+  module: ezr
+  legacy_ids:
+  - StatMedSaveDataSet
+- kind: separator
+  parent: menu.file
+  order: 5017
+  module: ezr
+- id: item.ezr.menu_file.load_log
+  parent: menu.file
+  label: Load script file
+  command: loadLog
+  activation: ''
+  install: ''
+  order: 5018
+  module: ezr
+  legacy_ids:
+  - loadLog
+- id: item.ezr.menu_file.stat_med_load_log_cp932
+  parent: menu.file
+  label: Load CP932 script file
+  command: StatMedLoadLogCP932
+  activation: ''
+  install: ''
+  order: 5019
+  module: ezr
+  legacy_ids:
+  - StatMedLoadLogCP932
+- id: item.ezr.menu_file.save_log
+  parent: menu.file
+  label: Save script
+  command: saveLog
+  activation: ''
+  install: ''
+  order: 5020
+  module: ezr
+  legacy_ids:
+  - saveLog
+- id: item.ezr.menu_file.save_log_as
+  parent: menu.file
+  label: Save script as
+  command: saveLogAs
+  activation: ''
+  install: ''
+  order: 5021
+  module: ezr
+  legacy_ids:
+  - saveLogAs
+- kind: separator
+  parent: menu.file
+  order: 5022
+  module: ezr
+- id: item.ezr.menu_file.save_output
+  parent: menu.file
+  label: Save output
+  command: saveOutput
+  activation: ''
+  install: ''
+  order: 5023
+  module: ezr
+  legacy_ids:
+  - saveOutput
+- id: item.ezr.menu_file.save_output_as
+  parent: menu.file
+  label: Save output as
+  command: saveOutputAs
+  activation: ''
+  install: ''
+  order: 5024
+  module: ezr
+  legacy_ids:
+  - saveOutputAs
+- kind: separator
+  parent: menu.file
+  order: 5025
+  module: ezr
+- id: item.ezr.menu_file.load_rmd
+  parent: menu.file
+  label: Open R Markdown file
+  command: loadRmd
+  activation: ''
+  install: ''
+  order: 5026
+  module: ezr
+  legacy_ids:
+  - loadRmd
+- id: item.ezr.menu_file.save_rmd
+  parent: menu.file
+  label: Save R Markdown file
+  command: saveRmd
+  activation: ''
+  install: ''
+  order: 5027
+  module: ezr
+  legacy_ids:
+  - saveRmd
+- id: item.ezr.menu_file.save_rmd_as
+  parent: menu.file
+  label: Save R Markdown file as
+  command: saveRmdAs
+  activation: ''
+  install: ''
+  order: 5028
+  module: ezr
+  legacy_ids:
+  - saveRmdAs
+- kind: separator
+  parent: menu.file
+  order: 5029
+  module: ezr
+- id: item.ezr.menu_file.stat_med_load_workspace
+  parent: menu.file
+  label: Load work space file
+  command: StatMedLoadWorkspace
+  activation: ''
+  install: ''
+  order: 5030
+  module: ezr
+  legacy_ids:
+  - StatMedLoadWorkspace
+- id: item.ezr.menu_file.save_workspace
+  parent: menu.file
+  label: Save work space
+  command: saveWorkspace
+  activation: ''
+  install: ''
+  order: 5031
+  module: ezr
+  legacy_ids:
+  - saveWorkspace
+- id: item.ezr.menu_file.save_workspace_as
+  parent: menu.file
+  label: Save work space as
+  command: saveWorkspaceAs
+  activation: ''
+  install: ''
+  order: 5032
+  module: ezr
+  legacy_ids:
+  - saveWorkspaceAs
+- kind: separator
+  parent: menu.file
+  order: 5033
+  module: ezr
+- id: item.ezr.menu_file.setwd
+  parent: menu.file
+  label: Change working directory
+  command: Setwd
+  activation: ''
+  install: ''
+  order: 5034
+  module: ezr
+  legacy_ids:
+  - Setwd
+- id: item.ezr.menu_file_exit_menu.stat_med_close_commander
+  parent: menu.file.exit_menu
+  label: From Commander
+  command: StatMedCloseCommander
+  activation: ''
+  install: ''
+  order: 5036
+  module: ezr
+  legacy_ids:
+  - StatMedCloseCommander
+- id: item.ezr.menu_file_exit_menu.stat_medclose_commander_and_r
+  parent: menu.file.exit_menu
+  label: From Commander and R
+  command: StatMedcloseCommanderAndR
+  activation: ''
+  install: ''
+  order: 5037
+  module: ezr
+  legacy_ids:
+  - StatMedcloseCommanderAndR
+- id: item.ezr.menu_edit.on_cut
+  parent: menu.edit
+  label: Cut (Ctrl-X)
+  command: onCut
+  activation: ''
+  install: ''
+  order: 5039
+  module: ezr
+  legacy_ids:
+  - onCut
+- id: item.ezr.menu_edit.on_copy
+  parent: menu.edit
+  label: Copy (Ctrl-C)
+  command: onCopy
+  activation: ''
+  install: ''
+  order: 5040
+  module: ezr
+  legacy_ids:
+  - onCopy
+- id: item.ezr.menu_edit.on_paste
+  parent: menu.edit
+  label: Paste (Ctrl-V)
+  command: onPaste
+  activation: ''
+  install: ''
+  order: 5041
+  module: ezr
+  legacy_ids:
+  - onPaste
+- id: item.ezr.menu_edit.on_delete
+  parent: menu.edit
+  label: Delete (Delete)
+  command: onDelete
+  activation: ''
+  install: ''
+  order: 5042
+  module: ezr
+  legacy_ids:
+  - onDelete
+- kind: separator
+  parent: menu.edit
+  order: 5043
+  module: ezr
+- id: item.ezr.menu_edit.on_find
+  parent: menu.edit
+  label: Find... (Ctrl-F)
+  command: onFind
+  activation: ''
+  install: ''
+  order: 5044
+  module: ezr
+  legacy_ids:
+  - onFind
+- id: item.ezr.menu_edit.on_select_all
+  parent: menu.edit
+  label: Select all (Ctrl-A)
+  command: onSelectAll
+  activation: ''
+  install: ''
+  order: 5045
+  module: ezr
+  legacy_ids:
+  - onSelectAll
+- id: item.ezr.menu_edit.on_undo
+  parent: menu.edit
+  label: Undo (Ctrl-Z)
+  command: onUndo
+  activation: ''
+  install: ''
+  order: 5046
+  module: ezr
+  legacy_ids:
+  - onUndo
+- id: item.ezr.menu_edit.on_redo
+  parent: menu.edit
+  label: Redo (Ctrl-W)
+  command: onRedo
+  activation: ''
+  install: ''
+  order: 5047
+  module: ezr
+  legacy_ids:
+  - onRedo
+- id: item.ezr.menu_edit.on_clear
+  parent: menu.edit
+  label: Clear window
+  command: onClear
+  activation: ''
+  install: ''
+  order: 5048
+  module: ezr
+  legacy_ids:
+  - onClear
+- id: item.ezr.menu_data_variables.stat_med_variable_check
+  parent: menu.data.variables
+  label: Show variables in active data set
+  command: StatMedVariableCheck
+  activation: activeDataSetP()
+  install: ''
+  order: 5051
+  module: ezr
+  legacy_ids:
+  - StatMedVariableCheck
+- id: item.ezr.menu_data_variables.stat_med_compute
+  parent: menu.data.variables
+  label: Create new variable
+  command: StatMedCompute
+  activation: activeDataSetP()
+  install: ''
+  order: 5052
+  module: ezr
+  legacy_ids:
+  - StatMedCompute
+- id: item.ezr.menu_data_variables.stat_med_bin_variable
+  parent: menu.data.variables
+  label: Bin numeric variable
+  command: StatMedBinVariable
+  activation: activeDataSetP()
+  install: ''
+  order: 5053
+  module: ezr
+  legacy_ids:
+  - StatMedBinVariable
+- id: item.ezr.menu_data_variables.stat_med_new_var
+  parent: menu.data.variables
+  label: Bin numeric variable with specified threshold
+  command: StatMedNewVar
+  activation: activeDataSetP()
+  install: ''
+  order: 5054
+  module: ezr
+  legacy_ids:
+  - StatMedNewVar
+- id: item.ezr.menu_data_variables.stat_med_new_var2
+  parent: menu.data.variables
+  label: Bin numeric variable to more than 2 groups with specified thresholds
+  command: StatMedNewVar2
+  activation: activeDataSetP()
+  install: ''
+  order: 5055
+  module: ezr
+  legacy_ids:
+  - StatMedNewVar2
+- id: item.ezr.menu_data_variables.stat_med_log
+  parent: menu.data.variables
+  label: Logarithmic transformation
+  command: StatMedLog
+  activation: activeDataSetP()
+  install: ''
+  order: 5056
+  module: ezr
+  legacy_ids:
+  - StatMedLog
+- id: item.ezr.menu_data_variables.stat_med_numeric_to_factor
+  parent: menu.data.variables
+  label: Convert numeric variables to factors
+  command: StatMedNumericToFactor
+  activation: activeDataSetP()
+  install: ''
+  order: 5057
+  module: ezr
+  legacy_ids:
+  - StatMedNumericToFactor
+- kind: separator
+  parent: menu.data.variables
+  order: 5058
+  module: ezr
+- id: item.ezr.menu_data_variables.stat_med_factor_to_numeric
+  parent: menu.data.variables
+  label: Convert factors or character variables of numeric data to numeric variables
+  command: StatMedFactorToNumeric
+  activation: activeDataSetP()
+  install: ''
+  order: 5059
+  module: ezr
+  legacy_ids:
+  - StatMedFactorToNumeric
+- id: item.ezr.menu_data_variables.stat_med_chr_to_factor
+  parent: menu.data.variables
+  label: Convert all character variables to factors
+  command: StatMedChrToFactor
+  activation: activeDataSetP()
+  install: ''
+  order: 5060
+  module: ezr
+  legacy_ids:
+  - StatMedChrToFactor
+- id: item.ezr.menu_data_variables.stat_med_reorder_factor
+  parent: menu.data.variables
+  label: Reorder factor levels
+  command: StatMedReorderFactor
+  activation: activeDataSetP()
+  install: ''
+  order: 5061
+  module: ezr
+  legacy_ids:
+  - StatMedReorderFactor
+- id: item.ezr.menu_data_variables.stat_med_recode_dialog
+  parent: menu.data.variables
+  label: Recode variables
+  command: StatMedRecodeDialog
+  activation: activeDataSetP()
+  install: ''
+  order: 5062
+  module: ezr
+  legacy_ids:
+  - StatMedRecodeDialog
+- id: item.ezr.menu_data_variables.stat_med_drop_unused_factor_levels
+  parent: menu.data.variables
+  label: Drop unused factor levels
+  command: StatMedDropUnusedFactorLevels
+  activation: factorsP()
+  install: ''
+  order: 5063
+  module: ezr
+  legacy_ids:
+  - StatMedDropUnusedFactorLevels
+- id: item.ezr.menu_data_variables.stat_med_set_contrasts
+  parent: menu.data.variables
+  label: Define contrasts for a factor
+  command: StatMedSetContrasts
+  activation: activeDataSetP()
+  install: ''
+  order: 5064
+  module: ezr
+  legacy_ids:
+  - StatMedSetContrasts
+- id: item.ezr.menu_data_variables.stat_med_dummy
+  parent: menu.data.variables
+  label: Create dummy variables
+  command: StatMedDummy
+  activation: activeDataSetP()
+  install: ''
+  order: 5065
+  module: ezr
+  legacy_ids:
+  - StatMedDummy
+- id: item.ezr.menu_data_variables.stat_med_datediff
+  parent: menu.data.variables
+  label: Compute difference between two date variables
+  command: StatMedDatediff
+  activation: activeDataSetP()
+  install: ''
+  order: 5066
+  module: ezr
+  legacy_ids:
+  - StatMedDatediff
+- kind: separator
+  parent: menu.data.variables
+  order: 5067
+  module: ezr
+- id: item.ezr.menu_data_variables.stat_med_rename_variables
+  parent: menu.data.variables
+  label: Rename variables
+  command: StatMedRenameVariables
+  activation: activeDataSetP()
+  install: ''
+  order: 5068
+  module: ezr
+  legacy_ids:
+  - StatMedRenameVariables
+- id: item.ezr.menu_data_variables.stat_med_delete_variable
+  parent: menu.data.variables
+  label: Delete variables from data set
+  command: StatMedDeleteVariable
+  activation: activeDataSetP()
+  install: ''
+  order: 5069
+  module: ezr
+  legacy_ids:
+  - StatMedDeleteVariable
+- id: item.ezr.menu_data_variables.stat_med_stack
+  parent: menu.data.variables
+  label: Stack variables to long format data set
+  command: StatMedStack
+  activation: activeDataSetP()
+  install: ''
+  order: 5070
+  module: ezr
+  legacy_ids:
+  - StatMedStack
+- id: item.ezr.menu_data_rows.stat_med_subset_data_set
+  parent: menu.data.rows
+  label: Create subset data set
+  command: StatMedSubsetDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5072
+  module: ezr
+  legacy_ids:
+  - StatMedSubsetDataSet
+- id: item.ezr.menu_data_rows.remove_rows
+  parent: menu.data.rows
+  label: Remove row(s) from active data set
+  command: RemoveRows
+  activation: activeDataSetP()
+  install: ''
+  order: 5073
+  module: ezr
+  legacy_ids:
+  - RemoveRows
+- id: item.ezr.menu_data_rows.stat_med_sort
+  parent: menu.data.rows
+  label: Sort rows
+  command: StatMedSort
+  activation: activeDataSetP()
+  install: ''
+  order: 5074
+  module: ezr
+  legacy_ids:
+  - StatMedSort
+- id: item.ezr.menu_data_nadata.stat_med_count_missing
+  parent: menu.data.nadata
+  label: Count missing observations of specified variables
+  command: StatMedCountMissing
+  activation: activeDataSetP()
+  install: ''
+  order: 5076
+  module: ezr
+  legacy_ids:
+  - StatMedCountMissing
+- id: item.ezr.menu_data_nadata.count_missing
+  parent: menu.data.nadata
+  label: Count missing observations of all variables
+  command: countMissing
+  activation: activeDataSetP()
+  install: ''
+  order: 5077
+  module: ezr
+  legacy_ids:
+  - countMissing
+- id: item.ezr.menu_data_nadata.stat_med_nagroup
+  parent: menu.data.nadata
+  label: Convert missing observations to a group
+  command: StatMedNAgroup
+  activation: activeDataSetP()
+  install: ''
+  order: 5078
+  module: ezr
+  legacy_ids:
+  - StatMedNAgroup
+- id: item.ezr.menu_data_nadata.stat_med_filter_na
+  parent: menu.data.nadata
+  label: Remove rows with missing data in specified variables
+  command: StatMedFilterNA
+  activation: activeDataSetP()
+  install: ''
+  order: 5079
+  module: ezr
+  legacy_ids:
+  - StatMedFilterNA
+- id: item.ezr.menu_data_nadata.filter_na
+  parent: menu.data.nadata
+  label: Remove rows with any missing data
+  command: filterNA
+  activation: activeDataSetP()
+  install: ''
+  order: 5080
+  module: ezr
+  legacy_ids:
+  - filterNA
+- id: item.ezr.menu_data_data_save.stat_med_renew_data_set
+  parent: menu.data.data_save
+  label: Renew active data set
+  command: StatMedRenewDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5082
+  module: ezr
+  legacy_ids:
+  - StatMedRenewDataSet
+- id: item.ezr.menu_data_data_save.save_data_set
+  parent: menu.data.data_save
+  label: Save active data set
+  command: saveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5083
+  module: ezr
+  legacy_ids:
+  - saveDataSet
+- id: item.ezr.menu_data_data_save.stat_med_export_data_set
+  parent: menu.data.data_save
+  label: Export active data set (Text)
+  command: StatMedExportDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5084
+  module: ezr
+  legacy_ids:
+  - StatMedExportDataSet
+- id: item.ezr.menu_data_data_save.stat_med_export_stata
+  parent: menu.data.data_save
+  label: Export active data set (Stata)
+  command: StatMedExportStata
+  activation: activeDataSetP()
+  install: packageAvailable('foreign')
+  order: 5085
+  module: ezr
+  legacy_ids:
+  - StatMedExportStata
+- id: item.ezr.menu_analyze_discrete.stat_med_frequency
+  parent: menu.analyze.discrete
+  label: Frequency distributions
+  command: StatMedFrequency
+  activation: activeDataSetP()
+  install: ''
+  order: 5088
+  module: ezr
+  legacy_ids:
+  - StatMedFrequency
+- id: item.ezr.menu_analyze_discrete.stat_med_prob_ci
+  parent: menu.analyze.discrete
+  label: Confidence interval for a proportion
+  command: StatMedProbCI
+  activation: ''
+  install: ''
+  order: 5089
+  module: ezr
+  legacy_ids:
+  - StatMedProbCI
+- id: item.ezr.menu_analyze_discrete.stat_med_prob_single
+  parent: menu.analyze.discrete
+  label: One sample proportion test
+  command: StatMedProbSingle
+  activation: activeDataSetP()
+  install: ''
+  order: 5090
+  module: ezr
+  legacy_ids:
+  - StatMedProbSingle
+- id: item.ezr.menu_analyze_discrete.stat_med_prob_diff_ci
+  parent: menu.analyze.discrete
+  label: Confidence interval for a difference between two proportions
+  command: StatMedProbDiffCI
+  activation: ''
+  install: ''
+  order: 5091
+  module: ezr
+  legacy_ids:
+  - StatMedProbDiffCI
+- id: item.ezr.menu_analyze_discrete.stat_med_prob_ratio_ci
+  parent: menu.analyze.discrete
+  label: Confidence interval for a ratio of two proportions
+  command: StatMedProbRatioCI
+  activation: ''
+  install: ''
+  order: 5092
+  module: ezr
+  legacy_ids:
+  - StatMedProbRatioCI
+- kind: separator
+  parent: menu.analyze.discrete
+  order: 5093
+  module: ezr
+- id: item.ezr.menu_analyze_discrete.stat_med_enter_table
+  parent: menu.analyze.discrete
+  label: Enter and analyze two-way table
+  command: StatMedEnterTable
+  activation: ''
+  install: packageAvailable('abind')
+  order: 5094
+  module: ezr
+  legacy_ids:
+  - StatMedEnterTable
+- id: item.ezr.menu_analyze_discrete.stat_med_two_way_table
+  parent: menu.analyze.discrete
+  label: Create two-way table and compare two proportions (Fisher's exact test)
+  command: StatMedTwoWayTable
+  activation: activeDataSetP()
+  install: ''
+  order: 5095
+  module: ezr
+  legacy_ids:
+  - StatMedTwoWayTable
+- id: item.ezr.menu_analyze_discrete.stat_med_mc_nemar
+  parent: menu.analyze.discrete
+  label: Compare proportions of two paired samples (McNemar test)
+  command: StatMedMcNemar
+  activation: activeDataSetP()
+  install: ''
+  order: 5096
+  module: ezr
+  legacy_ids:
+  - StatMedMcNemar
+- id: item.ezr.menu_analyze_discrete.stat_med_cochran_q
+  parent: menu.analyze.discrete
+  label: Compare proportions of more than two paired samples (Cochran Q test)
+  command: StatMedCochranQ
+  activation: activeDataSetP()
+  install: ''
+  order: 5097
+  module: ezr
+  legacy_ids:
+  - StatMedCochranQ
+- id: item.ezr.menu_analyze_discrete.stat_med_prop_trend
+  parent: menu.analyze.discrete
+  label: Cochran-Armitage test for trend in proportions
+  command: StatMedPropTrend
+  activation: activeDataSetP()
+  install: ''
+  order: 5098
+  module: ezr
+  legacy_ids:
+  - StatMedPropTrend
+- kind: separator
+  parent: menu.analyze.discrete
+  order: 5099
+  module: ezr
+- id: item.ezr.menu_analyze_discrete.stat_med_logistic_regression
+  parent: menu.analyze.discrete
+  label: Logistic regression
+  command: StatMedLogisticRegression
+  activation: activeDataSetP()
+  install: ''
+  order: 5100
+  module: ezr
+  legacy_ids:
+  - StatMedLogisticRegression
+- id: item.ezr.menu_analyze_discrete.stat_med_modified_poisson_regression
+  parent: menu.analyze.discrete
+  label: Modified Poisson regression
+  command: StatMedModifiedPoissonRegression
+  activation: activeDataSetP()
+  install: packageAvailable('sandwich') && packageAvailable('lmtest')
+  order: 5101
+  module: ezr
+  legacy_ids:
+  - StatMedModifiedPoissonRegression
+- id: item.ezr.menu_analyze_discrete.stat_med_ordinal_regression_model
+  parent: menu.analyze.discrete
+  label: Ordinal logistic regression
+  command: StatMedOrdinalRegressionModel
+  activation: activeDataSetP()
+  install: packageAvailable('MASS') && packageAvailable('brant')
+  order: 5102
+  module: ezr
+  legacy_ids:
+  - StatMedOrdinalRegressionModel
+- id: item.ezr.menu_analyze_discrete.stat_med_multinomial_logit_model
+  parent: menu.analyze.discrete
+  label: Multinomial logistic regression
+  command: StatMedMultinomialLogitModel
+  activation: activeDataSetP()
+  install: packageAvailable('nnet')
+  order: 5103
+  module: ezr
+  legacy_ids:
+  - StatMedMultinomialLogitModel
+- id: item.ezr.menu_analyze_continuous.stat_med_numerical_summaries
+  parent: menu.analyze.continuous
+  label: Numerical summaries
+  command: StatMedNumericalSummaries
+  activation: activeDataSetP()
+  install: packageAvailable('abind')
+  order: 5105
+  module: ezr
+  legacy_ids:
+  - StatMedNumericalSummaries
+- id: item.ezr.menu_analyze_continuous.stat_med_sg
+  parent: menu.analyze.continuous
+  label: Smirnov-Grubbs test for outliers
+  command: StatMedSG
+  activation: activeDataSetP()
+  install: ''
+  order: 5106
+  module: ezr
+  legacy_ids:
+  - StatMedSG
+- id: item.ezr.menu_analyze_continuous.stat_med_ks
+  parent: menu.analyze.continuous
+  label: Kolmogorov-smirnov test for normal distribution
+  command: StatMedKS
+  activation: activeDataSetP()
+  install: ''
+  order: 5107
+  module: ezr
+  legacy_ids:
+  - StatMedKS
+- id: item.ezr.menu_analyze_continuous.stat_med_mean_ci
+  parent: menu.analyze.continuous
+  label: Confidence interval for a mean
+  command: StatMedMeanCI
+  activation: ''
+  install: ''
+  order: 5108
+  module: ezr
+  legacy_ids:
+  - StatMedMeanCI
+- id: item.ezr.menu_analyze_continuous.stat_med_single_sample_ttest
+  parent: menu.analyze.continuous
+  label: Single-sample t-test
+  command: StatMedSingleSampleTTest
+  activation: activeDataSetP()
+  install: ''
+  order: 5109
+  module: ezr
+  legacy_ids:
+  - StatMedSingleSampleTTest
+- kind: separator
+  parent: menu.analyze.continuous
+  order: 5110
+  module: ezr
+- id: item.ezr.menu_analyze_continuous.stat_med_ftest
+  parent: menu.analyze.continuous
+  label: Two-variances F-test
+  command: StatMedFTest
+  activation: activeDataSetP()
+  install: ''
+  order: 5111
+  module: ezr
+  legacy_ids:
+  - StatMedFTest
+- id: item.ezr.menu_analyze_continuous.stat_med_ttest
+  parent: menu.analyze.continuous
+  label: Two-sample t-test
+  command: StatMedTtest
+  activation: activeDataSetP()
+  install: ''
+  order: 5112
+  module: ezr
+  legacy_ids:
+  - StatMedTtest
+- id: item.ezr.menu_analyze_continuous.stat_med_paired_ttest
+  parent: menu.analyze.continuous
+  label: Paired t-test
+  command: StatMedPairedTtest
+  activation: activeDataSetP()
+  install: ''
+  order: 5113
+  module: ezr
+  legacy_ids:
+  - StatMedPairedTtest
+- id: item.ezr.menu_analyze_continuous.stat_med_bartlett
+  parent: menu.analyze.continuous
+  label: Bartlett's test
+  command: StatMedBartlett
+  activation: activeDataSetP()
+  install: ''
+  order: 5114
+  module: ezr
+  legacy_ids:
+  - StatMedBartlett
+- id: item.ezr.menu_analyze_continuous.stat_med_anova
+  parent: menu.analyze.continuous
+  label: One-way ANOVA
+  command: StatMedANOVA
+  activation: activeDataSetP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5115
+  module: ezr
+  legacy_ids:
+  - StatMedANOVA
+- id: item.ezr.menu_analyze_continuous.stat_med_rep_anova
+  parent: menu.analyze.continuous
+  label: Repeated-measures ANOVA
+  command: StatMedRepANOVA
+  activation: activeDataSetP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5116
+  module: ezr
+  legacy_ids:
+  - StatMedRepANOVA
+- id: item.ezr.menu_analyze_continuous.stat_med_multi_anova
+  parent: menu.analyze.continuous
+  label: Multi-way ANOVA
+  command: StatMedMultiANOVA
+  activation: activeDataSetP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5117
+  module: ezr
+  legacy_ids:
+  - StatMedMultiANOVA
+- id: item.ezr.menu_analyze_continuous.stat_med_ancova
+  parent: menu.analyze.continuous
+  label: ANCOVA
+  command: StatMedANCOVA
+  activation: activeDataSetP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5118
+  module: ezr
+  legacy_ids:
+  - StatMedANCOVA
+- kind: separator
+  parent: menu.analyze.continuous
+  order: 5119
+  module: ezr
+- id: item.ezr.menu_analyze_continuous.stat_med_correlation
+  parent: menu.analyze.continuous
+  label: Test for Pearson's correlation
+  command: StatMedCorrelation
+  activation: activeDataSetP()
+  install: ''
+  order: 5120
+  module: ezr
+  legacy_ids:
+  - StatMedCorrelation
+- id: item.ezr.menu_analyze_continuous.stat_med_linear_regression
+  parent: menu.analyze.continuous
+  label: Linear regression
+  command: StatMedLinearRegression
+  activation: activeDataSetP()
+  install: ''
+  order: 5121
+  module: ezr
+  legacy_ids:
+  - StatMedLinearRegression
+- id: item.ezr.menu_analyze_continuous.stat_med_linear_mixed_model
+  parent: menu.analyze.continuous
+  label: Linear mixed model
+  command: StatMedLinearMixedModel
+  activation: activeDataSetP()
+  install: packageAvailable('lme4')
+  order: 5122
+  module: ezr
+  legacy_ids:
+  - StatMedLinearMixedModel
+- id: item.ezr.menu_analyze_non_para.stat_med_mann_w
+  parent: menu.analyze.non_para
+  label: Mann-Whitney U test
+  command: StatMedMannW
+  activation: activeDataSetP()
+  install: ''
+  order: 5124
+  module: ezr
+  legacy_ids:
+  - StatMedMannW
+- id: item.ezr.menu_analyze_non_para.stat_med_wil_sign
+  parent: menu.analyze.non_para
+  label: Wilcoxon's signed rank test
+  command: StatMedWilSign
+  activation: activeDataSetP()
+  install: ''
+  order: 5125
+  module: ezr
+  legacy_ids:
+  - StatMedWilSign
+- id: item.ezr.menu_analyze_non_para.stat_med_kru_walli
+  parent: menu.analyze.non_para
+  label: Kruskal-Wallis test
+  command: StatMedKruWalli
+  activation: activeDataSetP()
+  install: ''
+  order: 5126
+  module: ezr
+  legacy_ids:
+  - StatMedKruWalli
+- id: item.ezr.menu_analyze_non_para.stat_med_friedman
+  parent: menu.analyze.non_para
+  label: Friedman test
+  command: StatMedFriedman
+  activation: activeDataSetP()
+  install: ''
+  order: 5127
+  module: ezr
+  legacy_ids:
+  - StatMedFriedman
+- id: item.ezr.menu_analyze_non_para.stat_med_jt
+  parent: menu.analyze.non_para
+  label: Jonckheere-Terpstra test
+  command: StatMedJT
+  activation: activeDataSetP()
+  install: packageAvailable('clinfun')
+  order: 5128
+  module: ezr
+  legacy_ids:
+  - StatMedJT
+- id: item.ezr.menu_analyze_non_para.stat_med_spearman
+  parent: menu.analyze.non_para
+  label: Spearman's rank correlation test
+  command: StatMedSpearman
+  activation: activeDataSetP()
+  install: ''
+  order: 5129
+  module: ezr
+  legacy_ids:
+  - StatMedSpearman
+- id: item.ezr.menu_analyze_time_to_event.stat_med_kaplan_meier
+  parent: menu.analyze.time_to_event
+  label: Kaplan-Meier survival curve and logrank test
+  command: StatMedKaplanMeier
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5131
+  module: ezr
+  legacy_ids:
+  - StatMedKaplanMeier
+- id: item.ezr.menu_analyze_time_to_event.stat_med_logrank_trend
+  parent: menu.analyze.time_to_event
+  label: Logrank trend test
+  command: StatMedLogrankTrend
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5132
+  module: ezr
+  legacy_ids:
+  - StatMedLogrankTrend
+- id: item.ezr.menu_analyze_time_to_event.stat_med_current_survival
+  parent: menu.analyze.time_to_event
+  label: Current survival and current cmulative incidence
+  command: StatMedCurrentSurvival
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5133
+  module: ezr
+  legacy_ids:
+  - StatMedCurrentSurvival
+- kind: separator
+  parent: menu.analyze.time_to_event
+  order: 5134
+  module: ezr
+- id: item.ezr.menu_analyze_time_to_event.stat_med_cox_regression
+  parent: menu.analyze.time_to_event
+  label: Cox proportional hazard regression
+  command: StatMedCoxRegression
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5135
+  module: ezr
+  legacy_ids:
+  - StatMedCoxRegression
+- id: item.ezr.menu_analyze_time_to_event.stat_med_cox_td
+  parent: menu.analyze.time_to_event
+  label: Cox proportional hazard regression with time-dependent covariate
+  command: StatMedCoxTD
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5136
+  module: ezr
+  legacy_ids:
+  - StatMedCoxTD
+- kind: separator
+  parent: menu.analyze.time_to_event
+  order: 5137
+  module: ezr
+- id: item.ezr.menu_analyze_time_to_event.stat_med_cum_inc
+  parent: menu.analyze.time_to_event
+  label: Cumulative incidence of competing events and Gray test
+  command: StatMedCumInc
+  activation: activeDataSetP()
+  install: packageAvailable('survival') && packageAvailable('cmprsk')
+  order: 5138
+  module: ezr
+  legacy_ids:
+  - StatMedCumInc
+- id: item.ezr.menu_analyze_time_to_event.stat_med_crr
+  parent: menu.analyze.time_to_event
+  label: Fine-Gray proportional hazard regression for competing events
+  command: StatMedCrr
+  activation: activeDataSetP()
+  install: packageAvailable('survival') && packageAvailable('cmprsk')
+  order: 5139
+  module: ezr
+  legacy_ids:
+  - StatMedCrr
+- id: item.ezr.menu_analyze_time_to_event.stat_med_crr_td
+  parent: menu.analyze.time_to_event
+  label: Fine-Gray proportional hazard regression with time-dependent covariate
+  command: StatMedCrrTD
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5140
+  module: ezr
+  legacy_ids:
+  - StatMedCrrTD
+- id: item.ezr.menu_analyze_test.stat_med_test
+  parent: menu.analyze.test
+  label: Accuracy of qualitative test
+  command: StatMedTest
+  activation: ''
+  install: ''
+  order: 5142
+  module: ezr
+  legacy_ids:
+  - StatMedTest
+- id: item.ezr.menu_analyze_test.stat_med_kappa
+  parent: menu.analyze.test
+  label: Kappa statistics for agreement of two tests
+  command: StatMedKappa
+  activation: ''
+  install: ''
+  order: 5143
+  module: ezr
+  legacy_ids:
+  - StatMedKappa
+- id: item.ezr.menu_analyze_test.stat_med_predictive_value
+  parent: menu.analyze.test
+  label: Compute positive and negative predictive values
+  command: StatMedPredictiveValue
+  activation: ''
+  install: ''
+  order: 5144
+  module: ezr
+  legacy_ids:
+  - StatMedPredictiveValue
+- kind: separator
+  parent: menu.analyze.test
+  order: 5145
+  module: ezr
+- id: item.ezr.menu_analyze_test.stat_med_roc
+  parent: menu.analyze.test
+  label: ROC curve analysis for quantitative test
+  command: StatMedROC
+  activation: activeDataSetP()
+  install: packageAvailable('pROC')
+  order: 5146
+  module: ezr
+  legacy_ids:
+  - StatMedROC
+- id: item.ezr.menu_analyze_test.stat_med_roctest
+  parent: menu.analyze.test
+  label: Compare two ROC curves
+  command: StatMedROCtest
+  activation: activeDataSetP()
+  install: packageAvailable('pROC')
+  order: 5147
+  module: ezr
+  legacy_ids:
+  - StatMedROCtest
+- id: item.ezr.menu_analyze_test.stat_med_survival_roc
+  parent: menu.analyze.test
+  label: ROC curve analysis for time-to-event data
+  command: StatMedSurvivalROC
+  activation: activeDataSetP()
+  install: packageAvailable('timeROC')
+  order: 5148
+  module: ezr
+  legacy_ids:
+  - StatMedSurvivalROC
+- id: item.ezr.menu_analyze_test.stat_med_reliability
+  parent: menu.analyze.test
+  label: Cronbach's alpha coefficient for reliability
+  command: StatMedReliability
+  activation: activeDataSetP()
+  install: packageAvailable('psych')
+  order: 5149
+  module: ezr
+  legacy_ids:
+  - StatMedReliability
+- id: item.ezr.menu_analyze_matched_pair.stat_med_matching
+  parent: menu.analyze.matched_pair
+  label: Extract matched controls
+  command: StatMedMatching
+  activation: activeDataSetP()
+  install: packageAvailable('MatchIt')
+  order: 5151
+  module: ezr
+  legacy_ids:
+  - StatMedMatching
+- id: item.ezr.menu_analyze_matched_pair.stat_med_mh
+  parent: menu.analyze.matched_pair
+  label: Mantel-Haenzel test for matched proportions
+  command: StatMedMH
+  activation: activeDataSetP()
+  install: ''
+  order: 5152
+  module: ezr
+  legacy_ids:
+  - StatMedMH
+- id: item.ezr.menu_analyze_matched_pair.stat_med_clogistic
+  parent: menu.analyze.matched_pair
+  label: Conditional logistic regression for matched-pair analysis
+  command: StatMedCLogistic
+  activation: activeDataSetP()
+  install: ''
+  order: 5153
+  module: ezr
+  legacy_ids:
+  - StatMedCLogistic
+- id: item.ezr.menu_analyze_matched_pair.stat_med_st_cox
+  parent: menu.analyze.matched_pair
+  label: Stratified Cox proportional hazard regression for matched-pair analysis
+  command: StatMedStCox
+  activation: activeDataSetP()
+  install: ''
+  order: 5154
+  module: ezr
+  legacy_ids:
+  - StatMedStCox
+- id: item.ezr.menu_analyze_meta.stat_med_meta
+  parent: menu.analyze.meta
+  label: Metaanalysis and metaregression for proportions
+  command: StatMedMeta
+  activation: activeDataSetP()
+  install: packageAvailable('meta')
+  order: 5156
+  module: ezr
+  legacy_ids:
+  - StatMedMeta
+- id: item.ezr.menu_analyze_meta.stat_med_meta_cont
+  parent: menu.analyze.meta
+  label: Metaanalysis and metaregression for means
+  command: StatMedMetaCont
+  activation: activeDataSetP()
+  install: packageAvailable('meta')
+  order: 5157
+  module: ezr
+  legacy_ids:
+  - StatMedMetaCont
+- id: item.ezr.menu_analyze_meta.stat_med_meta_hazard
+  parent: menu.analyze.meta
+  label: Metaanalysis and metaregression for hazard ratios
+  command: StatMedMetaHazard
+  activation: activeDataSetP()
+  install: packageAvailable('meta')
+  order: 5158
+  module: ezr
+  legacy_ids:
+  - StatMedMetaHazard
+- id: item.ezr.menu_analyze_meta.stat_med_network_meta
+  parent: menu.analyze.meta
+  label: Network metaanalysis
+  command: StatMedNetworkMeta
+  activation: activeDataSetP()
+  install: packageAvailable('netmeta')
+  order: 5159
+  module: ezr
+  legacy_ids:
+  - StatMedNetworkMeta
+- id: item.ezr.menu_analyze_power.stat_med_sample_phase_ii
+  parent: menu.analyze.power
+  label: Calculate sample size from control and desired response rates
+  command: StatMedSamplePhaseII
+  activation: ''
+  install: packageAvailable('clinfun')
+  order: 5161
+  module: ezr
+  legacy_ids:
+  - StatMedSamplePhaseII
+- id: item.ezr.menu_analyze_power.stat_med_sample_proportions_ci
+  parent: menu.analyze.power
+  label: Calculate sample size from proportion and confidence interval
+  command: StatMedSampleProportionsCI
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5162
+  module: ezr
+  legacy_ids:
+  - StatMedSampleProportionsCI
+- id: item.ezr.menu_analyze_power.stat_med_sample_proportions_single
+  parent: menu.analyze.power
+  label: Calculate sample size for comparison with specified proportion
+  command: StatMedSampleProportionsSingle
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5163
+  module: ezr
+  legacy_ids:
+  - StatMedSampleProportionsSingle
+- id: item.ezr.menu_analyze_power.stat_med_power_proportions_single
+  parent: menu.analyze.power
+  label: Calculate power for comparison with specified proportion
+  command: StatMedPowerProportionsSingle
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5164
+  module: ezr
+  legacy_ids:
+  - StatMedPowerProportionsSingle
+- kind: separator
+  parent: menu.analyze.power
+  order: 5165
+  module: ezr
+- id: item.ezr.menu_analyze_power.stat_med_sample_proportions
+  parent: menu.analyze.power
+  label: Calculate sample size for comparison between two proportions
+  command: StatMedSampleProportions
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5166
+  module: ezr
+  legacy_ids:
+  - StatMedSampleProportions
+- id: item.ezr.menu_analyze_power.stat_med_power_proportions
+  parent: menu.analyze.power
+  label: Calculate power for comparison between two proportions
+  command: StatMedPowerProportions
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5167
+  module: ezr
+  legacy_ids:
+  - StatMedPowerProportions
+- id: item.ezr.menu_analyze_power.stat_med_sample_proportions_non_inf
+  parent: menu.analyze.power
+  label: Calculate sample size for non-inferiority trial of two proportions
+  command: StatMedSampleProportionsNonInf
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5168
+  module: ezr
+  legacy_ids:
+  - StatMedSampleProportionsNonInf
+- id: item.ezr.menu_analyze_power.stat_med_sample_selection_design
+  parent: menu.analyze.power
+  label: Calculate sample size for selection design in randomized phase II trials
+  command: StatMedSampleSelectionDesign
+  activation: ''
+  install: packageAvailable('clinfun')
+  order: 5169
+  module: ezr
+  legacy_ids:
+  - StatMedSampleSelectionDesign
+- kind: separator
+  parent: menu.analyze.power
+  order: 5170
+  module: ezr
+- id: item.ezr.menu_analyze_power.stat_med_sample_means_ci
+  parent: menu.analyze.power
+  label: Calculate sample size from standard deviation and confidence interval
+  command: StatMedSampleMeansCI
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5171
+  module: ezr
+  legacy_ids:
+  - StatMedSampleMeansCI
+- id: item.ezr.menu_analyze_power.stat_med_sample_means
+  parent: menu.analyze.power
+  label: Calculate sample size for comparison between two means
+  command: StatMedSampleMeans
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5172
+  module: ezr
+  legacy_ids:
+  - StatMedSampleMeans
+- id: item.ezr.menu_analyze_power.stat_med_power_means
+  parent: menu.analyze.power
+  label: Calculate power for comparison between two means
+  command: StatMedPowerMeans
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5173
+  module: ezr
+  legacy_ids:
+  - StatMedPowerMeans
+- id: item.ezr.menu_analyze_power.stat_med_sample_means_non_inf
+  parent: menu.analyze.power
+  label: Calculate sample size for non-inferiority trial of two means
+  command: StatMedSampleMeansNonInf
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5174
+  module: ezr
+  legacy_ids:
+  - StatMedSampleMeansNonInf
+- kind: separator
+  parent: menu.analyze.power
+  order: 5175
+  module: ezr
+- id: item.ezr.menu_analyze_power.stat_med_sample_means_paired
+  parent: menu.analyze.power
+  label: Calculate sample size for comparison between two paired means
+  command: StatMedSampleMeansPaired
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5176
+  module: ezr
+  legacy_ids:
+  - StatMedSampleMeansPaired
+- id: item.ezr.menu_analyze_power.stat_med_power_means_paired
+  parent: menu.analyze.power
+  label: Calculate power for comparison between two paired means
+  command: StatMedPowerMeansPaired
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5177
+  module: ezr
+  legacy_ids:
+  - StatMedPowerMeansPaired
+- kind: separator
+  parent: menu.analyze.power
+  order: 5178
+  module: ezr
+- id: item.ezr.menu_analyze_power.stat_med_sample_hazard
+  parent: menu.analyze.power
+  label: Calculate sample size for comparison between two survival curves
+  command: StatMedSampleHazard
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5179
+  module: ezr
+  legacy_ids:
+  - StatMedSampleHazard
+- id: item.ezr.menu_analyze_power.stat_med_power_hazard
+  parent: menu.analyze.power
+  label: Calculate power for comparison between two survival curves
+  command: StatMedPowerHazard
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5180
+  module: ezr
+  legacy_ids:
+  - StatMedPowerHazard
+- id: item.ezr.menu_analyze_power.stat_med_sample_hazard_non_inf
+  parent: menu.analyze.power
+  label: Calculate sample size for non-inferiority trial of two survival curves
+  command: StatMedSampleHazardNonInf
+  activation: ''
+  install: packageAvailable('pwr')
+  order: 5181
+  module: ezr
+  legacy_ids:
+  - StatMedSampleHazardNonInf
+- id: item.ezr.menu_graphs.stat_med_bar_graph
+  parent: menu.graphs
+  label: Bar graph(Frequencies)
+  command: StatMedBarGraph
+  activation: activeDataSetP()
+  install: ''
+  order: 5183
+  module: ezr
+  legacy_ids:
+  - StatMedBarGraph
+- id: item.ezr.menu_graphs.stat_med_pie_chart
+  parent: menu.graphs
+  label: Pie chart(Frequencies)
+  command: StatMedPieChart
+  activation: activeDataSetP()
+  install: packageAvailable('colorspace')
+  order: 5184
+  module: ezr
+  legacy_ids:
+  - StatMedPieChart
+- kind: separator
+  parent: menu.graphs
+  order: 5185
+  module: ezr
+- id: item.ezr.menu_graphs.stat_med_stem_and_leaf
+  parent: menu.graphs
+  label: Stem-and-leaf display
+  command: StatMedStemAndLeaf
+  activation: activeDataSetP()
+  install: packageAvailable('aplpack')
+  order: 5186
+  module: ezr
+  legacy_ids:
+  - StatMedStemAndLeaf
+- id: item.ezr.menu_graphs.stat_med_histogram
+  parent: menu.graphs
+  label: Histogram
+  command: StatMedHistogram
+  activation: activeDataSetP()
+  install: ''
+  order: 5187
+  module: ezr
+  legacy_ids:
+  - StatMedHistogram
+- id: item.ezr.menu_graphs.stat_med_qqplot
+  parent: menu.graphs
+  label: Quantile-comparison plot
+  command: StatMedQQPlot
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 5188
+  module: ezr
+  legacy_ids:
+  - StatMedQQPlot
+- id: item.ezr.menu_graphs.stat_med_bar_means
+  parent: menu.graphs
+  label: Bar graph(Means)
+  command: StatMedBarMeans
+  activation: activeDataSetP()
+  install: ''
+  order: 5189
+  module: ezr
+  legacy_ids:
+  - StatMedBarMeans
+- id: item.ezr.menu_graphs.stat_med_plot_means
+  parent: menu.graphs
+  label: Line graph(Means)
+  command: StatMedPlotMeans
+  activation: activeDataSetP()
+  install: ''
+  order: 5190
+  module: ezr
+  legacy_ids:
+  - StatMedPlotMeans
+- id: item.ezr.menu_graphs.stat_med_line_plot
+  parent: menu.graphs
+  label: Line graph(Repeated measures)
+  command: StatMedLinePlot
+  activation: activeDataSetP()
+  install: ''
+  order: 5191
+  module: ezr
+  legacy_ids:
+  - StatMedLinePlot
+- id: item.ezr.menu_graphs.stat_med_box_plot
+  parent: menu.graphs
+  label: Boxplot
+  command: StatMedBoxPlot
+  activation: activeDataSetP()
+  install: ''
+  order: 5192
+  module: ezr
+  legacy_ids:
+  - StatMedBoxPlot
+- id: item.ezr.menu_graphs.stat_med_strip_chart
+  parent: menu.graphs
+  label: Dot chart
+  command: StatMedStripChart
+  activation: activeDataSetP()
+  install: ''
+  order: 5193
+  module: ezr
+  legacy_ids:
+  - StatMedStripChart
+- id: item.ezr.menu_graphs.stat_med_violin_plot
+  parent: menu.graphs
+  label: Violin plot
+  command: StatMedViolinPlot
+  activation: activeDataSetP()
+  install: packageAvailable('vioplot')
+  order: 5194
+  module: ezr
+  legacy_ids:
+  - StatMedViolinPlot
+- id: item.ezr.menu_graphs.stat_med_ordered_chart
+  parent: menu.graphs
+  label: Ordered chart
+  command: StatMedOrderedChart
+  activation: activeDataSetP()
+  install: ''
+  order: 5195
+  module: ezr
+  legacy_ids:
+  - StatMedOrderedChart
+- id: item.ezr.menu_graphs.stat_med_swim_plot
+  parent: menu.graphs
+  label: Swimmer plot
+  command: StatMedSwimPlot
+  activation: activeDataSetP()
+  install: ''
+  order: 5196
+  module: ezr
+  legacy_ids:
+  - StatMedSwimPlot
+- id: item.ezr.menu_graphs.stat_med_sankey
+  parent: menu.graphs
+  label: Sankey diagram
+  command: StatMedSankey
+  activation: activeDataSetP()
+  install: packageAvailable('ggalluvial') && packageAvailable('ggplot2')
+  order: 5197
+  module: ezr
+  legacy_ids:
+  - StatMedSankey
+- id: item.ezr.menu_graphs.stat_med_consort
+  parent: menu.graphs
+  label: CONSORT diagram
+  command: StatMedConsort
+  activation: activeDataSetP()
+  install: ''
+  order: 5198
+  module: ezr
+  legacy_ids:
+  - StatMedConsort
+- kind: separator
+  parent: menu.graphs
+  order: 5199
+  module: ezr
+- id: item.ezr.menu_graphs.stat_med_scatter_plot
+  parent: menu.graphs
+  label: Scatterplot
+  command: StatMedScatterPlot
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 5200
+  module: ezr
+  legacy_ids:
+  - StatMedScatterPlot
+- id: item.ezr.menu_graphs.stat_med_scatter_plot_matrix
+  parent: menu.graphs
+  label: Scatterplot matrix
+  command: StatMedScatterPlotMatrix
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 5201
+  module: ezr
+  legacy_ids:
+  - StatMedScatterPlotMatrix
+- kind: separator
+  parent: menu.graphs
+  order: 5202
+  module: ezr
+- id: item.ezr.menu_graphs.stat_med_adjusted_survival
+  parent: menu.graphs
+  label: Adjusted survival curve
+  command: StatMedAdjustedSurvival
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5203
+  module: ezr
+  legacy_ids:
+  - StatMedAdjustedSurvival
+- id: item.ezr.menu_graphs.stat_med_adjusted_cum_inc
+  parent: menu.graphs
+  label: Adjusted cumulative incidence curve
+  command: StatMedAdjustedCumInc
+  activation: activeDataSetP()
+  install: packageAvailable('cmprsk')
+  order: 5204
+  module: ezr
+  legacy_ids:
+  - StatMedAdjustedCumInc
+- id: item.ezr.menu_graphs.stat_med_stack_cum_inc
+  parent: menu.graphs
+  label: Stacked cumulative incidences
+  command: StatMedStackCumInc
+  activation: activeDataSetP()
+  install: packageAvailable('survival') && packageAvailable('cmprsk')
+  order: 5205
+  module: ezr
+  legacy_ids:
+  - StatMedStackCumInc
+- kind: separator
+  parent: menu.graphs
+  order: 5206
+  module: ezr
+- id: item.ezr.menu_graphs.stat_med_graph_options
+  parent: menu.graphs
+  label: Graph settings
+  command: StatMedGraphOptions
+  activation: ''
+  install: ''
+  order: 5207
+  module: ezr
+  legacy_ids:
+  - StatMedGraphOptions
+- id: item.ezr.menu_graphs.stat_med_change_palette
+  parent: menu.graphs
+  label: Graph colors
+  command: StatMedChangePalette
+  activation: ''
+  install: ''
+  order: 5208
+  module: ezr
+  legacy_ids:
+  - StatMedChangePalette
+- id: item.ezr.menu_graphs.stat_med_set_palette
+  parent: menu.graphs
+  label: Graph detailed colors
+  command: StatMedSetPalette
+  activation: ''
+  install: ''
+  order: 5209
+  module: ezr
+  legacy_ids:
+  - StatMedSetPalette
+- kind: separator
+  parent: menu.graphs
+  order: 5210
+  module: ezr
+- id: item.ezr.menu_graphs.stat_med_table_one
+  parent: menu.graphs
+  label: Summary table of sample characteristics
+  command: StatMedTableOne
+  activation: activeDataSetP()
+  install: ''
+  order: 5211
+  module: ezr
+  legacy_ids:
+  - StatMedTableOne
+- id: item.ezr.menu_graphs.stat_med_summary_results
+  parent: menu.graphs
+  label: Summary table of results
+  command: StatMedSummaryResults
+  activation: activeDataSetP()
+  install: ''
+  order: 5212
+  module: ezr
+  legacy_ids:
+  - StatMedSummaryResults
+- id: item.ezr.menu_utilities.load_packages
+  parent: menu.utilities
+  label: Load package(s)...
+  command: loadPackages
+  activation: ''
+  install: ''
+  order: 5214
+  module: ezr
+  legacy_ids:
+  - loadPackages
+- id: item.ezr.menu_utilities.load_plugins
+  parent: menu.utilities
+  label: Load Rcmdr plug-in(s)...
+  command: loadPlugins
+  activation: length(listPlugins()) > 0
+  install: ''
+  order: 5215
+  module: ezr
+  legacy_ids:
+  - loadPlugins
+- id: item.ezr.menu_utilities.app_nap
+  parent: menu.utilities
+  label: Manage Mac OS X app nap for R.app...
+  command: appNap
+  activation: ''
+  install: RappP()  && mavericksP()
+  order: 5216
+  module: ezr
+  legacy_ids:
+  - appNap
+- id: item.ezr.menu_utilities.options
+  parent: menu.utilities
+  label: Options...
+  command: Options
+  activation: ''
+  install: ''
+  order: 5217
+  module: ezr
+  legacy_ids:
+  - Options
+- id: item.ezr.menu_utilities.save_options
+  parent: menu.utilities
+  label: Save Rcmdr options...
+  command: saveOptions
+  activation: ''
+  install: ''
+  order: 5218
+  module: ezr
+  legacy_ids:
+  - saveOptions
+- id: item.ezr.menu_help.help_commander
+  parent: menu.help
+  label: Commander help
+  command: helpCommander
+  activation: ''
+  install: ''
+  order: 5220
+  module: ezr
+  legacy_ids:
+  - helpCommander
+- id: item.ezr.menu_help.browse_manual
+  parent: menu.help
+  label: Introduction to the R Commander
+  command: browseManual
+  activation: ''
+  install: ''
+  order: 5221
+  module: ezr
+  legacy_ids:
+  - browseManual
+- id: item.ezr.menu_help.browse_rcmdr_website
+  parent: menu.help
+  label: R Commander website
+  command: browseRcmdrWebsite
+  activation: ''
+  install: ''
+  order: 5222
+  module: ezr
+  legacy_ids:
+  - browseRcmdrWebsite
+- id: item.ezr.menu_help.help_about_commander
+  parent: menu.help
+  label: About Rcmdr
+  command: helpAboutCommander
+  activation: ''
+  install: ''
+  order: 5223
+  module: ezr
+  legacy_ids:
+  - helpAboutCommander
+- kind: separator
+  parent: menu.help
+  order: 5224
+  module: ezr
+- id: item.ezr.menu_help.start_help
+  parent: menu.help
+  label: Start R help system
+  command: startHelp
+  activation: ''
+  install: ''
+  order: 5225
+  module: ezr
+  legacy_ids:
+  - startHelp
+- id: item.ezr.menu_help.browse_rwebsite
+  parent: menu.help
+  label: R website
+  command: browseRWebsite
+  activation: ''
+  install: ''
+  order: 5226
+  module: ezr
+  legacy_ids:
+  - browseRWebsite
+- id: item.ezr.menu_help.browse_rmarkdown
+  parent: menu.help
+  label: Using R Markdown
+  command: browseRMarkdown
+  activation: ''
+  install: ''
+  order: 5227
+  module: ezr
+  legacy_ids:
+  - browseRMarkdown
+- id: item.ezr.menu_help.help_data_set
+  parent: menu.help
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5228
+  module: ezr
+  legacy_ids:
+  - helpDataSet
+- kind: separator
+  parent: menu.help
+  order: 5229
+  module: ezr
+- id: item.ezr.menu_help.ezrhelp
+  parent: menu.help
+  label: EZR help
+  command: EZRhelp
+  activation: ''
+  install: ''
+  order: 5230
+  module: ezr
+  legacy_ids:
+  - EZRhelp
+- id: item.ezr.menu_help.ezrversion
+  parent: menu.help
+  label: EZR version
+  command: EZRVersion
+  activation: ''
+  install: ''
+  order: 5231
+  module: ezr
+  legacy_ids:
+  - EZRVersion
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.setwd
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Change working directory...
+  command: Setwd
+  activation: ''
+  install: ''
+  order: 5234
+  module: ezr
+  legacy_ids:
+  - Setwd
+- kind: separator
+  parent: menu.utilities.ezr_original.file_menu2
+  order: 5235
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.load_log
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Open script file...
+  command: loadLog
+  activation: ''
+  install: ''
+  order: 5236
+  module: ezr
+  legacy_ids:
+  - loadLog
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_log
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save script...
+  command: saveLog
+  activation: ''
+  install: ''
+  order: 5237
+  module: ezr
+  legacy_ids:
+  - saveLog
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_log_as
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save script as...
+  command: saveLogAs
+  activation: ''
+  install: ''
+  order: 5238
+  module: ezr
+  legacy_ids:
+  - saveLogAs
+- kind: separator
+  parent: menu.utilities.ezr_original.file_menu2
+  order: 5239
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.load_rmd
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Open R Markdown file...
+  command: loadRmd
+  activation: ''
+  install: getRcmdr('use.markdown')
+  order: 5240
+  module: ezr
+  legacy_ids:
+  - loadRmd
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.load_rnw
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Open knitr file...
+  command: loadRnw
+  activation: ''
+  install: getRcmdr('use.knitr')
+  order: 5241
+  module: ezr
+  legacy_ids:
+  - loadRnw
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_rmd
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save R Markdown file...
+  command: saveRmd
+  activation: ''
+  install: getRcmdr('use.markdown')
+  order: 5242
+  module: ezr
+  legacy_ids:
+  - saveRmd
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_rnw
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save knitr file...
+  command: saveRnw
+  activation: ''
+  install: getRcmdr('use.knitr')
+  order: 5243
+  module: ezr
+  legacy_ids:
+  - saveRnw
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_rmd_as
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save R Markdown file as...
+  command: saveRmdAs
+  activation: ''
+  install: getRcmdr('use.markdown')
+  order: 5244
+  module: ezr
+  legacy_ids:
+  - saveRmdAs
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_rnw_as
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save knitr file as...
+  command: saveRnwAs
+  activation: ''
+  install: getRcmdr('use.knitr')
+  order: 5245
+  module: ezr
+  legacy_ids:
+  - saveRnwAs
+- kind: separator
+  parent: menu.utilities.ezr_original.file_menu2
+  order: 5246
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_output
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save output...
+  command: saveOutput
+  activation: ''
+  install: ''
+  order: 5247
+  module: ezr
+  legacy_ids:
+  - saveOutput
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_output_as
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save output as...
+  command: saveOutputAs
+  activation: ''
+  install: ''
+  order: 5248
+  module: ezr
+  legacy_ids:
+  - saveOutputAs
+- kind: separator
+  parent: menu.utilities.ezr_original.file_menu2
+  order: 5249
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_workspace
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save R workspace...
+  command: saveWorkspace
+  activation: ''
+  install: ''
+  order: 5250
+  module: ezr
+  legacy_ids:
+  - saveWorkspace
+- id: item.ezr.menu_utilities_ezr_original_file_menu2.save_workspace_as
+  parent: menu.utilities.ezr_original.file_menu2
+  label: Save R workspace as...
+  command: saveWorkspaceAs
+  activation: ''
+  install: ''
+  order: 5251
+  module: ezr
+  legacy_ids:
+  - saveWorkspaceAs
+- kind: separator
+  parent: menu.utilities.ezr_original.file_menu2
+  order: 5252
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_file_menu2_exit_menu2.close_commander
+  parent: menu.utilities.ezr_original.file_menu2.exit_menu2
+  label: From Commander
+  command: CloseCommander
+  activation: ''
+  install: ''
+  order: 5254
+  module: ezr
+  legacy_ids:
+  - CloseCommander
+- id: item.ezr.menu_utilities_ezr_original_file_menu2_exit_menu2.close_commander_and_r
+  parent: menu.utilities.ezr_original.file_menu2.exit_menu2
+  label: From Commander and R
+  command: closeCommanderAndR
+  activation: ''
+  install: ''
+  order: 5255
+  module: ezr
+  legacy_ids:
+  - closeCommanderAndR
+- id: item.ezr.menu_utilities_ezr_original_file_menu2_exit_menu2.restart_commander
+  parent: menu.utilities.ezr_original.file_menu2.exit_menu2
+  label: Restart the Commander
+  command: restartCommander
+  activation: ''
+  install: ''
+  order: 5256
+  module: ezr
+  legacy_ids:
+  - restartCommander
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.edit_markdown
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Edit R Markdown document
+  command: editMarkdown
+  activation: ''
+  install: MarkdownP()
+  order: 5258
+  module: ezr
+  legacy_ids:
+  - editMarkdown
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.edit_knitr
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Edit knitr document
+  command: editKnitr
+  activation: ''
+  install: knitrP()
+  order: 5259
+  module: ezr
+  legacy_ids:
+  - editKnitr
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.remove_last_rmd_block
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Remove last Markdown command block
+  command: removeLastRmdBlock
+  activation: ''
+  install: MarkdownP()
+  order: 5260
+  module: ezr
+  legacy_ids:
+  - removeLastRmdBlock
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.remove_last_rnw_block
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Remove last knitr command block
+  command: removeLastRnwBlock
+  activation: ''
+  install: knitrP()
+  order: 5261
+  module: ezr
+  legacy_ids:
+  - removeLastRnwBlock
+- kind: separator
+  parent: menu.utilities.ezr_original.edit_menu2
+  order: 5262
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_cut
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Cut
+  command: onCut
+  activation: ''
+  install: ''
+  order: 5263
+  module: ezr
+  legacy_ids:
+  - onCut
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_copy
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Copy
+  command: onCopy
+  activation: ''
+  install: ''
+  order: 5264
+  module: ezr
+  legacy_ids:
+  - onCopy
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_paste
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Paste
+  command: onPaste
+  activation: ''
+  install: ''
+  order: 5265
+  module: ezr
+  legacy_ids:
+  - onPaste
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_delete
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Delete
+  command: onDelete
+  activation: ''
+  install: ''
+  order: 5266
+  module: ezr
+  legacy_ids:
+  - onDelete
+- kind: separator
+  parent: menu.utilities.ezr_original.edit_menu2
+  order: 5267
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_find
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Find...
+  command: onFind
+  activation: ''
+  install: ''
+  order: 5268
+  module: ezr
+  legacy_ids:
+  - onFind
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_select_all
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Select all
+  command: onSelectAll
+  activation: ''
+  install: ''
+  order: 5269
+  module: ezr
+  legacy_ids:
+  - onSelectAll
+- kind: separator
+  parent: menu.utilities.ezr_original.edit_menu2
+  order: 5270
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_undo
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Undo
+  command: onUndo
+  activation: ''
+  install: ''
+  order: 5271
+  module: ezr
+  legacy_ids:
+  - onUndo
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_redo
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Redo
+  command: onRedo
+  activation: ''
+  install: ''
+  order: 5272
+  module: ezr
+  legacy_ids:
+  - onRedo
+- kind: separator
+  parent: menu.utilities.ezr_original.edit_menu2
+  order: 5273
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_edit_menu2.on_clear
+  parent: menu.utilities.ezr_original.edit_menu2
+  label: Clear window
+  command: onClear
+  activation: ''
+  install: ''
+  order: 5274
+  module: ezr
+  legacy_ids:
+  - onClear
+- id: item.ezr.menu_utilities_ezr_original_data_menu2.new_data_set
+  parent: menu.utilities.ezr_original.data_menu2
+  label: New data set...
+  command: newDataSet
+  activation: ''
+  install: getRcmdr('editDataset.threshold') > 0
+  order: 5276
+  module: ezr
+  legacy_ids:
+  - newDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2.load_data_set
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Load data set...
+  command: loadDataSet
+  activation: ''
+  install: ''
+  order: 5277
+  module: ezr
+  legacy_ids:
+  - loadDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2.merge_data_sets
+  parent: menu.utilities.ezr_original.data_menu2
+  label: Merge data sets...
+  command: mergeDataSets
+  activation: dataSetsP(2)
+  install: packageAvailable('car') && packageAvailable('RcmdrMisc')
+  order: 5278
+  module: ezr
+  legacy_ids:
+  - mergeDataSets
+- kind: separator
+  parent: menu.utilities.ezr_original.data_menu2
+  order: 5279
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.read_data_set
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from text file, clipboard, or URL...
+  command: readDataSet
+  activation: ''
+  install: ''
+  order: 5281
+  module: ezr
+  legacy_ids:
+  - readDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_spss
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from SPSS data set...
+  command: importSPSS
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5282
+  module: ezr
+  legacy_ids:
+  - importSPSS
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_sas
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from SAS xport file...
+  command: importSAS
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5283
+  module: ezr
+  legacy_ids:
+  - importSAS
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_sasb7dat
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from SAS b7dat file...
+  command: importSASb7dat
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5284
+  module: ezr
+  legacy_ids:
+  - importSASb7dat
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_minitab
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from Minitab data set...
+  command: importMinitab
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5285
+  module: ezr
+  legacy_ids:
+  - importMinitab
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_stata
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from STATA data set...
+  command: importSTATA
+  activation: ''
+  install: packageAvailable('foreign')
+  order: 5286
+  module: ezr
+  legacy_ids:
+  - importSTATA
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_import_menu2.import_excel
+  parent: menu.utilities.ezr_original.data_menu2.import_menu2
+  label: from Excel file...
+  command: importExcel
+  activation: ''
+  install: packageAvailable('readxl')
+  order: 5287
+  module: ezr
+  legacy_ids:
+  - importExcel
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_packages_menu2.list_data_sets_in_packages
+  parent: menu.utilities.ezr_original.data_menu2.packages_menu2
+  label: List data sets in packages
+  command: listDataSetsInPackages
+  activation: ''
+  install: ''
+  order: 5289
+  module: ezr
+  legacy_ids:
+  - listDataSetsInPackages
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_packages_menu2.read_data_from_package
+  parent: menu.utilities.ezr_original.data_menu2.packages_menu2
+  label: Read data set from an attached package...
+  command: readDataFromPackage
+  activation: ''
+  install: ''
+  order: 5290
+  module: ezr
+  legacy_ids:
+  - readDataFromPackage
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.view_data
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: View data...
+  command: viewData
+  activation: activeDataSetP()
+  install: ''
+  order: 5292
+  module: ezr
+  legacy_ids:
+  - viewData
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.select_active_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Select active data set...
+  command: selectActiveDataSet
+  activation: dataSetsP()
+  install: ''
+  order: 5293
+  module: ezr
+  legacy_ids:
+  - selectActiveDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.refresh_active_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Refresh active data set
+  command: refreshActiveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5294
+  module: ezr
+  legacy_ids:
+  - refreshActiveDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.help_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5295
+  module: ezr
+  legacy_ids:
+  - helpDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.variables_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Variables in active data set
+  command: variablesDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5296
+  module: ezr
+  legacy_ids:
+  - variablesDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.set_case_names
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Set case names...
+  command: setCaseNames
+  activation: activeDataSetP()
+  install: ''
+  order: 5297
+  module: ezr
+  legacy_ids:
+  - setCaseNames
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.subset_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Subset active data set...
+  command: subsetDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5298
+  module: ezr
+  legacy_ids:
+  - subsetDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.sort_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Sort active data set...
+  command: sortDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5299
+  module: ezr
+  legacy_ids:
+  - sortDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.aggregate
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Aggregate variables in active data set...
+  command: Aggregate
+  activation: activeDataSetP() && factorsP()
+  install: ''
+  order: 5300
+  module: ezr
+  legacy_ids:
+  - Aggregate
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.remove_rows
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Remove row(s) from active data set...
+  command: RemoveRows
+  activation: activeDataSetP()
+  install: ''
+  order: 5301
+  module: ezr
+  legacy_ids:
+  - RemoveRows
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.stack
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Stack variables in active data set...
+  command: Stack
+  activation: activeDataSetP() && numericP(2)
+  install: ''
+  order: 5302
+  module: ezr
+  legacy_ids:
+  - Stack
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.filter_na
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Remove cases with missing data...
+  command: filterNA
+  activation: activeDataSetP()
+  install: ''
+  order: 5303
+  module: ezr
+  legacy_ids:
+  - filterNA
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.reshape_long2_wide
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Reshape data set from long to wide format...
+  command: reshapeLong2Wide
+  activation: activeDataSetP()
+  install: ''
+  order: 5304
+  module: ezr
+  legacy_ids:
+  - reshapeLong2Wide
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.reshape_wide2_long
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Reshape data set from wide to long format...
+  command: reshapeWide2Long
+  activation: activeDataSetP()
+  install: ''
+  order: 5305
+  module: ezr
+  legacy_ids:
+  - reshapeWide2Long
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.convert_strings2_factors
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Convert all character variables to factors
+  command: convertStrings2Factors
+  activation: characterP()
+  install: ''
+  order: 5306
+  module: ezr
+  legacy_ids:
+  - convertStrings2Factors
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.save_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Save active data set...
+  command: saveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5307
+  module: ezr
+  legacy_ids:
+  - saveDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_active_menu2.export_data_set
+  parent: menu.utilities.ezr_original.data_menu2.active_menu2
+  label: Export active data set...
+  command: exportDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5308
+  module: ezr
+  legacy_ids:
+  - exportDataSet
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.recode_dialog
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Recode variables...
+  command: RecodeDialog
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 5310
+  module: ezr
+  legacy_ids:
+  - RecodeDialog
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.compute
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Compute new variable...
+  command: Compute
+  activation: activeDataSetP()
+  install: ''
+  order: 5311
+  module: ezr
+  legacy_ids:
+  - Compute
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.add_obs_numbers
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Add observation numbers to data set
+  command: addObsNumbers
+  activation: activeDataSetP()
+  install: ''
+  order: 5312
+  module: ezr
+  legacy_ids:
+  - addObsNumbers
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.standardize
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Standardize variables...
+  command: standardize
+  activation: numericP()
+  install: ''
+  order: 5313
+  module: ezr
+  legacy_ids:
+  - standardize
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.numeric_to_factor
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Convert numeric variables to factors...
+  command: numericToFactor
+  activation: numericP()
+  install: ''
+  order: 5314
+  module: ezr
+  legacy_ids:
+  - numericToFactor
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.character_to_factor
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Convert character variables to factors...
+  command: characterToFactor
+  activation: characterP()
+  install: ''
+  order: 5315
+  module: ezr
+  legacy_ids:
+  - characterToFactor
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.bin_variable
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Bin numeric variable...
+  command: binVariable
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5316
+  module: ezr
+  legacy_ids:
+  - binVariable
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.reorder_factor
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Reorder factor levels...
+  command: reorderFactor
+  activation: factorsP()
+  install: ''
+  order: 5317
+  module: ezr
+  legacy_ids:
+  - reorderFactor
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.drop_unused_factor_levels
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Drop unused factor levels...
+  command: dropUnusedFactorLevels
+  activation: factorsP()
+  install: ''
+  order: 5318
+  module: ezr
+  legacy_ids:
+  - dropUnusedFactorLevels
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.set_contrasts
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Define contrasts for a factor...
+  command: setContrasts
+  activation: factorsP()
+  install: ''
+  order: 5319
+  module: ezr
+  legacy_ids:
+  - setContrasts
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.rename_variables
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Rename variables...
+  command: renameVariables
+  activation: activeDataSetP()
+  install: ''
+  order: 5320
+  module: ezr
+  legacy_ids:
+  - renameVariables
+- id: item.ezr.menu_utilities_ezr_original_data_menu2_variables_menu2.delete_variable
+  parent: menu.utilities.ezr_original.data_menu2.variables_menu2
+  label: Delete variables from data set ...
+  command: deleteVariable
+  activation: activeDataSetP()
+  install: ''
+  order: 5321
+  module: ezr
+  legacy_ids:
+  - deleteVariable
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.summarize_data_set
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Active data set
+  command: summarizeDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5324
+  module: ezr
+  legacy_ids:
+  - summarizeDataSet
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.numerical_summaries
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Numerical summaries...
+  command: numericalSummaries
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5325
+  module: ezr
+  legacy_ids:
+  - numericalSummaries
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.frequency_distribution
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Frequency distributions...
+  command: frequencyDistribution
+  activation: factorsP()
+  install: ''
+  order: 5326
+  module: ezr
+  legacy_ids:
+  - frequencyDistribution
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.count_missing
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Count missing observations
+  command: countMissing
+  activation: activeDataSetP()
+  install: ''
+  order: 5327
+  module: ezr
+  legacy_ids:
+  - countMissing
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.statistics_table
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Table of statistics...
+  command: statisticsTable
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5328
+  module: ezr
+  legacy_ids:
+  - statisticsTable
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.correlation_matrix
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Correlation matrix...
+  command: correlationMatrix
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 5329
+  module: ezr
+  legacy_ids:
+  - correlationMatrix
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.correlation_test
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Correlation test...
+  command: correlationTest
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 5330
+  module: ezr
+  legacy_ids:
+  - correlationTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.normality_test
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Test of normality...
+  command: NormalityTest
+  activation: numericP()
+  install: packageAvailable('nortest')
+  order: 5331
+  module: ezr
+  legacy_ids:
+  - NormalityTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_summaries_menu2.transform_variables
+  parent: menu.utilities.ezr_original.statistics_menu2.summaries_menu2
+  label: Transform toward normality...
+  command: transformVariables
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 5332
+  module: ezr
+  legacy_ids:
+  - transformVariables
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_tables_menu2.two_way_table
+  parent: menu.utilities.ezr_original.statistics_menu2.tables_menu2
+  label: Two-way table...
+  command: twoWayTable
+  activation: factorsP(2)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5334
+  module: ezr
+  legacy_ids:
+  - twoWayTable
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_tables_menu2.multi_way_table
+  parent: menu.utilities.ezr_original.statistics_menu2.tables_menu2
+  label: Multi-way table...
+  command: multiWayTable
+  activation: factorsP(3)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5335
+  module: ezr
+  legacy_ids:
+  - multiWayTable
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_tables_menu2.enter_table
+  parent: menu.utilities.ezr_original.statistics_menu2.tables_menu2
+  label: Enter and analyze two-way table...
+  command: enterTable
+  activation: ''
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5336
+  module: ezr
+  legacy_ids:
+  - enterTable
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.single_sample_ttest
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: Single-sample t-test...
+  command: singleSampleTTest
+  activation: numericP()
+  install: ''
+  order: 5338
+  module: ezr
+  legacy_ids:
+  - singleSampleTTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.independent_samples_ttest
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: Independent samples t-test...
+  command: independentSamplesTTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 5339
+  module: ezr
+  legacy_ids:
+  - independentSamplesTTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.paired_ttest
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: Paired t-test...
+  command: pairedTTest
+  activation: numericP(2)
+  install: ''
+  order: 5340
+  module: ezr
+  legacy_ids:
+  - pairedTTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.one_way_anova
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: One-way ANOVA...
+  command: oneWayAnova
+  activation: numericP() && factorsP()
+  install: packageAvailable('multcomp') && packageAvailable('abind')
+  order: 5341
+  module: ezr
+  legacy_ids:
+  - oneWayAnova
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.multi_way_anova
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: Multi-way ANOVA...
+  command: multiWayAnova
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5342
+  module: ezr
+  legacy_ids:
+  - multiWayAnova
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.one_way_repeated_measures
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: One-factor repeated-measures ANOVA/ANCOVA...
+  command: oneWayRepeatedMeasures
+  activation: numericP(2)
+  install: ''
+  order: 5343
+  module: ezr
+  legacy_ids:
+  - oneWayRepeatedMeasures
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_means_menu2.two_way_repeated_measures
+  parent: menu.utilities.ezr_original.statistics_menu2.means_menu2
+  label: Two-factor repeated-measures ANOVA/ANCOVA...
+  command: twoWayRepeatedMeasures
+  activation: numericP(4)
+  install: ''
+  order: 5344
+  module: ezr
+  legacy_ids:
+  - twoWayRepeatedMeasures
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_proportions_menu2.single_proportion_test
+  parent: menu.utilities.ezr_original.statistics_menu2.proportions_menu2
+  label: Single-sample proportion test...
+  command: singleProportionTest
+  activation: twoLevelFactorsP()
+  install: ''
+  order: 5346
+  module: ezr
+  legacy_ids:
+  - singleProportionTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_proportions_menu2.two_sample_proportions_test
+  parent: menu.utilities.ezr_original.statistics_menu2.proportions_menu2
+  label: Two-sample proportions test...
+  command: twoSampleProportionsTest
+  activation: twoLevelFactorsP(2)
+  install: packageAvailable('abind')
+  order: 5347
+  module: ezr
+  legacy_ids:
+  - twoSampleProportionsTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_variances_menu2.two_variances_ftest
+  parent: menu.utilities.ezr_original.statistics_menu2.variances_menu2
+  label: Two-variances F-test...
+  command: twoVariancesFTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 5349
+  module: ezr
+  legacy_ids:
+  - twoVariancesFTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_variances_menu2.bartlett_test
+  parent: menu.utilities.ezr_original.statistics_menu2.variances_menu2
+  label: Bartlett's test...
+  command: BartlettTest
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5350
+  module: ezr
+  legacy_ids:
+  - BartlettTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_variances_menu2.levene_test
+  parent: menu.utilities.ezr_original.statistics_menu2.variances_menu2
+  label: Levene's test...
+  command: LeveneTest
+  activation: numericP() && factorsP()
+  install: packageAvailable('car')
+  order: 5351
+  module: ezr
+  legacy_ids:
+  - LeveneTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_nonparametric_menu2.two_sample_wilcoxon_test
+  parent: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  label: Two-sample Wilcoxon test...
+  command: twoSampleWilcoxonTest
+  activation: numericP() && twoLevelFactorsP()
+  install: ''
+  order: 5353
+  module: ezr
+  legacy_ids:
+  - twoSampleWilcoxonTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_nonparametric_menu2.onesample_wilcoxon_test
+  parent: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  label: Single-sample Wilcoxon test...
+  command: onesampleWilcoxonTest
+  activation: numericP()
+  install: ''
+  order: 5354
+  module: ezr
+  legacy_ids:
+  - onesampleWilcoxonTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_nonparametric_menu2.paired_wilcoxon_test
+  parent: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  label: Paired-samples Wilcoxon test...
+  command: pairedWilcoxonTest
+  activation: numericP(2)
+  install: ''
+  order: 5355
+  module: ezr
+  legacy_ids:
+  - pairedWilcoxonTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_nonparametric_menu2.kruskal_wallis_test
+  parent: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  label: Kruskal-Wallis test...
+  command: KruskalWallisTest
+  activation: numericP() && factorsP()
+  install: ''
+  order: 5356
+  module: ezr
+  legacy_ids:
+  - KruskalWallisTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_nonparametric_menu2.friedman_test
+  parent: menu.utilities.ezr_original.statistics_menu2.nonparametric_menu2
+  label: Friedman rank-sum test...
+  command: FriedmanTest
+  activation: numericP(2)
+  install: ''
+  order: 5357
+  module: ezr
+  legacy_ids:
+  - FriedmanTest
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2.reliability
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  label: Scale reliability...
+  command: Reliability
+  activation: numericP(3)
+  install: packageAvailable('RcmdrMisc')
+  order: 5359
+  module: ezr
+  legacy_ids:
+  - Reliability
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2.principal_components
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  label: Principal-components analysis...
+  command: principalComponents
+  activation: numericP(2)
+  install: ''
+  order: 5360
+  module: ezr
+  legacy_ids:
+  - principalComponents
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2.factor_analysis
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  label: Factor analysis...
+  command: factorAnalysis
+  activation: numericP(3)
+  install: ''
+  order: 5361
+  module: ezr
+  legacy_ids:
+  - factorAnalysis
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2.cfa
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2
+  label: Confirmatory factor analysis...
+  command: CFA
+  activation: numericP(3)
+  install: packageAvailable('sem')
+  order: 5362
+  module: ezr
+  legacy_ids:
+  - CFA
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2_cluster_menu2.kmeans_clustering
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2.cluster_menu2
+  label: k-means cluster analysis...
+  command: kmeansClustering
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5364
+  module: ezr
+  legacy_ids:
+  - kmeansClustering
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2_cluster_menu2.hierarchical_cluster
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2.cluster_menu2
+  label: Hierarchical cluster analysis...
+  command: hierarchicalCluster
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5365
+  module: ezr
+  legacy_ids:
+  - hierarchicalCluster
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2_cluster_menu2.hclust_summary
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2.cluster_menu2
+  label: Summarize hierarchical clustering...
+  command: hclustSummary
+  activation: hclustSolutionsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5366
+  module: ezr
+  legacy_ids:
+  - hclustSummary
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_dimensional_menu2_cluster_menu2.append_hclust_group
+  parent: menu.utilities.ezr_original.statistics_menu2.dimensional_menu2.cluster_menu2
+  label: Add hierarchical clustering to data set...
+  command: appendHclustGroup
+  activation: hclustSolutionsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5367
+  module: ezr
+  legacy_ids:
+  - appendHclustGroup
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.linear_regression_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Linear regression...
+  command: linearRegressionModel
+  activation: numericP(2)
+  install: ''
+  order: 5369
+  module: ezr
+  legacy_ids:
+  - linearRegressionModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.linear_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Linear model...
+  command: linearModel
+  activation: numericP()
+  install: ''
+  order: 5370
+  module: ezr
+  legacy_ids:
+  - linearModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.generalized_linear_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Generalized linear model...
+  command: generalizedLinearModel
+  activation: activeDataSetP()
+  install: ''
+  order: 5371
+  module: ezr
+  legacy_ids:
+  - generalizedLinearModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.multinomial_logit_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Multinomial logit model...
+  command: multinomialLogitModel
+  activation: factorsP()
+  install: packageAvailable('nnet')
+  order: 5372
+  module: ezr
+  legacy_ids:
+  - multinomialLogitModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.ordinal_regression_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Ordinal regression model...
+  command: ordinalRegressionModel
+  activation: factorsP()
+  install: packageAvailable('MASS')
+  order: 5373
+  module: ezr
+  legacy_ids:
+  - ordinalRegressionModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.linear_mixed_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Linear mixed model...
+  command: linearMixedModel
+  activation: numericP()
+  install: packageAvailable('lme4')
+  order: 5374
+  module: ezr
+  legacy_ids:
+  - linearMixedModel
+- id: item.ezr.menu_utilities_ezr_original_statistics_menu2_stat_models_menu2.generalized_linear_mixed_model
+  parent: menu.utilities.ezr_original.statistics_menu2.stat_models_menu2
+  label: Generalized linear mixed model...
+  command: generalizedLinearMixedModel
+  activation: activeDataSetP()
+  install: packageAvailable('lme4')
+  order: 5375
+  module: ezr
+  legacy_ids:
+  - generalizedLinearMixedModel
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.set_palette
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Color palette...
+  command: setPalette
+  activation: ''
+  install: ''
+  order: 5377
+  module: ezr
+  legacy_ids:
+  - setPalette
+- kind: separator
+  parent: menu.utilities.ezr_original.graphs_menu2
+  order: 5378
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.index_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Index plot...
+  command: indexPlot
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5379
+  module: ezr
+  legacy_ids:
+  - indexPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.dot_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Dot plot...
+  command: DotPlot
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5380
+  module: ezr
+  legacy_ids:
+  - DotPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.histogram
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Histogram...
+  command: Histogram
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5381
+  module: ezr
+  legacy_ids:
+  - Histogram
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.discrete_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Plot discrete numeric variable...
+  command: DiscretePlot
+  activation: discreteNumericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5382
+  module: ezr
+  legacy_ids:
+  - DiscretePlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.density_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Density estimate...
+  command: DensityPlot
+  activation: numericP()
+  install: ''
+  order: 5383
+  module: ezr
+  legacy_ids:
+  - DensityPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.stem_and_leaf
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Stem-and-leaf display...
+  command: stemAndLeaf
+  activation: numericP()
+  install: packageAvailable('aplpack')
+  order: 5384
+  module: ezr
+  legacy_ids:
+  - stemAndLeaf
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.box_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Boxplot...
+  command: boxPlot
+  activation: numericP()
+  install: ''
+  order: 5385
+  module: ezr
+  legacy_ids:
+  - boxPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.qqplot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Quantile-comparison plot...
+  command: QQPlot
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 5386
+  module: ezr
+  legacy_ids:
+  - QQPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.symbox
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Symmetry boxplot...
+  command: Symbox
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 5387
+  module: ezr
+  legacy_ids:
+  - Symbox
+- kind: separator
+  parent: menu.utilities.ezr_original.graphs_menu2
+  order: 5388
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.scatter_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Scatterplot...
+  command: scatterPlot
+  activation: numericP(2)
+  install: packageAvailable('car')
+  order: 5389
+  module: ezr
+  legacy_ids:
+  - scatterPlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.scatter_plot_matrix
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Scatterplot matrix...
+  command: scatterPlotMatrix
+  activation: numericP(3)
+  install: packageAvailable('car')
+  order: 5390
+  module: ezr
+  legacy_ids:
+  - scatterPlotMatrix
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.line_plot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Line graph...
+  command: linePlot
+  activation: numericP(2)
+  install: packageAvailable('RcmdrMisc')
+  order: 5391
+  module: ezr
+  legacy_ids:
+  - linePlot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.xyplot
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: XY conditioning plot...
+  command: Xyplot
+  activation: numericP(2)
+  install: ''
+  order: 5392
+  module: ezr
+  legacy_ids:
+  - Xyplot
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.plot_means
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Plot of means...
+  command: PlotMeans
+  activation: numericP() && factorsP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5393
+  module: ezr
+  legacy_ids:
+  - PlotMeans
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.strip_chart
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Strip chart...
+  command: stripChart
+  activation: numericP()
+  install: ''
+  order: 5394
+  module: ezr
+  legacy_ids:
+  - stripChart
+- kind: separator
+  parent: menu.utilities.ezr_original.graphs_menu2
+  order: 5395
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.bar_graph
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Bar graph...
+  command: barGraph
+  activation: factorsP()
+  install: ''
+  order: 5396
+  module: ezr
+  legacy_ids:
+  - barGraph
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2.pie_chart
+  parent: menu.utilities.ezr_original.graphs_menu2
+  label: Pie chart...
+  command: pieChart
+  activation: factorsP()
+  install: packageAvailable('colorspace')
+  order: 5397
+  module: ezr
+  legacy_ids:
+  - pieChart
+- kind: separator
+  parent: menu.utilities.ezr_original.graphs_menu2
+  order: 5398
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_three_dplot_menu2.scatter3_d
+  parent: menu.utilities.ezr_original.graphs_menu2.three_dplot_menu2
+  label: 3D scatterplot...
+  command: Scatter3D
+  activation: numericP(3)
+  install: packageAvailable('rgl')
+  order: 5400
+  module: ezr
+  legacy_ids:
+  - Scatter3D
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_three_dplot_menu2.identify3_d
+  parent: menu.utilities.ezr_original.graphs_menu2.three_dplot_menu2
+  label: Identify observations with mouse
+  command: Identify3D
+  activation: rglLoaded() && 0 != rgl.cur() && !is.null(getRcmdr('Identify3d'))
+  install: packageAvailable('rgl')
+  order: 5401
+  module: ezr
+  legacy_ids:
+  - Identify3D
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_three_dplot_menu2.save_rgl_graph
+  parent: menu.utilities.ezr_original.graphs_menu2.three_dplot_menu2
+  label: Save graph to file
+  command: saveRglGraph
+  activation: rglLoaded() && 0 != rgl.cur()
+  install: packageAvailable('rgl')
+  order: 5402
+  module: ezr
+  legacy_ids:
+  - saveRglGraph
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_save_graphs_menu2.save_bitmap
+  parent: menu.utilities.ezr_original.graphs_menu2.save_graphs_menu2
+  label: as bitmap...
+  command: saveBitmap
+  activation: dev.cur() != 1
+  install: ''
+  order: 5404
+  module: ezr
+  legacy_ids:
+  - saveBitmap
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_save_graphs_menu2.save_pdf
+  parent: menu.utilities.ezr_original.graphs_menu2.save_graphs_menu2
+  label: as PDF/Postscript/EPS...
+  command: savePDF
+  activation: dev.cur() != 1
+  install: ''
+  order: 5405
+  module: ezr
+  legacy_ids:
+  - savePDF
+- id: item.ezr.menu_utilities_ezr_original_graphs_menu2_save_graphs_menu2.save_rgl_graph
+  parent: menu.utilities.ezr_original.graphs_menu2.save_graphs_menu2
+  label: 3D RGL graph...
+  command: saveRglGraph
+  activation: rglLoaded() && 0 != rgl.cur()
+  install: packageAvailable('rgl')
+  order: 5406
+  module: ezr
+  legacy_ids:
+  - saveRglGraph
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.select_active_model
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Select active model...
+  command: selectActiveModel
+  activation: modelsP()
+  install: ''
+  order: 5408
+  module: ezr
+  legacy_ids:
+  - selectActiveModel
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.summarize_model
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Summarize model
+  command: summarizeModel
+  activation: modelCapability('sum')
+  install: ''
+  order: 5409
+  module: ezr
+  legacy_ids:
+  - summarizeModel
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.compare_coefficients
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Compare model coefficients...
+  command: compareCoefficients
+  activation: modelCapability('compc') && modelsP(2)
+  install: ''
+  order: 5410
+  module: ezr
+  legacy_ids:
+  - compareCoefficients
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.add_observation_statistics
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Add observation statistics to data...
+  command: addObservationStatistics
+  activation: activeModelP()
+  install: ''
+  order: 5411
+  module: ezr
+  legacy_ids:
+  - addObservationStatistics
+- kind: separator
+  parent: menu.utilities.ezr_original.models_menu2
+  order: 5412
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.aic
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Akaike Information Criterion (AIC)
+  command: aic
+  activation: modelCapability('aic')
+  install: ''
+  order: 5413
+  module: ezr
+  legacy_ids:
+  - aic
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.bic
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Bayesian Information Criterion (BIC)
+  command: bic
+  activation: modelCapability('bic')
+  install: ''
+  order: 5414
+  module: ezr
+  legacy_ids:
+  - bic
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.stepwise_regression
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Stepwise model selection...
+  command: stepwiseRegression
+  activation: modelCapability('stp')
+  install: packageAvailable('RcmdrMisc') && packageAvailable('MASS')
+  order: 5415
+  module: ezr
+  legacy_ids:
+  - stepwiseRegression
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.subset_regression
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Subset model selection...
+  command: subsetRegression
+  activation: modelCapability('sub')
+  install: packageAvailable('leaps')
+  order: 5416
+  module: ezr
+  legacy_ids:
+  - subsetRegression
+- kind: separator
+  parent: menu.utilities.ezr_original.models_menu2
+  order: 5417
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.confidence_intervals
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Confidence intervals...
+  command: confidenceIntervals
+  activation: modelCapability('con')
+  install: packageAvailable('MASS') && packageAvailable('abind')
+  order: 5418
+  module: ezr
+  legacy_ids:
+  - confidenceIntervals
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.bootstrap
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Bootstrap confidence intervals...
+  command: Bootstrap
+  activation: modelCapability('boot')
+  install: packageAvailable('boot')
+  order: 5419
+  module: ezr
+  legacy_ids:
+  - Bootstrap
+- id: item.ezr.menu_utilities_ezr_original_models_menu2.delta_method_conf_int
+  parent: menu.utilities.ezr_original.models_menu2
+  label: Delta method confidence interval...
+  command: DeltaMethodConfInt
+  activation: modelCapability('del')
+  install: getRcmdr('capabilities')$tktable
+  order: 5420
+  module: ezr
+  legacy_ids:
+  - DeltaMethodConfInt
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_hypothesis_menu2.anova_table
+  parent: menu.utilities.ezr_original.models_menu2.hypothesis_menu2
+  label: ANOVA table...
+  command: anovaTable
+  activation: modelCapability('aov') || modelCapability('Aov')
+  install: packageAvailable('car')
+  order: 5422
+  module: ezr
+  legacy_ids:
+  - anovaTable
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_hypothesis_menu2.compare_models
+  parent: menu.utilities.ezr_original.models_menu2.hypothesis_menu2
+  label: Compare two models...
+  command: compareModels
+  activation: modelCapability('compm') && modelsP(2)
+  install: ''
+  order: 5423
+  module: ezr
+  legacy_ids:
+  - compareModels
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_hypothesis_menu2.test_linear_hypothesis
+  parent: menu.utilities.ezr_original.models_menu2.hypothesis_menu2
+  label: Linear hypothesis...
+  command: testLinearHypothesis
+  activation: modelCapability('lin')
+  install: packageAvailable('car')
+  order: 5424
+  module: ezr
+  legacy_ids:
+  - testLinearHypothesis
+- kind: separator
+  parent: menu.utilities.ezr_original.models_menu2
+  order: 5425
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.vif
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: Variance-inflation factors
+  command: VIF
+  activation: modelCapability('vif')
+  install: packageAvailable('car')
+  order: 5427
+  module: ezr
+  legacy_ids:
+  - VIF
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.breusch_pagan_test
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: Breusch-Pagan test for heteroscedasticity...
+  command: BreuschPaganTest
+  activation: modelCapability('bpt')
+  install: packageAvailable('lmtest')
+  order: 5428
+  module: ezr
+  legacy_ids:
+  - BreuschPaganTest
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.durbin_watson_test
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: Durbin-Watson test for autocorrelation...
+  command: DurbinWatsonTest
+  activation: modelCapability('dwt')
+  install: packageAvailable('lmtest')
+  order: 5429
+  module: ezr
+  legacy_ids:
+  - DurbinWatsonTest
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.resettest
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: RESET test for nonlinearity...
+  command: RESETtest
+  activation: modelCapability('rse')
+  install: packageAvailable('lmtest')
+  order: 5430
+  module: ezr
+  legacy_ids:
+  - RESETtest
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.outlier_test
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: Bonferroni outlier test
+  command: OutlierTest
+  activation: modelCapability('bon')
+  install: packageAvailable('car')
+  order: 5431
+  module: ezr
+  legacy_ids:
+  - OutlierTest
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_diagnostics_menu2.transform_response
+  parent: menu.utilities.ezr_original.models_menu2.diagnostics_menu2
+  label: Response transformation...
+  command: transformResponse
+  activation: modelCapability('tranr')
+  install: packageAvailable('car')
+  order: 5432
+  module: ezr
+  legacy_ids:
+  - transformResponse
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.plot_model
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Basic diagnostic plots
+  command: plotModel
+  activation: modelCapability('plt')
+  install: ''
+  order: 5434
+  module: ezr
+  legacy_ids:
+  - plotModel
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.residual_qqplot
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Residual quantile-comparison plot...
+  command: residualQQPlot
+  activation: modelCapability('qqp')
+  install: packageAvailable('car')
+  order: 5435
+  module: ezr
+  legacy_ids:
+  - residualQQPlot
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.crplots
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Component+residual plots...
+  command: CRPlots
+  activation: modelCapability('crp')
+  install: packageAvailable('car')
+  order: 5436
+  module: ezr
+  legacy_ids:
+  - CRPlots
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.avplots
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Added-variable plots...
+  command: AVPlots
+  activation: modelCapability('avp')
+  install: packageAvailable('car')
+  order: 5437
+  module: ezr
+  legacy_ids:
+  - AVPlots
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.influence_plot
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Influence plot...
+  command: InfluencePlot
+  activation: modelCapability('infp')
+  install: packageAvailable('car')
+  order: 5438
+  module: ezr
+  legacy_ids:
+  - InfluencePlot
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.influence_index_plot
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Influence index plot...
+  command: InfluenceIndexPlot
+  activation: modelCapability('infp')
+  install: packageAvailable('car')
+  order: 5439
+  module: ezr
+  legacy_ids:
+  - InfluenceIndexPlot
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.effect_plots
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Effect plots...
+  command: effectPlots
+  activation: modelCapability('effp')
+  install: packageAvailable('effects')
+  order: 5440
+  module: ezr
+  legacy_ids:
+  - effectPlots
+- id: item.ezr.menu_utilities_ezr_original_models_menu2_models_graphs_menu2.predictor_effect_plots
+  parent: menu.utilities.ezr_original.models_menu2.models_graphs_menu2
+  label: Predictor effect plots...
+  command: predictorEffectPlots
+  activation: modelCapability('effp')
+  install: packageAvailable('effects')
+  order: 5441
+  module: ezr
+  legacy_ids:
+  - predictorEffectPlots
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2.set_random_seed
+  parent: menu.utilities.ezr_original.distributions_menu2
+  label: Set random number generator seed...
+  command: setRandomSeed
+  activation: ''
+  install: ''
+  order: 5445
+  module: ezr
+  legacy_ids:
+  - setRandomSeed
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_normal_menu2.normal_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.normal_menu2
+  label: Normal quantiles...
+  command: normalQuantiles
+  activation: ''
+  install: ''
+  order: 5447
+  module: ezr
+  legacy_ids:
+  - normalQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_normal_menu2.normal_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.normal_menu2
+  label: Normal probabilities...
+  command: normalProbabilities
+  activation: ''
+  install: ''
+  order: 5448
+  module: ezr
+  legacy_ids:
+  - normalProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_normal_menu2.normal_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.normal_menu2
+  label: Plot normal distribution...
+  command: normalDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5449
+  module: ezr
+  legacy_ids:
+  - normalDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_normal_menu2.normal_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.normal_menu2
+  label: Sample from normal distribution...
+  command: normalDistributionSamples
+  activation: ''
+  install: ''
+  order: 5450
+  module: ezr
+  legacy_ids:
+  - normalDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_t_menu2.t_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.t_menu2
+  label: t quantiles...
+  command: tQuantiles
+  activation: ''
+  install: ''
+  order: 5452
+  module: ezr
+  legacy_ids:
+  - tQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_t_menu2.t_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.t_menu2
+  label: t probabilities...
+  command: tProbabilities
+  activation: ''
+  install: ''
+  order: 5453
+  module: ezr
+  legacy_ids:
+  - tProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_t_menu2.t_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.t_menu2
+  label: Plot t distribution...
+  command: tDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5454
+  module: ezr
+  legacy_ids:
+  - tDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_t_menu2.t_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.t_menu2
+  label: Sample from t distribution...
+  command: tDistributionSamples
+  activation: ''
+  install: ''
+  order: 5455
+  module: ezr
+  legacy_ids:
+  - tDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_chisq_menu2.chisq_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.chisq_menu2
+  label: Chi-squared quantiles...
+  command: chisqQuantiles
+  activation: ''
+  install: ''
+  order: 5457
+  module: ezr
+  legacy_ids:
+  - chisqQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_chisq_menu2.chisq_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.chisq_menu2
+  label: Chi-squared probabilities...
+  command: chisqProbabilities
+  activation: ''
+  install: ''
+  order: 5458
+  module: ezr
+  legacy_ids:
+  - chisqProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_chisq_menu2.chisq_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.chisq_menu2
+  label: Plot chi-squared distribution...
+  command: chisqDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5459
+  module: ezr
+  legacy_ids:
+  - chisqDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_chisq_menu2.chisq_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.chisq_menu2
+  label: Sample from chi-squared distribution...
+  command: chisqDistributionSamples
+  activation: ''
+  install: ''
+  order: 5460
+  module: ezr
+  legacy_ids:
+  - chisqDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_fmenu2.fquantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.fmenu2
+  label: F quantiles...
+  command: FQuantiles
+  activation: ''
+  install: ''
+  order: 5462
+  module: ezr
+  legacy_ids:
+  - FQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_fmenu2.fprobabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.fmenu2
+  label: F probabilities...
+  command: FProbabilities
+  activation: ''
+  install: ''
+  order: 5463
+  module: ezr
+  legacy_ids:
+  - FProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_fmenu2.fdistribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.fmenu2
+  label: Plot F distribution...
+  command: FDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5464
+  module: ezr
+  legacy_ids:
+  - FDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_fmenu2.fdistribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.fmenu2
+  label: Sample from F distribution...
+  command: FDistributionSamples
+  activation: ''
+  install: ''
+  order: 5465
+  module: ezr
+  legacy_ids:
+  - FDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_exponential_menu2.exponential_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.exponential_menu2
+  label: Exponential quantiles...
+  command: exponentialQuantiles
+  activation: ''
+  install: ''
+  order: 5467
+  module: ezr
+  legacy_ids:
+  - exponentialQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_exponential_menu2.exponential_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.exponential_menu2
+  label: Exponential probabilities...
+  command: exponentialProbabilities
+  activation: ''
+  install: ''
+  order: 5468
+  module: ezr
+  legacy_ids:
+  - exponentialProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_exponential_menu2.exponential_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.exponential_menu2
+  label: Plot exponential distribution...
+  command: exponentialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5469
+  module: ezr
+  legacy_ids:
+  - exponentialDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_exponential_menu2.exponential_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.exponential_menu2
+  label: Sample from exponential distribution...
+  command: exponentialDistributionSamples
+  activation: ''
+  install: ''
+  order: 5470
+  module: ezr
+  legacy_ids:
+  - exponentialDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_uniform_menu2.uniform_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.uniform_menu2
+  label: Uniform quantiles...
+  command: uniformQuantiles
+  activation: ''
+  install: ''
+  order: 5472
+  module: ezr
+  legacy_ids:
+  - uniformQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_uniform_menu2.uniform_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.uniform_menu2
+  label: Uniform probabilities...
+  command: uniformProbabilities
+  activation: ''
+  install: ''
+  order: 5473
+  module: ezr
+  legacy_ids:
+  - uniformProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_uniform_menu2.uniform_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.uniform_menu2
+  label: Plot uniform distribution...
+  command: uniformDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5474
+  module: ezr
+  legacy_ids:
+  - uniformDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_uniform_menu2.uniform_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.uniform_menu2
+  label: Sample from uniform distribution...
+  command: uniformDistributionSamples
+  activation: ''
+  install: ''
+  order: 5475
+  module: ezr
+  legacy_ids:
+  - uniformDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_beta_menu2.beta_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.beta_menu2
+  label: Beta quantiles...
+  command: betaQuantiles
+  activation: ''
+  install: ''
+  order: 5477
+  module: ezr
+  legacy_ids:
+  - betaQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_beta_menu2.beta_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.beta_menu2
+  label: Beta probabilities...
+  command: betaProbabilities
+  activation: ''
+  install: ''
+  order: 5478
+  module: ezr
+  legacy_ids:
+  - betaProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_beta_menu2.beta_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.beta_menu2
+  label: Plot beta distribution...
+  command: betaDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5479
+  module: ezr
+  legacy_ids:
+  - betaDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_beta_menu2.beta_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.beta_menu2
+  label: Sample from beta distribution...
+  command: betaDistributionSamples
+  activation: ''
+  install: ''
+  order: 5480
+  module: ezr
+  legacy_ids:
+  - betaDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_cauchy_menu2.cauchy_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.cauchy_menu2
+  label: Cauchy quantiles...
+  command: CauchyQuantiles
+  activation: ''
+  install: ''
+  order: 5482
+  module: ezr
+  legacy_ids:
+  - CauchyQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_cauchy_menu2.cauchy_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.cauchy_menu2
+  label: Cauchy probabilities...
+  command: CauchyProbabilities
+  activation: ''
+  install: ''
+  order: 5483
+  module: ezr
+  legacy_ids:
+  - CauchyProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_cauchy_menu2.cauchy_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.cauchy_menu2
+  label: Plot Cauchy distribution...
+  command: CauchyDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5484
+  module: ezr
+  legacy_ids:
+  - CauchyDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_cauchy_menu2.cauchy_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.cauchy_menu2
+  label: Sample from Cauchy distribution...
+  command: CauchyDistributionSamples
+  activation: ''
+  install: ''
+  order: 5485
+  module: ezr
+  legacy_ids:
+  - CauchyDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_logistic_menu2.logistic_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.logistic_menu2
+  label: Logistic quantiles...
+  command: logisticQuantiles
+  activation: ''
+  install: ''
+  order: 5487
+  module: ezr
+  legacy_ids:
+  - logisticQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_logistic_menu2.logistic_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.logistic_menu2
+  label: Logistic probabilities...
+  command: logisticProbabilities
+  activation: ''
+  install: ''
+  order: 5488
+  module: ezr
+  legacy_ids:
+  - logisticProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_logistic_menu2.logistic_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.logistic_menu2
+  label: Plot logistic distribution...
+  command: logisticDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5489
+  module: ezr
+  legacy_ids:
+  - logisticDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_logistic_menu2.logistic_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.logistic_menu2
+  label: Sample from logistic distribution...
+  command: logisticDistributionSamples
+  activation: ''
+  install: ''
+  order: 5490
+  module: ezr
+  legacy_ids:
+  - logisticDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_lognormal_menu2.lognormal_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.lognormal_menu2
+  label: Lognormal quantiles...
+  command: lognormalQuantiles
+  activation: ''
+  install: ''
+  order: 5492
+  module: ezr
+  legacy_ids:
+  - lognormalQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_lognormal_menu2.lognormal_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.lognormal_menu2
+  label: Lognormal probabilities...
+  command: lognormalProbabilities
+  activation: ''
+  install: ''
+  order: 5493
+  module: ezr
+  legacy_ids:
+  - lognormalProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_lognormal_menu2.lognormal_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.lognormal_menu2
+  label: Plot lognormal distribution...
+  command: lognormalDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5494
+  module: ezr
+  legacy_ids:
+  - lognormalDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_lognormal_menu2.lognormal_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.lognormal_menu2
+  label: Sample from lognormal distribution...
+  command: lognormalDistributionSamples
+  activation: ''
+  install: ''
+  order: 5495
+  module: ezr
+  legacy_ids:
+  - lognormalDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gamma_menu2.gamma_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gamma_menu2
+  label: Gamma quantiles...
+  command: gammaQuantiles
+  activation: ''
+  install: ''
+  order: 5497
+  module: ezr
+  legacy_ids:
+  - gammaQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gamma_menu2.gamma_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gamma_menu2
+  label: Gamma probabilities...
+  command: gammaProbabilities
+  activation: ''
+  install: ''
+  order: 5498
+  module: ezr
+  legacy_ids:
+  - gammaProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gamma_menu2.gamma_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gamma_menu2
+  label: Plot gamma distribution...
+  command: gammaDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5499
+  module: ezr
+  legacy_ids:
+  - gammaDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gamma_menu2.gamma_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gamma_menu2
+  label: Sample from gamma distribution...
+  command: gammaDistributionSamples
+  activation: ''
+  install: ''
+  order: 5500
+  module: ezr
+  legacy_ids:
+  - gammaDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_weibull_menu2.weibull_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.weibull_menu2
+  label: Weibull quantiles...
+  command: WeibullQuantiles
+  activation: ''
+  install: ''
+  order: 5502
+  module: ezr
+  legacy_ids:
+  - WeibullQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_weibull_menu2.weibull_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.weibull_menu2
+  label: Weibull probabilities...
+  command: WeibullProbabilities
+  activation: ''
+  install: ''
+  order: 5503
+  module: ezr
+  legacy_ids:
+  - WeibullProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_weibull_menu2.weibull_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.weibull_menu2
+  label: Plot Weibull distribution...
+  command: WeibullDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5504
+  module: ezr
+  legacy_ids:
+  - WeibullDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_weibull_menu2.weibull_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.weibull_menu2
+  label: Sample from Weibull distribution...
+  command: WeibullDistributionSamples
+  activation: ''
+  install: ''
+  order: 5505
+  module: ezr
+  legacy_ids:
+  - WeibullDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gumbel_menu2.gumbel_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gumbel_menu2
+  label: Gumbel quantiles...
+  command: GumbelQuantiles
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 5507
+  module: ezr
+  legacy_ids:
+  - GumbelQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gumbel_menu2.gumbel_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gumbel_menu2
+  label: Gumbel probabilities...
+  command: GumbelProbabilities
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 5508
+  module: ezr
+  legacy_ids:
+  - GumbelProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gumbel_menu2.gumbel_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gumbel_menu2
+  label: Plot Gumbel distribution...
+  command: GumbelDistributionPlot
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 5509
+  module: ezr
+  legacy_ids:
+  - GumbelDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_continuous_menu2_gumbel_menu2.gumbel_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.continuous_menu2.gumbel_menu2
+  label: Sample from Gumbel distribution...
+  command: GumbelDistributionSamples
+  activation: ''
+  install: packageAvailable('VGAM')
+  order: 5510
+  module: ezr
+  legacy_ids:
+  - GumbelDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_binomial_menu2.binomial_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  label: Binomial quantiles...
+  command: binomialQuantiles
+  activation: ''
+  install: ''
+  order: 5512
+  module: ezr
+  legacy_ids:
+  - binomialQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_binomial_menu2.binomial_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  label: Binomial tail probabilities...
+  command: binomialProbabilities
+  activation: ''
+  install: ''
+  order: 5513
+  module: ezr
+  legacy_ids:
+  - binomialProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_binomial_menu2.binomial_mass
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  label: Binomial probabilities...
+  command: binomialMass
+  activation: ''
+  install: ''
+  order: 5514
+  module: ezr
+  legacy_ids:
+  - binomialMass
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_binomial_menu2.binomial_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  label: Plot binomial distribution...
+  command: binomialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5515
+  module: ezr
+  legacy_ids:
+  - binomialDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_binomial_menu2.binomial_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.binomial_menu2
+  label: Sample from binomial distribution...
+  command: binomialDistributionSamples
+  activation: ''
+  install: ''
+  order: 5516
+  module: ezr
+  legacy_ids:
+  - binomialDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_poisson_menu2.poisson_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  label: Poisson quantiles...
+  command: PoissonQuantiles
+  activation: ''
+  install: ''
+  order: 5518
+  module: ezr
+  legacy_ids:
+  - PoissonQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_poisson_menu2.poisson_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  label: Poisson tail probabilities...
+  command: PoissonProbabilities
+  activation: ''
+  install: ''
+  order: 5519
+  module: ezr
+  legacy_ids:
+  - PoissonProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_poisson_menu2.poisson_mass
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  label: Poisson probabilities...
+  command: PoissonMass
+  activation: ''
+  install: ''
+  order: 5520
+  module: ezr
+  legacy_ids:
+  - PoissonMass
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_poisson_menu2.poisson_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  label: Plot Poisson distribution...
+  command: PoissonDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5521
+  module: ezr
+  legacy_ids:
+  - PoissonDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_poisson_menu2.poisson_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.poisson_menu2
+  label: Sample from Poisson distribution...
+  command: PoissonDistributionSamples
+  activation: ''
+  install: ''
+  order: 5522
+  module: ezr
+  legacy_ids:
+  - PoissonDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_geometric_menu2.geom_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  label: Geometric quantiles...
+  command: geomQuantiles
+  activation: ''
+  install: ''
+  order: 5524
+  module: ezr
+  legacy_ids:
+  - geomQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_geometric_menu2.geom_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  label: Geometric tail probabilities...
+  command: geomProbabilities
+  activation: ''
+  install: ''
+  order: 5525
+  module: ezr
+  legacy_ids:
+  - geomProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_geometric_menu2.geom_mass
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  label: Geometric probabilities...
+  command: geomMass
+  activation: ''
+  install: ''
+  order: 5526
+  module: ezr
+  legacy_ids:
+  - geomMass
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_geometric_menu2.geom_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  label: Plot geometric distribution...
+  command: geomDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5527
+  module: ezr
+  legacy_ids:
+  - geomDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_geometric_menu2.geom_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.geometric_menu2
+  label: Sample from geometric distribution...
+  command: geomDistributionSamples
+  activation: ''
+  install: ''
+  order: 5528
+  module: ezr
+  legacy_ids:
+  - geomDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_hyper_menu2.hyper_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  label: Hypergeometric quantiles...
+  command: hyperQuantiles
+  activation: ''
+  install: ''
+  order: 5530
+  module: ezr
+  legacy_ids:
+  - hyperQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_hyper_menu2.hyper_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  label: Hypergeometric tail probabilities...
+  command: hyperProbabilities
+  activation: ''
+  install: ''
+  order: 5531
+  module: ezr
+  legacy_ids:
+  - hyperProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_hyper_menu2.hyper_mass
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  label: Hypergeometric probabilities...
+  command: hyperMass
+  activation: ''
+  install: ''
+  order: 5532
+  module: ezr
+  legacy_ids:
+  - hyperMass
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_hyper_menu2.hyper_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  label: Plot hypergeometric distribution...
+  command: hyperDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5533
+  module: ezr
+  legacy_ids:
+  - hyperDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_hyper_menu2.hyper_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.hyper_menu2
+  label: Sample from hypergeometric distribution...
+  command: hyperDistributionSamples
+  activation: ''
+  install: ''
+  order: 5534
+  module: ezr
+  legacy_ids:
+  - hyperDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_negbinomial_menu2.negbinomial_quantiles
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  label: Negative binomial quantiles...
+  command: negbinomialQuantiles
+  activation: ''
+  install: ''
+  order: 5536
+  module: ezr
+  legacy_ids:
+  - negbinomialQuantiles
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_negbinomial_menu2.negbinomial_probabilities
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  label: Negative binomial tail probabilities...
+  command: negbinomialProbabilities
+  activation: ''
+  install: ''
+  order: 5537
+  module: ezr
+  legacy_ids:
+  - negbinomialProbabilities
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_negbinomial_menu2.negbinomial_mass
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  label: Negative binomial probabilities...
+  command: negbinomialMass
+  activation: ''
+  install: ''
+  order: 5538
+  module: ezr
+  legacy_ids:
+  - negbinomialMass
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_negbinomial_menu2.negbinomial_distribution_plot
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  label: Plot negative binomial distribution...
+  command: negbinomialDistributionPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5539
+  module: ezr
+  legacy_ids:
+  - negbinomialDistributionPlot
+- id: item.ezr.menu_utilities_ezr_original_distributions_menu2_discrete_menu2_negbinomial_menu2.negbinomial_distribution_samples
+  parent: menu.utilities.ezr_original.distributions_menu2.discrete_menu2.negbinomial_menu2
+  label: Sample from negative binomial distribution...
+  command: negbinomialDistributionSamples
+  activation: ''
+  install: ''
+  order: 5540
+  module: ezr
+  legacy_ids:
+  - negbinomialDistributionSamples
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.load_packages
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Load package(s)...
+  command: loadPackages
+  activation: ''
+  install: ''
+  order: 5542
+  module: ezr
+  legacy_ids:
+  - loadPackages
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.load_plugins
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Load Rcmdr plug-in(s)...
+  command: loadPlugins
+  activation: length(listPlugins()) > 0
+  install: ''
+  order: 5543
+  module: ezr
+  legacy_ids:
+  - loadPlugins
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.options
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Options...
+  command: Options
+  activation: ''
+  install: ''
+  order: 5544
+  module: ezr
+  legacy_ids:
+  - Options
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.save_options
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Save Rcmdr options...
+  command: saveOptions
+  activation: ''
+  install: ''
+  order: 5545
+  module: ezr
+  legacy_ids:
+  - saveOptions
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.app_nap
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Manage Mac OS X app nap for R.app...
+  command: appNap
+  activation: ''
+  install: RappP()  && mavericksP()
+  order: 5546
+  module: ezr
+  legacy_ids:
+  - appNap
+- id: item.ezr.menu_utilities_ezr_original_tools_menu2.install_software
+  parent: menu.utilities.ezr_original.tools_menu2
+  label: Install auxiliary software...
+  command: installSoftware
+  activation: ''
+  install: any(!unlist(getRcmdr('capabilities')))
+  order: 5547
+  module: ezr
+  legacy_ids:
+  - installSoftware
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.help_commander
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Commander help
+  command: helpCommander
+  activation: ''
+  install: ''
+  order: 5549
+  module: ezr
+  legacy_ids:
+  - helpCommander
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_manual
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Introduction to the R Commander
+  command: browseManual
+  activation: ''
+  install: ''
+  order: 5550
+  module: ezr
+  legacy_ids:
+  - browseManual
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_english_manual
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Introduction to the R Commander (English version)
+  command: browseEnglishManual
+  activation: ''
+  install: manualTranslationP()
+  order: 5551
+  module: ezr
+  legacy_ids:
+  - browseEnglishManual
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_rcmdr_website
+  parent: menu.utilities.ezr_original.help_menu2
+  label: R Commander website
+  command: browseRcmdrWebsite
+  activation: ''
+  install: ''
+  order: 5552
+  module: ezr
+  legacy_ids:
+  - browseRcmdrWebsite
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.help_about_commander
+  parent: menu.utilities.ezr_original.help_menu2
+  label: About Rcmdr
+  command: helpAboutCommander
+  activation: ''
+  install: ''
+  order: 5553
+  module: ezr
+  legacy_ids:
+  - helpAboutCommander
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_rcmdr_hex_sticker
+  parent: menu.utilities.ezr_original.help_menu2
+  label: R Commander hex sticker
+  command: browseRcmdrHexSticker
+  activation: ''
+  install: ''
+  order: 5554
+  module: ezr
+  legacy_ids:
+  - browseRcmdrHexSticker
+- kind: separator
+  parent: menu.utilities.ezr_original.help_menu2
+  order: 5555
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.help_data_set
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5556
+  module: ezr
+  legacy_ids:
+  - helpDataSet
+- kind: separator
+  parent: menu.utilities.ezr_original.help_menu2
+  order: 5557
+  module: ezr
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.start_help
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Start R help system
+  command: startHelp
+  activation: ''
+  install: ''
+  order: 5558
+  module: ezr
+  legacy_ids:
+  - startHelp
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_rwebsite
+  parent: menu.utilities.ezr_original.help_menu2
+  label: R website
+  command: browseRWebsite
+  activation: ''
+  install: ''
+  order: 5559
+  module: ezr
+  legacy_ids:
+  - browseRWebsite
+- id: item.ezr.menu_utilities_ezr_original_help_menu2.browse_rmarkdown
+  parent: menu.utilities.ezr_original.help_menu2
+  label: Using R Markdown
+  command: browseRMarkdown
+  activation: ''
+  install: ''
+  order: 5560
+  module: ezr
+  legacy_ids:
+  - browseRMarkdown
+removes: []
+

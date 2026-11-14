@@ -1,0 +1,296 @@
+version: 1
+module: hh
+groups: []
+items:
+- id: item.hh.menu_analyze_tables_menu.two_way_table_hh
+  parent: menu.analyze.tables_menu
+  label: Two-way table... (HH)
+  command: twoWayTable.HH
+  activation: factorsP(2)
+  install: packageAvailable('HH')
+  order: 5001
+  module: hh
+  legacy_ids:
+  - twoWayTable.HH
+- id: item.hh.menu_analyze_tables_menu.enter_table_hh
+  parent: menu.analyze.tables_menu
+  label: Enter and analyze two-way table... (HH)
+  command: enterTable.HH
+  activation: ''
+  install: packageAvailable('HH')
+  order: 5002
+  module: hh
+  legacy_ids:
+  - enterTable.HH
+- id: item.hh.menu_analyze_tables_menu.analyze_two_way_table_hh
+  parent: menu.analyze.tables_menu
+  label: Analyze two-way table... (HH)
+  command: analyzeTwoWayTable.HH
+  activation: numericP()
+  install: ''
+  order: 5003
+  module: hh
+  legacy_ids:
+  - analyzeTwoWayTable.HH
+- id: item.hh.menu_analyze_models.best_subsets_regression_model_hh
+  parent: menu.analyze.models
+  label: Best subsets regression... (HH)
+  command: bestSubsetsRegressionModel.HH
+  activation: numericP(2)
+  install: packageAvailable('leaps')
+  order: 5004
+  module: hh
+  legacy_ids:
+  - bestSubsetsRegressionModel.HH
+- id: item.hh.menu_analyze_models.confidence_intervals_plot
+  parent: menu.analyze.models
+  label: Confidence interval Plot...
+  command: confidenceIntervalsPlot
+  activation: numericP(2)
+  install: ''
+  order: 5005
+  module: hh
+  legacy_ids:
+  - confidenceIntervalsPlot
+- id: item.hh.menu_analyze_models.predict_model
+  parent: menu.analyze.models
+  label: Prediction Intervals... (HH)
+  command: PredictModel
+  activation: activeModelP()
+  install: ''
+  order: 5006
+  module: hh
+  legacy_ids:
+  - PredictModel
+- id: item.hh.menu_graphs.scatter_plot_hh
+  parent: menu.graphs
+  label: Scatterplot.HH... (HH)
+  command: scatterPlot.HH
+  activation: numericP(2)
+  install: packageAvailable('car')
+  order: 5007
+  module: hh
+  legacy_ids:
+  - scatterPlot.HH
+- id: item.hh.menu_graphs.scatter_plot_matrix_hh
+  parent: menu.graphs
+  label: Scatterplot matrix... (HH)
+  command: scatterPlotMatrix.HH
+  activation: numericP(3)
+  install: packageAvailable('car')
+  order: 5008
+  module: hh
+  legacy_ids:
+  - scatterPlotMatrix.HH
+- id: item.hh.menu_graphs.xyplot_hh
+  parent: menu.graphs
+  label: XY conditioning plot... (HH)
+  command: Xyplot.HH
+  activation: numericP(2)
+  install: packageAvailable('lattice')
+  order: 5009
+  module: hh
+  legacy_ids:
+  - Xyplot.HH
+- id: item.hh.menu_graphs.xyplot_hh2
+  parent: menu.graphs
+  label: lattice plot... (HH)
+  command: Xyplot.HH2
+  activation: numericP(1)
+  install: packageAvailable('lattice')
+  order: 5010
+  module: hh
+  legacy_ids:
+  - Xyplot.HH2
+- id: item.hh.menu_graphs.likert_formula
+  parent: menu.graphs
+  label: likert plot (formula)... (HH)
+  command: LikertFormula
+  activation: factorsP(2)
+  install: packageAvailable('HH')
+  order: 5011
+  module: hh
+  legacy_ids:
+  - LikertFormula
+- id: item.hh.menu_graphs.resize_etc_dialog
+  parent: menu.graphs
+  label: Resize lattice plots...
+  command: ResizeEtcDialog
+  activation: modelsP()
+  install: packageAvailable('HH')
+  order: 5012
+  module: hh
+  legacy_ids:
+  - ResizeEtcDialog
+- id: item.hh.menu_graphs.interaction2wt_rcmdr
+  parent: menu.graphs
+  label: Plot of two-way interactions... (HH)
+  command: Interaction2wtRcmdr
+  activation: numericP() && factorsP(2)
+  install: packageAvailable('HH')
+  order: 5013
+  module: hh
+  legacy_ids:
+  - Interaction2wtRcmdr
+- id: item.hh.menu_graphs.dotplottb_rcmdr
+  parent: menu.graphs
+  label: Dotplot with stacked multiple hits... (HH)
+  command: DotplottbRcmdr
+  activation: numericP()
+  install: packageAvailable('lattice')
+  order: 5014
+  module: hh
+  legacy_ids:
+  - DotplottbRcmdr
+- id: item.hh.menu_graphs.regr1_plot
+  parent: menu.graphs
+  label: Squared Residuals... (HH)
+  command: Regr1Plot
+  activation: numericP(2)
+  install: ''
+  order: 5015
+  module: hh
+  legacy_ids:
+  - Regr1Plot
+- id: item.hh.menu_graphs.qqplot_hh
+  parent: menu.graphs
+  label: Quantile-comparison plot with test...
+  command: QQPlot.HH
+  activation: numericP()
+  install: packageAvailable('car')
+  order: 5016
+  module: hh
+  legacy_ids:
+  - QQPlot.HH
+- id: item.hh.menu_graphs_three_dplot_menu.scatter3_ddialog_hh
+  parent: menu.graphs.three_dplot_menu
+  label: 3D scatterplot... (HH)
+  command: Scatter3DDialog.HH
+  activation: numericP(3)
+  install: packageAvailable('rgl')
+  order: 5017
+  module: hh
+  legacy_ids:
+  - Scatter3DDialog.HH
+- id: item.hh.menu_analyze_models_hypothesis_menu.anova_table_ii_hh
+  parent: menu.analyze.models.hypothesis_menu
+  label: ANOVA table (Type II Sums of Squares)
+  command: anovaTableII.HH
+  activation: activeModelP()
+  install: packageAvailable('car')
+  order: 5018
+  module: hh
+  legacy_ids:
+  - anovaTableII.HH
+- id: item.hh.menu_analyze_models_hypothesis_menu.anova_table_i_hh
+  parent: menu.analyze.models.hypothesis_menu
+  label: ANOVA table (Type I Sums of Squares)
+  command: anovaTableI.HH
+  activation: activeModelP()
+  install: ''
+  order: 5019
+  module: hh
+  legacy_ids:
+  - anovaTableI.HH
+- id: item.hh.menu_analyze_distributions_continuous_menu_normal_menu.normal_and_t_hypotheses_plot
+  parent: menu.analyze.distributions.continuous_menu.normal_menu
+  label: Plot hypotheses or Confidence Intervals... (HH)
+  command: normal.and.t.hypotheses.plot
+  activation: ''
+  install: packageAvailable('HH')
+  order: 5020
+  module: hh
+  legacy_ids:
+  - normal.and.t.hypotheses.plot
+- id: item.hh.menu_analyze_distributions_continuous_menu_t_menu.normal_and_t_hypotheses_plot
+  parent: menu.analyze.distributions.continuous_menu.t_menu
+  label: Plot hypotheses or Confidence Intervals... (HH)
+  command: normal.and.t.hypotheses.plot
+  activation: ''
+  install: packageAvailable('HH')
+  order: 5021
+  module: hh
+  legacy_ids:
+  - normal.and.t.hypotheses.plot
+- id: item.hh.menu_analyze_distributions_continuous_menu_fmenu.fhypotheses_plot
+  parent: menu.analyze.distributions.continuous_menu.fmenu
+  label: Plot F hypotheses... (HH)
+  command: FHypothesesPlot
+  activation: ''
+  install: packageAvailable('HH')
+  order: 5022
+  module: hh
+  legacy_ids:
+  - FHypothesesPlot
+- id: item.hh.menu_analyze_distributions_continuous_menu_chisq_menu.chisq_hypotheses_plot
+  parent: menu.analyze.distributions.continuous_menu.chisq_menu
+  label: Plot chi-squared hypotheses... (HH)
+  command: ChisqHypothesesPlot
+  activation: ''
+  install: packageAvailable('HH')
+  order: 5023
+  module: hh
+  legacy_ids:
+  - ChisqHypothesesPlot
+- id: item.hh.menu_utilities.projector
+  parent: menu.utilities
+  label: Large Font for Projectors (HH)
+  command: Projector
+  activation: ''
+  install: ''
+  order: 5024
+  module: hh
+  legacy_ids:
+  - Projector
+- id: item.hh.menu_utilities.h600
+  parent: menu.utilities
+  label: Small Font for 600 pixel height netbook (HH)
+  command: H600
+  activation: ''
+  install: ''
+  order: 5025
+  module: hh
+  legacy_ids:
+  - H600
+- id: item.hh.menu_utilities.r_options
+  parent: menu.utilities
+  label: R options (HH)
+  command: R_options
+  activation: ''
+  install: ''
+  order: 5026
+  module: hh
+  legacy_ids:
+  - R_options
+- id: item.hh.menu_analyze_models_models_graphs_menu.mmcmenu
+  parent: menu.analyze.models.models_graphs_menu
+  label: MMC Plot... (HH)
+  command: MMCmenu
+  activation: aovModelsP()
+  install: packageAvailable('HH')
+  order: 5027
+  module: hh
+  legacy_ids:
+  - MMCmenu
+- id: item.hh.menu_file_exit_menu.close_commander_restart
+  parent: menu.file.exit_menu
+  label: From Commander and restart Commander
+  command: CloseCommanderRestart
+  activation: ''
+  install: ''
+  order: 5028
+  module: hh
+  legacy_ids:
+  - CloseCommanderRestart
+- id: item.hh.menu_file_exit_menu.close_commander_no_question_restart
+  parent: menu.file.exit_menu
+  label: From Commander and restart Commander, no questions
+  command: CloseCommanderNoQuestionRestart
+  activation: ''
+  install: ''
+  order: 5029
+  module: hh
+  legacy_ids:
+  - CloseCommanderNoQuestionRestart
+removes: []
+

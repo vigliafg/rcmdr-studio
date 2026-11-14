@@ -1,0 +1,16 @@
+version: 1
+module: sos
+groups: []
+items:
+- id: item.sos.menu_help.sos_init
+  parent: menu.help
+  label: Search R help system... (sos)
+  command: sosInit
+  activation: ''
+  install: packageAvailable('sos')
+  order: 5001
+  module: sos
+  legacy_ids:
+  - sosInit
+removes: []
+

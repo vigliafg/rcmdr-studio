@@ -11,14 +11,19 @@ test_that("the Rcmdr menu file is installed and parsed", {
   )
 })
 
-test_that("the menu tree has the Rcmdr top-level menus", {
+test_that("the menu tree has the curated top-level menus", {
   tree <- menu_tree()
   labels <- vapply(tree, function(node) node$label, character(1))
 
   expect_true(all(c(
-    "File", "Edit", "Data", "Statistics", "Graphs", "Models",
-    "Distributions", "Tools", "Help"
+    "File", "Edit", "Data", "Transform", "Analyze", "Graphs",
+    "Reports", "Utilities", "Help"
   ) %in% labels))
+
+  analyze <- tree[[match("Analyze", labels)]]
+  analyze_labels <- vapply(analyze$children,
+                           function(node) node$label, character(1))
+  expect_true(all(c("Models", "Distributions") %in% analyze_labels))
 })
 
 test_that("menu leaves have unique HTML-safe keys", {

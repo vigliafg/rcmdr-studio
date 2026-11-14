@@ -1,3 +1,30 @@
+# RcmdrShiny Studio 1.21.0
+
+## Wave 6.5 — Menu platform and stable ids
+
+- **Horizontal menubar**: File, Edit, Data, Transform, Analyze, Graphs,
+  Reports, Utilities and Help, with hierarchical dropdowns and nested
+  submenus. The routines and command ids are unchanged.
+- **Curated grouping**: one File > Save with data set, script, R Markdown,
+  knitr and workspace items, plus a nested Save as group; report authoring,
+  models and distributions are grouped under Reports and Analyze.
+- **Stable identifiers**: `module_id`, `menu_id`, `item_id` and `command_id`
+  are separate. DOM keys derive from `item_id`, not from a row counter, so
+  reordering does not break favourites, tests or palette links.
+- **Registry files**: `inst/menus/core.yml` and
+  `plugins/<module>/inst/menus/module.yml` replace the legacy menu file as the
+  layout source. `Rcmdr-menus.txt` remains as the activation and migration
+  reference.
+- **Validation**: unique ids, existing parents, cycles and command references
+  are checked; a golden test confirms every legacy command is still reachable.
+- **First-party modules**: the 15 bundled plugins are maintained with the app,
+  attach to core groups without redeclaring them, and can remove individual
+  core commands they replace. They no longer delete whole core menus.
+- **Migration**: expanded menu ids are mapped from the old names; favourites and
+  recents keep the stable command ids.
+- New `menu-structure` help topic, `menu-platform` vignette, registry tests and
+  a browser flow for the menubar.
+
 # RcmdrShiny Studio 1.20.0
 
 ## Wave 6 — Help, i18n and onboarding

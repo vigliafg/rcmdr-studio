@@ -1,0 +1,1490 @@
+version: 1
+module: teachstat
+groups:
+- id: menu.analyze.teachstat
+  parent: menu.analyze
+  label: Basic Statistics
+  order: 5001
+  module: teachstat
+  legacy_ids:
+  - EstadisticaUvigoMenu
+- id: menu.analyze.teachstat.data_menu2
+  parent: menu.analyze.teachstat
+  label: Data
+  order: 5002
+  module: teachstat
+  legacy_ids:
+  - dataMenu2
+- id: menu.analyze.teachstat.data_menu2.packages_menu2
+  parent: menu.analyze.teachstat.data_menu2
+  label: Data in packages
+  order: 5003
+  module: teachstat
+  legacy_ids:
+  - packagesMenu2
+- id: menu.analyze.teachstat.data_menu2.active_menu2
+  parent: menu.analyze.teachstat.data_menu2
+  label: Active data set
+  order: 5004
+  module: teachstat
+  legacy_ids:
+  - activeMenu2
+- id: menu.analyze.teachstat.data_menu2.variables_menu2
+  parent: menu.analyze.teachstat.data_menu2
+  label: Manage variables in active data set
+  order: 5005
+  module: teachstat
+  legacy_ids:
+  - variablesMenu2
+- id: menu.analyze.teachstat.index_number_menu
+  parent: menu.analyze.teachstat
+  label: Index Numbers
+  order: 5006
+  module: teachstat
+  legacy_ids:
+  - IndexNumberMenu
+- id: menu.analyze.teachstat.edescriptiva_menu
+  parent: menu.analyze.teachstat
+  label: Descriptive Statistics
+  order: 5007
+  module: teachstat
+  legacy_ids:
+  - EDescriptivaMenu
+- id: menu.analyze.teachstat.edescriptiva_menu.tables_menu_es
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Contingency tables
+  order: 5008
+  module: teachstat
+  legacy_ids:
+  - tablesMenuES
+- id: menu.analyze.teachstat.valeatoria_menu
+  parent: menu.analyze.teachstat
+  label: Random Variables
+  order: 5009
+  module: teachstat
+  legacy_ids:
+  - VAleatoriaMenu
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  parent: menu.analyze.teachstat.valeatoria_menu
+  label: Continuous distributions
+  order: 5010
+  module: teachstat
+  legacy_ids:
+  - continuasMenu
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: Continuous Generic distribution
+  order: 5011
+  module: teachstat
+  legacy_ids:
+  - genericMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: Normal distribution
+  order: 5012
+  module: teachstat
+  legacy_ids:
+  - normalMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: t distribution
+  order: 5013
+  module: teachstat
+  legacy_ids:
+  - tMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: Chi-squared distribution
+  order: 5014
+  module: teachstat
+  legacy_ids:
+  - chisqMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: F distribution
+  order: 5015
+  module: teachstat
+  legacy_ids:
+  - FMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: Exponential distribution
+  order: 5016
+  module: teachstat
+  legacy_ids:
+  - exponentialMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu
+  label: Uniform distribution
+  order: 5017
+  module: teachstat
+  legacy_ids:
+  - uniformMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  parent: menu.analyze.teachstat.valeatoria_menu
+  label: Discrete distributions
+  order: 5018
+  module: teachstat
+  legacy_ids:
+  - discretasMenu
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  label: Discrete Generic distribution
+  order: 5019
+  module: teachstat
+  legacy_ids:
+  - DgenericMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  label: Binomial distribution
+  order: 5020
+  module: teachstat
+  legacy_ids:
+  - binomialMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  label: Poisson distribution
+  order: 5021
+  module: teachstat
+  legacy_ids:
+  - PoissonMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  label: Geometric distribution
+  order: 5022
+  module: teachstat
+  legacy_ids:
+  - geometricMenuES
+- id: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu
+  label: Negative binomial distribution
+  order: 5023
+  module: teachstat
+  legacy_ids:
+  - negbinomialMenuES
+- id: menu.analyze.teachstat.inferencia_menu
+  parent: menu.analyze.teachstat
+  label: Statistical Inference
+  order: 5024
+  module: teachstat
+  legacy_ids:
+  - InferenciaMenu
+- id: menu.analyze.teachstat.inferencia_menu.iconfianza_menu
+  parent: menu.analyze.teachstat.inferencia_menu
+  label: Confidence Intervals
+  order: 5025
+  module: teachstat
+  legacy_ids:
+  - IConfianzaMenu
+- id: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu1
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu
+  label: Confidence intervals for a sample
+  order: 5026
+  module: teachstat
+  legacy_ids:
+  - IConfianzaMenu1
+- id: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu2
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu
+  label: Confidence intervals for two samples
+  order: 5027
+  module: teachstat
+  legacy_ids:
+  - IConfianzaMenu2
+- id: menu.analyze.teachstat.inferencia_menu.chipotesis_menu
+  parent: menu.analyze.teachstat.inferencia_menu
+  label: Hypothesis Testing
+  order: 5028
+  module: teachstat
+  legacy_ids:
+  - CHipotesisMenu
+- id: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu1
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu
+  label: Hypothesis testing for a sample
+  order: 5029
+  module: teachstat
+  legacy_ids:
+  - CHipotesisMenu1
+- id: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu2
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu
+  label: Hypothesis testing for two samples
+  order: 5030
+  module: teachstat
+  legacy_ids:
+  - CHipotesisMenu2
+items:
+- id: item.teachstat.menu_analyze_means_menu.one_way_anova_re
+  parent: menu.analyze.means_menu
+  label: One-Way ANOVA with random effects...
+  command: oneWayAnovaRE
+  activation: numericP() && factorsP()
+  install: packageAvailable('multcomp') && packageAvailable('abind') && packageAvailable('lme4')
+  order: 5001
+  module: teachstat
+  legacy_ids:
+  - oneWayAnovaRE
+- id: item.teachstat.menu_analyze_nonparametric_menu.randomness_ftest
+  parent: menu.analyze.nonparametric_menu
+  label: Randomness test for two level factor...
+  command: randomnessFTest
+  activation: twoLevelFactorsP()
+  install: ''
+  order: 5002
+  module: teachstat
+  legacy_ids:
+  - randomnessFTest
+- id: item.teachstat.menu_analyze_nonparametric_menu.randomness_ntest
+  parent: menu.analyze.nonparametric_menu
+  label: Randomness test for numeric variable...
+  command: randomnessNTest
+  activation: numericP()
+  install: ''
+  order: 5003
+  module: teachstat
+  legacy_ids:
+  - randomnessNTest
+- id: item.teachstat.menu_analyze_teachstat_data_menu2.new_data_set2
+  parent: menu.analyze.teachstat.data_menu2
+  label: New data set...
+  command: newDataSet2
+  activation: ''
+  install: getRcmdr('editDataset.threshold') > 0
+  order: 5006
+  module: teachstat
+  legacy_ids:
+  - newDataSet2
+- id: item.teachstat.menu_analyze_teachstat_data_menu2.load_data_set
+  parent: menu.analyze.teachstat.data_menu2
+  label: Load data set...
+  command: loadDataSet
+  activation: ''
+  install: ''
+  order: 5007
+  module: teachstat
+  legacy_ids:
+  - loadDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2.merge_data_sets
+  parent: menu.analyze.teachstat.data_menu2
+  label: Merge data sets...
+  command: mergeDataSets
+  activation: dataSetsP(2)
+  install: packageAvailable('car') && packageAvailable('RcmdrMisc')
+  order: 5008
+  module: teachstat
+  legacy_ids:
+  - mergeDataSets
+- kind: separator
+  parent: menu.analyze.teachstat.data_menu2
+  order: 5009
+  module: teachstat
+- id: item.teachstat.menu_analyze_teachstat_data_menu2.read_data_set
+  parent: menu.analyze.teachstat.data_menu2
+  label: Import data from text file, clipboard, or URL...
+  command: readDataSet
+  activation: ''
+  install: ''
+  order: 5010
+  module: teachstat
+  legacy_ids:
+  - readDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_packages_menu2.list_data_sets_in_packages
+  parent: menu.analyze.teachstat.data_menu2.packages_menu2
+  label: List data sets in packages
+  command: listDataSetsInPackages
+  activation: ''
+  install: ''
+  order: 5011
+  module: teachstat
+  legacy_ids:
+  - listDataSetsInPackages
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_packages_menu2.read_data_from_package
+  parent: menu.analyze.teachstat.data_menu2.packages_menu2
+  label: Read data set from an attached package...
+  command: readDataFromPackage
+  activation: ''
+  install: ''
+  order: 5012
+  module: teachstat
+  legacy_ids:
+  - readDataFromPackage
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.view_data
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: View data...
+  command: viewData
+  activation: activeDataSetP()
+  install: ''
+  order: 5014
+  module: teachstat
+  legacy_ids:
+  - viewData
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.select_active_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Select active data set...
+  command: selectActiveDataSet
+  activation: dataSetsP()
+  install: ''
+  order: 5015
+  module: teachstat
+  legacy_ids:
+  - selectActiveDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.refresh_active_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Refresh active data set
+  command: refreshActiveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5016
+  module: teachstat
+  legacy_ids:
+  - refreshActiveDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.help_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Help on active data set (if available)
+  command: helpDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5017
+  module: teachstat
+  legacy_ids:
+  - helpDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.variablesandtypes_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Variables and types in active data set
+  command: variablesandtypesDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5018
+  module: teachstat
+  legacy_ids:
+  - variablesandtypesDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.set_case_names
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Set case names...
+  command: setCaseNames
+  activation: activeDataSetP()
+  install: ''
+  order: 5019
+  module: teachstat
+  legacy_ids:
+  - setCaseNames
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.subset_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Subset active data set...
+  command: subsetDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5020
+  module: teachstat
+  legacy_ids:
+  - subsetDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.sort_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Sort active data set...
+  command: sortDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5021
+  module: teachstat
+  legacy_ids:
+  - sortDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.remove_rows
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Remove row(s) from active data set...
+  command: RemoveRows
+  activation: activeDataSetP()
+  install: ''
+  order: 5022
+  module: teachstat
+  legacy_ids:
+  - RemoveRows
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.filter_na
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Remove cases with missing data...
+  command: filterNA
+  activation: activeDataSetP()
+  install: ''
+  order: 5023
+  module: teachstat
+  legacy_ids:
+  - filterNA
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.save_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Save active data set...
+  command: saveDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5024
+  module: teachstat
+  legacy_ids:
+  - saveDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_active_menu2.export_data_set
+  parent: menu.analyze.teachstat.data_menu2.active_menu2
+  label: Export active data set...
+  command: exportDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5025
+  module: teachstat
+  legacy_ids:
+  - exportDataSet
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.convert_variables
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Change variables type...
+  command: ConvertVariables
+  activation: activeDataSetP()
+  install: ''
+  order: 5027
+  module: teachstat
+  legacy_ids:
+  - ConvertVariables
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.recode_dialog
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Recode variables...
+  command: RecodeDialog
+  activation: activeDataSetP()
+  install: packageAvailable('car')
+  order: 5028
+  module: teachstat
+  legacy_ids:
+  - RecodeDialog
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.compute
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Compute new variable...
+  command: Compute
+  activation: activeDataSetP()
+  install: ''
+  order: 5029
+  module: teachstat
+  legacy_ids:
+  - Compute
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.add_obs_numbers
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Add observation numbers to data set
+  command: addObsNumbers
+  activation: activeDataSetP()
+  install: ''
+  order: 5030
+  module: teachstat
+  legacy_ids:
+  - addObsNumbers
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.standardize
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Standardize variables...
+  command: standardize
+  activation: numericP()
+  install: ''
+  order: 5031
+  module: teachstat
+  legacy_ids:
+  - standardize
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.numeric_to_factor2
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Convert numeric variables to factors...
+  command: numericToFactor2
+  activation: numericP()
+  install: ''
+  order: 5032
+  module: teachstat
+  legacy_ids:
+  - numericToFactor2
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.bin_variable2
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Bin numeric variable...
+  command: binVariable2
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc')
+  order: 5033
+  module: teachstat
+  legacy_ids:
+  - binVariable2
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.reorder_factors
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Reorder factor levels...
+  command: reorderFactors
+  activation: factorsP()
+  install: ''
+  order: 5034
+  module: teachstat
+  legacy_ids:
+  - reorderFactors
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.drop_unused_factor_levels
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Drop unused factor levels...
+  command: dropUnusedFactorLevels
+  activation: factorsP()
+  install: ''
+  order: 5035
+  module: teachstat
+  legacy_ids:
+  - dropUnusedFactorLevels
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.rename_variables
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Rename variables...
+  command: renameVariables
+  activation: activeDataSetP()
+  install: ''
+  order: 5036
+  module: teachstat
+  legacy_ids:
+  - renameVariables
+- id: item.teachstat.menu_analyze_teachstat_data_menu2_variables_menu2.delete_variable
+  parent: menu.analyze.teachstat.data_menu2.variables_menu2
+  label: Delete variables from data set ...
+  command: deleteVariable
+  activation: activeDataSetP()
+  install: ''
+  order: 5037
+  module: teachstat
+  legacy_ids:
+  - deleteVariable
+- id: item.teachstat.menu_analyze_teachstat_index_number_menu.sindexnumbers
+  parent: menu.analyze.teachstat.index_number_menu
+  label: Simple index numbers...
+  command: Sindexnumbers
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: ''
+  order: 5040
+  module: teachstat
+  legacy_ids:
+  - Sindexnumbers
+- id: item.teachstat.menu_analyze_teachstat_index_number_menu.cindexnumbers
+  parent: menu.analyze.teachstat.index_number_menu
+  label: Complex index numbers...
+  command: Cindexnumbers
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: ''
+  order: 5041
+  module: teachstat
+  legacy_ids:
+  - Cindexnumbers
+- id: item.teachstat.menu_analyze_teachstat_index_number_menu.bcindexnumbers
+  parent: menu.analyze.teachstat.index_number_menu
+  label: Base change...
+  command: BCindexnumbers
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: ''
+  order: 5042
+  module: teachstat
+  legacy_ids:
+  - BCindexnumbers
+- id: item.teachstat.menu_analyze_teachstat_index_number_menu.pindexnumbers
+  parent: menu.analyze.teachstat.index_number_menu
+  label: Price index...
+  command: Pindexnumbers
+  activation: twoOrMoreLevelFactorsP() && numericP(n=2)
+  install: packageAvailable('IndexNumR')
+  order: 5043
+  module: teachstat
+  legacy_ids:
+  - Pindexnumbers
+- id: item.teachstat.menu_analyze_teachstat_index_number_menu.deflation
+  parent: menu.analyze.teachstat.index_number_menu
+  label: Deflation...
+  command: Deflation
+  activation: twoOrMoreLevelFactorsP() && numericP(n=2)
+  install: ''
+  order: 5044
+  module: teachstat
+  legacy_ids:
+  - Deflation
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.summarize_data_set
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Active data set
+  command: summarizeDataSet
+  activation: activeDataSetP()
+  install: ''
+  order: 5046
+  module: teachstat
+  legacy_ids:
+  - summarizeDataSet
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.resumen_variables_cualitativas
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Frequency distributions for qualitative variables...
+  command: resumenVariablesCualitativas
+  activation: factorsP()
+  install: ''
+  order: 5047
+  module: teachstat
+  legacy_ids:
+  - resumenVariablesCualitativas
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.resumen_numerico_vdiscreta
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Numerical summaries - Discrete variables...
+  command: resumenNumericoVDiscreta
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5048
+  module: teachstat
+  legacy_ids:
+  - resumenNumericoVDiscreta
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.resumen_numerico_vcontinua
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Numerical summaries...
+  command: resumenNumericoVContinua
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5049
+  module: teachstat
+  legacy_ids:
+  - resumenNumericoVContinua
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.resumen_numerico_ponderada
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Numerical summaries - Weighted variables...
+  command: resumenNumericoPonderada
+  activation: numericP()
+  install: packageAvailable('RcmdrMisc') && packageAvailable('Hmisc') && packageAvailable('abind')
+  order: 5050
+  module: teachstat
+  legacy_ids:
+  - resumenNumericoPonderada
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu.resumen_datos_tabulados
+  parent: menu.analyze.teachstat.edescriptiva_menu
+  label: Numerical summaries - Tabulated data...
+  command: resumenDatosTabulados
+  activation: numericP(n=3)
+  install: ''
+  order: 5051
+  module: teachstat
+  legacy_ids:
+  - resumenDatosTabulados
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu_tables_menu_es.two_way_table
+  parent: menu.analyze.teachstat.edescriptiva_menu.tables_menu_es
+  label: Two-way table...
+  command: twoWayTable
+  activation: factorsP(2)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5052
+  module: teachstat
+  legacy_ids:
+  - twoWayTable
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu_tables_menu_es.multi_way_table
+  parent: menu.analyze.teachstat.edescriptiva_menu.tables_menu_es
+  label: Multi-way table...
+  command: multiWayTable
+  activation: factorsP(3)
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5053
+  module: teachstat
+  legacy_ids:
+  - multiWayTable
+- id: item.teachstat.menu_analyze_teachstat_edescriptiva_menu_tables_menu_es.enter_table
+  parent: menu.analyze.teachstat.edescriptiva_menu.tables_menu_es
+  label: Enter and analyze two-way table...
+  command: enterTable
+  activation: ''
+  install: packageAvailable('RcmdrMisc') && packageAvailable('abind')
+  order: 5054
+  module: teachstat
+  legacy_ids:
+  - enterTable
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_distr_define
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Continuous Generic distribution definition...
+  command: genericDistrDefine
+  activation: ''
+  install: packageAvailable('distr')
+  order: 5059
+  module: teachstat
+  legacy_ids:
+  - genericDistrDefine
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Continuous Generic quantiles...
+  command: genericDistrQuantiles
+  activation: AbscontDistrsP()
+  install: packageAvailable('distr')
+  order: 5060
+  module: teachstat
+  legacy_ids:
+  - genericDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Continuous Generic probabilities...
+  command: genericProbabilitiesInter
+  activation: AbscontDistrsP()
+  install: packageAvailable('distr')
+  order: 5061
+  module: teachstat
+  legacy_ids:
+  - genericProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Plot continuous Generic distribution...
+  command: genericDistrPlot
+  activation: AbscontDistrsP()
+  install: packageAvailable('distr') && packageAvailable('RcmdrMisc')
+  order: 5062
+  module: teachstat
+  legacy_ids:
+  - genericDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Continuous Generic characteristics...
+  command: genericDistrCharac
+  activation: AbscontDistrsP()
+  install: packageAvailable('distr')
+  order: 5063
+  module: teachstat
+  legacy_ids:
+  - genericDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_generic_menu_es.generic_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.generic_menu_es
+  label: Sample from Continuous Generic distribution...
+  command: genericDistrSamples
+  activation: AbscontDistrsP()
+  install: packageAvailable('distr')
+  order: 5064
+  module: teachstat
+  legacy_ids:
+  - genericDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_normal_menu_es.normal_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  label: Normal quantiles...
+  command: normalDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5066
+  module: teachstat
+  legacy_ids:
+  - normalDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_normal_menu_es.normal_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  label: Normal probabilities...
+  command: normalProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5067
+  module: teachstat
+  legacy_ids:
+  - normalProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_normal_menu_es.normal_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  label: Plot normal distribution...
+  command: normalDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5068
+  module: teachstat
+  legacy_ids:
+  - normalDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_normal_menu_es.normal_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  label: Normal characteristics...
+  command: normalDistrCharac
+  activation: ''
+  install: ''
+  order: 5069
+  module: teachstat
+  legacy_ids:
+  - normalDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_normal_menu_es.normal_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.normal_menu_es
+  label: Sample from normal distribution...
+  command: normalDistrSamples
+  activation: ''
+  install: ''
+  order: 5070
+  module: teachstat
+  legacy_ids:
+  - normalDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_t_menu_es.t_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  label: t quantiles...
+  command: tDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5072
+  module: teachstat
+  legacy_ids:
+  - tDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_t_menu_es.t_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  label: t probabilities...
+  command: tProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5073
+  module: teachstat
+  legacy_ids:
+  - tProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_t_menu_es.t_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  label: Plot t distribution...
+  command: tDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5074
+  module: teachstat
+  legacy_ids:
+  - tDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_t_menu_es.t_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  label: t characteristics...
+  command: tDistrCharac
+  activation: ''
+  install: ''
+  order: 5075
+  module: teachstat
+  legacy_ids:
+  - tDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_t_menu_es.t_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.t_menu_es
+  label: Sample from t distribution...
+  command: tDistrSamples
+  activation: ''
+  install: ''
+  order: 5076
+  module: teachstat
+  legacy_ids:
+  - tDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_chisq_menu_es.chisq_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  label: Chi-squared quantiles...
+  command: chisqDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5078
+  module: teachstat
+  legacy_ids:
+  - chisqDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_chisq_menu_es.chisq_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  label: Chi-squared probabilities...
+  command: chisqProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5079
+  module: teachstat
+  legacy_ids:
+  - chisqProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_chisq_menu_es.chisq_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  label: Plot chi-squared distribution...
+  command: chisqDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5080
+  module: teachstat
+  legacy_ids:
+  - chisqDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_chisq_menu_es.chisq_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  label: ChiSquared characteristics...
+  command: chisqDistrCharac
+  activation: ''
+  install: ''
+  order: 5081
+  module: teachstat
+  legacy_ids:
+  - chisqDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_chisq_menu_es.chisq_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.chisq_menu_es
+  label: Sample from chi-squared distribution...
+  command: chisqDistrSamples
+  activation: ''
+  install: ''
+  order: 5082
+  module: teachstat
+  legacy_ids:
+  - chisqDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_fmenu_es.fdistr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  label: F quantiles...
+  command: FDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5084
+  module: teachstat
+  legacy_ids:
+  - FDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_fmenu_es.fprobabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  label: F probabilities...
+  command: FProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5085
+  module: teachstat
+  legacy_ids:
+  - FProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_fmenu_es.fdistr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  label: Plot F distribution...
+  command: FDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5086
+  module: teachstat
+  legacy_ids:
+  - FDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_fmenu_es.fdistr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  label: F characteristics...
+  command: FDistrCharac
+  activation: ''
+  install: ''
+  order: 5087
+  module: teachstat
+  legacy_ids:
+  - FDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_fmenu_es.fdistr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.fmenu_es
+  label: Sample from F distribution...
+  command: FDistrSamples
+  activation: ''
+  install: ''
+  order: 5088
+  module: teachstat
+  legacy_ids:
+  - FDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_exponential_menu_es.exponential_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  label: Exponential quantiles...
+  command: exponentialDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5090
+  module: teachstat
+  legacy_ids:
+  - exponentialDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_exponential_menu_es.exponential_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  label: Exponential probabilities...
+  command: exponentialProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5091
+  module: teachstat
+  legacy_ids:
+  - exponentialProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_exponential_menu_es.exponential_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  label: Plot exponential distribution...
+  command: exponentialDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5092
+  module: teachstat
+  legacy_ids:
+  - exponentialDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_exponential_menu_es.exponential_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  label: Exponential characteristics...
+  command: exponentialDistrCharac
+  activation: ''
+  install: ''
+  order: 5093
+  module: teachstat
+  legacy_ids:
+  - exponentialDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_exponential_menu_es.exponential_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.exponential_menu_es
+  label: Sample from exponential distribution...
+  command: exponentialDistrSamples
+  activation: ''
+  install: ''
+  order: 5094
+  module: teachstat
+  legacy_ids:
+  - exponentialDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_uniform_menu_es.uniform_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  label: Uniform quantiles...
+  command: uniformDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5096
+  module: teachstat
+  legacy_ids:
+  - uniformDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_uniform_menu_es.uniform_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  label: Uniform probabilities...
+  command: uniformProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5097
+  module: teachstat
+  legacy_ids:
+  - uniformProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_uniform_menu_es.uniform_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  label: Plot uniform distribution...
+  command: uniformDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5098
+  module: teachstat
+  legacy_ids:
+  - uniformDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_uniform_menu_es.uniform_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  label: Uniform characteristics...
+  command: uniformDistrCharac
+  activation: ''
+  install: ''
+  order: 5099
+  module: teachstat
+  legacy_ids:
+  - uniformDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_continuas_menu_uniform_menu_es.uniform_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.continuas_menu.uniform_menu_es
+  label: Sample from uniform distribution...
+  command: uniformDistrSamples
+  activation: ''
+  install: ''
+  order: 5100
+  module: teachstat
+  legacy_ids:
+  - uniformDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_define
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Discrete Generic distribution definition...
+  command: DgenericDistrDefine
+  activation: ''
+  install: packageAvailable('distr')
+  order: 5103
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrDefine
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Discrete Generic quantiles...
+  command: DgenericDistrQuantiles
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr')
+  order: 5104
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Discrete Generic tail probabilities...
+  command: DgenericProbabilitiesInter
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr') && packageAvailable('RcmdrMisc')
+  order: 5105
+  module: teachstat
+  legacy_ids:
+  - DgenericProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_mass
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Discrete Generic probabilities...
+  command: DgenericDistrMass
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr')
+  order: 5106
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrMass
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Plot discrete Generic distribution...
+  command: DgenericDistrPlot
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr') && packageAvailable('RcmdrMisc')
+  order: 5107
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Discrete Generic characteristics...
+  command: DgenericDistrCharac
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr')
+  order: 5108
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_dgeneric_menu_es.dgeneric_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.dgeneric_menu_es
+  label: Sample from Discrete Generic distribution...
+  command: DgenericDistrSamples
+  activation: DiscreteDistrsP()
+  install: packageAvailable('distr')
+  order: 5109
+  module: teachstat
+  legacy_ids:
+  - DgenericDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Binomial quantiles...
+  command: binomialDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5111
+  module: teachstat
+  legacy_ids:
+  - binomialDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Binomial tail probabilities...
+  command: binomialProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5112
+  module: teachstat
+  legacy_ids:
+  - binomialProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_distr_mass
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Binomial probabilities...
+  command: binomialDistrMass
+  activation: ''
+  install: ''
+  order: 5113
+  module: teachstat
+  legacy_ids:
+  - binomialDistrMass
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Plot binomial distribution...
+  command: binomialDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5114
+  module: teachstat
+  legacy_ids:
+  - binomialDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Binomial characteristics...
+  command: binomialDistrCharac
+  activation: ''
+  install: ''
+  order: 5115
+  module: teachstat
+  legacy_ids:
+  - binomialDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_binomial_menu_es.binomial_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.binomial_menu_es
+  label: Sample from binomial distribution...
+  command: binomialDistrSamples
+  activation: ''
+  install: ''
+  order: 5116
+  module: teachstat
+  legacy_ids:
+  - binomialDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Poisson quantiles...
+  command: PoissonDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5118
+  module: teachstat
+  legacy_ids:
+  - PoissonDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Poisson tail probabilities...
+  command: PoissonProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5119
+  module: teachstat
+  legacy_ids:
+  - PoissonProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_distr_mass
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Poisson probabilities...
+  command: PoissonDistrMass
+  activation: ''
+  install: ''
+  order: 5120
+  module: teachstat
+  legacy_ids:
+  - PoissonDistrMass
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Plot Poisson distribution...
+  command: PoissonDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5121
+  module: teachstat
+  legacy_ids:
+  - PoissonDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Poisson characteristics...
+  command: PoissonDistrCharac
+  activation: ''
+  install: ''
+  order: 5122
+  module: teachstat
+  legacy_ids:
+  - PoissonDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_poisson_menu_es.poisson_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.poisson_menu_es
+  label: Sample from Poisson distribution...
+  command: PoissonDistrSamples
+  activation: ''
+  install: ''
+  order: 5123
+  module: teachstat
+  legacy_ids:
+  - PoissonDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Geometric quantiles...
+  command: geomDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5125
+  module: teachstat
+  legacy_ids:
+  - geomDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Geometric tail probabilities...
+  command: geomProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5126
+  module: teachstat
+  legacy_ids:
+  - geomProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_distr_mass
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Geometric probabilities...
+  command: geomDistrMass
+  activation: ''
+  install: ''
+  order: 5127
+  module: teachstat
+  legacy_ids:
+  - geomDistrMass
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Plot geometric distribution...
+  command: geomDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5128
+  module: teachstat
+  legacy_ids:
+  - geomDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Geometric characteristics...
+  command: geomDistrCharac
+  activation: ''
+  install: ''
+  order: 5129
+  module: teachstat
+  legacy_ids:
+  - geomDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_geometric_menu_es.geom_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.geometric_menu_es
+  label: Sample from geometric distribution...
+  command: geomDistrSamples
+  activation: ''
+  install: ''
+  order: 5130
+  module: teachstat
+  legacy_ids:
+  - geomDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_distr_quantiles
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: Negative binomial quantiles...
+  command: negbinomialDistrQuantiles
+  activation: ''
+  install: ''
+  order: 5132
+  module: teachstat
+  legacy_ids:
+  - negbinomialDistrQuantiles
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_probabilities_inter
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: Negative binomial tail probabilities...
+  command: negbinomialProbabilitiesInter
+  activation: ''
+  install: ''
+  order: 5133
+  module: teachstat
+  legacy_ids:
+  - negbinomialProbabilitiesInter
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_distr_mass
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: Negative binomial probabilities...
+  command: negbinomialDistrMass
+  activation: ''
+  install: ''
+  order: 5134
+  module: teachstat
+  legacy_ids:
+  - negbinomialDistrMass
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_distr_plot
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: Plot negative binomial distribution...
+  command: negbinomialDistrPlot
+  activation: ''
+  install: packageAvailable('RcmdrMisc')
+  order: 5135
+  module: teachstat
+  legacy_ids:
+  - negbinomialDistrPlot
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_distr_charac
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: NegativeBinomial characteristics...
+  command: negbinomialDistrCharac
+  activation: ''
+  install: ''
+  order: 5136
+  module: teachstat
+  legacy_ids:
+  - negbinomialDistrCharac
+- id: item.teachstat.menu_analyze_teachstat_valeatoria_menu_discretas_menu_negbinomial_menu_es.negbinomial_distr_samples
+  parent: menu.analyze.teachstat.valeatoria_menu.discretas_menu.negbinomial_menu_es
+  label: Sample from negative binomial distribution...
+  command: negbinomialDistrSamples
+  activation: ''
+  install: ''
+  order: 5137
+  module: teachstat
+  legacy_ids:
+  - negbinomialDistrSamples
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu1.intervalo_confianza_media
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu1
+  label: Confidence interval for the mean...
+  command: intervaloConfianzaMedia
+  activation: numericP()
+  install: packageAvailable('tcltk2')
+  order: 5140
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaMedia
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu1.intervalo_confianza_varianza
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu1
+  label: Confidence interval for the variance...
+  command: intervaloConfianzaVarianza
+  activation: numericP()
+  install: packageAvailable('tcltk2')
+  order: 5141
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaVarianza
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu1.intervalo_confianza_proporcion
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu1
+  label: Confidence interval for a proportion...
+  command: intervaloConfianzaProporcion
+  activation: ''
+  install: packageAvailable('tcltk2')
+  order: 5142
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaProporcion
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu2.intervalo_confianza_medias_independientes
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu2
+  label: Confidence interval for the difference of independent means...
+  command: intervaloConfianzaMediasIndependientes
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: packageAvailable('tcltk2')
+  order: 5144
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaMediasIndependientes
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu2.intervalo_confianza_medias_pareadas
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu2
+  label: Confidence interval for mean paired difference...
+  command: intervaloConfianzaMediasPareadas
+  activation: numericP(n=2)
+  install: ''
+  order: 5145
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaMediasPareadas
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu2.intervalo_confianza2_varianzas
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu2
+  label: Confidence interval for the ratio of two variances...
+  command: intervaloConfianza2Varianzas
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: packageAvailable('tcltk2')
+  order: 5146
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianza2Varianzas
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_iconfianza_menu_iconfianza_menu2.intervalo_confianza_diferencia_proporciones
+  parent: menu.analyze.teachstat.inferencia_menu.iconfianza_menu.iconfianza_menu2
+  label: Confidence interval for difference of proportions...
+  command: intervaloConfianzaDiferenciaProporciones
+  activation: ''
+  install: packageAvailable('tcltk2')
+  order: 5147
+  module: teachstat
+  legacy_ids:
+  - intervaloConfianzaDiferenciaProporciones
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu1.contraste_hipotesis_media
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu1
+  label: Hypothesis testing for the mean...
+  command: contrasteHipotesisMedia
+  activation: numericP()
+  install: packageAvailable('tcltk2')
+  order: 5150
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesisMedia
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu1.contraste_hipotesis_varianza
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu1
+  label: Hypothesis testing for the variance...
+  command: contrasteHipotesisVarianza
+  activation: numericP()
+  install: ''
+  order: 5151
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesisVarianza
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu1.contrast_hipotesis_proporcion
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu1
+  label: Hypothesis testing for a proportion...
+  command: contrastHipotesisProporcion
+  activation: ''
+  install: ''
+  order: 5152
+  module: teachstat
+  legacy_ids:
+  - contrastHipotesisProporcion
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu2.contraste_hipotesis_medias_independientes
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu2
+  label: Hypothesis testing for independent means...
+  command: contrasteHipotesisMediasIndependientes
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: ''
+  order: 5154
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesisMediasIndependientes
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu2.contraste_hipotesis_medias_pareadas
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu2
+  label: Hypothesis testing for paired means...
+  command: contrasteHipotesisMediasPareadas
+  activation: numericP(n=2)
+  install: ''
+  order: 5155
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesisMediasPareadas
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu2.contraste_hipotesis2_varianzas
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu2
+  label: Hypothesis testing for the ratio of two variances...
+  command: contrasteHipotesis2Varianzas
+  activation: twoOrMoreLevelFactorsP() && numericP()
+  install: ''
+  order: 5156
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesis2Varianzas
+- id: item.teachstat.menu_analyze_teachstat_inferencia_menu_chipotesis_menu_chipotesis_menu2.contraste_hipotesis_diferencia_proporciones
+  parent: menu.analyze.teachstat.inferencia_menu.chipotesis_menu.chipotesis_menu2
+  label: Hypothesis testing for difference of proportions...
+  command: contrasteHipotesisDiferenciaProporciones
+  activation: ''
+  install: packageAvailable('tcltk2')
+  order: 5157
+  module: teachstat
+  legacy_ids:
+  - contrasteHipotesisDiferenciaProporciones
+removes: []
+

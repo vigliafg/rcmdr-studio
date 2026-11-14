@@ -1,0 +1,172 @@
+version: 1
+module: survival
+groups:
+- id: menu.analyze.survival_menu
+  parent: menu.analyze
+  label: Survival analysis
+  order: 5001
+  module: survival
+  legacy_ids:
+  - survivalMenu
+- id: menu.data.surv_data_menu
+  parent: menu.data
+  label: Survival data
+  order: 5002
+  module: survival
+  legacy_ids:
+  - survDataMenu
+items:
+- id: item.survival.menu_analyze_survival_menu.survfit
+  parent: menu.analyze.survival_menu
+  label: Estimate survival function...
+  command: Survfit
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5001
+  module: survival
+  legacy_ids:
+  - Survfit
+- id: item.survival.menu_analyze_survival_menu.survdiff
+  parent: menu.analyze.survival_menu
+  label: Compare survival functions...
+  command: Survdiff
+  activation: factorsP()
+  install: packageAvailable('survival')
+  order: 5002
+  module: survival
+  legacy_ids:
+  - Survdiff
+- id: item.survival.menu_data_surv_data_menu.survival_data
+  parent: menu.data.surv_data_menu
+  label: Survival data definition...
+  command: SurvivalData
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5004
+  module: survival
+  legacy_ids:
+  - SurvivalData
+- id: item.survival.menu_data_surv_data_menu.unfold
+  parent: menu.data.surv_data_menu
+  label: Convert wide to long data...
+  command: Unfold
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5005
+  module: survival
+  legacy_ids:
+  - Unfold
+- id: item.survival.menu_data_surv_data_menu.to_date
+  parent: menu.data.surv_data_menu
+  label: Convert variable to date...
+  command: toDate
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5006
+  module: survival
+  legacy_ids:
+  - toDate
+- kind: separator
+  parent: menu.analyze.stat_models_menu
+  order: 5008
+  module: survival
+- id: item.survival.menu_analyze_stat_models_menu.cox_model
+  parent: menu.analyze.stat_models_menu
+  label: Cox regression model...
+  command: CoxModel
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5009
+  module: survival
+  legacy_ids:
+  - CoxModel
+- id: item.survival.menu_analyze_stat_models_menu.survreg_model
+  parent: menu.analyze.stat_models_menu
+  label: Parametric survival model...
+  command: survregModel
+  activation: activeDataSetP()
+  install: packageAvailable('survival')
+  order: 5010
+  module: survival
+  legacy_ids:
+  - survregModel
+- kind: separator
+  parent: menu.analyze.models.diagnostics_menu
+  order: 5011
+  module: survival
+- id: item.survival.menu_analyze_models_diagnostics_menu.cox_zph
+  parent: menu.analyze.models.diagnostics_menu
+  label: Test proportional hazards
+  command: CoxZPH
+  activation: modelCapability('tph')
+  install: packageAvailable('survival')
+  order: 5012
+  module: survival
+  legacy_ids:
+  - CoxZPH
+- kind: separator
+  parent: menu.analyze.models.models_graphs_menu
+  order: 5013
+  module: survival
+- id: item.survival.menu_analyze_models_models_graphs_menu.plot_coxph
+  parent: menu.analyze.models.models_graphs_menu
+  label: Cox-model survival function...
+  command: PlotCoxph
+  activation: coxphP()
+  install: packageAvailable('survival')
+  order: 5014
+  module: survival
+  legacy_ids:
+  - PlotCoxph
+- id: item.survival.menu_analyze_models_models_graphs_menu.term_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Plot terms in Cox model
+  command: TermPlots
+  activation: coxphP() && !highOrderTermsP()
+  install: packageAvailable('survival')
+  order: 5015
+  module: survival
+  legacy_ids:
+  - TermPlots
+- id: item.survival.menu_analyze_models_models_graphs_menu.cox_dfbetas
+  parent: menu.analyze.models.models_graphs_menu
+  label: Plot survival-regression dfbetas
+  command: CoxDfbetas
+  activation: coxphP() || survregP()
+  install: packageAvailable('survival')
+  order: 5016
+  module: survival
+  legacy_ids:
+  - CoxDfbetas
+- id: item.survival.menu_analyze_models_models_graphs_menu.cox_dfbeta
+  parent: menu.analyze.models.models_graphs_menu
+  label: Plot survival-regression dfbeta
+  command: CoxDfbeta
+  activation: coxphP() || survregP()
+  install: packageAvailable('survival')
+  order: 5017
+  module: survival
+  legacy_ids:
+  - CoxDfbeta
+- id: item.survival.menu_analyze_models_models_graphs_menu.martingale_plots_dialog
+  parent: menu.analyze.models.models_graphs_menu
+  label: Plot null Martingale residuals
+  command: MartingalePlotsDialog
+  activation: coxphP()
+  install: packageAvailable('survival')
+  order: 5018
+  module: survival
+  legacy_ids:
+  - MartingalePlotsDialog
+- id: item.survival.menu_analyze_models_models_graphs_menu.partial_res_plots
+  parent: menu.analyze.models.models_graphs_menu
+  label: Cox-model partial-residual plots
+  command: PartialResPlots
+  activation: coxphP()
+  install: packageAvailable('survival')
+  order: 5019
+  module: survival
+  legacy_ids:
+  - PartialResPlots
+removes: []
+
