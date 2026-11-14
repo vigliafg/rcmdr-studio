@@ -57,7 +57,18 @@ attivato in Onda 7.
 
 ---
 
-## 2. File creati e modificati
+## 2. Commit
+
+| Hash | Messaggio | Note |
+|---|---|---|
+| `939b694` | feat: Wave 6 help centre, examples and onboarding | Commit principale dell'Onda 6 |
+| `07448ed` | docs: add Wave 5 navigation handoff diary | Ultimo commit Onda 5 |
+
+Il diario viene committato subito dopo il commit principale.
+
+---
+
+## 3. File creati e modificati
 
 ### Creati
 
@@ -105,7 +116,7 @@ attivato in Onda 7.
 
 ---
 
-## 3. Test ed evidenze
+## 4. Test ed evidenze
 
 | Verifica | Comando | Esito |
 |---|---|---|
@@ -123,7 +134,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 4. Decisioni e ADR
+## 5. Decisioni e ADR
 
 - **L'indice è una cache, non una seconda fonte.** La fonte resta il Markdown
   registrato; l'indice si invalida con `revision` e lingua.
@@ -147,7 +158,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 5. Deviazioni dal piano
+## 6. Deviazioni dal piano
 
 | Task | Piano originale | Cosa è stato fatto | Motivo |
 |---|---|---|---|
@@ -163,7 +174,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 6. Problemi noti e blocchi
+## 7. Problemi noti e blocchi
 
 | Problema | Impatto | Workaround | Task collegata |
 |---|---|---|---|
@@ -176,7 +187,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 7. Domande aperte
+## 8. Domande aperte
 
 - [ ] La checklist deve includere il progetto prima dell'Onda 7?
 - [ ] Gli esempi runnable devono poter usare un dataset scelto senza dataset
@@ -190,7 +201,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 8. Prossimi passi esatti
+## 9. Prossimi passi esatti
 
 ### Prima cosa da fare nella prossima sessione
 
@@ -229,7 +240,7 @@ function” per `renderPlot`, già noto dall'Onda 0.
 
 ---
 
-## 9. Comandi per riprendere
+## 10. Comandi per riprendere
 
 ```bash
 cd /home/vigliafg/Documenti/GitHub/rcmdr-studio
@@ -253,7 +264,7 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e 'pkgload::load_all(quiet=TRUE); testth
 
 ---
 
-## 10. Note di contesto
+## 11. Note di contesto
 
 - `help_index_cached(language)` è la funzione da usare nel server;
   `help_index_build()` resta pura per i test e la vignetta.
@@ -284,7 +295,7 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e 'pkgload::load_all(quiet=TRUE); testth
 
 ---
 
-## 11. Aggiornamenti alla checklist
+## 12. Aggiornamenti alla checklist
 
 - [x] `CHECKLIST.md` aggiornata.
 - [x] Documento di settore aggiornato.
