@@ -257,6 +257,7 @@ Documentazione: `vignettes/plugins.Rmd`, `topic:writing-plugins`,
 | E2E navigation | `RCMDRSHINY_E2E=1 test-navigation-e2e.R` | **4 pass** |
 | E2E progetto | `RCMDRSHINY_E2E=1 test-project-e2e.R` | **4 pass** |
 | Benchmark | `Rscript tests/benchmarks/benchmark.R` | tutti entro budget |
+| `R CMD check` 15 plugin | build + check per pacchetto | **15/15 Status: OK** |
 | Help links | `tools/check_help_links.R --strict` | 452 topic, 0 rotti |
 
 Benchmark rilevati (macchina di sviluppo): startup 922 ms, import 10k 19 ms,
@@ -269,7 +270,6 @@ index 1888 ms.
 
 | Problema | Impatto | Workaround | Task |
 |---|---|---|---|
-| `R CMD check` dei 15 pacchetti plugin non eseguito | Release CRAN | Eseguire i check in release | P7.22 |
 | Voci manuali di accessibilità (zoom 200%, screen reader, axe) | Audit completo | Checklist in `ACCESSIBILITY.md` | P7.21 |
 | Bundle `.zip` richiede `zip` esterno | Utenti Windows senza zip | Usare `.tar.gz` | P7.5 |
 | I modelli sono descritti, non serializzati | Apertura su un'altra macchina | Rifittare il modello | P7.2 |

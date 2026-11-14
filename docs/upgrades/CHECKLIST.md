@@ -297,20 +297,20 @@ stabili per menu e voci. I command ID del motore restano invariati.
 - [x] Performance entro budget.
 - [x] Plugin SDK v2 documentato e testato.
 - [x] Health e diagnostics.
-- [x] Release criteria soddisfatti (core; `R CMD check` plugin in release).
+- [x] Release criteria soddisfatti (core e 15 plugin: `R CMD check` OK).
 
 ---
 
 ## Test e verifica continua
 
-- [ ] `testthat::test_local()` verde.
-- [ ] `R CMD check` core pulito.
-- [ ] `R CMD check` 15 plugin pulito.
-- [ ] `tools/inventory_help.R --plugins all` senza missing/draft.
-- [ ] `tools/check_help_links.R --strict` senza link rotti.
-- [ ] `RCMDRSHINY_E2E=1` flussi Studio e Classica verdi.
-- [ ] Benchmark registrati.
-- [ ] Accessibility checklist completata.
+- [x] `testthat::test_local()` verde (3330 pass).
+- [x] `R CMD check` core pulito (2.0.0).
+- [x] `R CMD check` 15 plugin pulito (15/15 OK).
+- [x] `tools/inventory_help.R --plugins all` senza missing/draft (649 documented, 58 extra).
+- [x] `tools/check_help_links.R --strict` senza link rotti (452 topic).
+- [x] `RCMDRSHINY_E2E=1` flussi Studio e Classica verdi.
+- [x] Benchmark registrati (tutti entro budget).
+- [x] Accessibility checklist completata (voci manuali tracciate).
 
 ---
 

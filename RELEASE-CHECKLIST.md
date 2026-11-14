@@ -28,7 +28,7 @@ This checklist covers the Studio platform release (Wave 7). The historical
 
 - [x] `R CMD check --no-manual` clean on the core package.
 - [ ] `R CMD check --as-cran` final run.
-- [ ] `R CMD check` on the 15 plugin packages.
+- [x] `R CMD check` on the 15 plugin packages: all **Status: OK**.
 - [x] Vignettes build (Getting Started, Migrating, Plugins, Menu platform).
 - [x] pkgdown configuration.
 - [x] CI for Linux/Windows/macOS.
@@ -93,5 +93,6 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e \
 | Core test suite | maintainer | 2026-11-14 |
 | R CMD check core | maintainer | 2026-11-14 |
 | Plugin contract | maintainer | 2026-11-14 |
+| Plugin packages check | maintainer | 2026-11-14 |
 | Accessibility manual pass | maintainer | pending |
 | CRAN upload | maintainer | pending |
