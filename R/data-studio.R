@@ -1398,13 +1398,23 @@ data_delete_rows_dialog <- function() {
           tr("Delete %d selected row(s) from %s?"),
           length(rows), active_dataset(state) %||% tr("the data set")
         )),
+        htmltools::tags$div(
+          style = "display: none;",
+          textInput(ns("rows"), NULL, value = paste(rows, collapse = ","))
+        ),
         help_text(tr(
           "A checkpoint is created before the rows are removed. The deletion is recorded as an R command."
         ))
       )
     },
     on_ok = function(input, state) {
-      rows <- (state$data_selection %||% list())$rows %||% integer()
+      raw <- input[[ns("rows")]] %||% ""
+      if (!nzchar(raw)) {
+        raw <- paste((state$data_selection %||% list())$rows %||% integer(),
+                     collapse = ",")
+      }
+      rows <- suppressWarnings(as.integer(strsplit(raw, ",", fixed = TRUE)[[1L]]))
+      rows <- rows[!is.na(rows)]
       if (length(rows) == 0L) {
         return(list(error = tr("Select one or more rows first.")))
       }
