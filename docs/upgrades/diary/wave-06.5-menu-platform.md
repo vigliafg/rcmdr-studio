@@ -9,6 +9,39 @@
 
 ---
 
+## 0. Punto di ripresa per la prossima sessione
+
+**Stato al momento della compattazione:** 2026-11-14, branch `main`, HEAD
+`3e45e7f`, working tree pulito, tutto pushato su `origin/main`.
+
+**Baseline verificata:** `testthat::test_local()` → **2932 pass, 0 fail,
+16 skip**; `R CMD check` su `RcmdrShiny_1.21.0.tar.gz` → **Status: OK**.
+
+**Prossimo task:** **P7.1 — Schema progetto** in
+[`../07-platform-plugins-quality.md`](../07-platform-plugins-quality.md).
+
+**Da leggere, in quest'ordine:**
+
+1. questo diario (sezioni 0, 5, 7, 9, 11);
+2. [`../07-platform-plugins-quality.md`](../07-platform-plugins-quality.md);
+3. [`../CHECKLIST.md`](../CHECKLIST.md), sezione Onda 7;
+4. `docs/upgrades/diary/wave-06-help-i18n-onboarding.md` solo per il contesto
+   dell'help centre, se servirà.
+
+**Non ripartire da:** Wave 5 o Wave 6. L'Onda 6.5 è chiusa e committata; i
+dettagli operativi sono qui sotto.
+
+**Contesto minimo da conservare dopo la compattazione:**
+
+- il layout vive in `inst/menus/core.yml` + `plugins/*/inst/menus/module.yml`;
+- la logica vive in `R/menu-registry.R`, `R/menus.R`, `R/app.R`;
+- `command_id` non cambia mai; `menu_id`/`item_id` sono stabili;
+- i 15 plugin sono moduli first-party, non un'API esterna;
+- preferiti e recenti restano keyed by `command_id`;
+- l'Onda 7 parte da P7.1 e non deve rifare il menu.
+
+---
+
 ## 1. Obiettivo e risultato
 
 **Direttiva:** i 15 plugin sono first-party; il menu diventa una barra
@@ -55,6 +88,7 @@ Tutti i task M6.5.1–M6.5.7 sono chiusi.
 | Hash | Messaggio | Note |
 |---|---|---|
 | `4952414` | feat: Wave 6.5 menu platform and stable ids | Commit principale |
+| `3e45e7f` | docs: add Wave 6.5 menu platform handoff diary | Questo diario |
 | `4173539` | docs: add Wave 6.5 menu platform plan | Piano approvato |
 
 ---

@@ -5,6 +5,11 @@
 **Sblocca:** RcmdrShiny Studio 2.0 stabile e manutenibile  
 **Documento padre:** [`README.md`](README.md)
 
+> **Punto di partenza:** l'Onda 6.5 è chiusa. Prima di iniziare, leggere
+> [`diary/wave-06.5-menu-platform.md`](diary/wave-06.5-menu-platform.md)
+> (sezione 0). Baseline attesa: **2932 pass, 0 fail, 16 skip**;
+> `R CMD check` 1.21.0 **OK**. Il primo task è **P7.1 — Schema progetto**.
+
 ---
 
 ## 1. Obiettivo
