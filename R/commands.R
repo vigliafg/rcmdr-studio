@@ -220,6 +220,9 @@ remember_assignment <- function(state, expr, value, visible) {
   if (is.data.frame(value)) {
     state$active_dataset <- name
     state$active_model <- NULL
+    if (is.function(dataset_register)) {
+      dataset_register(state, name, source = "command", refresh = TRUE)
+    }
   } else if (inherits(value, "lm") || inherits(value, "glm")) {
     state$active_model <- name
   }

@@ -199,3 +199,68 @@ test_that("all Phase 2 dialogs render their UI", {
     expect_gt(nchar(html), 100)
   }
 })
+
+test_that("Data Studio column builders generate and apply commands", {
+  env <- new.env()
+  env$D <- data.frame(
+    a = 1:5,
+    b = c("x", "y", "x", "z", "y"),
+    f = factor(c("u", "v", "u", "v", "u")),
+    stringsAsFactors = FALSE
+  )
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+  run <- function(code) {
+    result <- run_command(state, code, source = "data")
+    expect_equal(result$status, "ok")
+  }
+
+  expect_equal(
+    RcmdrShiny:::cmd_add_column("D", "z", expression = "a * 2"),
+    "D$z <- with(D, a * 2)"
+  )
+  run(RcmdrShiny:::cmd_add_column("D", "z", expression = "a * 2"))
+  expect_equal(env$D$z, c(2, 4, 6, 8, 10))
+
+  expect_equal(
+    RcmdrShiny:::cmd_duplicate_column("D", "a", "a2"),
+    "D$a2 <- D$a"
+  )
+  run(RcmdrShiny:::cmd_duplicate_column("D", "a", "a2"))
+  expect_equal(env$D$a2, env$D$a)
+
+  expect_equal(
+    RcmdrShiny:::cmd_rename_column("D", "a2", "a3"),
+    'names(D)[names(D) == "a2"] <- "a3"'
+  )
+  run(RcmdrShiny:::cmd_rename_column("D", "a2", "a3"))
+  expect_true("a3" %in% names(env$D))
+
+  expect_equal(
+    RcmdrShiny:::cmd_reorder_columns("D", c("z", "a", "b", "f", "a3")),
+    'D <- D[, c("z", "a", "b", "f", "a3"), drop = FALSE]'
+  )
+  run(RcmdrShiny:::cmd_reorder_columns("D", c("z", "a", "b", "f", "a3")))
+  expect_equal(names(env$D), c("z", "a", "b", "f", "a3"))
+
+  expect_equal(
+    RcmdrShiny:::cmd_factor_to_numeric("D", "f"),
+    "D$f <- as.numeric(as.character(D$f))"
+  )
+  run(RcmdrShiny:::cmd_factor_to_numeric("D", "f"))
+  expect_true(is.numeric(env$D$f))
+
+  run(RcmdrShiny:::cmd_set_column_type("D", "b", "factor"))
+  expect_true(is.factor(env$D$b))
+  run(RcmdrShiny:::cmd_set_column_type("D", "b", "character"))
+  expect_true(is.character(env$D$b))
+  run(RcmdrShiny:::cmd_set_column_type("D", "a", "logical"))
+  expect_true(is.logical(env$D$a))
+
+  expect_equal(
+    RcmdrShiny:::cmd_delete_columns("D", "z"),
+    "D <- within(D, {\n  z <- NULL\n})"
+  )
+  run(RcmdrShiny:::cmd_delete_columns("D", "z"))
+  expect_false("z" %in% names(env$D))
+})

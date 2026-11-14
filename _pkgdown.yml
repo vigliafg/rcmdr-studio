@@ -69,6 +69,7 @@ articles:
     contents:
       - getting-started
       - data-import
+      - data-studio
   - title: Analysis
     contents:
       - descriptive-statistics

@@ -21,6 +21,150 @@ cmd_compute <- function(dataset, variable, expression) {
   sprintf("%s$%s <- with(%s, %s)", dataset, variable, dataset, expression)
 }
 
+# Structural column and row operations --------------------------------------
+#
+# The Data Studio issues these commands for every structural change so that the
+# grid never becomes a second, untracked editing engine.  `values` and
+# `expression` are R source snippets supplied by the caller; the builders only
+# assemble commands and never evaluate them.
+
+r_quote_data <- function(x) {
+  encodeString(as.character(x), quote = "\"")
+}
+
+#' @keywords internal
+cmd_add_column <- function(dataset, name, value = NA, expression = NULL) {
+  if (!is.null(expression) && nzchar(trimws(expression))) {
+    return(sprintf("%s$%s <- with(%s, %s)", dataset, name, dataset,
+                   trimws(expression)))
+  }
+  value <- value %||% NA
+  if (length(value) == 1L && is.na(value)) {
+    sprintf("%s$%s <- rep(NA, nrow(%s))", dataset, name, dataset)
+  } else if (is.character(value) && length(value) == 1L) {
+    sprintf("%s$%s <- %s", dataset, name, value)
+  } else {
+    sprintf("%s$%s <- %s", dataset, name, paste(deparse(value), collapse = ""))
+  }
+}
+
+#' @keywords internal
+cmd_duplicate_column <- function(dataset, variable, name) {
+  sprintf("%s$%s <- %s$%s", dataset, name, dataset, variable)
+}
+
+#' @keywords internal
+cmd_delete_columns <- function(dataset, variables) {
+  cmd_delete_variables(dataset, variables)
+}
+
+#' @keywords internal
+cmd_rename_column <- function(dataset, variable, new_name) {
+  sprintf("names(%s)[names(%s) == %s] <- %s", dataset, dataset,
+          r_quote_data(variable), r_quote_data(new_name))
+}
+
+#' @keywords internal
+cmd_reorder_columns <- function(dataset, order) {
+  sprintf("%s <- %s[, c(%s), drop = FALSE]", dataset, dataset,
+          paste0(r_quote_data(order), collapse = ", "))
+}
+
+#' @keywords internal
+cmd_factor_to_numeric <- function(dataset, variable) {
+  sprintf("%s$%s <- as.numeric(as.character(%s$%s))",
+          dataset, variable, dataset, variable)
+}
+
+#' @keywords internal
+cmd_logical_to_numeric <- function(dataset, variable) {
+  sprintf("%s$%s <- as.numeric(%s$%s)", dataset, variable, dataset, variable)
+}
+
+#' @keywords internal
+cmd_logical_to_factor <- function(dataset, variable, labels = NULL) {
+  if (!is.null(labels) && length(labels) > 0L) {
+    sprintf("%s$%s <- factor(%s$%s, labels = c(%s))", dataset, variable,
+            dataset, variable,
+            paste0(r_quote_data(labels), collapse = ", "))
+  } else {
+    sprintf("%s$%s <- factor(%s$%s)", dataset, variable, dataset, variable)
+  }
+}
+
+#' @keywords internal
+cmd_set_column_type <- function(dataset, variable, type = c(
+                                  "numeric", "factor", "character", "logical",
+                                  "date")) {
+  type <- match.arg(type)
+  source <- sprintf("%s$%s", dataset, variable)
+  expression <- switch(
+    type,
+    numeric = sprintf("as.numeric(as.character(%s))", source),
+    factor = sprintf("as.factor(%s)", source),
+    character = sprintf("as.character(%s)", source),
+    logical = sprintf("as.logical(%s)", source),
+    date = sprintf("as.Date(%s)", source)
+  )
+  sprintf("%s <- %s", source, expression)
+}
+
+#' @keywords internal
+cmd_add_row <- function(dataset, values = NULL) {
+  if (is.null(values) || length(values) == 0L) {
+    return(sprintf("%s[nrow(%s) + 1L, ] <- NA", dataset, dataset))
+  }
+  if (is.null(names(values)) || any(!nzchar(names(values)))) {
+    stop("Row values must be named.", call. = FALSE)
+  }
+  sprintf("%s[nrow(%s) + 1L, c(%s)] <- list(%s)", dataset, dataset,
+          paste0(r_quote_data(names(values)), collapse = ", "),
+          paste(values, collapse = ", "))
+}
+
+#' @keywords internal
+cmd_delete_rows <- function(dataset, rows, new_name = NULL) {
+  rows <- as.integer(rows)
+  rows <- rows[!is.na(rows) & rows > 0L]
+  if (length(rows) == 0L) return(character())
+  index <- paste0("-c(", paste(rows, collapse = ", "), ")")
+  if (is.null(new_name) || !nzchar(new_name) || identical(new_name, dataset)) {
+    sprintf("%s <- %s[%s, , drop = FALSE]", dataset, dataset, index)
+  } else {
+    sprintf("%s <- %s[%s, , drop = FALSE]", new_name, dataset, index)
+  }
+}
+
+#' @keywords internal
+cmd_duplicate_rows <- function(dataset, rows, new_name = NULL) {
+  rows <- as.integer(rows)
+  rows <- rows[!is.na(rows) & rows > 0L]
+  if (length(rows) == 0L) return(character())
+  target <- if (is.null(new_name) || !nzchar(new_name)) dataset else new_name
+  sprintf("%s <- rbind(%s, %s[c(%s), , drop = FALSE])",
+          target, dataset, dataset, paste(rows, collapse = ", "))
+}
+
+#' @keywords internal
+cmd_set_variable_label <- function(dataset, variable, label = NULL,
+                                   units = NULL, description = NULL) {
+  source <- sprintf("%s$%s", dataset, variable)
+  commands <- character()
+  if (!is.null(label)) {
+    commands <- c(commands, sprintf("attr(%s, \"label\") <- %s", source,
+                                    r_quote_data(label)))
+  }
+  if (!is.null(units)) {
+    commands <- c(commands, sprintf("attr(%s, \"units\") <- %s", source,
+                                    r_quote_data(units)))
+  }
+  if (!is.null(description)) {
+    commands <- c(commands, sprintf("attr(%s, \"description\") <- %s", source,
+                                    r_quote_data(description)))
+  }
+  commands
+}
+
 #' @keywords internal
 cmd_delete_variables <- function(dataset, variables) {
   lines <- vapply(variables, function(variable) {
@@ -387,4 +531,45 @@ cmd_import_sas_xport <- function(dataset, file) {
     sprintf('%s <- .Datasets[[1]]', dataset),
     "remove(.Datasets)"
   )
+}
+
+# Cell edits ----------------------------------------------------------------
+
+format_cell_value <- function(x) {
+  if (length(x) == 0L || is.na(x)) return("NA")
+  if (is.character(x)) return(r_quote_data(x))
+  if (is.logical(x)) return(if (isTRUE(x)) "TRUE" else "FALSE")
+  if (inherits(x, "Date")) {
+    return(sprintf("as.Date(%s)", r_quote_data(format(x, "%Y-%m-%d"))))
+  }
+  if (is.numeric(x)) {
+    return(format(x, digits = 15, scientific = FALSE, trim = TRUE))
+  }
+  r_quote_data(as.character(x))
+}
+
+#' @keywords internal
+cmd_edit_cells <- function(dataset, old, new) {
+  if (is.null(old) || is.null(new)) return(character())
+  if (!is.data.frame(old) || !is.data.frame(new)) return(character())
+  if (!identical(names(old), names(new))) return(character())
+
+  commands <- character()
+  for (column in names(old)) {
+    before <- old[[column]]
+    after <- new[[column]]
+    if (length(before) != length(after)) next
+    if (is.list(before) || is.list(after)) next
+    same <- (is.na(before) & is.na(after)) |
+      (!is.na(before) & !is.na(after) &
+         as.character(before) == as.character(after))
+    changed <- which(!same)
+    for (row in changed) {
+      commands <- c(commands, sprintf(
+        "%s[%d, %s] <- %s", dataset, row, r_quote_data(column),
+        format_cell_value(after[[row]])
+      ))
+    }
+  }
+  commands
 }

@@ -2,9 +2,10 @@
 
 history_source_labels <- function() {
   stats::setNames(
-    c("all", "dialog", "script", "console", "menu", "history"),
+    c("all", "dialog", "script", "console", "menu", "data", "history",
+      "checkpoint"),
     c(tr("All sources"), tr("Dialogs"), tr("Script"), tr("Console"),
-      tr("Menus"), tr("History"))
+      tr("Menus"), tr("Data Studio"), tr("History"), tr("Checkpoints"))
   )
 }
 

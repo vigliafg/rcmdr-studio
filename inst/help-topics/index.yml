@@ -50,6 +50,10 @@ topics:
     file: topics/data-editing.md
     category: data
     order: 100
+  - id: data-studio
+    file: topics/data-studio.md
+    category: data
+    order: 40
   - id: exporting-results
     file: topics/exporting-results.md
     category: data

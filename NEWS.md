@@ -1,3 +1,29 @@
+# RcmdrShiny Studio 1.15.0
+
+## Wave 1 — Data Studio
+
+- **Data set registry**: every data frame in the evaluation environment is
+  registered with rows, columns, classes, source, modification time and
+  editable status; the active data set can be switched from the Data toolbar.
+- **Data grid**: client-side DT grid with global search and a server-side
+  view of column filters that never modifies the data; row selection is
+  mapped back to original row numbers.
+- **Column inspector**: type, label, units, missingness, unique values,
+  numeric statistics and a compact distribution plot.
+- **Reproducible structural operations**: add, duplicate, rename, reorder and
+  delete columns; add, duplicate and delete rows; change column type; create
+  a subset from the current selection. Every operation is an R command.
+- **Session checkpoints**: a checkpoint is created before data mutations and
+  can be restored from the Data Studio. Restoring is a session operation and
+  is recorded as a note in the structured history, not as a script command.
+- **Data dictionary**: variable labels, units and descriptions stored as
+  attributes and exported to CSV/YAML.
+- **Import wizard** with a preview of the first rows, delimiter detection and
+  proposed column types.
+- **Targeted mode for large data sets**: above the interactive editing
+  threshold the editable grid is replaced by targeted column and row actions.
+- New Data Studio help topic and vignette.
+
 # RcmdrShiny Studio 1.14.0
 
 ## Wave 0 — Studio foundations

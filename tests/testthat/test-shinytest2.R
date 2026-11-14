@@ -206,7 +206,7 @@ test_that("the full Phase 0 flow works in a real browser", {
   switch_tab("Data")
   app$set_inputs(data_mode = "edit")
   app$wait_for_js(
-    "document.querySelector('#data_editor') !== null",
+    "document.querySelector('#data_studio_editor') !== null",
     timeout = 30000
   )
   expect_match(app$get_html(".rcmdr-sidebar"), "Statistics")

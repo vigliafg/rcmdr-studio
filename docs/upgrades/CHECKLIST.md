@@ -46,27 +46,27 @@ colonna Note.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| D1.1 | Registro dataset | [ ] | |
-| D1.2 | Griglia, ricerca, filtri, selezione | [ ] | |
-| D1.3 | Inspector di colonna | [ ] | |
-| D1.4 | Operazioni su colonne | [ ] | |
-| D1.5 | Operazioni su righe | [ ] | |
-| D1.6 | Undo e checkpoint | [ ] | |
-| D1.7 | Data dictionary | [ ] | |
-| D1.8 | Import wizard | [ ] | |
-| D1.9 | Fallback big data | [ ] | |
-| D1.10 | Selezione → analisi | [ ] | |
-| D1.11 | Test, help, vignetta | [ ] | |
+| D1.1 | Registro dataset | [x] | `R/data-studio.R`, selettore attivo |
+| D1.2 | Griglia, ricerca, filtri, selezione | [x] | DT, filtro vista, selezione originale |
+| D1.3 | Inspector di colonna | [x] | `column_profile()`, grafico compatto |
+| D1.4 | Operazioni su colonne | [x] | Builder + dialoghi |
+| D1.5 | Operazioni su righe | [x] | Builder + selezione |
+| D1.6 | Undo e checkpoint | [x] | `R/data-studio.R`, ripristino di sessione |
+| D1.7 | Data dictionary | [x] | Attributi, tabella, CSV/YAML |
+| D1.8 | Import wizard | [x] | `dataImportWizard`, anteprima |
+| D1.9 | Fallback big data | [x] | Modalità targeted |
+| D1.10 | Selezione → analisi | [x] | Subset comandato |
+| D1.11 | Test, help, vignetta | [x] | Unit, E2E, topic, vignetta |
 
 ### Chiusura Onda 1
 
-- [ ] Ciclo import → ispeziona → pulisci → deriva → esporta.
-- [ ] Dataset grandi non disabilitati.
-- [ ] Ogni mutazione genera un comando.
-- [ ] Filtro vista vs subset distinto.
-- [ ] Undo/checkpoint documentato come sessione.
-- [ ] E2E verde.
-- [ ] Help topic e vignetta.
+- [x] Ciclo import → ispeziona → pulisci → deriva → esporta.
+- [x] Dataset grandi non disabilitati.
+- [x] Ogni mutazione genera un comando.
+- [x] Filtro vista vs subset distinto.
+- [x] Undo/checkpoint documentato come sessione.
+- [x] E2E verde.
+- [x] Help topic e vignetta.
 
 ---
 
@@ -295,4 +295,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
 2026-11-14 — Onda 0 completata: Studio shell, palette, cronologia,
              anteprima comando, preset, preview isolata, temi, Console minima.
              Test unit 1401 pass; E2E core, documenti, plugin e Wave 0 verdi.
+2026-11-14 — Onda 1 completata: Data Studio con registro dataset, griglia,
+             inspector, operazioni strutturali, checkpoint, dizionario,
+             import wizard e fallback targeted. Test unit 1632 pass; E2E
+             core, Wave 0, documenti e Data Studio verdi.
 ```

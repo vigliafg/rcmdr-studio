@@ -1,9 +1,10 @@
 # Onda 1 — Data Studio
 
-**Stato:** da implementare  
+**Stato:** implementata — 14 novembre 2026  
 **Dipende da:** Onda 0  
 **Sblocca:** Chart Studio (modello dati condiviso), Report Studio (data profile)  
-**Documento padre:** [`README.md`](README.md)
+**Documento padre:** [`README.md`](README.md)  
+**Diario di handoff:** [`diary/wave-01-data-studio.md`](diary/wave-01-data-studio.md)
 
 ---
 
@@ -548,3 +549,36 @@ esplicito, mai un'azione magica non tracciata.
 - [ ] Selezione → analisi.
 - [ ] Help topic e vignetta.
 - [ ] Test unit e E2E verdi.
+
+---
+
+## 11. Risultato consegnato
+
+- **Registro dataset** in `R/data-studio.R` con `dataset_registry()`,
+  `dataset_register()`, `dataset_unregister()`, `dataset_activate()` e
+  `dataset_metadata()`; il registro si riconcilia con l'ambiente a ogni
+  lettura.
+- **Griglia** con ricerca globale, filtro di colonna lato server, selezione
+  delle righe originali tramite `.row_id` e callback dedicato.
+- **Inspector** con `column_profile()` per numeriche, fattori, character,
+  logical e date.
+- **Operazioni strutturali** come comandi puri: nuovi builder in
+  `R/command-builders-data.R` e dialoghi `dataAddColumn`,
+  `dataDuplicateColumn`, `dataColumnType`, `dataCreateSubset`,
+  `dataDeleteRows`.
+- **Checkpoint** di sessione con cap per numero e memoria, ripristino e nota
+  nella cronologia.
+- **Data dictionary** con attributi `label`, `units`, `description`, tabella
+  ed export CSV/YAML.
+- **Import wizard** `dataImportWizard` con anteprima, rilevamento delimitatore
+  e proposta dei tipi.
+- **Fallback targeted** sopra la soglia di editing: niente griglia editabile,
+  ma inspector e azioni restano disponibili.
+- **Selezione -> analisi** tramite `selection_subset_command()`.
+- **Test**: `test-data-registry.R`, `test-data-studio-grid.R`,
+  `test-column-profile.R`, `test-data-rows.R`, `test-checkpoints.R`,
+  `test-data-dictionary.R`, `test-import-wizard.R`,
+  `test-selection-handoff.R`, `test-data-studio-dialogs.R`,
+  `test-data-studio-e2e.R`; builder esistenti estesi.
+- **Documentazione**: topic `data-studio`, vignetta `data-studio.Rmd`,
+  README, NEWS e descrizione del pacchetto.

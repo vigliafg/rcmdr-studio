@@ -1,0 +1,159 @@
+---
+title: "Data Studio"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Studio}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r}
+library(RcmdrShiny)
+```
+
+# Overview
+
+The Data Studio is the **Data** tab in Studio mode. It turns the historical
+view/edit pane into a complete data preparation workspace while keeping the
+engine rule unchanged: any change that modifies the data is an R command.
+
+This vignette walks through the lifecycle **import -> inspect -> clean ->
+derive -> export**.
+
+# A small data set
+
+For the examples we use a data frame created in a private environment, the
+same way the tests do:
+
+```{r}
+env <- new.env()
+env$Dataset <- data.frame(
+  id = 1:6,
+  group = factor(rep(c("a", "b"), 3)),
+  score = c(10, 12, 11, 15, 14, 16),
+  weight = c(1.2, 1.4, 1.1, 1.8, 1.6, 1.9)
+)
+state <- AppState(env = env)
+active_dataset(state, "Dataset")
+```
+
+The data set registry lists it with its dimensions and classes:
+
+```{r}
+RcmdrShiny:::dataset_registry(state)
+```
+
+# Inspect a column
+
+`RcmdrShiny:::column_profile()` is the same function behind the inspector:
+
+```{r}
+profile <- RcmdrShiny:::column_profile(state, "Dataset", "score")
+profile$type
+profile$stats
+profile$levels
+```
+
+Numeric profiles include a compact histogram, factor and character profiles
+include level counts.
+
+# Clean with commands
+
+Structural operations are generated as commands. Here we add a computed
+column, then remove it again:
+
+```{r}
+command <- RcmdrShiny:::cmd_add_column("Dataset", "ratio", expression = "score / weight")
+command
+run_command(state, command)
+env$Dataset$ratio
+```
+
+Deleting the column is another command:
+
+```{r}
+run_command(state, RcmdrShiny:::cmd_delete_columns("Dataset", "ratio"))
+names(env$Dataset)
+```
+
+# Select and subset
+
+Row selection is a session state. It is translated into a reproducible
+subset command only when you ask for it:
+
+```{r}
+RcmdrShiny:::set_data_selection(state, rows = c(1L, 3L), columns = c("id", "score"))
+RcmdrShiny:::selection_summary(state)
+sub <- RcmdrShiny:::selection_subset_command(state, "DatasetSubset")
+sub
+run_command(state, sub)
+env$DatasetSubset
+```
+
+A filtered view is different: it never changes the data set and never adds a
+command to the log.
+
+# Checkpoints
+
+Before a destructive operation the Data Studio creates a checkpoint:
+
+```{r}
+checkpoint <- RcmdrShiny:::checkpoint_create(state, "Before deleting rows")
+run_command(state, RcmdrShiny:::cmd_delete_rows("Dataset", c(1, 2)))
+nrow(env$Dataset)
+RcmdrShiny:::checkpoint_restore(state, checkpoint$id)
+nrow(env$Dataset)
+```
+
+A restore is a session operation. It is noted in the structured history but
+does not add a command to the script.
+
+# Data dictionary
+
+Labels and units are stored as attributes:
+
+```{r}
+RcmdrShiny:::set_variable_label(state, "Dataset", "score", label = "Score", units = "points")
+RcmdrShiny:::variable_label(state, "Dataset", "score")
+attr(env$Dataset$score, "label", exact = TRUE)
+```
+
+The same values are exported by the dictionary table:
+
+```{r}
+RcmdrShiny:::dictionary_table(state, "Dataset")
+```
+
+# Import preview
+
+`RcmdrShiny:::preview_import_file()` reads the first rows, detects the delimiter and
+proposes column types. The wizard uses it to show the preview before it
+generates the `read.table()` command.
+
+```{r, eval = FALSE}
+RcmdrShiny:::preview_import_file("data.csv", header = TRUE)
+```
+
+# Export
+
+Exporting is a command like any other:
+
+```{r, eval = FALSE}
+run_command(state, RcmdrShiny:::cmd_export_data("Dataset", "dataset.csv"))
+```
+
+The toolbar also exposes the download buttons for CSV and `.RData`.
+
+# Design notes
+
+- The grid is a view; it never becomes a second editing engine.
+- Every structural change goes through `run_command()`, so it appears in the
+  script, the output and the structured history.
+- Checkpoints are capped by count and memory; large data sets fall back to
+  targeted actions instead of disabling the workspace.
+- The Data Studio adds no statistical procedure: it reuses the existing
+  dialogs and command builders.

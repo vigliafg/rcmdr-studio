@@ -254,6 +254,16 @@ app_css <- function() {
     .rcmdr-console-input { display: flex; gap: .5rem; align-items: flex-start; }
     .rcmdr-console-input .form-group { flex: 1; margin-bottom: 0; }
     .rcmdr-console-note { color: var(--rcmdr-muted); font-size: .8rem; margin: .5rem 0; }
+    .dataTable tbody tr.rcmdr-row-selected td { background-color: #dbeafe !important; }
+    .dataTable tbody tr { cursor: pointer; }
+    .rcmdr-selection-bar {
+      display: flex; align-items: center; gap: .5rem;
+      margin-top: .75rem; padding: .45rem .6rem;
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+    }
+    .rcmdr-selection-bar .btn-link { padding: 0; }
     .rcmdr-menu-search { margin-bottom: .6rem; }
     .rcmdr-menu-search .form-group { margin-bottom: 0; }
     .rcmdr-menu-flat-path { font-size: .72rem; color: var(--rcmdr-muted); display: block; }
@@ -514,7 +524,7 @@ messages_pane_ui <- function() {
   )
 }
 
-data_pane_ui <- function() {
+classic_data_pane_ui <- function() {
   htmltools::tagList(
     htmltools::div(
       class = "d-flex gap-2 align-items-center mb-2 flex-wrap",
@@ -533,6 +543,14 @@ data_pane_ui <- function() {
     ),
     uiOutput("data_pane")
   )
+}
+
+data_pane_ui <- function(mode = "studio") {
+  if (identical(mode, "classic")) {
+    classic_data_pane_ui()
+  } else {
+    data_studio_ui()
+  }
 }
 
 plots_pane_ui <- function() {
@@ -613,7 +631,7 @@ main_tabs_ui <- function(mode = "studio") {
       tabPanel(tr("Messages"), messages_pane_ui()),
       tabPanel(tr("Plots"), plots_pane_ui()),
       tabPanel(tr("Report"), report_pane_ui()),
-      tabPanel(tr("Data"), data_pane_ui()),
+      tabPanel(tr("Data"), data_pane_ui("classic")),
       tabPanel(tr("Environment"), uiOutput("environment_pane")),
       tabPanel(tr("Help"), help_center_ui())
     ))
@@ -621,7 +639,7 @@ main_tabs_ui <- function(mode = "studio") {
   tabsetPanel(
     id = "main_tabs",
     tabPanel(tr("Home"), home_pane_ui()),
-    tabPanel(tr("Data"), data_pane_ui()),
+    tabPanel(tr("Data"), data_pane_ui("studio")),
     tabPanel(tr("Charts"), plots_pane_ui()),
     tabPanel(tr("Report"), report_pane_ui()),
     tabPanel(tr("Script"), script_pane_ui()),
@@ -736,6 +754,8 @@ app_server <- function(env = globalenv()) {
     last_plot_count <- reactiveVal(0L)
     main_tabs_mode <- reactiveVal(ui_mode(state))
     history_revision <- reactiveVal(0L)
+    data_grid_revision <- reactiveVal(0L)
+    data_selection_revision <- reactiveVal(0L)
     state$notify <- function() tick(tick() + 1L)
     state$script_consumed <- 0L
     state$set_script <- function(value) {
@@ -1498,10 +1518,9 @@ app_server <- function(env = globalenv()) {
       DT::datatable(
         df,
         options = list(pageLength = 10, scrollX = TRUE, dom = "ftip"),
-        rownames = FALSE,
-        server = nrow(df) > (state$options$dt_server_threshold %||% 5000L)
+        rownames = FALSE
       )
-    })
+    }, server = FALSE)
 
     output$data_editor <- rhandsontable::renderRHandsontable({
       tick()
@@ -1512,10 +1531,109 @@ app_server <- function(env = globalenv()) {
       )
     })
 
+    action_clicked <- function(value) {
+      if (is.null(value) || length(value) == 0L) return(FALSE)
+      if (is.character(value)) return(any(value == "click"))
+      value <- suppressWarnings(as.numeric(value))
+      length(value) == 1L && !is.na(value) && value > 0
+    }
+
+    data_selected_column <- reactive({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      if (is.null(df) || ncol(df) == 0L) return(NULL)
+      column <- input$data_inspector_column %||% ""
+      if (!nzchar(column) || !column %in% names(df)) column <- names(df)[[1L]]
+      column
+    })
+
+    observeEvent(input$data_dictionary, {
+      if (!action_clicked(input$data_dictionary)) return()
+      open_dialog_memory(state, "dataDictionary",
+                         list(variable = data_selected_column()))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_checkpoints, {
+      if (!action_clicked(input$data_checkpoints)) return()
+      open_dialog_memory(state, "dataCheckpoints", list())
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_create_subset, {
+      if (!action_clicked(input$data_create_subset)) return()
+      open_dialog_memory(state, "dataCreateSubset", list())
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_delete_rows, {
+      if (!action_clicked(input$data_delete_rows)) return()
+      rows <- data_selection(state)$rows
+      if (length(rows) == 0L) {
+        showNotification(tr("Select one or more rows first."),
+                         type = "message", duration = 4)
+        return()
+      }
+      open_dialog_memory(state, "dataDeleteRows", list(rows = rows))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_duplicate_column, {
+      if (!action_clicked(input$data_duplicate_column)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "dataDuplicateColumn", list(variable = column))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_add_column, {
+      if (!action_clicked(input$data_add_column)) return()
+      open_dialog_memory(state, "dataAddColumn", list())
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_col_type, {
+      if (!action_clicked(input$data_col_type)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "dataColumnType", list(variable = column))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_col_label, {
+      if (!action_clicked(input$data_col_label)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "dataDictionary", list(variable = column))
+    }, ignoreInit = TRUE)
+
+    refresh_data_ui <- function(touch_dataset = TRUE) {
+      tick(tick() + 1L)
+      menu_revision(menu_revision() + 1L)
+      history_revision(history_revision() + 1L)
+      if (isTRUE(touch_dataset)) {
+        data_grid_revision(data_grid_revision() + 1L)
+      }
+      invisible(NULL)
+    }
+
+    run_data_commands <- function(commands, checkpoint_label = NULL,
+                                  destructive = FALSE) {
+      commands <- commands %||% character()
+      commands <- commands[nzchar(commands)]
+      if (length(commands) == 0L) return(invisible(FALSE))
+      if (isTRUE(destructive)) {
+        checkpoint_create(state, checkpoint_label %||% tr("Before Data Studio change"))
+      }
+      ok <- TRUE
+      for (command in commands) {
+        outcome <- run_command(state, command, source = "data")
+        if (!identical(outcome$status, "ok")) ok <- FALSE
+      }
+      refresh_data_ui()
+      invisible(ok)
+    }
+
     observeEvent(input$data_apply, {
-      req(input$data_editor)
+      if (!action_clicked(input$data_apply)) return()
+      editor <- input$data_studio_editor %||% input$data_editor
+      req(editor)
       df <- tryCatch(
-        rhandsontable::hot_to_r(input$data_editor),
+        rhandsontable::hot_to_r(editor),
         error = function(e) NULL
       )
       if (is.null(df) || !is.data.frame(df)) {
@@ -1523,15 +1641,436 @@ app_server <- function(env = globalenv()) {
                          type = "error", duration = 6)
         return()
       }
-      update_dataset(state, df)
+      old <- dataset(state)
+      commands <- cmd_edit_cells(active_dataset(state), old, df)
+      if (length(commands) == 0L) {
+        showNotification(tr("No changes to apply."), type = "message",
+                         duration = 3)
+        return()
+      }
+      run_data_commands(
+        commands,
+        checkpoint_label = tr("Before cell editing"),
+        destructive = TRUE
+      )
       showNotification(tr("Data set updated."), type = "message", duration = 3)
-      tick(tick() + 1L)
-      menu_revision(menu_revision() + 1L)
     }, ignoreInit = TRUE)
 
     observeEvent(input$data_refresh, {
-      tick(tick() + 1L)
+      if (!action_clicked(input$data_refresh)) return()
+      dataset_register(state, active_dataset(state), refresh = TRUE)
+      refresh_data_ui()
     }, ignoreInit = TRUE)
+
+    # -- Data Studio --------------------------------------------------------
+
+    output$data_dataset_selector <- renderUI({
+      tick()
+      data_grid_revision()
+      registry <- dataset_registry(state)
+      if (nrow(registry) == 0L) {
+        return(htmltools::tags$span(class = "text-muted small",
+                                    tr("No data sets registered")))
+      }
+      labels <- sprintf("%s (%d x %d)", registry$name, registry$rows,
+                        registry$cols)
+      selectInput(
+        "data_dataset_choice", tr("Active data set"),
+        choices = stats::setNames(registry$name, labels),
+        selected = active_dataset(state),
+        width = "100%"
+      )
+    })
+
+    observeEvent(input$data_dataset_choice, {
+      choice <- input$data_dataset_choice %||% ""
+      if (!nzchar(choice) || identical(choice, active_dataset(state))) return()
+      dataset_activate(state, choice)
+      clear_data_selection(state)
+      data_selection_revision(data_selection_revision() + 1L)
+      refresh_data_ui()
+    }, ignoreInit = TRUE)
+
+    data_filter_value_d <- shiny::debounce(
+      reactive(input$data_filter_value %||% ""), 300
+    )
+
+    output$data_filter_ui <- renderUI({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      if (is.null(df)) return(NULL)
+      choices <- stats::setNames(
+        c("", names(df)),
+        c(tr("(no column filter)"), names(df))
+      )
+      selected <- isolate(input$data_filter_column %||% "")
+      if (!selected %in% names(df)) selected <- ""
+      value <- isolate(input$data_filter_value %||% "")
+      htmltools::div(
+        class = "d-flex gap-2 align-items-end",
+        selectInput("data_filter_column", NULL, choices = choices,
+                    selected = selected, width = "190px"),
+        textInput("data_filter_value", NULL, value = value,
+                  placeholder = tr("Filter value"), width = "150px"),
+        actionButton("data_filter_clear", tr("Clear filter"),
+                     class = "btn-sm btn-outline-secondary")
+      )
+    })
+
+    data_view_frame <- reactive({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      if (is.null(df)) return(NULL)
+      grid <- data_grid_frame(df)
+      column <- input$data_filter_column %||% ""
+      value <- trim_blanks(data_filter_value_d() %||% "")
+      if (!nzchar(column) || !column %in% names(grid) || !nzchar(value)) {
+        return(grid)
+      }
+      x <- grid[[column]]
+      keep <- tryCatch({
+        if (is.numeric(x)) {
+          number <- suppressWarnings(as.numeric(value))
+          if (!is.na(number)) {
+            !is.na(x) & x == number
+          } else {
+            grepl(value, as.character(x), ignore.case = TRUE, fixed = TRUE)
+          }
+        } else {
+          grepl(value, as.character(x), ignore.case = TRUE, fixed = TRUE)
+        }
+      }, error = function(e) rep(TRUE, nrow(grid)))
+      grid[keep %in% TRUE, , drop = FALSE]
+    })
+
+    observeEvent(input$data_filter_clear, {
+      if (!action_clicked(input$data_filter_clear)) return()
+      updateSelectInput(session, "data_filter_column", selected = "")
+      updateTextInput(session, "data_filter_value", value = "")
+      data_grid_revision(data_grid_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    output$data_grid <- renderUI({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      if (is.null(df)) {
+        return(empty_state(
+          tr("No active data set"),
+          tr("Import a file or load a data set from a package to start.")
+        ))
+      }
+      mode <- input$data_mode %||% "view"
+      if (identical(mode, "edit") && editable_dataset(state)) {
+        return(rhandsontable::rHandsontableOutput("data_studio_editor"))
+      }
+      targeted <- identical(mode, "edit") && !editable_dataset(state)
+      server_mode <- nrow(df) > (state$options$dt_server_threshold %||% 5000L)
+      htmltools::tagList(
+        if (targeted) {
+          htmltools::tags$div(
+            class = "alert alert-warning py-2",
+            tr("This data set is above the interactive editing threshold. Targeted column and row actions remain available.")
+          )
+        },
+        if (server_mode) {
+          DT::dataTableOutput("data_studio_table_server")
+        } else {
+          DT::dataTableOutput("data_studio_table")
+        }
+      )
+    })
+
+    output$data_studio_table <- DT::renderDataTable({
+      tick()
+      data_grid_revision()
+      grid <- data_view_frame()
+      req(grid)
+      DT::datatable(
+        grid,
+        selection = "none",
+        callback = grid_selection_callback(),
+        options = list(
+          pageLength = 25L, scrollX = TRUE, searchHighlight = TRUE,
+          autoWidth = TRUE,
+          columnDefs = list(
+            list(visible = FALSE, targets = ncol(grid) - 1L)
+          )
+        ),
+        rownames = FALSE
+      )
+    }, server = FALSE)
+
+    output$data_studio_table_server <- DT::renderDataTable({
+      tick()
+      data_grid_revision()
+      grid <- data_view_frame()
+      req(grid)
+      DT::datatable(
+        grid,
+        selection = "none",
+        callback = grid_selection_callback(),
+        options = list(
+          pageLength = 25L, scrollX = TRUE, autoWidth = TRUE,
+          dom = "ftip",
+          columnDefs = list(
+            list(visible = FALSE, targets = ncol(grid) - 1L)
+          )
+        ),
+        rownames = FALSE
+      )
+    }, server = TRUE)
+
+    output$data_studio_editor <- rhandsontable::renderRHandsontable({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      req(df, editable_dataset(state))
+      rhandsontable::rhandsontable(
+        df, height = 520, stretchH = "all", useTypes = TRUE
+      ) |>
+        rhandsontable::hot_context_menu(allowRowEdit = TRUE,
+                                        allowColEdit = FALSE) |>
+        rhandsontable::hot_cols(manualColumnResize = TRUE, columnSorting = TRUE) |>
+        rhandsontable::hot_rows(rowHeights = 28)
+    })
+
+    output$data_inspector <- renderUI({
+      tick()
+      data_grid_revision()
+      data_selection_revision()
+      df <- dataset(state)
+      if (is.null(df)) return(NULL)
+      column <- data_selected_column()
+      profile <- column_profile(state, active_dataset(state), column)
+      htmltools::tags$div(
+        class = "rcmdr-section-card",
+        selectInput(
+          "data_inspector_column", tr("Column"),
+          choices = stats::setNames(names(df), names(df)),
+          selected = column, width = "100%"
+        ),
+        data_inspector_ui(profile)
+      )
+    })
+
+    output$data_selection_columns_ui <- renderUI({
+      tick()
+      data_grid_revision()
+      data_selection_revision()
+      df <- dataset(state)
+      if (is.null(df)) return(NULL)
+      selectizeInput(
+        "data_selection_columns", tr("Columns for subset"),
+        choices = stats::setNames(names(df), names(df)),
+        selected = data_selection(state)$columns,
+        multiple = TRUE, width = "100%"
+      )
+    })
+
+    output$data_profile_plot <- renderPlot({
+      tick()
+      data_grid_revision()
+      column <- data_selected_column()
+      req(column)
+      profile <- column_profile(state, active_dataset(state), column)
+      req(profile)
+      graphics::par(mar = c(3, 3, 1, 1))
+      if (!is.null(profile$histogram)) {
+        graphics::barplot(
+          profile$histogram$counts,
+          names.arg = format(profile$histogram$mids, digits = 3),
+          col = "#4c78a8", border = NA, las = 2, cex.names = 0.7,
+          main = "", ylab = "", xlab = ""
+        )
+      } else if (!is.null(profile$levels)) {
+        top <- utils::head(profile$levels, 10L)
+        graphics::barplot(
+          top$count, names.arg = top$value, col = "#4c78a8", border = NA,
+          las = 2, cex.names = 0.7, ylab = "", xlab = ""
+        )
+      } else {
+        graphics::plot.new()
+      }
+    })
+
+    output$data_missingness <- renderUI({
+      tick()
+      data_grid_revision()
+      data_missingness_ui(data_missingness(state))
+    })
+
+    output$data_selection_bar <- renderUI({
+      tick()
+      data_selection_revision()
+      selection <- data_selection(state)
+      htmltools::tags$div(
+        class = "rcmdr-selection-bar",
+        htmltools::tags$span(selection_summary(state)),
+        if (length(selection$rows) > 0L || length(selection$columns) > 0L ||
+            nzchar(selection$expression %||% "")) {
+          actionButton("data_selection_clear", tr("Clear selection"),
+                       class = "btn-sm btn-link")
+        }
+      )
+    })
+
+    observeEvent(input$data_grid_selection, {
+      rows <- input$data_grid_selection %||% integer()
+      rows <- as.integer(rows)
+      rows <- rows[!is.na(rows)]
+      columns <- data_selection(state)$columns
+      set_data_selection(state, rows = rows, columns = columns)
+      data_selection_revision(data_selection_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_selection_columns, {
+      rows <- data_selection(state)$rows
+      set_data_selection(
+        state, rows = rows,
+        columns = input$data_selection_columns %||% character()
+      )
+      data_selection_revision(data_selection_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_selection_clear, {
+      if (!action_clicked(input$data_selection_clear)) return()
+      clear_data_selection(state)
+      data_selection_revision(data_selection_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_search, {
+      df <- dataset(state)
+      if (is.null(df)) return()
+      id <- if (nrow(df) > (state$options$dt_server_threshold %||% 5000L)) {
+        "data_studio_table_server"
+      } else {
+        "data_studio_table"
+      }
+      tryCatch({
+        proxy <- DT::dataTableProxy(id, session = session)
+        DT::updateSearch(
+          proxy,
+          keywords = list(global = input$data_search %||% "")
+        )
+      }, error = function(e) NULL)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_import_wizard, {
+      if (!action_clicked(input$data_import_wizard)) return()
+      state$open_dialog("dataImportWizard")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_col_summary, {
+      if (!action_clicked(input$data_col_summary)) return()
+      column <- data_selected_column()
+      req(column)
+      if (!column %in% numeric_variables(state)) {
+        showNotification(tr("Numerical summaries need a numeric variable."),
+                         type = "message", duration = 5)
+        return()
+      }
+      open_dialog_memory(state, "numericalSummaries", list(x = column))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_col_plot, {
+      if (!action_clicked(input$data_col_plot)) return()
+      column <- data_selected_column()
+      req(column)
+      df <- dataset(state)
+      if (is.numeric(df[[column]])) {
+        open_dialog_memory(state, "Histogram", list(variable = column))
+      } else {
+        open_dialog_memory(state, "barGraph", list(variable = column))
+      }
+    }, ignoreInit = TRUE)
+
+
+
+    observeEvent(input$data_col_rename, {
+      if (!action_clicked(input$data_col_rename)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "renameVariables",
+                         list(variables = column, names = column))
+    }, ignoreInit = TRUE)
+
+
+
+    observeEvent(input$data_col_recode, {
+      if (!action_clicked(input$data_col_recode)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "RecodeDialog", list(variables = column))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_col_delete, {
+      if (!action_clicked(input$data_col_delete)) return()
+      column <- data_selected_column()
+      req(column)
+      open_dialog_memory(state, "deleteVariable", list(variables = column))
+    }, ignoreInit = TRUE)
+
+
+
+    observeEvent(input$data_add_row, {
+      if (!action_clicked(input$data_add_row)) return()
+      run_data_commands(
+        cmd_add_row(active_dataset(state)),
+        checkpoint_label = tr("Before adding a row"),
+        destructive = TRUE
+      )
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_duplicate_rows, {
+      if (!action_clicked(input$data_duplicate_rows)) return()
+      rows <- data_selection(state)$rows
+      if (length(rows) == 0L) {
+        showNotification(tr("Select one or more rows first."),
+                         type = "message", duration = 4)
+        return()
+      }
+      run_data_commands(
+        cmd_duplicate_rows(active_dataset(state), rows),
+        checkpoint_label = tr("Before duplicating rows"),
+        destructive = TRUE
+      )
+    }, ignoreInit = TRUE)
+
+
+
+
+
+
+    output$download_dictionary_csv <- downloadHandler(
+      filename = function() {
+        paste0(active_dataset(state) %||% "dictionary", "-dictionary.csv")
+      },
+      content = function(file) {
+        utils::write.csv(dictionary_export(state), file, row.names = FALSE)
+      }
+    )
+
+    output$download_dictionary_yaml <- downloadHandler(
+      filename = function() {
+        paste0(active_dataset(state) %||% "dictionary", "-dictionary.yml")
+      },
+      content = function(file) {
+        table <- dictionary_export(state)
+        entries <- lapply(seq_len(nrow(table)), function(i) {
+          list(
+            variable = table$variable[[i]],
+            label = table$label[[i]],
+            units = table$units[[i]],
+            description = table$description[[i]]
+          )
+        })
+        names(entries) <- table$variable
+        yaml::write_yaml(entries, file)
+      }
+    )
 
     output$environment_pane <- renderUI({
       tick()

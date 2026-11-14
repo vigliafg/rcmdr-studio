@@ -41,6 +41,7 @@ base_dialog_catalog <- function() {
     list(
       loadPlugins = load_plugins_dialog(),
       readDataSet = import_text_dialog(),
+      dataImportWizard = data_import_dialog(),
       numericalSummaries = numerical_summaries_dialog(),
       linearModel = linear_model_dialog(),
       Options = options_dialog(),
@@ -50,6 +51,7 @@ base_dialog_catalog <- function() {
       exportReport = export_report_dialog()
     ),
     document_dialogs(),
+    data_studio_dialogs(),
     phase2_dialogs(), phase3_dialogs(), phase4_dialogs(), phase5_dialogs()
   )
 }

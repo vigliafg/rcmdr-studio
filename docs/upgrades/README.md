@@ -103,6 +103,9 @@ Report Studio riusa la galleria grafici.
 **Onda 0 completata il 14 novembre 2026.** Il diario di handoff è
 [`diary/wave-00-foundations.md`](diary/wave-00-foundations.md).
 
+**Onda 1 completata il 14 novembre 2026.** Il diario di handoff è
+[`diary/wave-01-data-studio.md`](diary/wave-01-data-studio.md).
+
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.
 

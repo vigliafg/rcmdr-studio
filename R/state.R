@@ -19,6 +19,17 @@ AppState <- function(env = globalenv()) {
   state$active_dataset <- NULL
   state$active_model <- NULL
 
+  # Data Studio: dataset registry, data dictionary, session checkpoints and
+  # the current grid selection.  `state$active_dataset` remains the single
+  # source of truth used by the rest of the engine.
+  state$datasets <- list()
+  state$data_dictionary <- list()
+  state$checkpoints <- list()
+  state$checkpoint_counter <- 0L
+  state$data_selection <- NULL
+  state$data_grid_revision <- 0L
+  state$last_checkpoint_skip <- NULL
+
   state$log <- character()
   state$output <- character()
   state$output_stack <- list()
@@ -72,6 +83,9 @@ AppState <- function(env = globalenv()) {
     max_plots = 50L,
     output_stack_length = 10L,
     dt_server_threshold = 5000L,
+    checkpoint_max = 20L,
+    checkpoint_max_bytes = 50 * 1024^2,
+    import_preview_rows = 20L,
     use_markdown = FALSE,
     use_knitr = FALSE,
     language = current_language(),
@@ -132,6 +146,7 @@ active_dataset <- function(state, value) {
     state$active_model <- NULL
   }
   state$active_dataset <- value
+  if (is.function(dataset_register)) dataset_register(state, value)
   state_touch(state)
   invisible(value)
 }
@@ -167,6 +182,7 @@ update_dataset <- function(state, df) {
   if (is.null(name)) stop("There is no active data set.", call. = FALSE)
   if (!is.data.frame(df)) stop("The edited object is not a data frame.", call. = FALSE)
   assign(name, df, envir = state$env)
+  if (is.function(dataset_register)) dataset_register(state, name)
   state_touch(state)
   invisible(df)
 }
