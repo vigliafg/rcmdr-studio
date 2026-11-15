@@ -1,7 +1,7 @@
 # Onda 8 — Hardening menu e ciclo di vita dei plugin
 
 **Data:** 2026-11-15
-**Stato:** Fase 1 completata (2.0.2); Fase 2 completata (2.1.0); Fase 3 da valutare
+**Stato:** Fase 1 (2.0.2), Fase 2 (2.1.0) e Fase 3 (ADR-014, no-go) concluse
 **Baseline:** RcmdrShiny 2.1.0
 **Ondate precedenti:** 0–7, tutte chiuse
 **Diario di riferimento:** [`diary/wave-07-platform.md`](diary/wave-07-platform.md)
@@ -30,6 +30,8 @@ errori e persistenza delle preferenze.
 ---
 
 ## 2. Diagnosi sintetica
+
+Evidenze complete, misure e prove: [`audit-menu-plugin.md`](audit-menu-plugin.md).
 
 ### 2.1 Menu in stato di debito
 
@@ -78,7 +80,7 @@ Problemi verificati:
 |---|---|---|---|
 | 1 | H8.1–H8.7: disponibilità, guardie, preferiti, accessibilità, errori plugin, messaggio reload | **completata 2026-11-15** | 2.0.2 |
 | 2 | H8.8–H8.12: persistenza e Plugin Manager, conflitti, lazy documentato, benchmark | **completata 2026-11-15** | 2.1.0 |
-| 3 | H8.13: valutazione lazy reale / registry per-sessione | da valutare | — |
+| 3 | H8.13: valutazione lazy reale / registry per-sessione | **valutata 2026-11-15: no-go (ADR-014)** | — |
 
 Il punto di ripresa è in
 [`diary/wave-08-hardening.md`](diary/wave-08-hardening.md), sezione 0.
@@ -391,15 +393,20 @@ modificare codice R; un plugin mancante non blocca l'avvio.
 
 ### H8.13 — Lazy reale e registro per sessione
 
-Solo se emerge una necessità concreta:
+**Esito: no-go (ADR-014, 2026-11-15).** Il caricamento resta differito al primo
+catalogo e il registro resta globale di processo. Trigger per riaprire la
+decisione: requisito multiutente, startup stabilmente sopra budget, catalogo
+plugin molto più grande, necessità di scaricare un singolo plugin.
+
+Se in futuro si riapre:
 
 - **Lazy reale per gruppo di menu:** richiede menu e predicati disponibili
   senza caricare il namespace del plugin, quindi una separazione tra
   contributo statico (menu) e contributo dinamico (dialoghi, comandi). Impatto
   alto su registry, cache e attivazione.
 - **Registro per sessione:** spostare `.plugin_registry` nello stato della
-  sessione. Rompe l'assunzione single-user e le cache globali; richiede ADR e
-  migrazione dei test.
+  sessione. Rompe l'assunzione single-user e le cache globali; richiede un ADR
+  dedicato e la migrazione dei test.
 - Output atteso: ADR con decisione go/no-go e stima, non implementazione
   automatica.
 

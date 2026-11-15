@@ -411,3 +411,61 @@ Shiny. Il progetto è locale e single-user, ma il comportamento va esplicitato.
 ### Alternative scartate
 
 - Registry per sessione: rompe cache globali e test, beneficio non dimostrato.
+
+---
+
+## ADR-014 — Nessun lazy reale e nessun registry plugin per-sessione
+
+**Stato:** accettata
+**Data:** 2026-11-15
+
+### Contesto
+
+L'audit dell'Onda 8 ha misurato il ciclo di vita dei plugin: 5,69 s per
+caricare 16 plugin, 7,10 s per materializzare la coda differita al primo
+catalogo, 0,71–1,48 s per costruire l'albero dei menu. Il registro
+`.plugin_registry` è globale di processo e l'applicazione è locale,
+single-user.
+
+H8.13 chiedeva se valesse la pena implementare un caricamento davvero
+on-demand (per gruppo di menu) e un registro per-sessione.
+
+### Decisione
+
+- **No al lazy reale per ora.** Il caricamento resta "differito al primo
+  accesso al catalogo". L'opzione `RcmdrShiny.lazy_plugins` resta per
+  compatibilità, ma la documentazione non promette caricamento su richiesta.
+- **No al registry per-sessione.** Il registro resta globale di processo e
+  l'assunzione single-user di ADR-013 resta valida.
+- **Trigger di rivalutazione**, da verificare prima di riaprire la decisione:
+  - requisito multiutente o più sessioni con selezioni diverse;
+  - "startup shell" stabilmente sopra il budget di 3 s;
+  - catalogo plugin abbastanza grande da rendere il caricamento eager
+    percepibile (> 20 plugin o > 10 s);
+  - necessità di scaricare un singolo plugin senza toccare gli altri.
+
+### Conseguenze
+
+- Il costo del caricamento resta concentrato all'avvio della sessione, non
+  distribuito sulle azioni dell'utente.
+- Un load/unload a runtime continua a influenzare le altre sessioni; i menu
+  restano catturati per sessione e richiedono il reload della pagina.
+- Health e diagnostics espongono fallimenti, conflitti e tempo di
+  materializzazione, così il comportamento è osservabile.
+
+### Alternative scartate
+
+- **Lazy per gruppo di menu**: richiede menu e predicati disponibili senza
+  caricare il namespace del plugin, quindi separare contributo statico e
+  dinamico; impatto alto su registry, cache e attivazione, beneficio non
+  dimostrato dalle misure.
+- **Registry per-sessione**: rompe cache globali, help condiviso ed estensioni
+  (preset, workflow, chart type) e non è giustificato dal posizionamento
+  single-user.
+
+### Verifica
+
+- Baseline 2.1.0: suite 3401 pass; benchmark plugin entro budget (load 1
+  plugin 831 ms, tree caldo 100 ms).
+- Le misure e le prove sono in
+  [`audit-menu-plugin.md`](audit-menu-plugin.md).

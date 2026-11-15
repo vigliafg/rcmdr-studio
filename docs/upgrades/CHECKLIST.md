@@ -320,7 +320,7 @@ Rilascio pianificato: 2.0.2 (H8.1–H8.7) e 2.1.0 (H8.8–H8.12).
 | H8.10 | Semantica lazy documentata e misurata | [x] | 2.1.0: health/diagnostics espongono il tempo di materializzazione |
 | H8.11 | Benchmark del ciclo plugin | [x] | 2.1.0: 4 scenari con budget in `R/benchmark.R` |
 | H8.12 | Chiusura Fase 2 (2.1.0) | [x] | Suite 3401 pass, check OK, diario aggiornato |
-| H8.13 | Valutazione lazy reale / registry per-sessione | [ ] | Solo ADR, nessuna implementazione |
+| H8.13 | Valutazione lazy reale / registry per-sessione | [x] | ADR-014: no-go, trigger di rivalutazione documentati |
 
 ### Chiusura Onda 8
 

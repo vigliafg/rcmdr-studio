@@ -10,7 +10,8 @@
 | Golden | Comandi esistenti invariati | `test-command-builders-*.R` | tutti i builder |
 | Menu contract | ID stabili, copertura comandi, moduli first-party | `test-menu-registry.R`, `test-plugins-compat.R` | 782/782 comandi |
 | E2E | Flussi Studio e Classica | `RCMDRSHINY_E2E=1` + `test-shinytest2.R` | 15 test |
-| E2E menu | Menubar gerarchico e ID DOM | `test-menu-platform-e2e.R` | 16 test |
+| E2E menu | Menubar gerarchico, ID DOM e voci non disponibili | `test-menu-platform-e2e.R` | 2 flussi |
+| E2E plugin manager | Selezione plugin e persistenza preferenze | `test-plugin-manager-e2e.R` | 1 flusso |
 | E2E navigation | Palette, preferiti, ricerca | `test-navigation-e2e.R` | 4 test |
 | Visual | Grafici deterministici | `vdiffr` (opzionale) | `test-visual.R` |
 | Accessibility | Landmark, ARIA, focus, skip link | `test-accessibility.R` + `docs/upgrades/ACCESSIBILITY.md` | checklist |
@@ -29,6 +30,8 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e \
   'pkgload::load_all(quiet=TRUE); testthat::test_file("tests/testthat/test-shinytest2.R")'
 NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e \
   'pkgload::load_all(quiet=TRUE); testthat::test_file("tests/testthat/test-menu-platform-e2e.R")'
+NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e \
+  'pkgload::load_all(quiet=TRUE); testthat::test_file("tests/testthat/test-plugin-manager-e2e.R")'
 NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e \
   'pkgload::load_all(quiet=TRUE); testthat::test_file("tests/testthat/test-navigation-e2e.R")'
 

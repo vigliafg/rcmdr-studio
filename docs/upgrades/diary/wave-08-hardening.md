@@ -11,22 +11,25 @@
 ## 0. Punto di ripresa per la prossima sessione
 
 **Stato al momento della compattazione:** branch `main`, HEAD corrente (vedi
-`git log -1`), working tree pulito, Fase 2 pushata su `origin/main`.
+`git log -1`), working tree pulito. Onda 8 chiusa: Fasi 1–2 implementate,
+Fase 3 decisa con ADR-014 (no-go).
 
 **Baseline verificata:**
-`testthat::test_local()` → **3401 pass, 0 fail, 20 skip**;
+`testthat::test_local()` → **3401 pass, 0 fail, 22 skip**;
 `R CMD check --no-manual` su `RcmdrShiny_2.1.0.tar.gz` → **Status: OK**.
 
-**Prossimo task:** nessun task obbligatorio. Resta solo **H8.13** (valutazione
-lazy reale / registry per-sessione, solo ADR) se emerge una necessità.
+**Prossimo task:** nessuno. Onda 8 chiusa. Eventuali riaperture sono elencate
+nei trigger di ADR-014 e nella sezione 8.
 
 **Da leggere, in quest'ordine:**
 
 1. questo diario (sezioni 0, 5, 7, 8);
 2. [`../08-hardening-menus-plugins.md`](../08-hardening-menus-plugins.md),
    sezioni 4 (decisioni), 6 (Fase 2) e 10 (test);
-3. [`../CHECKLIST.md`](../CHECKLIST.md), sezione Onda 8;
-4. solo se serve: `R/plugins.R`, `R/preferences.R`, `R/health.R`.
+3. [`../audit-menu-plugin.md`](../audit-menu-plugin.md) per le evidenze
+   complete dei due audit;
+4. [`../CHECKLIST.md`](../CHECKLIST.md), sezione Onda 8;
+5. solo se serve: `R/plugins.R`, `R/preferences.R`, `R/health.R`.
 
 **Regola:** non assumere che il contesto precedente sia disponibile. Questo
 diario è la fonte di verità.
@@ -67,7 +70,8 @@ visibili, benchmark del ciclo plugin.
 |---|---|---|
 | `6222d6f` | docs: add Wave 8 hardening plan | Piano e checklist Onda 8 |
 | `0735a2f` | feat: unify command availability and harden plugins | Fase 1 (2.0.2) |
-| _(questo commit)_ | feat: persist plugin selection and surface conflicts | Fase 2 (2.1.0) |
+| `4538bd8` | feat: persist plugin selection and surface conflicts | Fase 2 (2.1.0) |
+| _(questo commit)_ | docs: close Wave 8 phase 3 and add browser coverage | Audit, E2E, ADR-014 |
 
 ---
 
@@ -106,7 +110,7 @@ visibili, benchmark del ciclo plugin.
 
 | Verifica | Comando | Esito |
 |---|---|---|
-| Suite completa | `testthat::test_local()` | **3401 pass, 0 fail, 20 skip** |
+| Suite completa | `testthat::test_local()` | **3401 pass, 0 fail, 22 skip** |
 | Menu e disponibilità | `test_file("tests/testthat/test-menus.R")` | verde |
 | Attivazione | `test_file("tests/testthat/test-activation.R")` | verde |
 | Guardie | `test_file("tests/testthat/test-menu-availability.R")` | verde |
@@ -163,20 +167,19 @@ Decisioni minori prese durante l'implementazione:
 
 ### Prima cosa da fare nella prossima sessione
 
-1. Leggere questo diario (sezioni 0, 7, 11) e la sezione 7 del documento di
-   settore.
+1. Leggere questo diario (sezioni 0, 7, 11, 12) e la sezione 7 del documento
+   di settore.
 2. Eseguire la baseline (sezione 9) e confermare **3401 pass, 0 fail**.
-3. Non ci sono task obbligatori. Se serve, aprire **H8.13** come ADR/spike.
+3. Onda 8 è chiusa. Riaprire solo se scatta un trigger di ADR-014.
 
-### H8.13 — Valutazione lazy reale / registry per-sessione
+### H8.13 — Chiusa con ADR-014
 
-- Solo ADR in `DECISIONS.md`, nessuna implementazione automatica.
-- Lazy reale: richiede menu e predicati disponibili senza caricare il namespace
-  del plugin, quindi separare contributo statico e dinamico; impatto alto su
-  registry, cache e attivazione.
-- Registry per-sessione: sposta `.plugin_registry` nello stato; rompe cache
-  globali e l'assunzione single-user di ADR-013.
-- Decisione attesa: go/no-go con stima, oppure chiusura come "non necessario".
+- **No** al lazy reale per gruppo: costo e rischio alti, beneficio non
+  dimostrato (la coda si materializza comunque al primo catalogo).
+- **No** al registry per-sessione: il progetto è single-user e le cache sono
+  globali.
+- Trigger di rivalutazione: multiutente, startup sopra budget, catalogo molto
+  più grande, necessità di scaricare un singolo plugin.
 
 ### Lavoro ordinario
 
@@ -254,7 +257,7 @@ ciclo plugin con benchmark.
 `R/diagnostics.R`, `R/benchmark.R`, `inst/etc/Rcmdr-menus.txt`,
 `inst/menus/core.yml`, test in `test-plugins.R`, help e vignetta plugin.
 
-**Test:** 3401 pass, 0 fail, 20 skip; `R CMD check` OK; 0 link rotti.
+**Test:** 3401 pass, 0 fail, 22 skip; `R CMD check` OK; 0 link rotti.
 Benchmark quick: load 1 plugin 831 ms (budget 6000), menu tree warm 100 ms
 (budget 4000), tutti gli scenari entro budget.
 
@@ -271,3 +274,32 @@ Benchmark quick: load 1 plugin 831 ms (budget 6000), menu tree warm 100 ms
 
 **Debito residuo:** nessun E2E browser per il Plugin Manager; H8.13 resta una
 valutazione.
+
+---
+
+## 12. Chiusura Onda 8 — audit, E2E e ADR-014
+
+**Audit persistito:** [`../audit-menu-plugin.md`](../audit-menu-plugin.md)
+contiene evidenze, misure, prove e mappatura difetto → correzione per entrambi
+gli audit. Il piano lo cita nella sezione 2.
+
+**E2E aggiunti:**
+
+- `test-menu-platform-e2e.R` — secondo flusso: voce `inactive` con
+  `aria-disabled`, motivo, `tabindex`, click che non chiude il menu, preferiti
+  con 1 link e 2 voci disabilitate.
+- `test-plugin-manager-e2e.R` — apre Utilities, seleziona un plugin installato,
+  Apply e verifica la selezione scritta nel file preferenze.
+
+**Stato E2E:** i test sono gated da `RCMDRSHINY_E2E=1`. In questa macchina
+l'esecuzione browser **non è possibile**: anche i flussi E2E preesistenti
+falliscono con `Chromote: timed out waiting for response to command
+Page.navigate`. Non è una regressione introdotta qui; il debito di evidenza
+resta dichiarato. Da rieseguire in CI o su una macchina con browser
+funzionante.
+
+**Fase 3:** ADR-014 chiude H8.13 con **no-go** su lazy reale e registry
+per-sessione, e fissa i trigger di rivalutazione.
+
+**Onda 8 chiusa.** Prossimi passi possibili: release 2.1.0 (`R CMD check
+--as-cran`, tag), rifiniture UX del Plugin Manager, o una nuova ondata.
