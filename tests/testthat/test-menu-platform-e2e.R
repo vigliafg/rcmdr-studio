@@ -85,3 +85,82 @@ test_that("the menubar exposes hierarchical menus with stable ids", {
   expect_match(app$get_text(".modal-title"), "Options")
   app$click("dialog_cancel")
 })
+
+test_that("unavailable menu items explain themselves and keep the menu open", {
+  menu_e2e_ready()
+
+  preferences <- tempfile(fileext = ".rds")
+  saveRDS(list(
+    favorites = c("readDataSet", "oneWayAnova", "onCopy"),
+    recents = character()
+  ), preferences)
+  old_preferences <- Sys.getenv("RCMDRSHINY_PREFERENCES", unset = NA_character_)
+  Sys.setenv(RCMDRSHINY_PREFERENCES = preferences)
+  on.exit({
+    unlink(preferences)
+    if (is.na(old_preferences)) {
+      Sys.unsetenv("RCMDRSHINY_PREFERENCES")
+    } else {
+      Sys.setenv(RCMDRSHINY_PREFERENCES = old_preferences)
+    }
+  }, add = TRUE)
+
+  app <- shinytest2::AppDriver$new(
+    RcmdrShiny::app(env = new.env()),
+    name = "menu-unavailable-flow",
+    width = 1400,
+    height = 1000,
+    load_timeout = 90000
+  )
+  on.exit(app$stop(), add = TRUE)
+
+  app$wait_for_idle(timeout = 30000)
+  app$run_js("Shiny.setInputValue('tour_skip', 1, {priority: 'event'});")
+  app$wait_for_js(
+    "document.querySelectorAll('.rcmdr-menubar-group').length >= 9",
+    timeout = 60000
+  )
+
+  # Transform has only inactive entries without a data set.
+  app$run_js(paste0(
+    "(function(){",
+    "var g=Array.from(document.querySelectorAll('.rcmdr-menubar-group'))",
+    ".find(function(el){return el.querySelector('summary').textContent.trim()==='Transform';});",
+    "if(g) g.open=true;",
+    "})();"
+  ))
+  app$wait_for_js(
+    "document.querySelectorAll('.rcmdr-menubar-group[open] .rcmdr-menu-item[aria-disabled=\"true\"]').length > 0",
+    timeout = 30000
+  )
+
+  item <- paste0(
+    "document.querySelector('.rcmdr-menubar-group[open] ",
+    ".rcmdr-menu-item[aria-disabled=\"true\"]')"
+  )
+  expect_match(
+    app$get_js(paste0(item, ".getAttribute('title')")),
+    "Not available", fixed = TRUE
+  )
+  expect_identical(app$get_js(paste0(item, ".getAttribute('tabindex')")), "0")
+  expect_match(
+    app$get_js(paste0(item, ".textContent")),
+    "Not available", fixed = TRUE
+  )
+
+  # Clicking a disabled item keeps the menu open and opens nothing.
+  app$run_js(paste0(item, ".click();"))
+  app$wait_for_idle(timeout = 30000)
+  expect_true(app$get_js(
+    "document.querySelector('.rcmdr-menubar-group[open]') !== null"
+  ))
+  expect_true(app$get_js("document.querySelector('.modal') === null"))
+
+  # Favourites mirror the status: one link, two disabled entries.
+  expect_equal(app$get_js(
+    "document.querySelectorAll('#menus .rcmdr-menu-shortcuts a.rcmdr-menu-item').length"
+  ), 1)
+  expect_equal(app$get_js(
+    "document.querySelectorAll('#menus .rcmdr-menu-shortcuts .rcmdr-menu-item[aria-disabled=\"true\"]').length"
+  ), 2)
+})
