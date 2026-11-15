@@ -163,14 +163,26 @@ test_that("ggplot2 grouped histograms keep the fill mapping", {
   expect_match(command, "position = \"identity\"")
 })
 
-test_that("the ggplot2 engine is limited to supported types", {
+test_that("every chart type has a ggplot2 engine", {
+  skip_if_not_installed("ggplot2")
   state <- chart_test_state()
-  spec <- chart_spec("qq", "D", list(x = "y"),
-                     theme = list(engine = "ggplot2"))
-  if (requireNamespace("ggplot2", quietly = TRUE)) {
-    expect_match(chart_spec_validate(spec, state), "does not support")
-  } else {
-    expect_match(chart_spec_validate(spec, state), "requires")
+  for (id in chart_type_ids()) {
+    info <- chart_type(id)
+    mapping <- lapply(names(info$mapping), function(slot) {
+      rule <- info$mapping[[slot]]
+      if (isTRUE(rule$optional)) "" else if (identical(rule$kind, "numeric")) {
+        "y"
+      } else if (identical(rule$kind, "factor")) {
+        "g"
+      } else {
+        "x"
+      }
+    })
+    names(mapping) <- names(info$mapping)
+    spec <- chart_spec(id, "D", mapping, theme = list(engine = "ggplot2"))
+    expect_true(chart_spec_ready(spec, state), info = id)
+    expect_match(chart_spec_command(spec), "print\\(ggplot2::ggplot",
+                 info = id)
   }
 })
 
