@@ -30,13 +30,52 @@ cmd_stem_leaf <- function(dataset, variable) {
 }
 
 #' @keywords internal
-cmd_boxplot <- function(dataset, variables, response = NULL, group = NULL) {
+cmd_boxplot <- function(dataset, variables, response = NULL, group = NULL,
+                        notch = FALSE, notchwidth = NULL, varwidth = FALSE,
+                        horizontal = FALSE, outline = TRUE, width = NULL) {
+  extras <- character()
+  if (isTRUE(notch)) extras <- c(extras, "notch=TRUE")
+  if (isTRUE(notch) && !is.null(notchwidth) && is.finite(notchwidth) &&
+      notchwidth > 0) {
+    extras <- c(extras, sprintf("notchwidth=%s", format(notchwidth, digits = 3)))
+  }
+  if (isTRUE(varwidth)) extras <- c(extras, "varwidth=TRUE")
+  if (isFALSE(outline)) extras <- c(extras, "outline=FALSE")
+  if (!is.null(width) && is.finite(width) && width > 0) {
+    extras <- c(extras, sprintf("width=%s", format(width, digits = 3)))
+  }
+  suffix <- if (length(extras) > 0L) {
+    paste0(", ", paste(extras, collapse = ", "))
+  } else {
+    ""
+  }
+  # car::Boxplot() refuses horizontal=TRUE, so the horizontal layout uses the
+  # base boxplot() directly with the same options.
+  if (isTRUE(horizontal)) {
+    horizontal_arg <- "horizontal=TRUE"
+    extra_suffix <- if (length(extras) > 0L) {
+      paste0(", ", paste(c(extras, horizontal_arg), collapse = ", "))
+    } else {
+      paste0(", ", horizontal_arg)
+    }
+    if (!is.null(group) && nzchar(group)) {
+      return(paste0("boxplot(", response %||% variables[[1L]], " ~ ", group,
+                    ", data=", dataset, extra_suffix, ")"))
+    }
+    if (length(variables) == 1L) {
+      return(paste0("boxplot(", dataset, "$", variables[[1L]], extra_suffix,
+                    ")"))
+    }
+    return(paste0("boxplot(", dataset, "[, c(",
+                  paste(chart_quote(variables), collapse = ", "),
+                  ")]", extra_suffix, ")"))
+  }
   if (!is.null(group) && nzchar(group)) {
     paste0("Boxplot(", response %||% variables[[1L]], " ~ ", group,
-           ", data=", dataset, ', id=list(method="y"))')
+           ", data=", dataset, ', id=list(method="y")', suffix, ")")
   } else {
     paste0("Boxplot(~ ", paste(variables, collapse = " + "), ", data=", dataset,
-           ', id=list(method="y"))')
+           ', id=list(method="y")', suffix, ")")
   }
 }
 
@@ -52,11 +91,26 @@ cmd_dotplot <- function(dataset, variable, groups = NULL) {
 
 #' @keywords internal
 cmd_scatterplot <- function(dataset, x, y, groups = NULL,
-                            smooth = FALSE, boxplots = FALSE, log = "") {
+                            smooth = FALSE, boxplots = FALSE, log = "",
+                            regression = FALSE, ellipse = FALSE,
+                            grid = FALSE, jitter = 0) {
+  jitter_code <- if (is.numeric(jitter) && length(jitter) == 1L &&
+                     is.finite(jitter) && jitter > 0) {
+    sprintf(", jitter=list(x=%s, y=%s)", format(jitter, digits = 3),
+            format(jitter, digits = 3))
+  } else if (isTRUE(jitter)) {
+    ", jitter=list(x=0.1, y=0.1)"
+  } else {
+    ""
+  }
   extras <- paste0(
     if (isTRUE(smooth)) ', smooth=TRUE' else "",
     ", boxplots=", isTRUE(boxplots),
-    if (nzchar(log)) paste0(', log="', log, '"') else ""
+    if (nzchar(log)) paste0(', log="', log, '"') else "",
+    if (isTRUE(regression)) ", regLine=TRUE" else "",
+    if (isTRUE(ellipse)) ", ellipse=TRUE" else "",
+    if (isTRUE(grid)) ", grid=TRUE" else "",
+    jitter_code
   )
   if (is.null(groups)) {
     paste0("scatterplot(", y, "~", x, ", data=", dataset, extras, ")")

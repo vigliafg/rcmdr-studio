@@ -167,3 +167,54 @@ test_that("ggplot2 interactivity is gated on plotly compatibility", {
     expect_null(code)
   }
 })
+
+test_that("the ggplot2 boxplot maps notch, width, outliers and jitter", {
+  spec <- chart_gg_spec(
+    "boxplot",
+    mapping = list(x = "y", group = "g", facet = "g2"),
+    options = list(notch = TRUE, notchwidth = 0.4, varwidth = TRUE,
+                   outline = FALSE, width = 0.6, horizontal = TRUE,
+                   jitter = 0.1)
+  )
+  command <- chart_spec_command(spec)
+  expect_match(command, "notch = TRUE")
+  expect_match(command, "notchwidth = 0.4")
+  expect_match(command, "varwidth = TRUE")
+  expect_match(command, "width = 0.6")
+  expect_match(command, "outlier.shape = NA")
+  expect_match(command, "ggplot2::geom_jitter\\(width = 0.1")
+  expect_match(command, "ggplot2::coord_flip\\(\\)")
+  expect_match(command, "facet_wrap")
+})
+
+test_that("the ggplot2 histogram maps the base scale to after_stat", {
+  counts <- chart_spec_command(chart_gg_spec("histogram",
+                                             options = list(scale = "frequency")))
+  expect_false(grepl("after_stat", counts, fixed = TRUE))
+
+  density <- chart_spec_command(chart_gg_spec("histogram",
+                                              options = list(scale = "density")))
+  expect_match(density, "ggplot2::after_stat\\(density\\)")
+
+  percent <- chart_spec_command(chart_gg_spec("histogram",
+                                              options = list(scale = "percent")))
+  expect_match(percent, "after_stat\\(count / sum\\(count\\) \\* 100\\)")
+})
+
+test_that("the ggplot2 scatterplot maps regression bands and ellipses", {
+  spec <- chart_gg_spec(
+    "scatter",
+    mapping = list(x = "x", y = "y", group = "g"),
+    options = list(regression = TRUE, smooth_se = TRUE, ellipse = TRUE)
+  )
+  command <- chart_spec_command(spec)
+  expect_match(command, "ggplot2::geom_smooth\\(method = \"lm\", se = TRUE\\)")
+  expect_match(command, "ggplot2::stat_ellipse\\(\\)")
+
+  loess <- chart_gg_spec(
+    "scatter", options = list(smooth = TRUE, smooth_method = "loess",
+                              smooth_se = FALSE)
+  )
+  expect_match(chart_spec_command(loess),
+               "ggplot2::geom_smooth\\(method = \"loess\", se = FALSE\\)")
+})

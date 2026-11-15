@@ -279,6 +279,16 @@ chart_ggplot_object <- function(spec) {
   }
 
   if (identical(type, "histogram")) {
+    scale <- options$scale %||% "frequency"
+    if (identical(scale, "density")) {
+      aes_items <- c(aes_items, "y = ggplot2::after_stat(density)")
+    } else if (identical(scale, "percent")) {
+      aes_items <- c(aes_items,
+                     "y = ggplot2::after_stat(count / sum(count) * 100)")
+    }
+  }
+
+  if (identical(type, "histogram")) {
     binwidth <- chart_gg_number(options$binwidth, default = 0, min = 0)
     arguments <- c(
       sprintf("bins = %d", as.integer(chart_gg_number(
@@ -302,14 +312,42 @@ chart_ggplot_object <- function(spec) {
     layers <- sprintf("ggplot2::geom_density(%s)",
                       paste(arguments, collapse = ", "))
   } else if (identical(type, "boxplot")) {
-    layers <- sprintf(
-      "ggplot2::geom_boxplot(position = %s, %s)",
-      chart_gg_position(options), alpha
+    notch <- isTRUE(options$notch)
+    box_arguments <- c(
+      sprintf("position = %s", chart_gg_position(options)),
+      alpha,
+      if (notch) "notch = TRUE" else NULL,
+      if (notch) sprintf("notchwidth = %s", format(
+        chart_gg_number(options$notchwidth %||% 0.5, default = 0.5,
+                        min = 0, max = 1), digits = 3)) else NULL,
+      if (isTRUE(options$varwidth)) "varwidth = TRUE" else NULL,
+      if (chart_gg_number(options$width %||% 0, default = 0, min = 0) > 0) {
+        sprintf("width = %s", format(
+          chart_gg_number(options$width, default = 0, min = 0), digits = 3))
+      } else {
+        NULL
+      },
+      if (isFALSE(options$outline %||% TRUE)) "outlier.shape = NA" else NULL
     )
+    layers <- sprintf("ggplot2::geom_boxplot(%s)",
+                      paste(box_arguments[!is.na(box_arguments)],
+                            collapse = ", "))
+    jitter <- chart_gg_number(options$jitter, default = 0, min = 0)
+    if (jitter > 0) {
+      layers <- c(layers, sprintf(
+        "ggplot2::geom_jitter(width = %s, height = 0, %s)",
+        format(jitter, digits = 3), alpha
+      ))
+    }
   } else if (identical(type, "scatter")) {
-    if (isTRUE(options$smooth)) {
+    method <- NULL
+    if (isTRUE(options$regression)) {
+      method <- "lm"
+    } else if (isTRUE(options$smooth)) {
       method <- options$smooth_method %||% "lm"
       if (!method %in% c("lm", "loess", "gam")) method <- "lm"
+    }
+    if (!is.null(method)) {
       layers <- c(
         sprintf("ggplot2::geom_smooth(method = %s, se = %s)",
                 chart_quote(method),
@@ -334,6 +372,9 @@ chart_ggplot_object <- function(spec) {
         "ggplot2::geom_text(ggplot2::aes(label = %s), nudge_y = 0.1, check_overlap = TRUE)",
         label_by
       ))
+    }
+    if (isTRUE(options$ellipse)) {
+      layers <- c(layers, "ggplot2::stat_ellipse()")
     }
   } else if (identical(type, "line")) {
     series <- if (length(y) > 0L) y else character()
@@ -421,7 +462,9 @@ chart_ggplot_object <- function(spec) {
   if (grepl("y", log, fixed = TRUE)) {
     scales <- c(scales, "ggplot2::scale_y_log10()")
   }
-  coord <- if (isTRUE(options$flip)) "ggplot2::coord_flip()" else NULL
+  flip <- isTRUE(options$flip) ||
+    (identical(type, "boxplot") && isTRUE(options$horizontal))
+  coord <- if (flip) "ggplot2::coord_flip()" else NULL
 
   pieces <- c(
     sprintf("ggplot2::ggplot(%s, %s)", dataset, chart_gg_aes(aes_items)),

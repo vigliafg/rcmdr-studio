@@ -120,17 +120,40 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(),
+      defaults = list(notch = FALSE, notchwidth = 0.5, varwidth = FALSE,
+                      horizontal = FALSE, outline = TRUE, width = 0),
       controls = function(spec) {
-        help_text(tr("Without a group, one box for the selected variable."))
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          checkbox_input("chart_opt_notch", tr("Notched box"),
+                         isTRUE(options$notch)),
+          spin_input("chart_opt_notchwidth", tr("Notch width"),
+                     options$notchwidth %||% 0.5, min = 0, max = 1,
+                     step = 0.05),
+          checkbox_input("chart_opt_varwidth", tr("Width by group size"),
+                         isTRUE(options$varwidth)),
+          checkbox_input("chart_opt_horizontal", tr("Horizontal"),
+                         isTRUE(options$horizontal)),
+          checkbox_input("chart_opt_outline", tr("Show outliers"),
+                         isTRUE(options$outline %||% TRUE)),
+          spin_input("chart_opt_width", tr("Box width (0 = auto)"),
+                     options$width %||% 0, min = 0, step = 0.1)
+        )
       },
       command = function(spec) {
+        options <- spec$options %||% list()
         group <- chart_optional(spec$mapping$group)
         variable <- spec$mapping$x %||% ""
         cmd_boxplot(
           spec$dataset, variable,
           response = if (is.null(group)) NULL else variable,
-          group = group
+          group = group,
+          notch = isTRUE(options$notch),
+          notchwidth = options$notchwidth %||% 0.5,
+          varwidth = isTRUE(options$varwidth),
+          horizontal = isTRUE(options$horizontal),
+          outline = !isFALSE(options$outline %||% TRUE),
+          width = options$width %||% 0
         )
       },
       interactive = function(spec) {
@@ -163,14 +186,23 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(smooth = FALSE, boxplots = FALSE, log = ""),
+      defaults = list(smooth = FALSE, boxplots = FALSE, log = "",
+                      regression = FALSE, ellipse = FALSE, grid = FALSE,
+                      jitter = 0),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
-          checkbox_input("chart_opt_smooth", tr("Least-squares line"),
+          checkbox_input("chart_opt_smooth", tr("Loess smooth"),
                          options$smooth),
+          checkbox_input("chart_opt_regression", tr("Regression line"),
+                         options$regression),
+          checkbox_input("chart_opt_ellipse", tr("Confidence ellipse"),
+                         options$ellipse),
           checkbox_input("chart_opt_boxplots", tr("Marginal boxplots"),
                          options$boxplots),
+          checkbox_input("chart_opt_grid", tr("Grid"), options$grid),
+          spin_input("chart_opt_jitter", tr("Jitter (0 = off)"),
+                     options$jitter %||% 0, min = 0, step = 0.02),
           radio_input(
             "chart_opt_log", tr("Log axes"),
             c("None" = "", "x" = "x", "y" = "y", "xy" = "xy"),
@@ -179,12 +211,17 @@ chart_types_builtin <- function() {
         )
       },
       command = function(spec) {
+        options <- spec$options %||% list()
         cmd_scatterplot(
           spec$dataset, spec$mapping$x %||% "", spec$mapping$y %||% "",
           chart_optional(spec$mapping$group),
-          isTRUE(spec$options$smooth),
-          isTRUE(spec$options$boxplots),
-          spec$options$log %||% ""
+          isTRUE(options$smooth),
+          isTRUE(options$boxplots),
+          options$log %||% "",
+          regression = isTRUE(options$regression),
+          ellipse = isTRUE(options$ellipse),
+          grid = isTRUE(options$grid),
+          jitter = options$jitter %||% 0
         )
       },
       interactive = function(spec) {

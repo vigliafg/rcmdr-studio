@@ -109,3 +109,36 @@ test_that("graph commands execute and are captured as plots", {
   expect_equal(length(state$plots), length(commands))
   expect_true(all(file.exists(vapply(state$plots, `[[`, character(1), "file"))))
 })
+
+test_that("boxplot options are emitted only when changed", {
+  expect_equal(
+    RcmdrShiny:::cmd_boxplot(
+      "D", "y", response = "y", group = "g",
+      notch = TRUE, notchwidth = 0.4, varwidth = TRUE, outline = FALSE,
+      width = 0.6
+    ),
+    paste0('Boxplot(y ~ g, data=D, id=list(method="y"), notch=TRUE, ',
+           "notchwidth=0.4, varwidth=TRUE, outline=FALSE, width=0.6)")
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_boxplot("D", "y", response = "y", group = "g",
+                             notch = TRUE, horizontal = TRUE),
+    "boxplot(y ~ g, data=D, notch=TRUE, horizontal=TRUE)"
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_boxplot("D", c("y", "x"), varwidth = TRUE,
+                             horizontal = TRUE),
+    'boxplot(D[, c("y", "x")], varwidth=TRUE, horizontal=TRUE)'
+  )
+})
+
+test_that("scatterplot regression, ellipse, grid and jitter are emitted", {
+  expect_equal(
+    RcmdrShiny:::cmd_scatterplot(
+      "D", "x", "y", regression = TRUE, ellipse = TRUE, grid = TRUE,
+      jitter = 0.1
+    ),
+    paste0("scatterplot(y~x, data=D, boxplots=FALSE, regLine=TRUE, ",
+           "ellipse=TRUE, grid=TRUE, jitter=list(x=0.1, y=0.1))")
+  )
+})
