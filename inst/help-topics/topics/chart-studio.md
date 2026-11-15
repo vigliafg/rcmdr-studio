@@ -69,6 +69,21 @@ jitter in both engines. In ggplot2 the “Smooth” choice and the “Confidence
 band” option produce `geom_smooth(method = "lm" | "loess", se = TRUE/FALSE)`;
 the ellipse is `stat_ellipse()`.
 
+## ggplot-only types
+
+Four statistical types exist only with the ggplot2 engine and appear in the
+chart type selector only after switching engine:
+
+| Type | Mapping | Main options |
+|---|---|---|
+| Violin plot | numeric, group? | trim, area/count/width scale, bandwidth adjust, boxplot overlay |
+| Empirical CDF | numeric, group? | padding, line style |
+| 2D density | two numerics | contour bins, bandwidth, points |
+| Heatmap | x, y, numeric value | low/high gradient, value labels |
+
+With the base engine these types are rejected with an explicit message; the
+round-trip keeps the engine and the type.
+
 ## Other chart options
 
 - **Density**: kernel, adjust, rug and grid in the base engine; ggplot2 uses

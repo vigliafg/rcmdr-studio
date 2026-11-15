@@ -386,6 +386,22 @@ Rilascio: 2.4.0.
 
 ---
 
+## Onda 12 — Tipi ggplot-only
+
+Documento di settore: [`12-ggplot-only-types.md`](12-ggplot-only-types.md).
+Rilascio: 2.5.0.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| G12.1 | Violino | [x] | trim, scale, adjust, boxplot sovrapposto |
+| G12.2 | ECDF | [x] | pad, stile linea |
+| G12.3 | Densità 2D | [x] | bins, bandwidth, punti |
+| G12.4 | Heatmap | [x] | gradient low/high, valori |
+| G12.5 | Gate engine e scelte UI | [x] | `chart_type_choices(engine)` |
+| G12.6 | Test e documentazione | [x] | suite 3755, check OK |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
@@ -496,4 +512,7 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              (bin/binaxis/stackdir), strip (jitter/shape), QQ (distribuzione/
              linea/envelope/grid), medie (connect/errore/punto), xyplot
              (type/layout/smooth). Default invariati. Suite 3631 pass, check OK.
+2026-11-15 — Onda 12 (2.5.0): tipi ggplot-only violino, ECDF, densità 2D e
+             heatmap, con gate per engine nella select, validazione e
+             round-trip. Suite 3755 pass, check OK.
 ```

@@ -1,3 +1,20 @@
+# RcmdrShiny Studio 2.5.0
+
+## Wave 12 — ggplot-only chart types
+
+- **Violin plot**: numeric variable by group, with trim, area/count/width
+  scaling, bandwidth adjust and an optional boxplot overlay.
+- **Empirical CDF**: numeric variable by group, padding and line style.
+- **2D density**: two numeric variables, contour bins, bandwidth and optional
+  points.
+- **Heatmap**: two variables and a numeric value, low/high gradient and
+  optional value labels.
+- These four types are available **only with the ggplot2 engine**: the type
+  selector is filtered per engine, the base engine rejects them with an
+  explicit message, and round-trip keeps the engine.
+- New tests: engine gating, commands, validation, preview and apply for the
+  four types.
+
 # RcmdrShiny Studio 2.4.0
 
 ## Wave 11 — Remaining chart types completed

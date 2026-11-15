@@ -163,6 +163,14 @@ a regression line, a confidence ellipse, a grid and jitter; ggplot2 maps the
 smooth choice and the confidence band to `geom_smooth(method=, se=)` and the
 ellipse to `stat_ellipse()`.
 
+# ggplot-only types
+
+Four statistical types are available only with the ggplot2 engine: violin plot
+(trim, scale, bandwidth, optional boxplot), empirical CDF (padding, line
+style), 2D density (bins, bandwidth, points) and heatmap (two variables plus a
+numeric value, low/high gradient and optional labels). The type selector is
+filtered by engine; the base engine rejects these types explicitly.
+
 # Remaining chart options
 
 Density exposes kernel, adjust, rug and grid (adjust in ggplot2). Line graphs
