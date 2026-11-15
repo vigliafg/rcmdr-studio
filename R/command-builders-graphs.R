@@ -80,12 +80,13 @@ cmd_boxplot <- function(dataset, variables, response = NULL, group = NULL,
 }
 
 #' @keywords internal
-cmd_dotplot <- function(dataset, variable, groups = NULL) {
+cmd_dotplot <- function(dataset, variable, groups = NULL, bin = FALSE) {
+  bin_code <- if (isTRUE(bin)) "bin=TRUE" else "bin=FALSE"
   if (is.null(groups)) {
-    paste0("with(", dataset, ", Dotplot(", variable, ", bin=FALSE))")
+    paste0("with(", dataset, ", Dotplot(", variable, ", ", bin_code, "))")
   } else {
     paste0("with(", dataset, ", Dotplot(", variable, ", by=", groups,
-           ", bin=FALSE))")
+           ", ", bin_code, "))")
   }
 }
 
@@ -149,19 +150,36 @@ cmd_lineplot <- function(dataset, x, y) {
 }
 
 #' @keywords internal
-cmd_qqplot <- function(dataset, variable, groups = NULL) {
-  if (is.null(groups)) {
-    paste0("with(", dataset, ", qqPlot(", variable, "))")
+cmd_qqplot <- function(dataset, variable, groups = NULL, distribution = "norm",
+                       line = TRUE, envelope = FALSE, grid = FALSE) {
+  extras <- character()
+  if (nzchar(distribution) && !identical(distribution, "norm")) {
+    extras <- c(extras, sprintf('distribution="%s"', distribution))
+  }
+  if (isFALSE(line)) extras <- c(extras, "line=FALSE")
+  if (isTRUE(envelope)) extras <- c(extras, "envelope=TRUE")
+  if (isTRUE(grid)) extras <- c(extras, "grid=TRUE")
+  suffix <- if (length(extras) > 0L) {
+    paste0(", ", paste(extras, collapse = ", "))
   } else {
-    paste0("with(", dataset, ", qqPlot(", variable, " ~ ", groups, "))")
+    ""
+  }
+  if (is.null(groups)) {
+    paste0("with(", dataset, ", qqPlot(", variable, suffix, "))")
+  } else {
+    paste0("with(", dataset, ", qqPlot(", variable, " ~ ", groups,
+           suffix, "))")
   }
 }
 
 #' @keywords internal
 cmd_plot_means <- function(dataset, response, group,
-                           error_bars = "se", legend = TRUE) {
+                           error_bars = "se", legend = TRUE,
+                           connect = NULL) {
+  connect_code <- if (isFALSE(connect)) ", connect=FALSE" else ""
   paste0("with(", dataset, ", plotMeans(", response, ", ", group,
-         ', error.bars="', error_bars, '", legend=', isTRUE(legend), "))")
+         ', error.bars="', error_bars, '", legend=', isTRUE(legend),
+         connect_code, "))")
 }
 
 #' @keywords internal
@@ -176,15 +194,24 @@ cmd_scatter3d <- function(dataset, y, x1, x2, groups = NULL) {
 
 #' @keywords internal
 cmd_xyplot <- function(dataset, x, y, groups = NULL, type = "p",
-                       layout = NULL) {
+                       layout = NULL, smooth = FALSE) {
+  if (isTRUE(smooth)) {
+    type_code <- if (identical(type, "p")) {
+      '"smooth"'
+    } else {
+      sprintf('c("%s","smooth")', type)
+    }
+  } else {
+    type_code <- sprintf('"%s"', type)
+  }
   layout_code <- if (is.null(layout) || !nzchar(layout)) "" else
     paste0(", layout=c(", layout, ")")
   if (is.null(groups)) {
-    paste0("xyplot(", y, " ~ ", x, ", data=", dataset, ', type="', type,
-           '"', layout_code, ")")
+    paste0("xyplot(", y, " ~ ", x, ", data=", dataset, ', type=', type_code,
+           layout_code, ")")
   } else {
     paste0("xyplot(", y, " ~ ", x, " | ", groups, ", data=", dataset,
-           ', type="', type, '"', layout_code, ")")
+           ', type=', type_code, layout_code, ")")
   }
 }
 
@@ -200,13 +227,21 @@ cmd_stripchart <- function(dataset, response, groups = NULL,
 }
 
 #' @keywords internal
-cmd_density_plot <- function(dataset, variable, groups = NULL, bw = "") {
-  bw_code <- if (nzchar(bw)) paste0(", bw=", bw) else ""
+cmd_density_plot <- function(dataset, variable, groups = NULL, bw = "",
+                             kernel = "", adjust = NULL, rug = FALSE,
+                             grid = FALSE) {
+  extras <- if (nzchar(bw)) paste0(", bw=", bw) else ""
+  if (nzchar(kernel)) extras <- paste0(extras, ', kernel="', kernel, '"')
+  if (!is.null(adjust) && is.finite(adjust) && adjust > 0) {
+    extras <- paste0(extras, ", adjust=", format(adjust, digits = 3))
+  }
+  if (isTRUE(rug)) extras <- paste0(extras, ", rug=TRUE")
+  if (isTRUE(grid)) extras <- paste0(extras, ", grid=TRUE")
   if (is.null(groups)) {
-    paste0("densityPlot(~ ", variable, ", data=", dataset, bw_code, ")")
+    paste0("densityPlot(~ ", variable, ", data=", dataset, extras, ")")
   } else {
     paste0("densityPlot(", variable, "~", groups, ", data=", dataset,
-           bw_code, ")")
+           extras, ")")
   }
 }
 

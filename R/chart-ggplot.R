@@ -304,6 +304,9 @@ chart_ggplot_object <- function(spec) {
                       paste(arguments[!is.na(arguments)], collapse = ", "))
   } else if (identical(type, "density")) {
     adjust <- chart_gg_number(options$bw, default = 0, min = 0)
+    if (adjust <= 0) {
+      adjust <- chart_gg_number(options$adjust, default = 0, min = 0)
+    }
     arguments <- c(
       "linewidth = 1",
       alpha,
@@ -378,18 +381,39 @@ chart_ggplot_object <- function(spec) {
     }
   } else if (identical(type, "line")) {
     series <- if (length(y) > 0L) y else character()
+    line_type <- options$line_type %||% "line"
+    geom <- switch(line_type,
+                   step = "geom_step",
+                   area = "geom_area",
+                   "geom_line")
+    linetype <- options$linetype %||% "solid"
+    linewidth <- chart_gg_number(options$linewidth %||% 1,
+                                 default = 1, min = 0.1)
+    extra <- sprintf("linetype = %s, linewidth = %s",
+                     chart_quote(linetype), format(linewidth, digits = 3))
+    if (identical(geom, "geom_area")) {
+      extra <- sprintf("linetype = %s, linewidth = %s, %s",
+                       chart_quote(linetype), format(linewidth, digits = 3),
+                       alpha)
+    }
     if (length(series) == 0L) {
       layers <- character()
     } else if (length(series) == 1L) {
+      aes_line <- c(sprintf("y = %s", series[[1L]]))
+      if (nzchar(group)) {
+        aes_line <- c(aes_line, sprintf("colour = %s", group),
+                      sprintf("group = %s", group))
+        use_colour <- TRUE
+      }
       layers <- sprintf(
-        "ggplot2::geom_line(ggplot2::aes(y = %s), linewidth = 1)",
-        series[[1L]]
+        "ggplot2::%s(ggplot2::aes(%s), %s)",
+        geom, paste(aes_line, collapse = ", "), extra
       )
     } else {
       layers <- vapply(series, function(variable) {
         sprintf(
-          "ggplot2::geom_line(ggplot2::aes(y = %s, colour = %s), linewidth = 1)",
-          variable, chart_quote(variable)
+          "ggplot2::%s(ggplot2::aes(y = %s, colour = %s), %s)",
+          geom, variable, chart_quote(variable), extra
         )
       }, character(1))
       if (!is.null(palette)) {
@@ -398,29 +422,64 @@ chart_ggplot_object <- function(spec) {
       }
     }
   } else if (identical(type, "bar")) {
+    bar_stat <- options$bar_stat %||% "count"
+    if (identical(bar_stat, "percent")) {
+      aes_items <- c(aes_items,
+                     "y = ggplot2::after_stat(count / sum(count) * 100)")
+    }
+    bar_width <- chart_gg_number(options$width %||% 0, default = 0, min = 0)
     position <- options$position %||% if (nzchar(group)) "dodge" else "stack"
     if (identical(position, "identity") && nzchar(group)) position <- "dodge"
     layers <- sprintf(
-      "ggplot2::geom_bar(position = %s, %s, colour = \"white\")",
-      chart_gg_position(list(position = position), position), alpha
+      "ggplot2::geom_bar(position = %s, %s, colour = \"white\"%s)",
+      chart_gg_position(list(position = position), position), alpha,
+      if (bar_width > 0) sprintf(", width = %s", format(bar_width, digits = 3))
+      else ""
     )
   } else if (identical(type, "dot")) {
+    binaxis <- options$binaxis %||% "x"
+    if (!binaxis %in% c("x", "y")) binaxis <- "x"
+    stackdir <- options$stackdir %||% "center"
+    if (!stackdir %in% c("up", "down", "center", "centerwhole")) {
+      stackdir <- "center"
+    }
+    dot_size <- chart_gg_number(options$dotsize %||% 1, default = 1, min = 0.1)
+    binwidth <- chart_gg_number(options$binwidth %||% 0, default = 0, min = 0)
     layers <- sprintf(
-      "ggplot2::geom_dotplot(binaxis = \"x\", stackdir = \"center\", %s)",
+      "ggplot2::geom_dotplot(binaxis = %s, stackdir = %s, dotsize = %s%s, %s)",
+      chart_quote(binaxis), chart_quote(stackdir),
+      format(dot_size, digits = 3),
+      if (binwidth > 0) sprintf(", binwidth = %s", format(binwidth, digits = 3))
+      else "",
       alpha
     )
   } else if (identical(type, "strip")) {
-    jitter <- chart_gg_number(options$jitter, default = 0.2, min = 0)
+    jitter_width <- chart_gg_number(options$jitter_width %||% 0.2,
+                                    default = 0.2, min = 0)
+    jitter_height <- chart_gg_number(options$jitter_height %||% 0.1,
+                                     default = 0.1, min = 0)
     layers <- sprintf(
-      "ggplot2::geom_jitter(width = %s, height = 0.1, %s, shape = %d)",
-      format(jitter, digits = 3), alpha,
+      "ggplot2::geom_jitter(width = %s, height = %s, %s, shape = %d)",
+      format(jitter_width, digits = 3), format(jitter_height, digits = 3),
+      alpha,
       as.integer(chart_gg_number(options$shape %||% 19, default = 19))
     )
   } else if (identical(type, "qq")) {
-    layers <- c(
-      "ggplot2::stat_qq()",
-      "ggplot2::stat_qq_line()"
+    distribution <- options$distribution %||% "norm"
+    distribution_fn <- switch(
+      distribution,
+      unif = "stats::qunif",
+      exp = "stats::qexp",
+      "stats::qnorm"
     )
+    layers <- sprintf(
+      "ggplot2::stat_qq(distribution = %s)", distribution_fn
+    )
+    if (isTRUE(options$line %||% TRUE)) {
+      layers <- c(layers, sprintf(
+        "ggplot2::stat_qq_line(distribution = %s)", distribution_fn
+      ))
+    }
   } else if (identical(type, "means")) {
     error_bars <- options$error_bars %||% "se"
     fun <- switch(
@@ -429,13 +488,24 @@ chart_ggplot_object <- function(spec) {
       ci = "mean_cl_normal",
       "mean_se"
     )
+    point_size <- chart_gg_number(options$point_size %||% 3,
+                                  default = 3, min = 0.5)
+    error_width <- chart_gg_number(options$error_width %||% 0.2,
+                                   default = 0.2, min = 0)
     layers <- c(
-      "ggplot2::stat_summary(fun = \"mean\", geom = \"point\", size = 3)",
       sprintf(
-        "ggplot2::stat_summary(fun.data = \"%s\", geom = \"errorbar\", width = 0.2)",
-        fun
+        "ggplot2::stat_summary(fun = \"mean\", geom = \"point\", size = %s)",
+        format(point_size, digits = 3)
+      ),
+      sprintf(
+        "ggplot2::stat_summary(fun.data = \"%s\", geom = \"errorbar\", width = %s)",
+        fun, format(error_width, digits = 3)
       )
     )
+    if (isTRUE(options$connect %||% TRUE)) {
+      layers <- c(layers,
+                  "ggplot2::stat_summary(fun = \"mean\", geom = \"line\", ggplot2::aes(group = 1))")
+    }
   } else if (identical(type, "xyplot")) {
     plot_type <- options$type %||% "p"
     if (plot_type %in% c("p", "b")) {
@@ -443,6 +513,9 @@ chart_ggplot_object <- function(spec) {
     }
     if (plot_type %in% c("l", "b")) {
       layers <- c(layers, "ggplot2::geom_line()")
+    }
+    if (isTRUE(options$smooth)) {
+      layers <- c(layers, "ggplot2::geom_smooth(method = \"lm\", se = FALSE)")
     }
   }
 

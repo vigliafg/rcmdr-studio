@@ -218,3 +218,78 @@ test_that("the ggplot2 scatterplot maps regression bands and ellipses", {
   expect_match(chart_spec_command(loess),
                "ggplot2::geom_smooth\\(method = \"loess\", se = FALSE\\)")
 })
+
+test_that("the remaining ggplot types map their options", {
+  density <- chart_gg_spec(
+    "density", options = list(adjust = 0.8)
+  )
+  expect_match(chart_spec_command(density), "adjust = 0.8")
+
+  line <- chart_gg_spec(
+    "line", mapping = list(x = "x", y = "y", group = "g"),
+    options = list(line_type = "step", linetype = "dashed", linewidth = 1.5)
+  )
+  command <- chart_spec_command(line)
+  expect_match(command, "ggplot2::geom_step")
+  expect_match(command, "colour = g, group = g")
+  expect_match(command, "linetype = \"dashed\"")
+  expect_match(command, "linewidth = 1.5")
+
+  area <- chart_gg_spec("line", options = list(line_type = "area"))
+  expect_match(chart_spec_command(area), "ggplot2::geom_area")
+
+  bar <- chart_gg_spec(
+    "bar", mapping = list(x = "g", group = "g2"),
+    options = list(bar_stat = "percent", width = 0.8, position = "dodge")
+  )
+  command <- chart_spec_command(bar)
+  expect_match(command, "after_stat\\(count / sum\\(count\\) \\* 100\\)")
+  expect_match(command, "width = 0.8")
+
+  dot <- chart_gg_spec(
+    "dot", options = list(binaxis = "y", stackdir = "up", dotsize = 1.5,
+                          binwidth = 0.5)
+  )
+  command <- chart_spec_command(dot)
+  expect_match(command, "binaxis = \"y\"")
+  expect_match(command, "stackdir = \"up\"")
+  expect_match(command, "dotsize = 1.5")
+  expect_match(command, "binwidth = 0.5")
+
+  strip <- chart_gg_spec(
+    "strip", options = list(jitter_width = 0.3, jitter_height = 0.05,
+                            shape = 17)
+  )
+  command <- chart_spec_command(strip)
+  expect_match(command, "width = 0.3, height = 0.05")
+  expect_match(command, "shape = 17")
+
+  qq <- chart_gg_spec(
+    "qq", options = list(distribution = "exp", line = FALSE)
+  )
+  command <- chart_spec_command(qq)
+  expect_match(command, "stat_qq\\(distribution = stats::qexp\\)")
+  expect_false(grepl("stat_qq_line", command, fixed = TRUE))
+
+  means <- chart_gg_spec(
+    "means", options = list(error_bars = "ci", connect = TRUE,
+                            error_width = 0.3, point_size = 4)
+  )
+  command <- chart_spec_command(means)
+  expect_match(command, "size = 4")
+  expect_match(command, "mean_cl_normal")
+  expect_match(command, "width = 0.3")
+  expect_match(command, "geom = \"line\"")
+})
+
+test_that("the ggplot xyplot maps smooth and layout", {
+  spec <- chart_gg_spec(
+    "xyplot", mapping = list(x = "x", y = "y", group = "g2"),
+    options = list(type = "b", smooth = TRUE, facet_ncol = 2)
+  )
+  command <- chart_spec_command(spec)
+  expect_match(command, "ggplot2::geom_point")
+  expect_match(command, "ggplot2::geom_line")
+  expect_match(command, "ggplot2::geom_smooth\\(method = \"lm\"")
+  expect_match(command, "ncol = 2")
+})

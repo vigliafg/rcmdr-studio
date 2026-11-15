@@ -142,3 +142,61 @@ test_that("scatterplot regression, ellipse, grid and jitter are emitted", {
            "ellipse=TRUE, grid=TRUE, jitter=list(x=0.1, y=0.1))")
   )
 })
+
+test_that("density, qq, dot, means and xyplot options keep defaults", {
+  expect_equal(
+    RcmdrShiny:::cmd_density_plot("D", "y"),
+    "densityPlot(~ y, data=D)"
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_qqplot("D", "y"),
+    "with(D, qqPlot(y))"
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_dotplot("D", "y"),
+    "with(D, Dotplot(y, bin=FALSE))"
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_plot_means("D", "y", "g"),
+    'with(D, plotMeans(y, g, error.bars="se", legend=TRUE))'
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_xyplot("D", "x", "y", "g"),
+    'xyplot(y ~ x | g, data=D, type="p")'
+  )
+})
+
+test_that("the remaining graph builders map their new options", {
+  expect_equal(
+    RcmdrShiny:::cmd_density_plot(
+      "D", "y", kernel = "epanechnikov", adjust = 0.8, rug = TRUE,
+      grid = TRUE
+    ),
+    paste0('densityPlot(~ y, data=D, kernel="epanechnikov", adjust=0.8, ',
+           "rug=TRUE, grid=TRUE)")
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_qqplot(
+      "D", "y", distribution = "unif", line = FALSE, envelope = TRUE,
+      grid = TRUE
+    ),
+    paste0('with(D, qqPlot(y, distribution="unif", line=FALSE, ',
+           "envelope=TRUE, grid=TRUE))")
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_dotplot("D", "y", bin = TRUE),
+    "with(D, Dotplot(y, bin=TRUE))"
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_plot_means("D", "y", "g", connect = FALSE),
+    'with(D, plotMeans(y, g, error.bars="se", legend=TRUE, connect=FALSE))'
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_xyplot("D", "x", "y", smooth = TRUE),
+    'xyplot(y ~ x, data=D, type="smooth")'
+  )
+  expect_equal(
+    RcmdrShiny:::cmd_xyplot("D", "x", "y", type = "b", smooth = TRUE),
+    'xyplot(y ~ x, data=D, type=c("b","smooth"))'
+  )
+})

@@ -89,16 +89,38 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(bw = ""),
+      defaults = list(bw = "", kernel = "", adjust = 0, rug = FALSE,
+                      grid = FALSE),
       controls = function(spec) {
-        entry_input("chart_opt_bw", tr("Bandwidth (optional):"),
-                    spec$options$bw %||% "")
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          entry_input("chart_opt_bw", tr("Bandwidth (optional):"),
+                      options$bw %||% ""),
+          selectInput(
+            "chart_opt_kernel", tr("Kernel"),
+            choices = stats::setNames(
+              c("", "gaussian", "epanechnikov", "rectangular", "triangular"),
+              c(tr("Default"), "Gaussian", "Epanechnikov", "Rectangular",
+                "Triangular")
+            ),
+            selected = options$kernel %||% ""
+          ),
+          spin_input("chart_opt_adjust", tr("Adjust (0 = auto)"),
+                     options$adjust %||% 0, min = 0, step = 0.1),
+          checkbox_input("chart_opt_rug", tr("Rug"), isTRUE(options$rug)),
+          checkbox_input("chart_opt_grid", tr("Grid"), isTRUE(options$grid))
+        )
       },
       command = function(spec) {
+        options <- spec$options %||% list()
         cmd_density_plot(
           spec$dataset, spec$mapping$x %||% "",
           chart_optional(spec$mapping$group),
-          spec$options$bw %||% ""
+          options$bw %||% "",
+          kernel = options$kernel %||% "",
+          adjust = options$adjust %||% 0,
+          rug = isTRUE(options$rug),
+          grid = isTRUE(options$grid)
         )
       },
       dialog = "DensityPlot",
@@ -252,11 +274,34 @@ chart_types_builtin <- function() {
       mapping = list(
         x = list(label = tr("X variable (pick one)"), kind = "any"),
         y = list(label = tr("Y variable(s) (pick one or more)"),
-                 kind = "numeric", multiple = TRUE)
+                 kind = "numeric", multiple = TRUE),
+        group = list(label = tr("Groups (optional, ggplot2)"), kind = "factor",
+                     optional = TRUE)
       ),
-      defaults = list(),
+      defaults = list(line_type = "line", linetype = "solid", linewidth = 1),
       controls = function(spec) {
-        help_text(tr("Each selected numeric variable becomes one line."))
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          selectInput(
+            "chart_opt_line_type", tr("Line type (ggplot2)"),
+            choices = stats::setNames(
+              c("line", "step", "area"),
+              c(tr("Line"), tr("Step"), tr("Area"))
+            ),
+            selected = options$line_type %||% "line"
+          ),
+          selectInput(
+            "chart_opt_linetype", tr("Line style"),
+            choices = stats::setNames(
+              c("solid", "dashed", "dotted", "longdash"),
+              c(tr("Solid"), tr("Dashed"), tr("Dotted"), tr("Long dash"))
+            ),
+            selected = options$linetype %||% "solid"
+          ),
+          spin_input("chart_opt_linewidth", tr("Line width"),
+                     options$linewidth %||% 1, min = 0.1, step = 0.1),
+          help_text(tr("Each selected numeric variable becomes one line."))
+        )
       },
       command = function(spec) {
         cmd_lineplot(
@@ -286,9 +331,22 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(),
+      defaults = list(width = 0, bar_stat = "count"),
       controls = function(spec) {
-        help_text(tr("Use a factor for the bars, or convert the variable first."))
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          spin_input("chart_opt_width", tr("Bar width (0 = auto)"),
+                     options$width %||% 0, min = 0, step = 0.1),
+          selectInput(
+            "chart_opt_bar_stat", tr("Statistic (ggplot2)"),
+            choices = stats::setNames(
+              c("count", "percent"),
+              c(tr("Counts"), tr("Percent"))
+            ),
+            selected = options$bar_stat %||% "count"
+          ),
+          help_text(tr("Use a factor for the bars, or convert the variable first."))
+        )
       },
       command = function(spec) {
         cmd_barplot(
@@ -312,12 +370,37 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(),
-      controls = function(spec) help_text(tr("One dot per observation.")),
+      defaults = list(bin = FALSE, binaxis = "x", stackdir = "center",
+                      dotsize = 1, binwidth = 0),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          checkbox_input("chart_opt_bin", tr("Binned (base engine)"),
+                         isTRUE(options$bin)),
+          selectInput(
+            "chart_opt_binaxis", tr("Bin axis (ggplot2)"),
+            choices = stats::setNames(c("x", "y"), c("X", "Y")),
+            selected = options$binaxis %||% "x"
+          ),
+          selectInput(
+            "chart_opt_stackdir", tr("Stack direction (ggplot2)"),
+            choices = stats::setNames(
+              c("up", "down", "center", "centerwhole"),
+              c("Up", "Down", "Center", "Center whole")
+            ),
+            selected = options$stackdir %||% "center"
+          ),
+          spin_input("chart_opt_dotsize", tr("Dot size"),
+                     options$dotsize %||% 1, min = 0.1, step = 0.1),
+          spin_input("chart_opt_binwidth", tr("Bin width (0 = auto)"),
+                     options$binwidth %||% 0, min = 0, step = 0.1)
+        )
+      },
       command = function(spec) {
         cmd_dotplot(
           spec$dataset, spec$mapping$x %||% "",
-          chart_optional(spec$mapping$group)
+          chart_optional(spec$mapping$group),
+          bin = isTRUE((spec$options %||% list())$bin)
         )
       },
       dialog = "DotPlot",
@@ -336,12 +419,22 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(method = "stack"),
+      defaults = list(method = "stack", jitter_width = 0.2,
+                      jitter_height = 0.1, shape = 19),
       controls = function(spec) {
-        radio_input(
-          "chart_opt_method", tr("Method"),
-          c("Stack" = "stack", "Jitter" = "jitter"),
-          spec$options$method %||% "stack"
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          radio_input(
+            "chart_opt_method", tr("Method"),
+            c("Stack" = "stack", "Jitter" = "jitter"),
+            options$method %||% "stack"
+          ),
+          spin_input("chart_opt_jitter_width", tr("Jitter width (ggplot2)"),
+                     options$jitter_width %||% 0.2, min = 0, step = 0.05),
+          spin_input("chart_opt_jitter_height", tr("Jitter height (ggplot2)"),
+                     options$jitter_height %||% 0.1, min = 0, step = 0.05),
+          spin_input("chart_opt_shape", tr("Point shape (ggplot2)"),
+                     options$shape %||% 19, min = 0, max = 25, step = 1)
         )
       },
       command = function(spec) {
@@ -368,12 +461,35 @@ chart_types_builtin <- function() {
         group = list(label = tr("Groups (optional)"), kind = "factor",
                      optional = TRUE)
       ),
-      defaults = list(),
-      controls = function(spec) help_text(tr("Uses the Rcmdr qqPlot defaults.")),
+      defaults = list(distribution = "norm", line = TRUE, envelope = FALSE,
+                      grid = FALSE),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          selectInput(
+            "chart_opt_distribution", tr("Distribution"),
+            choices = stats::setNames(
+              c("norm", "unif", "exp"),
+              c(tr("Normal"), tr("Uniform"), tr("Exponential"))
+            ),
+            selected = options$distribution %||% "norm"
+          ),
+          checkbox_input("chart_opt_line", tr("Reference line"),
+                         isTRUE(options$line %||% TRUE)),
+          checkbox_input("chart_opt_envelope", tr("Confidence envelope"),
+                         isTRUE(options$envelope)),
+          checkbox_input("chart_opt_grid", tr("Grid"), isTRUE(options$grid))
+        )
+      },
       command = function(spec) {
+        options <- spec$options %||% list()
         cmd_qqplot(
           spec$dataset, spec$mapping$x %||% "",
-          chart_optional(spec$mapping$group)
+          chart_optional(spec$mapping$group),
+          distribution = options$distribution %||% "norm",
+          line = isTRUE(options$line %||% TRUE),
+          envelope = isTRUE(options$envelope),
+          grid = isTRUE(options$grid)
         )
       },
       dialog = "QQPlot",
@@ -391,17 +507,25 @@ chart_types_builtin <- function() {
         x = list(label = tr("Response variable (pick one)"), kind = "numeric"),
         group = list(label = tr("Factor (pick one)"), kind = "factor")
       ),
-      defaults = list(error_bars = "se", legend = TRUE),
+      defaults = list(error_bars = "se", legend = TRUE, connect = TRUE,
+                      error_width = 0.2, point_size = 3),
       controls = function(spec) {
+        options <- spec$options %||% list()
         htmltools::tagList(
           radio_input(
             "chart_opt_error_bars", tr("Error bars"),
             c("Standard error" = "se", "Standard deviation" = "sd",
               "Confidence interval" = "ci"),
-            spec$options$error_bars %||% "se"
+            options$error_bars %||% "se"
           ),
           checkbox_input("chart_opt_legend", tr("Show legend"),
-                         isTRUE(spec$options$legend %||% TRUE))
+                         isTRUE(options$legend %||% TRUE)),
+          checkbox_input("chart_opt_connect", tr("Connect the means"),
+                         isTRUE(options$connect %||% TRUE)),
+          spin_input("chart_opt_error_width", tr("Error bar width"),
+                     options$error_width %||% 0.2, min = 0, step = 0.05),
+          spin_input("chart_opt_point_size", tr("Point size"),
+                     options$point_size %||% 3, min = 0.5, step = 0.5)
         )
       },
       command = function(spec) {
@@ -409,7 +533,8 @@ chart_types_builtin <- function() {
           spec$dataset, spec$mapping$x %||% "",
           spec$mapping$group %||% "",
           spec$options$error_bars %||% "se",
-          isTRUE(spec$options$legend %||% TRUE)
+          isTRUE(spec$options$legend %||% TRUE),
+          connect = isTRUE(spec$options$connect %||% TRUE)
         )
       },
       dialog = "PlotMeans",
@@ -431,24 +556,29 @@ chart_types_builtin <- function() {
         group = list(label = tr("Conditioning factor (optional)"),
                      kind = "factor", optional = TRUE)
       ),
-      defaults = list(type = "p", layout = ""),
+      defaults = list(type = "p", layout = "", smooth = FALSE),
       controls = function(spec) {
+        options <- spec$options %||% list()
         htmltools::tagList(
           radio_input(
             "chart_opt_type", tr("Plot type"),
             c("Points" = "p", "Lines" = "l", "Both" = "b"),
-            spec$options$type %||% "p"
+            options$type %||% "p"
           ),
           entry_input("chart_opt_layout", tr("Layout (e.g. 2,2):"),
-                      spec$options$layout %||% "")
+                      options$layout %||% ""),
+          checkbox_input("chart_opt_smooth", tr("Add a smooth"),
+                         isTRUE(options$smooth))
         )
       },
       command = function(spec) {
+        options <- spec$options %||% list()
         cmd_xyplot(
           spec$dataset, spec$mapping$x %||% "", spec$mapping$y %||% "",
           chart_optional(spec$mapping$group),
-          spec$options$type %||% "p",
-          spec$options$layout %||% ""
+          options$type %||% "p",
+          options$layout %||% "",
+          smooth = isTRUE(options$smooth)
         )
       },
       dialog = "Xyplot",
