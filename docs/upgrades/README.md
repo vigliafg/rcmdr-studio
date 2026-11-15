@@ -95,6 +95,7 @@ Le decisioni sono registrate in forma di ADR in
 | **5** | [`05-navigation-dialogs-workflows.md`](05-navigation-dialogs-workflows.md) | Palette evoluta, preferiti, preset dialoghi, workflow guidati | 0–4 |
 | **6** | [`06-help-i18n-onboarding.md`](06-help-i18n-onboarding.md) | Help full-text, “Try it”, mappa errori, tour, italiano, cambio lingua | 0 |
 | **7** | [`07-platform-plugins-quality.md`](07-platform-plugins-quality.md) | Progetto `.rcmdrproj`, autosave/recovery, performance, Plugin SDK v2, QA | 0–6 |
+| **8** | [`08-hardening-menus-plugins.md`](08-hardening-menus-plugins.md) | Debito del menu, accessibilità, robustezza e ciclo di vita dei plugin | 0–7 |
 
 Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il

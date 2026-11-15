@@ -301,6 +301,38 @@ stabili per menu e voci. I command ID del motore restano invariati.
 
 ---
 
+## Onda 8 — Hardening menu e ciclo di vita plugin
+
+Documento di settore: [`08-hardening-menus-plugins.md`](08-hardening-menus-plugins.md).
+Rilascio pianificato: 2.0.2 (H8.1–H8.7) e 2.1.0 (H8.8–H8.12).
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| H8.1 | `command_availability()` fonte unica di stato | [ ] | Rendering + guardie |
+| H8.2 | Guardie di ingresso (`launch`, cronologia) | [ ] | Messaggi distinti per `porting`/`inactive`/`hidden` |
+| H8.3 | Preferiti e recenti coerenti col menubar | [ ] | Disabilitati con motivo; `hidden` omessi |
+| H8.4 | Click su voce disabilitata e accessibilità | [ ] | Non chiude il menu; `aria-disabled`, focus, motivo |
+| H8.5 | Isolamento errori plugin | [ ] | Fallimenti in health/diagnostics, avvio non bloccato |
+| H8.6 | Messaggio caricamento a runtime | [ ] | Reload pagina, non riavvio di R |
+| H8.7 | Chiusura Fase 1 (2.0.2) | [ ] | Test, NEWS, check, diario |
+| H8.8 | Persistenza plugin e Plugin Manager | [ ] | Preferenze + dialogo installati |
+| H8.9 | Conflitti plugin visibili | [ ] | Health/diagnostics + notifica |
+| H8.10 | Semantica lazy documentata e misurata | [ ] | Deferred al primo catalogo |
+| H8.11 | Benchmark del ciclo plugin | [ ] | 5 scenari con budget |
+| H8.12 | Chiusura Fase 2 (2.1.0) | [ ] | Test, NEWS, check, diario |
+| H8.13 | Valutazione lazy reale / registry per-sessione | [ ] | Solo ADR, nessuna implementazione |
+
+### Chiusura Onda 8
+
+- [ ] Nessun percorso utente apre dialoghi o esegue comandi non disponibili.
+- [ ] Il debito è spiegato in menubar, ricerca, preferiti, recenti e palette.
+- [ ] Un plugin rotto non blocca l'avvio e compare in health.
+- [ ] La selezione dei plugin è persistente e gestibile da UI.
+- [ ] Contratti dei 15 plugin e copertura comandi invariati.
+- [ ] Test, `R CMD check`, documentazione e diario aggiornati.
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
