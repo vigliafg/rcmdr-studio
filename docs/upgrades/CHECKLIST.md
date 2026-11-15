@@ -402,6 +402,21 @@ Rilascio: 2.5.0.
 
 ---
 
+## Onda 13 — Anteprima interattiva nel builder
+
+Documento di settore: [`13-interactive-builder.md`](13-interactive-builder.md).
+Rilascio: 2.6.0.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| G13.1 | Widget plotly nel pannello Build | [x] | fallback immagine |
+| G13.2 | Sorgente separata `rcmdr-build` | [x] | nessun conflitto con la galleria |
+| G13.3 | Selezione e conteggio nel builder | [x] | |
+| G13.4 | Subset dal builder | [x] | `chart_subset_selected()` condiviso |
+| G13.5 | Test e documentazione | [x] | suite 3767, check OK |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
@@ -515,4 +530,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
 2026-11-15 — Onda 12 (2.5.0): tipi ggplot-only violino, ECDF, densità 2D e
              heatmap, con gate per engine nella select, validazione e
              round-trip. Suite 3755 pass, check OK.
+2026-11-15 — Onda 13 (2.6.0): anteprima plotly nel pannello Build con
+             sorgente separata, selezione punti e creazione dataset dal
+             builder; helper `chart_subset_selected()` condiviso con la
+             galleria. Suite 3767 pass, check OK.
 ```

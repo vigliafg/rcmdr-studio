@@ -19,6 +19,7 @@ wave-09-ggplot.md
 wave-10-graph-options.md
 wave-11-remaining-types.md
 wave-12-ggplot-only-types.md
+wave-13-interactive-builder.md
 ```
 
 ## Regole

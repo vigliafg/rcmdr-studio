@@ -5,7 +5,7 @@
 
 | Livello | Cosa copre | Comando | Evidenza corrente |
 |---|---|---|---|
-| Unit | Funzioni pure, parser, builder, schema progetto, cache | `Rscript -e 'testthat::test_local()'` | 3 755 test |
+| Unit | Funzioni pure, parser, builder, schema progetto, cache | `Rscript -e 'testthat::test_local()'` | 3 767 test |
 | Integration | Server Shiny, dialoghi, stato, progetto, checkpoint | `testthat::test_local()` | `test-app-integration.R`, `test-menu-availability.R`, `test-project.R`, `test-session-checkpoints.R` |
 | Golden | Comandi esistenti invariati | `test-command-builders-*.R` | tutti i builder |
 | Menu contract | ID stabili, copertura comandi, moduli first-party | `test-menu-registry.R`, `test-plugins-compat.R` | 782/782 comandi |

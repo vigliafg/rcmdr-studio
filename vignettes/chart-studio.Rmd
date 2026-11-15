@@ -163,6 +163,12 @@ a regression line, a confidence ellipse, a grid and jitter; ggplot2 maps the
 smooth choice and the confidence band to `geom_smooth(method=, se=)` and the
 ellipse to `stat_ellipse()`.
 
+The preview is isolated: it never logs a command or adds a plot. When an
+interactive expression exists, the Build panel shows the plotly widget (hover,
+zoom, selection); the builder uses its own source and an ungrouped scatterplot
+can create a data set from the selection with the same command as the gallery.
+Otherwise the static PNG is shown.
+
 # ggplot-only types
 
 Four statistical types are available only with the ggplot2 engine: violin plot

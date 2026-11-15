@@ -107,6 +107,13 @@ calls `run_command()`, never appends to the command log and never adds a plot to
 the gallery. Previews are debounced and cached by specification and data set
 shape.
 
+When the chart has an interactive plotly version, the Build panel shows the
+widget instead of the PNG: hover, zoom and point selection are available while
+you edit. The builder uses a separate plotly source, so its selection does not
+mix with the gallery detail. On an ungrouped scatterplot the selection offers
+**Create data set from selection**, with the same reproducible command used by
+the gallery.
+
 If the chart cannot be produced, the preview panel shows the R error instead of
 failing.
 

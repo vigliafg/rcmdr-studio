@@ -1,3 +1,20 @@
+# RcmdrShiny Studio 2.6.0
+
+## Wave 13 — Interactive preview in the builder
+
+- The Build panel now shows a **plotly widget** when the preview has an
+  interactive version: hover, zoom and point selection while editing.
+- Falls back to the static PNG when plotly is unavailable or the chart has no
+  interactive expression.
+- The builder uses its own plotly source (`rcmdr-build`), so selection events
+  never mix with the gallery detail (`rcmdr-chart`).
+- Scatter selection shows the selected count and **Create data set from
+  selection**, producing the same reproducible subset command as the gallery.
+- Selection is cleared on Refresh, Reset and Apply.
+- `chart_subset_selected()` is shared by the builder and the gallery.
+- New tests: builder widget source, subset from selection and rejection of
+  grouped/non-scatter charts.
+
 # RcmdrShiny Studio 2.5.0
 
 ## Wave 12 — ggplot-only chart types
