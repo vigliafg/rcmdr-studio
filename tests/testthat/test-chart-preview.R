@@ -59,6 +59,7 @@ test_that("plotly previews are built when the engine supports them", {
   result <- chart_preview(state, spec, width = 320, height = 240)
   expect_equal(result$type, "image")
   expect_false(is.null(result$widget))
+  expect_identical(result$widget$x$source, "rcmdr-build")
 })
 
 test_that("themes are reflected in the preview command", {

@@ -83,3 +83,33 @@ test_that("ids are stable and locate plots by name", {
   expect_equal(plot_title(plot_entry(state, id)), "Distribution")
   expect_true(is.na(plot_locate(state, "missing")))
 })
+
+test_that("selected points create a reproducible data set", {
+  state <- chart_test_state()
+  spec <- chart_spec("scatter", "D", list(x = "x", y = "y"))
+  selected <- data.frame(pointNumber = c(0L, 2L))
+
+  result <- chart_subset_selected(state, spec, selected)
+  expect_true(result$ok)
+  expect_identical(result$name, "DSelected")
+  expect_identical(result$rows, 2L)
+  expect_true(exists("DSelected", envir = state$env, inherits = FALSE))
+  expect_equal(nrow(state$env$DSelected), 2L)
+  expect_identical(active_dataset(state), "DSelected")
+  expect_match(result$command, "DSelected <- D\\[c\\(1, 3\\), , drop = FALSE\\]")
+})
+
+test_that("subsetting rejects grouped or non-scatter charts", {
+  state <- chart_test_state()
+  grouped <- chart_spec("scatter", "D", list(x = "x", y = "y", group = "g"))
+  expect_false(chart_subset_selected(
+    state, grouped, data.frame(pointNumber = 0L)
+  )$ok)
+  histogram <- chart_spec("histogram", "D", list(x = "y"))
+  expect_false(chart_subset_selected(
+    state, histogram, data.frame(pointNumber = 0L)
+  )$ok)
+  expect_false(chart_subset_selected(
+    state, grouped, data.frame(pointNumber = integer())
+  )$ok)
+})

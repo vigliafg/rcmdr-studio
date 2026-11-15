@@ -217,6 +217,49 @@ plot_compare <- function(state, keys) {
   Filter(Negate(is.null), plots)
 }
 
+#' Create a data set from selected plotly points
+#'
+#' @param state Application state.
+#' @param spec Chart specification of the plot.
+#' @param selected Data frame returned by `plotly::event_data()`.
+#' @return A list with `ok`, `name`, `rows` and `command`.
+#' @keywords internal
+chart_subset_selected <- function(state, spec, selected) {
+  if (is.null(selected) || nrow(selected) == 0L) {
+    return(list(ok = FALSE,
+                error = tr("Select points in an interactive scatterplot first.")))
+  }
+  if (is.null(spec)) {
+    return(list(ok = FALSE, error = tr("The selected chart has no saved specification.")))
+  }
+  if (!identical(spec$type, "scatter") ||
+      nzchar(spec$mapping$group %||% "")) {
+    return(list(ok = FALSE, error = tr(
+      "Subsetting from selection is available for ungrouped scatterplots."
+    )))
+  }
+  rows <- as.integer(selected$pointNumber) + 1L
+  rows <- rows[!is.na(rows)]
+  if (length(rows) == 0L) {
+    return(list(ok = FALSE, error = tr("Select points in an interactive scatterplot first.")))
+  }
+  name <- paste0(spec$dataset, "Selected")
+  suffix <- 1L
+  while (exists(name, envir = state$env, inherits = FALSE)) {
+    suffix <- suffix + 1L
+    name <- paste0(spec$dataset, "Selected", suffix)
+  }
+  command <- sprintf("%s <- %s[c(%s), , drop = FALSE]",
+                     name, spec$dataset, paste(rows, collapse = ", "))
+  outcome <- run_command(state, command, source = "chart")
+  if (!identical(outcome$status, "ok")) {
+    return(list(ok = FALSE,
+                error = outcome$error %||% tr("The subset failed.")))
+  }
+  active_dataset(state, name)
+  list(ok = TRUE, name = name, rows = length(rows), command = command)
+}
+
 #' Render a plot to a file
 #'
 #' @param state Application state.
@@ -354,7 +397,11 @@ chart_preview <- function(state, spec, width = NULL, height = NULL) {
   if (plotly_available() && is.null(rendered$error)) {
     interactive <- chart_spec_interactive(spec)
     if (!is.null(interactive)) {
-      widget <- preview_plotly(state, interactive)$widget
+      # The builder uses its own plotly source so selection events do not mix
+      # with the gallery detail.
+      build_code <- gsub('source = "rcmdr-chart"', 'source = "rcmdr-build"',
+                         interactive, fixed = TRUE)
+      widget <- preview_plotly(state, build_code)$widget
     }
   }
   result <- list(
@@ -661,8 +708,9 @@ chart_builder_ui <- function() {
         uiOutput("chart_preview_message"),
         htmltools::div(
           class = "rcmdr-chart-preview-image",
-          imageOutput("chart_preview_image", height = "auto")
+          uiOutput("chart_preview_media")
         ),
+        uiOutput("chart_preview_selection"),
         htmltools::tags$h6(class = "mt-3", tr("Generated command")),
         verbatimTextOutput("chart_command_text")
       ),
@@ -1194,6 +1242,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   })
 
   chart_preview_spec <- debounce(reactive(chart_current_spec()), 350)
+  chart_build_selection <- reactiveVal(NULL)
+  chart_build_interactive_ready <- reactiveVal(FALSE)
 
   chart_preview_result <- reactive({
     spec <- chart_preview_spec()
@@ -1203,6 +1253,24 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       width = isolate(input$chart_width %||% 800),
       height = isolate(input$chart_height %||% 600)
     )
+  })
+
+  output$chart_preview_media <- renderUI({
+    result <- chart_preview_result()
+    height <- isolate(input$chart_height %||% 600)
+    if (!is.null(result$widget)) {
+      plotly::plotlyOutput("chart_preview_plotly",
+                           height = paste0(height, "px"))
+    } else {
+      imageOutput("chart_preview_image", height = "auto")
+    }
+  })
+
+  output$chart_preview_plotly <- plotly::renderPlotly({
+    result <- chart_preview_result()
+    req(result$widget)
+    chart_build_interactive_ready(TRUE)
+    result$widget
   })
 
   output$chart_preview_image <- renderImage({
@@ -1237,8 +1305,59 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     ))
   })
 
+  output$chart_preview_selection <- renderUI({
+    selected <- chart_build_selection()
+    if (is.null(selected) || nrow(selected) == 0L) return(NULL)
+    spec <- chart_current_spec()
+    rows <- nrow(selected)
+    if (is.null(spec) || !identical(spec$type, "scatter") ||
+        nzchar(spec$mapping$group %||% "")) {
+      return(help_text(sprintf(
+        tr("%d point(s) selected. Subsetting is available for ungrouped scatterplots."),
+        rows
+      )))
+    }
+    htmltools::div(
+      class = "d-flex gap-2 align-items-center flex-wrap mt-1",
+      htmltools::tags$span(class = "small text-muted",
+                           sprintf(tr("%d point(s) selected."), rows)),
+      actionButton("chart_build_subset",
+                   tr("Create data set from selection"),
+                   class = "btn-sm btn-outline-primary")
+    )
+  })
+
+  if (plotly_available()) {
+    observeEvent(chart_build_interactive_ready(), {
+      observeEvent(
+        plotly::event_data("plotly_selected", source = "rcmdr-build"),
+        {
+          chart_build_selection(
+            plotly::event_data("plotly_selected", source = "rcmdr-build")
+          )
+        },
+        ignoreInit = TRUE
+      )
+    }, once = TRUE, ignoreInit = TRUE)
+  }
+
+  observeEvent(input$chart_build_subset, {
+    spec <- isolate(chart_current_spec())
+    result <- chart_subset_selected(state, spec, chart_build_selection())
+    if (!isTRUE(result$ok)) {
+      showNotification(result$error, type = "message", duration = 5)
+      return()
+    }
+    chart_build_selection(NULL)
+    refresh(gallery = TRUE)
+    showNotification(sprintf(tr("Created %s from %d selected point(s)."),
+                             result$name, result$rows),
+                     type = "message", duration = 5)
+  }, ignoreInit = TRUE)
+
   observeEvent(input$chart_preview, {
     chart_preview_cache_clear()
+    chart_build_selection(NULL)
     chart_revision(chart_revision() + 1L)
   }, ignoreInit = TRUE)
 
@@ -1252,6 +1371,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       return()
     }
     chart_detail_index(result$index)
+    chart_build_selection(NULL)
     refresh(gallery = TRUE)
     showNotification(tr("Chart applied and added to the gallery."),
                      type = "message", duration = 4)
@@ -1271,6 +1391,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
 
   observeEvent(input$chart_reset, {
     chart_env$pending <- NULL
+    chart_build_selection(NULL)
     info <- chart_type(input$chart_type %||% "histogram")
     if (!is.null(info)) {
       engine <- input$chart_engine %||% "base"
@@ -1515,50 +1636,21 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   }, ignoreInit = TRUE)
 
   observeEvent(input$chart_selection_subset, {
-    selected <- chart_selection()
     current <- current_detail()
-    if (is.null(selected) || nrow(selected) == 0L) {
-      showNotification(tr("Select points in an interactive scatterplot first."),
-                       type = "message", duration = 5)
+    result <- chart_subset_selected(
+      state,
+      if (is.null(current)) NULL else current$plot$spec,
+      chart_selection()
+    )
+    if (!isTRUE(result$ok)) {
+      showNotification(result$error, type = "message", duration = 5)
       return()
     }
-    if (is.null(current) || is.null(current$plot$spec)) {
-      showNotification(tr("The selected chart has no saved specification."),
-                       type = "message", duration = 5)
-      return()
-    }
-    spec <- current$plot$spec
-    if (!identical(spec$type, "scatter") ||
-        nzchar(spec$mapping$group %||% "")) {
-      showNotification(tr(
-        "Subsetting from selection is available for ungrouped scatterplots."
-      ), type = "message", duration = 6)
-      return()
-    }
-    rows <- as.integer(selected$pointNumber) + 1L
-    rows <- rows[!is.na(rows)]
-    if (length(rows) == 0L) return()
-    name <- paste0(spec$dataset, "Selected")
-    suffix <- 1L
-    while (exists(name, envir = state$env, inherits = FALSE)) {
-      suffix <- suffix + 1L
-      name <- paste0(spec$dataset, "Selected", suffix)
-    }
-    command <- sprintf("%s <- %s[c(%s), , drop = FALSE]",
-                       name, spec$dataset,
-                       paste(rows, collapse = ", "))
-    outcome <- run_command(state, command, source = "chart")
-    if (!identical(outcome$status, "ok")) {
-      showNotification(outcome$error %||% tr("The subset failed."),
-                       type = "error", duration = 6)
-      return()
-    }
-    active_dataset(state, name)
     chart_selection(NULL)
     chart_revision(chart_revision() + 1L)
     refresh(gallery = TRUE)
     showNotification(sprintf(tr("Created %s from %d selected point(s)."),
-                             name, length(rows)),
+                             result$name, result$rows),
                      type = "message", duration = 5)
   }, ignoreInit = TRUE)
 
