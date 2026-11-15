@@ -1,6 +1,7 @@
 ^\.git$
 ^\.github$
 ^\.freebuff$
+^start\.sh$
 ^LICENSE$
 ^NOTICE$
 ^UPSTREAM\.md$
