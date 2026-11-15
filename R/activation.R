@@ -309,3 +309,108 @@ command_status <- function(state, command, activation = "", install = "") {
   if (!evaluate_condition(state, activation)) return("inactive")
   "enabled"
 }
+
+# Single availability source -------------------------------------------------
+#
+# Rendering asks command_status() per node.  Every other entry point (launch,
+# history, favourites, recents) asks command_availability(), so a command the
+# menu disables cannot be opened through a different path.
+
+.command_index_cache <- new.env(parent = emptyenv())
+.command_index_cache$key <- NULL
+.command_index_cache$value <- NULL
+
+.command_status_rank <- c(enabled = 1L, inactive = 2L, porting = 3L,
+                          hidden = 4L)
+
+#' Human-readable reason for a command status
+#' @keywords internal
+command_status_reason <- function(status) {
+  switch(
+    status,
+    porting = tr("Not ported yet"),
+    inactive = tr("Not available for the current data set"),
+    hidden = tr("Not available in this environment"),
+    ""
+  )
+}
+
+#' Notification text for a command status
+#' @keywords internal
+command_status_message <- function(status) {
+  switch(
+    status,
+    porting = tr("This command has not been ported yet."),
+    inactive = tr("This command is not available for the current data set."),
+    hidden = tr("This command is not available in this environment."),
+    ""
+  )
+}
+
+.command_index_key <- function() {
+  sprintf("%s|%s", .plugin_registry$version %||% 0L,
+          .menu_registry_cache$key %||% "")
+}
+
+# Commands can appear more than once; keep every row so the best status wins.
+.command_index <- function() {
+  key <- .command_index_key()
+  if (identical(.command_index_cache$key, key) &&
+      !is.null(.command_index_cache$value)) {
+    return(.command_index_cache$value)
+  }
+  leaves <- tryCatch(menu_leaves(menu_tree()), error = function(e) NULL)
+  value <- list()
+  if (!is.null(leaves) && nrow(leaves) > 0L) {
+    leaves <- leaves[nzchar(leaves$command), , drop = FALSE]
+    if (nrow(leaves) > 0L) value <- split(leaves, leaves$command)
+  }
+  .command_index_cache$key <- .command_index_key()
+  .command_index_cache$value <- value
+  value
+}
+
+#' Availability of a command
+#'
+#' @param state Application state.
+#' @param command Command identifier.
+#' @return A list with `status` (`"enabled"`, `"inactive"`, `"porting"` or
+#'   `"hidden"`), `reason`, `command`, `path`, `activation` and `install`.
+#'   Commands without a menu row fall back to `"enabled"` when implemented and
+#'   to `"porting"` otherwise.
+#' @keywords internal
+command_availability <- function(state, command) {
+  command <- as.character(command %||% "")
+  empty <- list(status = "hidden", reason = command_status_reason("hidden"),
+                command = command, path = "", activation = "", install = "")
+  if (!nzchar(command)) return(empty)
+
+  if (identical(command, "loadPlugins")) {
+    return(list(status = "enabled", reason = "", command = command,
+                path = "", activation = "", install = ""))
+  }
+
+  rows <- .command_index()[[command]]
+  if (is.null(rows) || nrow(rows) == 0L) {
+    status <- if (is_implemented_command(command)) "enabled" else "porting"
+    return(list(status = status, reason = command_status_reason(status),
+                command = command, path = "", activation = "", install = ""))
+  }
+
+  statuses <- vapply(seq_len(nrow(rows)), function(i) {
+    command_status(state, rows$command[[i]], rows$activation[[i]],
+                   rows$install[[i]])
+  }, character(1))
+  ranks <- .command_status_rank[statuses]
+  ranks[is.na(ranks)] <- .command_status_rank[["hidden"]]
+  best <- which.min(ranks)
+  row <- rows[best, , drop = FALSE]
+  list(
+    status = statuses[[best]],
+    reason = command_status_reason(statuses[[best]]),
+    command = command,
+    path = row$path[[1L]],
+    activation = row$activation[[1L]],
+    install = row$install[[1L]]
+  )
+}

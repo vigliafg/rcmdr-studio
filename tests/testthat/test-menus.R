@@ -65,7 +65,36 @@ test_that("menu rendering marks unavailable entries as disabled", {
   expect_true(grepl("rcmdr-menu-item", html, fixed = TRUE))
   expect_true(grepl("disabled", html, fixed = TRUE))
   expect_true(grepl("menu_item_", html, fixed = TRUE))
-  expect_true(grepl("In porting", html, fixed = TRUE))
+  expect_true(grepl("Not ported yet", html, fixed = TRUE))
+})
+
+test_that("disabled menu items expose their reason", {
+  state <- AppState(env = new.env())
+  html <- as.character(menu_ui(menu_tree(), function(node) {
+    command_status(state, node$command, node$activation, node$install)
+  }))
+
+  expect_match(html, 'aria-disabled="true"', fixed = TRUE)
+  expect_match(html, 'tabindex="0"', fixed = TRUE)
+  expect_match(html, "visually-hidden", fixed = TRUE)
+  expect_match(html, "Not available for the current data set", fixed = TRUE)
+})
+
+test_that("favourites and recents mirror the menubar availability", {
+  state <- AppState(env = new.env())
+  state$menu_favorites <- c("readDataSet", "saveDataSet", "onCopy", "CFA")
+  state$menu_recents <- "oneWayAnova"
+
+  html <- as.character(menu_sections_ui(state))
+
+  links <- regmatches(html, gregexpr("<a [^>]*>", html))[[1L]]
+  expect_length(links, 1L)
+  expect_match(links, "readDataSet", fixed = TRUE)
+  expect_match(html, 'aria-disabled="true"', fixed = TRUE)
+  expect_match(html, "Not available for the current data set", fixed = TRUE)
+  expect_match(html, "Not ported yet", fixed = TRUE)
+  expect_false(grepl("Confirmatory factor analysis", html, fixed = TRUE))
+  expect_match(html, "oneWayAnova", fixed = TRUE)
 })
 
 test_that("top-level menubar groups carry their menu id in the DOM", {

@@ -350,6 +350,22 @@ menubar_top_ui <- function(node, status = function(node) "enabled",
   )
 }
 
+menu_disabled_item <- function(label, status) {
+  reason <- command_status_reason(status)
+  htmltools::tags$span(
+    class = "rcmdr-menu-item disabled",
+    role = "menuitem",
+    `aria-disabled` = "true",
+    tabindex = "0",
+    title = reason,
+    label,
+    htmltools::tags$span(
+      class = "visually-hidden",
+      paste0(" \u2014 ", reason)
+    )
+  )
+}
+
 menu_node_ui <- function(node, status = function(node) "enabled",
                          favorites = character(), expanded = NULL,
                          query = "") {
@@ -386,18 +402,9 @@ menu_node_ui <- function(node, status = function(node) "enabled",
       menu_star_ui(node$command, node$command %in% favorites)
     )
   } else {
-    tooltip <- if (identical(state, "porting")) {
-      tr("In porting")
-    } else {
-      tr("Not available for the current data set")
-    }
     htmltools::tags$div(
       class = "rcmdr-menu-row",
-      htmltools::tags$span(
-        class = "rcmdr-menu-item disabled",
-        title = tooltip,
-        menu_highlight(menu_label(node$label), query)
-      )
+      menu_disabled_item(menu_highlight(menu_label(node$label), query), state)
     )
   }
 }
@@ -577,15 +584,7 @@ menu_flat_item_ui <- function(row, status, query = "", favorite = FALSE) {
   } else {
     htmltools::tags$div(
       class = "rcmdr-menu-row",
-      htmltools::tags$div(
-        class = "rcmdr-menu-item disabled",
-        title = if (identical(status, "porting")) {
-          tr("In porting")
-        } else {
-          tr("Not available for the current data set")
-        },
-        label
-      )
+      menu_disabled_item(label, status)
     )
   }
 }
@@ -600,20 +599,30 @@ menu_sections_ui <- function(state, leaves = NULL) {
   section <- function(title, commands) {
     commands <- commands[commands %in% leaves$command]
     if (length(commands) == 0L) return(NULL)
+    rows <- lapply(commands, function(command) {
+      index <- match(command, leaves$command)
+      row <- leaves[index, , drop = FALSE]
+      status <- command_status(state, row$command, row$activation,
+                               row$install)
+      if (identical(status, "hidden")) return(NULL)
+      htmltools::tags$div(
+        class = "rcmdr-menu-row",
+        if (identical(status, "enabled")) {
+          menu_shortcut_link(row, row$label)
+        } else {
+          menu_disabled_item(row$label, status)
+        },
+        menu_star_ui(row$command, row$command %in% favorites)
+      )
+    })
+    rows <- Filter(Negate(is.null), rows)
+    if (length(rows) == 0L) return(NULL)
     htmltools::tags$details(
       class = "rcmdr-menu-group rcmdr-menu-shortcut-group", open = "open",
       htmltools::tags$summary(title),
       htmltools::tags$div(
         class = "rcmdr-menu-children",
-        lapply(commands, function(command) {
-          index <- match(command, leaves$command)
-          row <- leaves[index, , drop = FALSE]
-          htmltools::tags$div(
-            class = "rcmdr-menu-row",
-            menu_shortcut_link(row, row$label),
-            menu_star_ui(row$command, row$command %in% favorites)
-          )
-        })
+        rows
       )
     )
   }

@@ -20,6 +20,7 @@
 # registering or unloading a plugin invalidates every derived catalogue with a
 # single integer comparison.
 .plugin_registry$pending <- list()
+.plugin_registry$failures <- list()
 .plugin_catalog_cache <- new.env(parent = emptyenv())
 .plugin_catalog_cache$version <- NULL
 .plugin_catalog_cache$value <- list()
@@ -28,6 +29,52 @@ plugin_catalog_reset <- function() {
   .plugin_catalog_cache$version <- NULL
   .plugin_catalog_cache$value <- list()
   invisible(NULL)
+}
+
+# Failures are recorded instead of aborting the whole load: one broken plugin
+# must not prevent the application from starting.
+plugin_record_failure <- function(name, stage, message) {
+  .plugin_registry$failures[[length(.plugin_registry$failures) + 1L]] <- list(
+    name = as.character(name %||% "<inline>")[[1L]],
+    stage = as.character(stage %||% "load")[[1L]],
+    message = as.character(message %||% "")[[1L]],
+    time = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  )
+  invisible(NULL)
+}
+
+#' Plugin loading failures
+#'
+#' @return A data frame with `name`, `stage`, `message` and `time`.
+#' @keywords internal
+plugin_failures <- function() {
+  failures <- .plugin_registry$failures
+  if (length(failures) == 0L) {
+    return(data.frame(
+      name = character(), stage = character(), message = character(),
+      time = character(), stringsAsFactors = FALSE
+    ))
+  }
+  data.frame(
+    name = vapply(failures, function(failure) failure$name, character(1)),
+    stage = vapply(failures, function(failure) failure$stage, character(1)),
+    message = vapply(failures, function(failure) failure$message, character(1)),
+    time = vapply(failures, function(failure) failure$time, character(1)),
+    stringsAsFactors = FALSE
+  )
+}
+
+plugin_clear_failures <- function() {
+  .plugin_registry$failures <- list()
+  invisible(NULL)
+}
+
+plugin_label <- function(plugin) {
+  if (is.character(plugin) && length(plugin) == 1L) return(plugin)
+  if (is.list(plugin) && !is.null(plugin$name)) {
+    return(as.character(plugin$name)[[1L]])
+  }
+  "<inline>"
 }
 
 plugin_catalog_cached <- function(name, build) {
@@ -274,6 +321,7 @@ unload_plugins <- function() {
   }
   .plugin_registry$plugins <- list()
   .plugin_registry$pending <- list()
+  .plugin_registry$failures <- list()
   .plugin_registry$version <- .plugin_registry$version + 1L
   if (is.function(plugin_extensions_reset)) plugin_extensions_reset()
   plugin_catalog_reset()
@@ -412,16 +460,21 @@ load_plugins <- function(plugins, lazy = NULL) {
 
 load_plugins_now <- function(plugins) {
   for (plugin in plugins) {
-    if (is.character(plugin) && length(plugin) == 1L && file.exists(plugin)) {
-      load_plugin(plugin)
-    } else if (is.character(plugin) && length(plugin) == 1L) {
-      load_plugin_package(plugin)
-    } else if (is.list(plugin)) {
-      do.call(RcmdrShiny.plugin, plugin)
-    } else {
-      stop("Plugins must be file paths, package names or argument lists.",
-           call. = FALSE)
-    }
+    label <- plugin_label(plugin)
+    tryCatch({
+      if (is.character(plugin) && length(plugin) == 1L && file.exists(plugin)) {
+        load_plugin(plugin)
+      } else if (is.character(plugin) && length(plugin) == 1L) {
+        load_plugin_package(plugin)
+      } else if (is.list(plugin)) {
+        do.call(RcmdrShiny.plugin, plugin)
+      } else {
+        stop("Plugins must be file paths, package names or argument lists.",
+             call. = FALSE)
+      }
+    }, error = function(e) {
+      plugin_record_failure(label, "load", conditionMessage(e))
+    })
   }
   invisible(list_plugins())
 }
@@ -552,7 +605,7 @@ load_plugins_dialog <- function() {
           filetypes = c("R", "r")
         ),
         help_text(tr(
-          "The script should call RcmdrShiny.plugin(). Plugin menus appear after restarting RcmdrShiny."
+          "The script should call RcmdrShiny.plugin(). Reload the page to see the plugin menus; restarting R removes the plugin."
         )),
         if (length(list_plugins()) > 0L) {
           htmltools::tags$p(
@@ -582,7 +635,7 @@ load_plugins_dialog <- function() {
       }
       list(
         memory = list(file = file),
-        message = tr("Plugin loaded. Restart RcmdrShiny to display its menus.")
+        message = tr("Plugin loaded. Reload the page (F5) to see its menus. Restarting R removes the plugin.")
       )
     }
   )

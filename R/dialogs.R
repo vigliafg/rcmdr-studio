@@ -492,17 +492,7 @@ show_help_modal <- function(topic, package = NULL) {
 
 #' @keywords internal
 command_enabled <- function(state, command) {
-  if (!is_implemented_command(command)) return(FALSE)
-
-  ds <- active_dataset(state)
-  switch(
-    command,
-    readDataSet = TRUE,
-    summarizeDataSet = !is.null(ds),
-    numericalSummaries = length(numeric_variables(state)) > 0L,
-    linearModel = length(numeric_variables(state)) > 0L,
-    TRUE
-  )
+  identical(command_availability(state, command)$status, "enabled")
 }
 
 #' Modal for a dialog specification

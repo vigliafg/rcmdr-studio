@@ -1,8 +1,8 @@
 # Onda 8 — Hardening menu e ciclo di vita dei plugin
 
 **Data:** 2026-11-15
-**Stato:** pianificato, implementazione non iniziata
-**Baseline:** RcmdrShiny 2.0.1 (commit `3216687`)
+**Stato:** Fase 1 completata (2.0.2); Fasi 2–3 pianificate
+**Baseline:** RcmdrShiny 2.0.2
 **Ondate precedenti:** 0–7, tutte chiuse
 **Diario di riferimento:** [`diary/wave-07-platform.md`](diary/wave-07-platform.md)
 **Checklist:** [`CHECKLIST.md`](CHECKLIST.md)
@@ -69,6 +69,19 @@ Problemi verificati:
 | P5 | Conflitti tra plugin solo `warning()` | `R/plugins.R:198-203`; override UCA osservato |
 | P6 | Costo plugin fuori dai budget | 5,69 s per 16 plugin; tree 0,7–1,5 s per sessione |
 | P7 | Registro globale di processo, condiviso tra sessioni | `R/plugins.R:15-17` |
+
+---
+
+### 2.3 Stato di implementazione
+
+| Fase | Contenuto | Stato | Rilascio |
+|---|---|---|---|
+| 1 | H8.1–H8.7: disponibilità, guardie, preferiti, accessibilità, errori plugin, messaggio reload | **completata 2026-11-15** | 2.0.2 |
+| 2 | H8.8–H8.12: persistenza e Plugin Manager, conflitti, lazy documentato, benchmark | pianificata | 2.1.0 |
+| 3 | H8.13: valutazione lazy reale / registry per-sessione | da valutare | — |
+
+Il punto di ripresa per la Fase 2 è in
+[`diary/wave-08-hardening.md`](diary/wave-08-hardening.md), sezione 0.
 
 ---
 

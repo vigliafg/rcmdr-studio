@@ -281,6 +281,14 @@ history_open_dialog <- function(state, id) {
     }
     return(invisible(FALSE))
   }
+  availability <- command_availability(state, entry$dialog_id)
+  if (!identical(availability$status, "enabled")) {
+    if (!is.null(state$session)) {
+      showNotification(command_status_message(availability$status),
+                       type = "warning", duration = 5)
+    }
+    return(invisible(FALSE))
+  }
   set_dialog_memory(state, entry$dialog_id, entry$dialog_memory %||% list())
   state$open_dialog(entry$dialog_id)
   invisible(TRUE)

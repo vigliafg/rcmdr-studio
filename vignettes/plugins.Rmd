@@ -252,7 +252,9 @@ RcmdrShiny::run(plugins = c(
 ```
 
 Or use *Tools > Load Rcmdr plug-in(s)...*.  Menus are read at startup, so a
-plugin loaded in a running session requires a restart.
+plugin loaded in a running session appears after reloading the page (F5), not
+after restarting R: restarting R removes the plugin again. The command palette
+sees the new commands immediately.
 
 # Legacy Tk plugins
 

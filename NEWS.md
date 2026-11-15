@@ -1,3 +1,32 @@
+# RcmdrShiny Studio 2.0.2
+
+## Wave 8 — Menu availability and plugin robustness
+
+- **Single availability source**: `command_availability()` reads the menu row
+  and is used by the renderer, `launch()`, the history and the sidebar.
+  `command_enabled()` is now a thin wrapper, so a command the menu disables
+  cannot be opened through favourites, recents or the history.
+- **Favourites and recents** mirror the menubar: unavailable commands are
+  disabled with their reason, `hidden` commands are omitted, and the favourite
+  star stays available so entries can still be removed. The stored preferences
+  are never modified automatically.
+- **Disabled menu items** expose `aria-disabled`, are focusable and announce
+  their reason (`Not ported yet`, `Not available for the current data set`,
+  `Not available in this environment`). Clicking one keeps the menu open.
+- **Distinct messages**: a command that is not ported, one that needs a data
+  set and one that is hidden by the environment now produce different
+  notifications.
+- **Plugin failures no longer abort startup**: each plugin load is isolated,
+  failures are recorded and shown in Home > Health and in diagnostics, and the
+  remaining plugins still load. Lazy queues record a failure instead of
+  retrying it silently.
+- **Runtime plugin loading** now asks to reload the page (the command palette
+  sees new commands immediately) and states that restarting R removes the
+  plugin. The `lazy_plugins` option is documented as deferred loading at the
+  first catalogue lookup.
+- New tests: availability matrix, disabled markup, favourites/recents, launch
+  guard, history guard, plugin failure isolation and the reload message.
+
 # RcmdrShiny Studio 2.0.1
 
 ## Menubar fixes (2026-11-15)

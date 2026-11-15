@@ -30,6 +30,7 @@ diagnostics_report <- function(state = NULL) {
     rcmdrshiny = package_version("RcmdrShiny"),
     language = tryCatch(current_language(), error = function(e) "en"),
     plugins = tryCatch(as.character(list_plugins()), error = function(e) character()),
+    plugin_failures = tryCatch(plugin_failures(), error = function(e) NULL),
     packages = versions,
     help_topics = tryCatch(length(help_topics()), error = function(e) 0L),
     options = list(
@@ -79,6 +80,13 @@ format_diagnostics <- function(report = diagnostics_report()) {
     if (length(report$pending_plugins %||% character()) > 0L) {
       sprintf("Pending plugins: %s",
               paste(report$pending_plugins, collapse = ", "))
+    } else {
+      NULL
+    },
+    if (!is.null(report$plugin_failures) && nrow(report$plugin_failures) > 0L) {
+      sprintf("Plugin failures: %s",
+              paste(sprintf("%s (%s)", report$plugin_failures$name,
+                            report$plugin_failures$message), collapse = ", "))
     } else {
       NULL
     },

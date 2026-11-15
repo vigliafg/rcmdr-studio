@@ -123,3 +123,8 @@ Il test verifica skip link, landmark `main`/`navigation`/`banner`, regione
 `aria-live`, semantica del menubar, outline `:focus-visible`,
 `prefers-reduced-motion`, validazione `aria-live="assertive"` e campo di ricerca
 della palette etichettato.
+
+Le voci di menu non disponibili sono `aria-disabled="true"`, focalizzabili e
+accompagnate dal motivo (`visually-hidden` + `title`), così il debito è
+annunciato anche senza mouse. Il click su una voce disabilitata non chiude il
+menu.

@@ -314,3 +314,100 @@ persi al riavvio.
 
 - Salvare solo il workspace `.RData`: non cattura UI, preset e report.
 - Salvarlo tutto in `.GlobalEnv`: non è un progetto.
+
+---
+
+## ADR-011 — Disponibilità dei comandi come fonte unica
+
+**Stato:** accettata
+**Data:** 2026-11-15
+
+### Contesto
+
+Lo stato `enabled`/`inactive`/`porting`/`hidden` era calcolato nel rendering,
+mentre `launch()` usava una guardia separata che copriva solo tre comandi. I
+percorsi alternativi (preferiti, recenti, cronologia) potevano quindi aprire
+dialoghi non disponibili.
+
+### Decisione
+
+- `command_availability(state, command)` legge la riga di menu del comando e
+  ritorna stato, motivo, path e condizioni.
+- Rendering, `launch()`, cronologia e sezioni laterali usano la stessa fonte.
+- Un comando senza riga di menu ricade su "implementato → enabled", così i
+  comandi solo-palette non vengono bloccati.
+
+### Conseguenze
+
+- Un solo punto da modificare quando cambia la semantica dello stato.
+- `command_enabled()` resta come wrapper deprecato per un rilascio.
+- L'indice comando→riga è memorizzato in cache per versione del registry.
+
+### Alternative scartate
+
+- Duplicare la logica in ogni percorso: divergenza garantita.
+- Bloccare `open_dialog()` globalmente: rompe i flussi contestuali del Data
+  Studio già validati.
+
+---
+
+## ADR-012 — Caricamento plugin: isolamento e reload della pagina
+
+**Stato:** accettata
+**Data:** 2026-11-15
+
+### Contesto
+
+Un plugin mancante bloccava l'avvio dell'app e un plugin caricato a runtime
+produceva menu vecchi ma palette nuova, con l'istruzione di riavviare R che
+avrebbe eliminato il plugin.
+
+### Decisione
+
+- Ogni plugin viene caricato in un `tryCatch`; i fallimenti sono registrati in
+  `plugin_failures()` e mostrati in health/diagnostics, senza interrompere gli
+  altri plugin.
+- I menu sono catturati per sessione: dopo un caricamento a runtime si chiede
+  il reload della pagina; la palette vede subito i comandi nuovi.
+- Il messaggio non suggerisce più di riavviare R.
+
+### Conseguenze
+
+- Avvio robusto anche con plugin rotti o disinstallati.
+- Un plugin caricato a runtime non compare nel menubar fino al reload.
+- Il retry di un plugin fallito è esplicito, non automatico.
+
+### Alternative scartate
+
+- Ricostruire observer e tree a runtime: costo e rischio elevati per un caso
+  raro.
+- Disabilitare silenziosamente i plugin rotti: il debito resterebbe invisibile.
+
+---
+
+## ADR-013 — Registro plugin globale, assunzione single-user
+
+**Stato:** accettata
+**Data:** 2026-11-15
+
+### Contesto
+
+`.plugin_registry` è un oggetto di processo, condiviso da tutte le sessioni
+Shiny. Il progetto è locale e single-user, ma il comportamento va esplicitato.
+
+### Decisione
+
+- Il registro resta globale di processo.
+- La selezione persistente dei plugin (Fase 2) è un default di avvio, non un
+  isolamento per sessione.
+- Un registry per-sessione è fuori perimetro e richiede un ADR dedicato.
+
+### Conseguenze
+
+- Caricare o scaricare plugin in una sessione cambia palette, help e comandi
+  delle altre sessioni.
+- I menubar delle sessioni già aperte restano quelli catturati all'avvio.
+
+### Alternative scartate
+
+- Registry per sessione: rompe cache globali e test, beneficio non dimostrato.

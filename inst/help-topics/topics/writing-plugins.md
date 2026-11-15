@@ -127,7 +127,12 @@ extension hooks are additive:
 
 A plugin cannot replace a built-in workflow, chart type or report template by
 id. Presets merge with session presets, and the session wins. Loading can be
-queued with `options(RcmdrShiny.lazy_plugins = TRUE)`.
+deferred with `options(RcmdrShiny.lazy_plugins = TRUE)`: the queue is
+materialised on the first catalogue lookup (menus, commands, help), which in a
+running session happens at startup. Plugin menus are captured per session, so
+a plugin loaded at runtime appears after reloading the page; the command
+palette sees its commands immediately. A plugin that fails to load is recorded
+in Home > Health instead of blocking the application.
 
 ## Help topics
 

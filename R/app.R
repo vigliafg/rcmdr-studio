@@ -848,6 +848,8 @@ app_js <- function(lang = current_language()) {
     document.addEventListener('click', function(event) {
       var target = event.target;
       if (target && target.closest) {
+        // A disabled item only carries its reason; keep the menu open.
+        if (target.closest('.rcmdr-menubar .rcmdr-menu-item.disabled')) return;
         // Choosing an item closes the menu, as a menubar is expected to do.
         if (target.closest('.rcmdr-menubar .rcmdr-menu-item')) {
           closeMenubarGroups();
@@ -1514,6 +1516,15 @@ app_server <- function(env = globalenv()) {
     tree <- menu_tree()
     leaves <- menu_leaves(tree)
 
+    failures <- plugin_failures()
+    if (nrow(failures) > 0L) {
+      showNotification(
+        sprintf(tr("%d plugin(s) could not be loaded. See Home > Health."),
+                nrow(failures)),
+        type = "warning", duration = 10
+      )
+    }
+
     # -- menus --------------------------------------------------------------
 
     output$menubar <- renderUI({
@@ -1688,9 +1699,10 @@ app_server <- function(env = globalenv()) {
     })
 
     launch <- function(command) {
-      if (!command_enabled(state, command)) {
+      availability <- command_availability(state, command)
+      if (!identical(availability$status, "enabled")) {
         showNotification(
-          tr("This command is not available for the current data set."),
+          command_status_message(availability$status),
           type = "warning", duration = 5
         )
         return(invisible(NULL))

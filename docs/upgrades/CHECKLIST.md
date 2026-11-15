@@ -308,13 +308,13 @@ Rilascio pianificato: 2.0.2 (H8.1–H8.7) e 2.1.0 (H8.8–H8.12).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| H8.1 | `command_availability()` fonte unica di stato | [ ] | Rendering + guardie |
-| H8.2 | Guardie di ingresso (`launch`, cronologia) | [ ] | Messaggi distinti per `porting`/`inactive`/`hidden` |
-| H8.3 | Preferiti e recenti coerenti col menubar | [ ] | Disabilitati con motivo; `hidden` omessi |
-| H8.4 | Click su voce disabilitata e accessibilità | [ ] | Non chiude il menu; `aria-disabled`, focus, motivo |
-| H8.5 | Isolamento errori plugin | [ ] | Fallimenti in health/diagnostics, avvio non bloccato |
-| H8.6 | Messaggio caricamento a runtime | [ ] | Reload pagina, non riavvio di R |
-| H8.7 | Chiusura Fase 1 (2.0.2) | [ ] | Test, NEWS, check, diario |
+| H8.1 | `command_availability()` fonte unica di stato | [x] | 2.0.2: `R/activation.R`, usata da rendering e guardie |
+| H8.2 | Guardie di ingresso (`launch`, cronologia) | [x] | 2.0.2: messaggi distinti; `history_open_dialog` controlla lo stato |
+| H8.3 | Preferiti e recenti coerenti col menubar | [x] | 2.0.2: disabilitati con motivo; `hidden` omessi |
+| H8.4 | Click su voce disabilitata e accessibilità | [x] | 2.0.2: menu resta aperto; `aria-disabled`, focus, motivo |
+| H8.5 | Isolamento errori plugin | [x] | 2.0.2: `plugin_failures()`, health/diagnostics, avvio non bloccato |
+| H8.6 | Messaggio caricamento a runtime | [x] | 2.0.2: reload pagina; palette immediata |
+| H8.7 | Chiusura Fase 1 (2.0.2) | [x] | Suite 3379 pass, check OK, diario `wave-08-hardening.md` |
 | H8.8 | Persistenza plugin e Plugin Manager | [ ] | Preferenze + dialogo installati |
 | H8.9 | Conflitti plugin visibili | [ ] | Health/diagnostics + notifica |
 | H8.10 | Semantica lazy documentata e misurata | [ ] | Deferred al primo catalogo |
@@ -408,4 +408,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              chiusura del menu alla selezione, gruppo aperto ripristinato dopo
              il re-render (`data-menu-group`, `menu_toggle_is_echo()`) senza
              loop di toggle. Nessun ID o comando cambiato; suite 3333 pass.
+2026-11-15 — Onda 8 Fase 1 (2.0.2): disponibilità unica
+             (`command_availability()`), preferiti/recenti e cronologia
+             allineati al menubar, voci disabilitate accessibili e menu che
+             resta aperto al click, errori plugin isolati in
+             `plugin_failures()` con health/diagnostics, messaggio di reload
+             per il caricamento a runtime. Suite 3379 pass, check OK.
 ```

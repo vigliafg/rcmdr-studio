@@ -60,6 +60,8 @@ health_status <- function(state = NULL) {
     optional_packages = versions,
     plugins = plugins,
     pending_plugins = pending,
+    plugin_failures = tryCatch(plugin_failures(),
+                               error = function(e) NULL),
     plugin_versions = vapply(plugins, function(package) {
       health_package_version(package)
     }, character(1)),
@@ -121,6 +123,15 @@ health_table <- function(state = NULL) {
     rows[[length(rows) + 1L]] <- data.frame(
       item = "Last error", value = health$last_error, status = "error",
       stringsAsFactors = FALSE
+    )
+  }
+  failures <- health$plugin_failures
+  if (!is.null(failures) && nrow(failures) > 0L) {
+    rows[[length(rows) + 1L]] <- data.frame(
+      item = "Plugin failures",
+      value = paste(sprintf("%s: %s", failures$name, failures$message),
+                    collapse = "; "),
+      status = "error", stringsAsFactors = FALSE
     )
   }
   do.call(rbind, rows)
