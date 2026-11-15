@@ -1,8 +1,8 @@
 # Diario di handoff — Onda 8 — Hardening menu e ciclo di vita plugin
 
 **Data:** 2026-11-15
-**Stato:** Fase 1 completata (2.0.2); Fase 2 pianificata (2.1.0)
-**Baseline:** RcmdrShiny 2.0.2
+**Stato:** Fase 1 (2.0.2) e Fase 2 (2.1.0) completate; Fase 3 da valutare
+**Baseline:** RcmdrShiny 2.1.0
 **Documento di settore:** [`../08-hardening-menus-plugins.md`](../08-hardening-menus-plugins.md)
 **Checklist:** [`../CHECKLIST.md`](../CHECKLIST.md)
 
@@ -11,14 +11,14 @@
 ## 0. Punto di ripresa per la prossima sessione
 
 **Stato al momento della compattazione:** branch `main`, HEAD corrente (vedi
-`git log -1`), working tree pulito, Fase 1 pushata su `origin/main`.
+`git log -1`), working tree pulito, Fase 2 pushata su `origin/main`.
 
 **Baseline verificata:**
-`testthat::test_local()` → **3379 pass, 0 fail, 20 skip**;
-`R CMD check --no-manual` su `RcmdrShiny_2.0.2.tar.gz` → **Status: OK**.
+`testthat::test_local()` → **3401 pass, 0 fail, 20 skip**;
+`R CMD check --no-manual` su `RcmdrShiny_2.1.0.tar.gz` → **Status: OK**.
 
-**Prossimo task:** **H8.8 — Persistenza plugin e Plugin Manager**, poi H8.9,
-H8.10, H8.11, H8.12 (vedi sezione 8).
+**Prossimo task:** nessun task obbligatorio. Resta solo **H8.13** (valutazione
+lazy reale / registry per-sessione, solo ADR) se emerge una necessità.
 
 **Da leggere, in quest'ordine:**
 
@@ -66,7 +66,8 @@ visibili, benchmark del ciclo plugin.
 | Hash | Messaggio | Note |
 |---|---|---|
 | `6222d6f` | docs: add Wave 8 hardening plan | Piano e checklist Onda 8 |
-| _(questo commit)_ | feat: unify command availability and harden plugins | Fase 1 completa (2.0.2) |
+| `0735a2f` | feat: unify command availability and harden plugins | Fase 1 (2.0.2) |
+| _(questo commit)_ | feat: persist plugin selection and surface conflicts | Fase 2 (2.1.0) |
 
 ---
 
@@ -94,7 +95,7 @@ visibili, benchmark del ciclo plugin.
 ### Modificati — test e documentazione
 
 - `tests/testthat/test-activation.R`, `test-menus.R`, `test-plugins.R`.
-- `DESCRIPTION` (2.0.2), `NEWS.md` (2.0.2).
+- `DESCRIPTION` (2.1.0), `NEWS.md` (2.1.0).
 - `inst/help-topics/topics/writing-plugins.md`, `vignettes/plugins.Rmd`.
 - `docs/upgrades/08-hardening-menus-plugins.md`, `CHECKLIST.md`,
   `TEST-MATRIX.md`, `ACCESSIBILITY.md`, `DECISIONS.md` (ADR-011…013).
@@ -105,12 +106,12 @@ visibili, benchmark del ciclo plugin.
 
 | Verifica | Comando | Esito |
 |---|---|---|
-| Suite completa | `testthat::test_local()` | **3379 pass, 0 fail, 20 skip** |
+| Suite completa | `testthat::test_local()` | **3401 pass, 0 fail, 20 skip** |
 | Menu e disponibilità | `test_file("tests/testthat/test-menus.R")` | verde |
 | Attivazione | `test_file("tests/testthat/test-activation.R")` | verde |
 | Guardie | `test_file("tests/testthat/test-menu-availability.R")` | verde |
 | Plugin | `test_file("tests/testthat/test-plugins.R")` | verde |
-| `R CMD check` | build + check `--no-manual` su 2.0.2 | **Status: OK** |
+| `R CMD check` | build + check `--no-manual` su 2.1.0 | **Status: OK** |
 | E2E browser | `RCMDRSHINY_E2E=1 ...` | **non rieseguiti** (debito dichiarato) |
 
 Warning ambientali noti: `rgl`/X11 (2 warning) e snapshot visual opzionale.
@@ -152,9 +153,9 @@ Decisioni minori prese durante l'implementazione:
 |---|---|---|---|
 | I menu sono catturati per sessione | Un plugin caricato a runtime non compare nel menubar fino al reload, ma la palette lo vede subito | Ricaricare la pagina | H8.6 (documentato) |
 | Registro plugin globale | Un load/unload influenza le altre sessioni; i loro menubar restano vecchi | Assunzione single-user; reload | ADR-013 / H8.13 |
-| Lazy differito al primo catalogo | Non riduce il lavoro, lo sposta all'avvio sessione | Documentato; da misurare | H8.10, H8.11 |
-| Conflitti tra plugin solo warning | Override silenziosi fuori dalla console | Nessuno | H8.9 |
-| E2E non rieseguiti | Nessuna copertura browser del click su voce disabilitata | Eseguire `RCMDRSHINY_E2E=1` | H8.12 |
+| Lazy differito al primo catalogo | Non riduce il lavoro, lo sposta all'avvio sessione | Documentato e misurato in health | H8.10, chiuso |
+| Conflitti tra plugin silenziosi | Override visibili solo nella console | Risolto: health, diagnostics e notifica | H8.9, chiuso |
+| E2E non rieseguiti | Nessuna copertura browser del click su voce disabilitata o del Plugin Manager | Eseguire `RCMDRSHINY_E2E=1` | Lavoro ordinario |
 
 ---
 
@@ -162,50 +163,29 @@ Decisioni minori prese durante l'implementazione:
 
 ### Prima cosa da fare nella prossima sessione
 
-1. Leggere questo diario e la sezione 6 del documento di settore.
-2. Eseguire la baseline (sezione 9) e confermare **3379 pass, 0 fail**.
-3. Partire da **H8.8**.
+1. Leggere questo diario (sezioni 0, 7, 11) e la sezione 7 del documento di
+   settore.
+2. Eseguire la baseline (sezione 9) e confermare **3401 pass, 0 fail**.
+3. Non ci sono task obbligatori. Se serve, aprire **H8.13** come ADR/spike.
 
-### H8.8 — Persistenza plugin e Plugin Manager (2.1.0)
+### H8.13 — Valutazione lazy reale / registry per-sessione
 
-- `R/preferences.R`: campo `plugins` nello snapshot e nel load, validazione,
-  fallimenti registrati con `plugin_record_failure()`.
-- `R/app.R`: semantica `NULL` → salvati, `character()` → nessuno, vettore →
-  quelli indicati (l'argomento esplicito vince).
-- Nuovo dialogo in Utilities: elenco `RcmdrShinyPlugin.*` installati con
-  versione/stato, checkbox, path per script, "Apply" scrive le preferenze,
-  messaggio "Reload to apply".
-- Test: roundtrip preferenze, tre semantiche, plugin salvato mancante,
-  rendering del dialogo.
-- Accettazione: la selezione sopravvive al riavvio; un plugin mancante non
-  blocca l'avvio.
+- Solo ADR in `DECISIONS.md`, nessuna implementazione automatica.
+- Lazy reale: richiede menu e predicati disponibili senza caricare il namespace
+  del plugin, quindi separare contributo statico e dinamico; impatto alto su
+  registry, cache e attivazione.
+- Registry per-sessione: sposta `.plugin_registry` nello stato; rompe cache
+  globali e l'assunzione single-user di ADR-013.
+- Decisione attesa: go/no-go con stima, oppure chiusura come "non necessario".
 
-### H8.9 — Conflitti visibili
+### Lavoro ordinario
 
-- `.plugin_registry$conflicts` alimentato da `check_conflicts()`; health,
-  diagnostics e notifica una tantum; i clash col core restano errori.
-
-### H8.10 — Lazy documentato e misurato
-
-- Health/diagnostics espongono il numero di plugin accodati e il tempo di
-  materializzazione; help/vignetta aggiornati (già aggiornati in Fase 1, da
-  completare con la parte di misura).
-
-### H8.11 — Benchmark plugin
-
-- Scenari: load 1 plugin, load 15, primo catalogo dopo lazy, `menu_tree()`
-  caldo, conteggio fallimenti; budget in `R/benchmark.R` e `TEST-MATRIX.md`.
-- Baseline 2.0.1 misurata: 5,69 s per 16 plugin; tree 0,7–1,5 s.
-
-### H8.12 — Chiusura Fase 2
-
-- `NEWS.md` 2.1.0, `DESCRIPTION` 2.1.0, E2E gated, diario aggiornato,
-  checklist `[x]`.
-
-### Dopo la Fase 2
-
-- **H8.13** solo ADR/spike: lazy reale per gruppo e registry per-sessione.
-  Nessuna implementazione senza decisione esplicita.
+- Rieseguire gli E2E browser quando possibile:
+  `RCMDRSHINY_E2E=1` su `test-menu-platform-e2e.R` e sul nuovo flusso del
+  Plugin Manager (da creare se si vuole copertura browser).
+- Tenere aggiornati health/diagnostics se si aggiungono nuovi campi plugin.
+- Non modificare `menu_id`, `item_id`, `command_id` o il formato preferenze
+  senza migrazione.
 
 ---
 
@@ -242,3 +222,52 @@ commit.
   `plugin_failures()` nei test, non `expect_error()`.
 - Non modificare `menu_id`, `item_id`, `command_id` né il formato delle
   preferenze esistenti.
+
+---
+
+## 11. Fase 2 — risultati (2.1.0)
+
+**Obiettivo:** rendere la selezione dei plugin persistente e gestibile da UI,
+rendere visibili i conflitti, misurare il caricamento differito e coprire il
+ciclo plugin con benchmark.
+
+**Implementato:**
+
+- `preferences_snapshot()`/`preferences_load()` includono `plugins`
+  (pacchetti e script), con filtro delle stringhe vuote.
+- `app(plugins = NULL)` carica la selezione salvata; `character()` non carica
+  nulla; un vettore esplicito prevale. Helper: `saved_plugin_selection()`,
+  `resolve_startup_plugins()`.
+- Il dialogo Utilities (id `loadPlugins`) è diventato **Manage Rcmdr
+  plug-ins...**: checkbox sui pacchetti installati, script aggiuntivo con
+  "Remember this script", salvataggio preferenze e reload del registry.
+- `plugin_conflicts()` registra override tra plugin e col core (con
+  `replace = TRUE`); health, diagnostics e una notifica per sessione li
+  mostrano. I clash col core senza `replace` restano errori.
+- `plugins_ensure_loaded()` misura `last_materialize_ms`; health e diagnostics
+  riportano "Deferred plugins".
+- Benchmark: `benchmark_plugin_load()`, `benchmark_plugin_deferred()`,
+  `benchmark_plugin_tree()`; budget per "load 1 plugin", "load all plugins",
+  "first catalogue after deferred loading", "menu tree warm".
+
+**File toccati:** `R/preferences.R`, `R/app.R`, `R/plugins.R`, `R/health.R`,
+`R/diagnostics.R`, `R/benchmark.R`, `inst/etc/Rcmdr-menus.txt`,
+`inst/menus/core.yml`, test in `test-plugins.R`, help e vignetta plugin.
+
+**Test:** 3401 pass, 0 fail, 20 skip; `R CMD check` OK; 0 link rotti.
+Benchmark quick: load 1 plugin 831 ms (budget 6000), menu tree warm 100 ms
+(budget 4000), tutti gli scenari entro budget.
+
+**Decisioni minori:**
+
+- Il manager applica la selezione con `unload_plugins()` + `load_plugins()`:
+  stato deterministico, ma richiede il reload della pagina per i menu.
+- Un plugin può essere deselezionato mentre è caricato; viene scaricato al
+  reload successivo insieme agli altri.
+- Gli script salvati restano nella selezione anche se il file sparisce: il
+  fallimento è registrato in health.
+- Non è stato aggiunto un nuovo ID di menu: si riusa `loadPlugins`, così
+  conteggi e golden test del registry restano invariati.
+
+**Debito residuo:** nessun E2E browser per il Plugin Manager; H8.13 resta una
+valutazione.

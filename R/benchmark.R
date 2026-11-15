@@ -125,6 +125,76 @@ benchmark_help <- function() {
   )
 }
 
+#' Benchmark loading one or more plugins
+#' @keywords internal
+benchmark_plugin_load <- function(packages, scenario = NULL) {
+  installed <- intersect(packages, installed_plugin_packages())
+  if (length(installed) == 0L) return(NULL)
+  unload_plugins()
+  menu_registry_reset()
+  on.exit(unload_plugins(), add = TRUE)
+
+  time <- benchmark_time({
+    for (package in installed) {
+      tryCatch(suppressWarnings(load_plugin_package(package)),
+               error = function(e) NULL)
+    }
+    length(list_plugins())
+  })
+  data.frame(
+    scenario = scenario %||% sprintf("load %d plugin(s)", length(installed)),
+    rows = as.integer(length(installed)),
+    elapsed_ms = unname(time$elapsed_ms), stringsAsFactors = FALSE
+  )
+}
+
+#' Benchmark the first catalogue after deferred loading
+#' @keywords internal
+benchmark_plugin_deferred <- function(packages) {
+  installed <- intersect(packages, installed_plugin_packages())
+  if (length(installed) == 0L) return(NULL)
+  old <- getOption("RcmdrShiny.lazy_plugins")
+  options(RcmdrShiny.lazy_plugins = TRUE)
+  on.exit({
+    options(RcmdrShiny.lazy_plugins = old)
+    unload_plugins()
+  }, add = TRUE)
+  unload_plugins()
+  menu_registry_reset()
+  load_plugins(as.list(installed), lazy = TRUE)
+
+  time <- benchmark_time({
+    tree <- menu_tree()
+    length(tree)
+  })
+  data.frame(
+    scenario = "first catalogue after deferred loading",
+    rows = as.integer(length(installed)),
+    elapsed_ms = unname(time$elapsed_ms), stringsAsFactors = FALSE
+  )
+}
+
+#' Benchmark a warm menu tree with plugins loaded
+#' @keywords internal
+benchmark_plugin_tree <- function(packages, scenario = "menu tree warm") {
+  installed <- intersect(packages, installed_plugin_packages())
+  if (length(installed) == 0L) return(NULL)
+  unload_plugins()
+  menu_registry_reset()
+  on.exit(unload_plugins(), add = TRUE)
+  for (package in installed) {
+    tryCatch(suppressWarnings(load_plugin_package(package)),
+             error = function(e) NULL)
+  }
+  invisible(menu_tree())
+
+  time <- benchmark_time(length(menu_tree()))
+  data.frame(
+    scenario = scenario, rows = as.integer(length(installed)),
+    elapsed_ms = unname(time$elapsed_ms), stringsAsFactors = FALSE
+  )
+}
+
 #' Run the benchmark suite
 #'
 #' @param quick When `TRUE`, use small sizes for a smoke run.
@@ -132,14 +202,35 @@ benchmark_help <- function() {
 #' @keywords internal
 benchmark_suite <- function(quick = FALSE) {
   sizes <- if (isTRUE(quick)) c(1000L, 5000L) else c(10000L, 100000L)
-  rows <- list(
-    benchmark_startup(),
-    benchmark_import(sizes[[1L]]),
-    benchmark_import(sizes[[2L]]),
-    benchmark_grid(sizes[[1L]]),
-    benchmark_history(if (isTRUE(quick)) 50L else 100L),
-    benchmark_plots(if (isTRUE(quick)) 25L else 50L),
-    benchmark_help()
+  installed <- installed_plugin_packages()
+  one <- if ("RcmdrShinyPlugin.Export" %in% installed) {
+    "RcmdrShinyPlugin.Export"
+  } else if (length(installed) > 0L) {
+    installed[[1L]]
+  } else {
+    character()
+  }
+  plugin_rows <- Filter(Negate(is.null), list(
+    if (length(one) > 0L) benchmark_plugin_load(one, "load 1 plugin"),
+    if (length(one) > 0L) benchmark_plugin_tree(one, "menu tree warm")
+  ))
+  if (!isTRUE(quick) && length(installed) > 1L) {
+    plugin_rows <- c(plugin_rows, Filter(Negate(is.null), list(
+      benchmark_plugin_load(installed, "load all plugins"),
+      benchmark_plugin_deferred(installed)
+    )))
+  }
+  rows <- c(
+    list(
+      benchmark_startup(),
+      benchmark_import(sizes[[1L]]),
+      benchmark_import(sizes[[2L]]),
+      benchmark_grid(sizes[[1L]]),
+      benchmark_history(if (isTRUE(quick)) 50L else 100L),
+      benchmark_plots(if (isTRUE(quick)) 25L else 50L),
+      benchmark_help()
+    ),
+    plugin_rows
   )
   result <- do.call(rbind, rows)
   rownames(result) <- NULL
@@ -155,9 +246,12 @@ benchmark_budgets <- function() {
                  "import CSV 100000 rows", "grid page 1000 rows",
                  "grid page 10000 rows", "50 history entries",
                  "100 history entries", "25 plot registrations",
-                 "50 plot registrations", "help index rebuild"),
+                 "50 plot registrations", "help index rebuild",
+                 "load 1 plugin", "load all plugins",
+                 "first catalogue after deferred loading",
+                 "menu tree warm"),
     budget_ms = c(3000, 1500, 3000, 3000, 15000, 500, 500, 500, 500,
-                  500, 500, 5000),
+                  500, 500, 5000, 6000, 15000, 15000, 4000),
     stringsAsFactors = FALSE
   )
 }

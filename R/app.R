@@ -1524,6 +1524,14 @@ app_server <- function(env = globalenv()) {
         type = "warning", duration = 10
       )
     }
+    conflicts <- plugin_conflicts()
+    if (nrow(conflicts) > 0L) {
+      showNotification(
+        sprintf(tr("%d plugin conflict(s) recorded. See Home > Health."),
+                nrow(conflicts)),
+        type = "warning", duration = 10
+      )
+    }
 
     # -- menus --------------------------------------------------------------
 
@@ -3918,7 +3926,8 @@ app_server <- function(env = globalenv()) {
 #' @return A `shiny.appobj`.
 #' @export
 app <- function(env = globalenv(), plugins = NULL) {
-  load_plugins(plugins)
+  saved <- tryCatch(saved_plugin_selection(), error = function(e) character())
+  load_plugins(resolve_startup_plugins(plugins, saved))
   persisted <- tryCatch(preferences_peek(), error = function(e) list())
   if (is.character(persisted$language) && length(persisted$language) == 1L &&
       nzchar(persisted$language)) {

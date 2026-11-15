@@ -1,3 +1,25 @@
+# RcmdrShiny Studio 2.1.0
+
+## Wave 8 — Plugin selection and diagnostics
+
+- **Plugin selection is remembered**: the preferences file stores the chosen
+  plugin packages and script paths. `app(plugins = NULL)` now uses that
+  selection, `character()` starts with no plugins, and an explicit vector wins
+  over the saved one.
+- **Plugin manager**: *Utilities > Manage Rcmdr plug-ins...* lists the
+  installed `RcmdrShinyPlugin.*` packages with checkboxes, accepts an
+  additional script, saves the selection and reloads the registry. A plugin
+  that cannot be loaded is reported instead of blocking the manager.
+- **Conflicts are visible**: overrides between plugins and with the core are
+  recorded in `plugin_conflicts()`, shown in Home > Health, in diagnostics and
+  in a one-time notification. Core clashes still require `replace = TRUE`.
+- **Deferred loading is measured**: health and diagnostics report how long the
+  first catalogue took to materialise and how many plugins were queued.
+- **Plugin benchmarks**: load one plugin, load all plugins, first catalogue
+  after deferred loading and a warm menu tree, with documented budgets.
+- New tests: startup selection semantics, preferences roundtrip, plugin
+  manager, conflict recording, deferred timing and the plugin benchmark.
+
 # RcmdrShiny Studio 2.0.2
 
 ## Wave 8 — Menu availability and plugin robustness

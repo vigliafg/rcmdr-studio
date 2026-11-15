@@ -31,6 +31,11 @@ diagnostics_report <- function(state = NULL) {
     language = tryCatch(current_language(), error = function(e) "en"),
     plugins = tryCatch(as.character(list_plugins()), error = function(e) character()),
     plugin_failures = tryCatch(plugin_failures(), error = function(e) NULL),
+    plugin_conflicts = tryCatch(plugin_conflicts(), error = function(e) NULL),
+    plugin_materialize_ms = tryCatch(
+      .plugin_registry$last_materialize_ms %||% 0,
+      error = function(e) 0
+    ),
     packages = versions,
     help_topics = tryCatch(length(help_topics()), error = function(e) 0L),
     options = list(
@@ -87,6 +92,20 @@ format_diagnostics <- function(report = diagnostics_report()) {
       sprintf("Plugin failures: %s",
               paste(sprintf("%s (%s)", report$plugin_failures$name,
                             report$plugin_failures$message), collapse = ", "))
+    } else {
+      NULL
+    },
+    if (!is.null(report$plugin_conflicts) && nrow(report$plugin_conflicts) > 0L) {
+      sprintf("Plugin conflicts: %s",
+              paste(sprintf("%s overrides %s (%s)", report$plugin_conflicts$plugin,
+                            report$plugin_conflicts$entries,
+                            report$plugin_conflicts$kind),
+                    collapse = ", "))
+    } else {
+      NULL
+    },
+    if (isTRUE((report$plugin_materialize_ms %||% 0) > 0)) {
+      sprintf("Deferred plugins: %.0f ms", report$plugin_materialize_ms)
     } else {
       NULL
     },

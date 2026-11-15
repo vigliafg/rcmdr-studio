@@ -315,21 +315,21 @@ Rilascio pianificato: 2.0.2 (H8.1–H8.7) e 2.1.0 (H8.8–H8.12).
 | H8.5 | Isolamento errori plugin | [x] | 2.0.2: `plugin_failures()`, health/diagnostics, avvio non bloccato |
 | H8.6 | Messaggio caricamento a runtime | [x] | 2.0.2: reload pagina; palette immediata |
 | H8.7 | Chiusura Fase 1 (2.0.2) | [x] | Suite 3379 pass, check OK, diario `wave-08-hardening.md` |
-| H8.8 | Persistenza plugin e Plugin Manager | [ ] | Preferenze + dialogo installati |
-| H8.9 | Conflitti plugin visibili | [ ] | Health/diagnostics + notifica |
-| H8.10 | Semantica lazy documentata e misurata | [ ] | Deferred al primo catalogo |
-| H8.11 | Benchmark del ciclo plugin | [ ] | 5 scenari con budget |
-| H8.12 | Chiusura Fase 2 (2.1.0) | [ ] | Test, NEWS, check, diario |
+| H8.8 | Persistenza plugin e Plugin Manager | [x] | 2.1.0: preferenze `plugins`, dialog Utilities, avvio da selezione salvata |
+| H8.9 | Conflitti plugin visibili | [x] | 2.1.0: `plugin_conflicts()`, health/diagnostics, notifica |
+| H8.10 | Semantica lazy documentata e misurata | [x] | 2.1.0: health/diagnostics espongono il tempo di materializzazione |
+| H8.11 | Benchmark del ciclo plugin | [x] | 2.1.0: 4 scenari con budget in `R/benchmark.R` |
+| H8.12 | Chiusura Fase 2 (2.1.0) | [x] | Suite 3401 pass, check OK, diario aggiornato |
 | H8.13 | Valutazione lazy reale / registry per-sessione | [ ] | Solo ADR, nessuna implementazione |
 
 ### Chiusura Onda 8
 
-- [ ] Nessun percorso utente apre dialoghi o esegue comandi non disponibili.
-- [ ] Il debito è spiegato in menubar, ricerca, preferiti, recenti e palette.
-- [ ] Un plugin rotto non blocca l'avvio e compare in health.
-- [ ] La selezione dei plugin è persistente e gestibile da UI.
-- [ ] Contratti dei 15 plugin e copertura comandi invariati.
-- [ ] Test, `R CMD check`, documentazione e diario aggiornati.
+- [x] Nessun percorso utente apre dialoghi o esegue comandi non disponibili.
+- [x] Il debito è spiegato in menubar, ricerca, preferiti, recenti e palette.
+- [x] Un plugin rotto non blocca l'avvio e compare in health.
+- [x] La selezione dei plugin è persistente e gestibile da UI.
+- [x] Contratti dei 15 plugin e copertura comandi invariati.
+- [x] Test, `R CMD check`, documentazione e diario aggiornati.
 
 ---
 
@@ -414,4 +414,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              resta aperto al click, errori plugin isolati in
              `plugin_failures()` con health/diagnostics, messaggio di reload
              per il caricamento a runtime. Suite 3379 pass, check OK.
+2026-11-15 — Onda 8 Fase 2 (2.1.0): selezione plugin persistita e Plugin
+             Manager in Utilities, avvio da preferenze con semantica
+             NULL/character()/vettore, conflitti in `plugin_conflicts()` con
+             health/diagnostics, tempo di materializzazione del caricamento
+             differito, quattro scenari benchmark plugin con budget. Suite
+             3401 pass, check OK.
 ```

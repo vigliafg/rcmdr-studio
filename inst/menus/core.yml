@@ -2912,7 +2912,7 @@ items:
   - loadPackages
 - id: item.core.menu_utilities.load_plugins
   parent: menu.utilities
-  label: Load Rcmdr plug-in(s)...
+  label: Manage Rcmdr plug-ins...
   command: loadPlugins
   activation: length(listPlugins()) > 0
   install: ''

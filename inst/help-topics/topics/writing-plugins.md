@@ -134,6 +134,16 @@ a plugin loaded at runtime appears after reloading the page; the command
 palette sees its commands immediately. A plugin that fails to load is recorded
 in Home > Health instead of blocking the application.
 
+## Choosing plugins
+
+*Utilities > Manage Rcmdr plug-ins...* lists the installed
+`RcmdrShinyPlugin.*` packages. Checked packages and an optional script path
+are saved in the preferences file; `app(plugins = NULL)` loads that selection
+on the next start, `plugins = character()` starts with none, and an explicit
+vector overrides it. Applying the dialog reloads the registry for the current
+process; reload the page (F5) to rebuild the menus. Conflicts between plugins
+are recorded in Home > Health and in the diagnostics report.
+
 ## Help topics
 
 Add `inst/help/index.yml` and Markdown topics; the loader discovers them

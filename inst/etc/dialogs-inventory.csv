@@ -138,6 +138,6 @@
 "twoVariancesFTest","statistics-variances-menu.R","twoVariancesFTest","Statistics > Variances > Two-variances F-test...","ported"
 "stepwiseRegression","stepwiseRegression.R","stepwiseRegression","Models > Stepwise model selection...","ported"
 "compileRmd","utilities.R","","","todo"
-"loadPlugins","utilities.R","loadPlugins","Tools > Load Rcmdr plug-in(s)...","ported"
+"loadPlugins","utilities.R","loadPlugins","Tools > Manage Rcmdr plug-ins...","ported"
 "RcmdrEditor","utilities.R","","","todo"
 "RcmdrTkmessageBox","utilities.R","","","todo"

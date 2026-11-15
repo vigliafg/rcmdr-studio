@@ -424,7 +424,7 @@
 
     menu    toolsMenu       topMenu         ""                                              ""                          ""          ""
     item    toolsMenu       command         "Load package(s)..."                            loadPackages                ""          ""
-    item    toolsMenu       command         "Load Rcmdr plug-in(s)..."                        loadPlugins             "length(listPlugins()) > 0" ""
+    item    toolsMenu       command         "Manage Rcmdr plug-ins..."                        loadPlugins             "length(listPlugins()) > 0" ""
     item    toolsMenu       command         "Options..."                                    Options                     ""          ""
     item    toolsMenu       command         "Session checkpoints..."                        sessionCheckpoint           ""          ""
     item    toolsMenu       command         "Save Rcmdr options..."                         saveOptions                 ""          ""

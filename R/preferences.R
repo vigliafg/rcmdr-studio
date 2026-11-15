@@ -51,6 +51,7 @@ preferences_snapshot <- function(state) {
     expanded = state$menu_expanded %||% character(),
     presets = state$dialog_presets %||% list(),
     presets_version = state$dialog_presets_version %||% 1L,
+    plugins = as.character(state$options$plugins %||% character()),
     language = state$options$language %||% current_language(),
     theme = state$options$theme %||% "system"
   )
@@ -85,6 +86,10 @@ preferences_load <- function(state, path = preferences_file(state)) {
   if (is.list(value$presets)) {
     state$dialog_presets <- value$presets
     state$dialog_presets_version <- as.integer(value$presets_version %||% 1L)
+  }
+  plugins <- value$plugins %||% character()
+  if (is.character(plugins)) {
+    state$options$plugins <- unique(plugins[nzchar(plugins)])
   }
   language <- value$language %||% NULL
   if (is.character(language) && length(language) == 1L && nzchar(language)) {
@@ -132,6 +137,7 @@ preferences_clear <- function(state, remove = FALSE,
   state$menu_expanded <- character()
   state$dialog_presets <- list()
   state$dialog_presets_version <- 1L
+  state$options$plugins <- character()
   if (isTRUE(remove) && !is.null(path) && nzchar(path) && file.exists(path)) {
     unlink(path)
   }

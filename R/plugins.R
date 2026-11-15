@@ -21,6 +21,8 @@
 # single integer comparison.
 .plugin_registry$pending <- list()
 .plugin_registry$failures <- list()
+.plugin_registry$conflicts <- list()
+.plugin_registry$last_materialize_ms <- 0
 .plugin_catalog_cache <- new.env(parent = emptyenv())
 .plugin_catalog_cache$version <- NULL
 .plugin_catalog_cache$value <- list()
@@ -67,6 +69,84 @@ plugin_failures <- function() {
 plugin_clear_failures <- function() {
   .plugin_registry$failures <- list()
   invisible(NULL)
+}
+
+plugin_record_conflict <- function(plugin, kind, entries, source = "plugin") {
+  entries <- as.character(entries)
+  entries <- entries[nzchar(entries)]
+  if (length(entries) == 0L) return(invisible(NULL))
+  .plugin_registry$conflicts[[length(.plugin_registry$conflicts) + 1L]] <- list(
+    plugin = as.character(plugin)[[1L]],
+    kind = as.character(kind)[[1L]],
+    entries = entries,
+    source = as.character(source)[[1L]],
+    time = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  )
+  invisible(NULL)
+}
+
+#' Plugin registration conflicts
+#'
+#' @return A data frame with `plugin`, `kind`, `entries`, `source` and `time`.
+#' @keywords internal
+plugin_conflicts <- function() {
+  conflicts <- .plugin_registry$conflicts
+  if (length(conflicts) == 0L) {
+    return(data.frame(
+      plugin = character(), kind = character(), entries = character(),
+      source = character(), time = character(), stringsAsFactors = FALSE
+    ))
+  }
+  data.frame(
+    plugin = vapply(conflicts, function(item) item$plugin, character(1)),
+    kind = vapply(conflicts, function(item) item$kind, character(1)),
+    entries = vapply(conflicts, function(item) {
+      paste(item$entries, collapse = ", ")
+    }, character(1)),
+    source = vapply(conflicts, function(item) item$source, character(1)),
+    time = vapply(conflicts, function(item) item$time, character(1)),
+    stringsAsFactors = FALSE
+  )
+}
+
+plugin_clear_conflicts <- function() {
+  .plugin_registry$conflicts <- list()
+  invisible(NULL)
+}
+
+#' Installed RcmdrShiny plugin packages
+#'
+#' @param lib.loc Optional library location.
+#' @return A character vector of package names.
+#' @keywords internal
+installed_plugin_packages <- function(lib.loc = NULL) {
+  installed <- tryCatch(
+    rownames(utils::installed.packages(lib.loc = lib.loc)),
+    error = function(e) character()
+  )
+  sort(installed[grepl("^RcmdrShinyPlugin\\.", installed)])
+}
+
+#' Plugins saved in the preferences
+#'
+#' @param path Optional preferences file.
+#' @return A character vector of package names or script paths.
+#' @keywords internal
+saved_plugin_selection <- function(path = preferences_default_file()) {
+  value <- tryCatch(preferences_peek(path)$plugins,
+                    error = function(e) NULL)
+  if (!is.character(value)) return(character())
+  unique(value[nzchar(value)])
+}
+
+#' Resolve the plugins to load at startup
+#'
+#' `NULL` means "use the saved selection", `character()` means "none", and a
+#' vector means "only these".
+#' @keywords internal
+resolve_startup_plugins <- function(plugins, saved = character()) {
+  if (is.null(plugins)) return(as.character(saved))
+  as.character(plugins)
 }
 
 plugin_label <- function(plugin) {
@@ -242,11 +322,17 @@ RcmdrShiny.plugin <- function(name, menus = NULL, dialogs = list(),
         name, kind, paste(base_clashes, collapse = ", ")
       ), call. = FALSE)
     }
-    if (length(plugin_clashes) > 0L && !isTRUE(replace)) {
-      warning(sprintf(
-        "Plugin '%s' overrides %s from an earlier plugin: %s.",
-        name, kind, paste(plugin_clashes, collapse = ", ")
-      ), call. = FALSE)
+    if (length(base_clashes) > 0L) {
+      plugin_record_conflict(name, kind, base_clashes, source = "core")
+    }
+    if (length(plugin_clashes) > 0L) {
+      plugin_record_conflict(name, kind, plugin_clashes, source = "plugin")
+      if (!isTRUE(replace)) {
+        warning(sprintf(
+          "Plugin '%s' overrides %s from an earlier plugin: %s.",
+          name, kind, paste(plugin_clashes, collapse = ", ")
+        ), call. = FALSE)
+      }
     }
     invisible(NULL)
   }
@@ -322,6 +408,8 @@ unload_plugins <- function() {
   .plugin_registry$plugins <- list()
   .plugin_registry$pending <- list()
   .plugin_registry$failures <- list()
+  .plugin_registry$conflicts <- list()
+  .plugin_registry$last_materialize_ms <- 0
   .plugin_registry$version <- .plugin_registry$version + 1L
   if (is.function(plugin_extensions_reset)) plugin_extensions_reset()
   plugin_catalog_reset()
@@ -485,7 +573,10 @@ plugins_ensure_loaded <- function() {
   pending <- .plugin_registry$pending
   if (length(pending) == 0L) return(invisible(FALSE))
   .plugin_registry$pending <- list()
+  started <- proc.time()[["elapsed"]]
   load_plugins_now(pending)
+  .plugin_registry$last_materialize_ms <-
+    (proc.time()[["elapsed"]] - started) * 1000
   invisible(TRUE)
 }
 
@@ -589,27 +680,49 @@ plugin_aliases <- function() {
 }
 
 
-#' Dialog for loading a plugin script
+#' Dialog for choosing and loading plugin packages or scripts
 #' @keywords internal
 load_plugins_dialog <- function() {
   id <- "loadPlugins"
   ns <- function(x) paste0(id, "_", x)
 
   dialog_spec(
-    id = id, title = tr("Load Rcmdr Plug-in(s)"), help = "library",
+    id = id, title = tr("Manage Rcmdr Plug-in(s)"), help = "library",
     preview = FALSE,
     ui = function(state, memory) {
+      packages <- installed_plugin_packages()
+      saved <- saved_plugin_selection()
+      selected <- intersect(packages, saved)
+      scripts <- setdiff(saved, packages)
       htmltools::tagList(
+        if (length(packages) > 0L) {
+          htmltools::tagList(
+            htmltools::tags$p(htmltools::tags$strong(tr("Installed plugins"))),
+            checkboxes_input(
+              ns("plugins"), stats::setNames(packages, packages),
+              selected = selected, ncol = 1L
+            )
+          )
+        } else {
+          help_text(tr("No RcmdrShiny plugin packages are installed."))
+        },
+        if (length(scripts) > 0L) {
+          htmltools::tags$p(
+            htmltools::tags$strong(tr("Saved plugin scripts: ")),
+            paste(scripts, collapse = ", ")
+          )
+        },
         file_input(
-          ns("file"), tr("Plugin script:"), memory$file %||% "",
+          ns("file"), tr("Add a plugin script:"), memory$file %||% "",
           filetypes = c("R", "r")
         ),
+        checkbox_input(ns("remember"), tr("Remember this script"), TRUE),
         help_text(tr(
-          "The script should call RcmdrShiny.plugin(). Reload the page to see the plugin menus; restarting R removes the plugin."
+          "Checked plugins and scripts are saved in your preferences. Applying unloads and reloads the selection for this session; reload the page (F5) to see the new menus."
         )),
         if (length(list_plugins()) > 0L) {
           htmltools::tags$p(
-            htmltools::tags$strong(tr("Registered plugins:")),
+            htmltools::tags$strong(tr("Loaded now:")),
             paste(list_plugins(), collapse = ", ")
           )
         }
@@ -624,19 +737,38 @@ load_plugins_dialog <- function() {
       )
     },
     on_ok = function(input, state) {
+      packages <- installed_plugin_packages()
+      chosen <- packages[vapply(packages, function(package) {
+        isTRUE(input[[ns(paste0("plugins_", package))]])
+      }, logical(1))]
+      saved <- saved_plugin_selection()
+      scripts <- setdiff(saved, packages)
       file <- trim_blanks(input[[ns("file")]] %||% "")
-      if (!nzchar(file)) return(list(error = tr("You must select a file.")))
-      if (!file.exists(file)) {
-        return(list(error = sprintf(tr("File not found: %s"), file)))
+      remember <- isTRUE(input[[ns("remember")]])
+      if (nzchar(file)) {
+        if (!file.exists(file)) {
+          return(list(error = sprintf(tr("File not found: %s"), file)))
+        }
+        if (remember) scripts <- unique(c(scripts, file))
       }
-      result <- tryCatch(load_plugin(file), error = function(e) e)
-      if (inherits(result, "error")) {
-        return(list(error = conditionMessage(result)))
+
+      selection <- unique(c(chosen, scripts))
+      state$options$plugins <- selection
+      persisted <- tryCatch(preferences_save(state), error = function(e) FALSE)
+      to_load <- unique(c(selection, if (nzchar(file)) file else character()))
+
+      unload_plugins()
+      load_plugins(to_load)
+      failures <- plugin_failures()
+      message <- if (nrow(failures) > 0L) {
+        sprintf(tr("%d plugin(s) could not be loaded. See Home > Health."),
+                nrow(failures))
+      } else if (isTRUE(persisted)) {
+        tr("Plugin selection saved. Reload the page (F5) to see its menus.")
+      } else {
+        tr("Plugin selection applied for this session. Reload the page (F5) to see its menus.")
       }
-      list(
-        memory = list(file = file),
-        message = tr("Plugin loaded. Reload the page (F5) to see its menus. Restarting R removes the plugin.")
-      )
+      list(memory = list(file = file), message = message)
     }
   )
 }

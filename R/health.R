@@ -62,6 +62,12 @@ health_status <- function(state = NULL) {
     pending_plugins = pending,
     plugin_failures = tryCatch(plugin_failures(),
                                error = function(e) NULL),
+    plugin_conflicts = tryCatch(plugin_conflicts(),
+                                error = function(e) NULL),
+    plugin_materialize_ms = tryCatch(
+      .plugin_registry$last_materialize_ms %||% 0,
+      error = function(e) 0
+    ),
     plugin_versions = vapply(plugins, function(package) {
       health_package_version(package)
     }, character(1)),
@@ -132,6 +138,23 @@ health_table <- function(state = NULL) {
       value = paste(sprintf("%s: %s", failures$name, failures$message),
                     collapse = "; "),
       status = "error", stringsAsFactors = FALSE
+    )
+  }
+  conflicts <- health$plugin_conflicts
+  if (!is.null(conflicts) && nrow(conflicts) > 0L) {
+    rows[[length(rows) + 1L]] <- data.frame(
+      item = "Plugin conflicts",
+      value = paste(sprintf("%s overrides %s (%s)", conflicts$plugin,
+                            conflicts$entries, conflicts$kind),
+                    collapse = "; "),
+      status = "warning", stringsAsFactors = FALSE
+    )
+  }
+  if (isTRUE(health$plugin_materialize_ms > 0)) {
+    rows[[length(rows) + 1L]] <- data.frame(
+      item = "Deferred plugins",
+      value = sprintf("%.0f ms to materialise", health$plugin_materialize_ms),
+      status = "ok", stringsAsFactors = FALSE
     )
   }
   do.call(rbind, rows)
