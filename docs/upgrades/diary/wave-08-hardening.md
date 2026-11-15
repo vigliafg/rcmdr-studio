@@ -15,7 +15,7 @@
 Fase 3 decisa con ADR-014 (no-go).
 
 **Baseline verificata:**
-`testthat::test_local()` → **3401 pass, 0 fail, 22 skip**;
+`testthat::test_local()` → **3438 pass, 0 fail, 22 skip**;
 `R CMD check --no-manual` su `RcmdrShiny_2.1.0.tar.gz` → **Status: OK**.
 
 **Prossimo task:** nessuno. Onda 8 chiusa. Eventuali riaperture sono elencate
@@ -110,7 +110,7 @@ visibili, benchmark del ciclo plugin.
 
 | Verifica | Comando | Esito |
 |---|---|---|
-| Suite completa | `testthat::test_local()` | **3401 pass, 0 fail, 22 skip** |
+| Suite completa | `testthat::test_local()` | **3438 pass, 0 fail, 22 skip** |
 | Menu e disponibilità | `test_file("tests/testthat/test-menus.R")` | verde |
 | Attivazione | `test_file("tests/testthat/test-activation.R")` | verde |
 | Guardie | `test_file("tests/testthat/test-menu-availability.R")` | verde |
@@ -257,7 +257,7 @@ ciclo plugin con benchmark.
 `R/diagnostics.R`, `R/benchmark.R`, `inst/etc/Rcmdr-menus.txt`,
 `inst/menus/core.yml`, test in `test-plugins.R`, help e vignetta plugin.
 
-**Test:** 3401 pass, 0 fail, 22 skip; `R CMD check` OK; 0 link rotti.
+**Test:** 3438 pass, 0 fail, 22 skip; `R CMD check` OK; 0 link rotti.
 Benchmark quick: load 1 plugin 831 ms (budget 6000), menu tree warm 100 ms
 (budget 4000), tutti gli scenari entro budget.
 
@@ -303,3 +303,30 @@ per-sessione, e fissa i trigger di rivalutazione.
 
 **Onda 8 chiusa.** Prossimi passi possibili: release 2.1.0 (`R CMD check
 --as-cran`, tag), rifiniture UX del Plugin Manager, o una nuova ondata.
+
+---
+
+## 13. Contratto dialoghi e mapping UI → comando
+
+**Contesto:** domanda di audit successiva alla chiusura: le scelte UI sono
+sempre accoppiate al comando/workflow giusto? Risposta: non era garantito da
+un contratto globale.
+
+**Implementato:**
+
+- `test-dialog-contract.R`: sweep su tutti i 235 dialoghi (rendering + `on_ok`
+  con input sintetico), verifica del risultato, chiavi di memoria dei workflow
+  e modalità strict.
+- `test-dialogs-core-mapping.R`: mapping esplicito per istogramma, bar graph,
+  scatterplot, correlazioni, export; validazioni incomplete.
+- `workflow_step_trace()`: traccia dialogo effettivo e comandi per step.
+- `set_dialog_memory()` avvisa con `options(RcmdrShiny.strict_memory = TRUE)`
+  se una chiave non è consumata dal dialogo (alias `linearModel`/`model_name`).
+
+**Difetto trovato e corretto:** il dialogo delle correlazioni passava
+`"Spearman"` al builder, che confrontava con `"spearman"`; il comando perdeva
+`method="spearman"`. Corretto in `cmd_correlation_matrix()` con `tolower(type)`.
+
+**Evidenze:** 235/235 dialoghi renderizzano, 0 errori, 0 risultati malformati;
+test mirati verdi, suite 3438 pass, check OK. Aggiornati
+`audit-menu-plugin.md` (Parte C), `NEWS.md` e `TEST-MATRIX.md`.

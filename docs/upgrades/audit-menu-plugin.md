@@ -183,3 +183,47 @@ Rscript tests/benchmarks/benchmark.R --quick
 
 I numeri dipendono dalla macchina e dai pacchetti plugin installati; i budget
 di riferimento sono in `R/benchmark.R` (`benchmark_budgets()`).
+
+---
+
+## Parte C — Mapping UI → comando e workflow
+
+### C.1 Metodo
+
+- **Contract sweep** su tutti i 235 dialoghi: rendering della UI con uno stato
+  ricco (dataset con numeriche, fattore, carattere; modello `lm` attivo),
+  estrazione degli input renderizzati, costruzione di un input realistico e
+  chiamata a `on_ok()`.
+- Verifica che il risultato sia una lista ben formata: `commands` carattere
+  senza `NA`, `memory` lista, `error` non vuoto quando presente.
+- Verifica delle chiavi di memoria usate dai workflow contro gli id resi dal
+  dialogo.
+- Test espliciti di mapping per i dialoghi più usati.
+
+### C.2 Risultati
+
+- **235/235** dialoghi renderizzano e `on_ok()` non lancia eccezioni con input
+  sintetico.
+- **0** risultati vuoti o malformati.
+- **Tutti** gli step di workflow con dialogo hanno chiavi di memoria consumate
+  (l’unico alias noto è `linearModel`: `model_name` → input `linearModel_model`).
+- **1 difetto reale trovato e corretto**: il dialogo delle correlazioni passava
+  `"Spearman"` a `cmd_correlation_matrix()`, che confrontava con `"spearman"`;
+  il comando generato era `cor(..., use=...)` **senza** `method="spearman"`.
+  Corretto normalizzando `tolower(type)` nel builder e coperto da test.
+
+### C.3 Copertura
+
+| Prima | Dopo |
+|---|---|
+| 38/235 dialoghi referenziati esplicitamente nei test | 235/235 passano il contract sweep |
+| 20 file di test chiamano `on_ok` | + mapping esplicito per istogramma, bar graph, scatterplot, correlazioni, export |
+| Nessuna traccia del dialogo che ha completato uno step | `workflow_step_trace()` registra dialogo e comandi per step |
+| Chiavi di memoria sconosciute ignorate in silenzio | `RcmdrShiny.strict_memory=TRUE` avvisa; test dedicato |
+
+### C.4 Limite residuo
+
+Il contract sweep dimostra che UI e `on_ok` sono **coerenti strutturalmente**
+(nessun input rotto, nessun crash), non che ogni singola opzione produca
+l’argomento giusto. Quello resta coperto dai test di mapping per dialogo; il
+sweep non sostituisce la semantica.

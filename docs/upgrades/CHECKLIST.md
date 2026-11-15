@@ -420,4 +420,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              health/diagnostics, tempo di materializzazione del caricamento
              differito, quattro scenari benchmark plugin con budget. Suite
              3401 pass, check OK.
+2026-11-15 — Contratto dialoghi: sweep su 235 dialoghi (rendering + on_ok),
+             mapping UI→comando per istogramma, bar graph, scatterplot,
+             correlazioni ed export, traccia dialogo/comandi nei workflow,
+             avviso strict sulle chiavi di memoria sconosciute. Corretto il
+             comando Spearman che perdeva `method="spearman"`. Audit
+             aggiornato con la Parte C.
 ```

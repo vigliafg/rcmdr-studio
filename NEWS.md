@@ -17,8 +17,19 @@
   first catalogue took to materialise and how many plugins were queued.
 - **Plugin benchmarks**: load one plugin, load all plugins, first catalogue
   after deferred loading and a warm menu tree, with documented budgets.
+- **Dialog contract sweep**: every one of the 235 dialogs renders and returns a
+  well-formed `on_ok()` result; explicit UI-to-command tests cover histogram,
+  bar graph, scatterplot, correlations and export.
+- **Correlation fix**: `cmd_correlation_matrix()` normalises `type`, so the
+  Spearman choice now adds `method="spearman"` instead of silently generating
+  a Pearson command.
+- **Workflow traceability**: `workflow_step_trace()` records the dialog that
+  completed each step and the commands it produced.
+- **Strict memory mode**: `options(RcmdrShiny.strict_memory = TRUE)` warns when
+  a preset or workflow passes memory keys the dialog does not consume.
 - New tests: startup selection semantics, preferences roundtrip, plugin
-  manager, conflict recording, deferred timing and the plugin benchmark.
+  manager, conflict recording, deferred timing, the plugin benchmark, the
+  dialog contract and the core dialog mappings.
 
 # RcmdrShiny Studio 2.0.2
 
