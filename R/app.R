@@ -18,7 +18,7 @@ app_css <- function() {
     }
     .rcmdr-menu-group > summary::-webkit-details-marker { display: none; }
     .rcmdr-menubar { display: flex; align-items: stretch; gap: .1rem;
-      flex-wrap: nowrap; overflow-x: auto; overflow-y: visible;
+      flex-wrap: wrap; overflow: visible;
       background: #fff; border-bottom: 1px solid #dde2e8;
       padding: .2rem .5rem; position: relative; z-index: 1040; }
     .rcmdr-menubar-group { position: relative; }
@@ -43,10 +43,9 @@ app_css <- function() {
     .rcmdr-menubar-dropdown .rcmdr-menu-item { white-space: normal; }
     .rcmdr-menubar-toggle { display: none; }
     @media (max-width: 991px) {
-      .rcmdr-menubar { overflow-x: auto; }
       .rcmdr-menubar-group > summary { padding: .4rem .5rem; font-size: .92rem; }
-      .rcmdr-menubar-dropdown { position: fixed; left: .5rem; right: .5rem;
-        top: 7.5rem; max-width: none; min-width: 0; }
+      .rcmdr-menubar-dropdown { width: calc(100vw - 1rem);
+        min-width: 0; max-width: calc(100vw - 1rem); }
     }
     .rcmdr-menu-group > summary:before { content: '\\25B8'; display: inline-block;
       width: 1em; transition: transform .1s; }
@@ -788,20 +787,92 @@ app_js <- function(lang = current_language()) {
         }
       } catch (e) {}
     });
-    document.addEventListener('click', function(event) {
-      var target = event.target;
-      if (target && target.closest && target.closest('.rcmdr-menubar')) return;
+    window.rcmdrAlignDropdown = function(group) {
+      var panel = group && group.querySelector('.rcmdr-menubar-dropdown');
+      var bar = group && group.closest ? group.closest('.rcmdr-menubar') : null;
+      if (!panel || !bar) return;
+      panel.style.left = '';
+      panel.style.right = '';
+      panel.style.top = '';
+      var margin = 8;
+      var groupRect = group.getBoundingClientRect();
+      var barRect = bar.getBoundingClientRect();
+      var panelRect = panel.getBoundingClientRect();
+      var maxLeft = Math.max(margin, window.innerWidth - margin - panelRect.width);
+      var targetLeft = Math.min(Math.max(groupRect.left, margin), maxLeft);
+      panel.style.left = Math.round(targetLeft - groupRect.left) + 'px';
+      if (groupRect.bottom < barRect.bottom) {
+        panel.style.top = Math.round(barRect.bottom - groupRect.top + 2) + 'px';
+      }
+    };
+    // The menu tree is re-rendered by the server (tick()), which replaces the
+    // open <details> elements.  Remember the open top-level group so it can be
+    // reopened after a re-render instead of closing under the pointer.
+    var rcmdrOpenMenubarGroup = null;
+    window.rcmdrRestoreMenubar = function() {
+      if (!rcmdrOpenMenubarGroup) return;
+      var groups = document.querySelectorAll('.rcmdr-menubar-group');
+      var group = null;
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[i].getAttribute('data-menu-group') === rcmdrOpenMenubarGroup) {
+          group = groups[i];
+          break;
+        }
+      }
+      if (!group) return;
+      if (!group.open) group.open = true;
+      window.rcmdrAlignDropdown(group);
+    };
+    if (window.MutationObserver) {
+      var rcmdrMenubarObserver = new MutationObserver(function(records) {
+        if (!rcmdrOpenMenubarGroup) return;
+        for (var i = 0; i < records.length; i++) {
+          var target = records[i].target;
+          if (!target || target.nodeType !== 1) continue;
+          if (target.id === 'menubar' ||
+              (target.closest && target.closest('#menubar'))) {
+            window.rcmdrRestoreMenubar();
+            return;
+          }
+        }
+      });
+      rcmdrMenubarObserver.observe(document.documentElement,
+                                   { childList: true, subtree: true });
+    }
+    var closeMenubarGroups = function() {
+      rcmdrOpenMenubarGroup = null;
       document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
         el.open = false;
       });
+    };
+    document.addEventListener('click', function(event) {
+      var target = event.target;
+      if (target && target.closest) {
+        // Choosing an item closes the menu, as a menubar is expected to do.
+        if (target.closest('.rcmdr-menubar .rcmdr-menu-item')) {
+          closeMenubarGroups();
+          return;
+        }
+        if (target.closest('.rcmdr-menubar')) return;
+      }
+      closeMenubarGroups();
     }, true);
     document.addEventListener('toggle', function(event) {
       var target = event.target;
       if (!target || !target.matches) return;
-      if (target.matches('.rcmdr-menubar-group') && target.open) {
-        document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
-          if (el !== target) el.open = false;
-        });
+      if (target.matches('.rcmdr-menubar-group')) {
+        var groupId = target.getAttribute('data-menu-group');
+        if (target.open) {
+          rcmdrOpenMenubarGroup = groupId;
+          document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
+            if (el !== target) el.open = false;
+          });
+          window.rcmdrAlignDropdown(target);
+        } else if (groupId && groupId === rcmdrOpenMenubarGroup && target.isConnected) {
+          // A re-render removes the old group, which also reports a close; only
+          // a close from a group still in the page is a real user action.
+          rcmdrOpenMenubarGroup = null;
+        }
       }
       if (!target.matches('details[data-menu-id]')) return;
       Shiny.setInputValue('menu_group_toggle', {
@@ -1501,6 +1572,14 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$menu_group_toggle, {
       action <- input$menu_group_toggle
       if (is.null(action) || is.null(action$id)) return()
+      # Re-rendering the menu tree recreates the open <details> elements, which
+      # makes the browser report a toggle for a state the session already has.
+      # Touching the state for those echoes re-renders the tree again (tick())
+      # and the UI loops forever, so only real changes are applied.
+      if (menu_toggle_is_echo(isolate(state$menu_expanded), action$id,
+                              action$open)) {
+        return()
+      }
       menu_toggle_expanded(state, action$id, isTRUE(action$open))
       persist_preferences()
     }, ignoreInit = TRUE)

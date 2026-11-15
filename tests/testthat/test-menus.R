@@ -68,6 +68,33 @@ test_that("menu rendering marks unavailable entries as disabled", {
   expect_true(grepl("In porting", html, fixed = TRUE))
 })
 
+test_that("top-level menubar groups carry their menu id in the DOM", {
+  tree <- menu_tree()
+  group <- tree[[1L]]
+  expect_identical(group$type, "menu")
+
+  html <- as.character(menubar_top_ui(group))
+
+  expect_match(html, 'class="rcmdr-menubar-group"', fixed = TRUE)
+  expect_match(html, sprintf('data-menu-group="%s"', group$id), fixed = TRUE)
+})
+
+test_that("a menu toggle that only echoes the stored state is ignored", {
+  expanded <- c("menu.file", "menu.analyze")
+
+  # The browser re-reports the state the session already has after a re-render.
+  expect_true(menu_toggle_is_echo(expanded, "menu.analyze", TRUE))
+  expect_true(menu_toggle_is_echo(expanded, "menu.graphs", FALSE))
+  expect_true(menu_toggle_is_echo(character(), "menu.graphs", FALSE))
+  expect_true(menu_toggle_is_echo(NULL, "menu.graphs", FALSE))
+
+  # A real change must still reach the state.
+  expect_false(menu_toggle_is_echo(expanded, "menu.graphs", TRUE))
+  expect_false(menu_toggle_is_echo(expanded, "menu.file", FALSE))
+  expect_false(menu_toggle_is_echo(NULL, "menu.file", TRUE))
+  expect_true(menu_toggle_is_echo(NULL, NA_character_, TRUE))
+})
+
 test_that("the parser keeps labels containing spaces", {
   row <- RcmdrShiny:::parse_menu_line(
     '    item    fileMenu        command         "Change working directory..."   Setwd   ""   ""'

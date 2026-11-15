@@ -54,7 +54,7 @@ invariati; servono ID stabili per menu e voci.
 - **Menubar orizzontale** con nove gruppi: File, Edit, Data, Transform,
   Analyze, Graphs, Reports, Utilities, Help. Sottomenu annidati con
   `<details>`, chiusura su click esterno, apertura di un solo gruppo per volta,
-  scorrimento orizzontale su schermi piccoli.
+  a capo su più righe quando lo schermo è stretto.
 - **Registry stabile** (`R/menu-registry.R`): separazione tra `module_id`,
   `menu_id`, `item_id` e `command_id`; ID DOM derivati da `item_id`
   (`menu_item_file_save_script`), non da un contatore posizionale.
@@ -92,6 +92,7 @@ Tutti i task M6.5.1–M6.5.7 sono chiusi.
 | `3e45e7f` | docs: add Wave 6.5 menu platform handoff diary | Diario Onda 6.5 |
 | `a18886e` | docs: add pre-Wave 7 resume checkpoint | Punto di ripresa pre-compattazione |
 | `4173539` | docs: add Wave 6.5 menu platform plan | Piano approvato |
+| _(questo commit)_ | fix: keep the menubar usable and stable | Correzioni post-rilascio 2026-11-15 (sezione 13) |
 
 ---
 
@@ -187,7 +188,7 @@ Resta il warning cosmetico di `shinytest2` sui globals di `renderPlot`.
 | EZR aggiunge i propri menu accanto ai core invece di sostituirli | Possibili voci duplicate in File/Data/Analyze | Copertura comandi preservata; curare il frammento EZR | M6.5.3 |
 | I frammenti dei plugin installati vanno rigenerati/reinstallati | Un plugin vecchio usa il fallback legacy | `tools/build_menu_registry.R` + reinstall | M6.5.3 |
 | Solo il gruppo Save ha ID semantici leggibili | Altri item hanno ID generati (`item.core...`) | Sono stabili; rinominare solo se serve | M6.5.2 |
-| Menubar mobile con dropdown a posizione fissa | Può sovrapporsi al contenuto su viewport molto piccole | Scorrimento orizzontale; test manuale | M6.5.5 |
+| Menubar mobile con dropdown a posizione fissa | Può sovrapporsi al contenuto su viewport molto piccole | Risolto il 2026-11-15: dropdown ancorato al gruppo e riallineato nel viewport (sezione 13) | M6.5.5 |
 
 ---
 
@@ -295,3 +296,45 @@ NOT_CRAN=true RCMDRSHINY_E2E=1 Rscript -e 'pkgload::load_all(quiet=TRUE); testth
 - [x] Documento di settore aggiornato.
 - [x] Diario committato e pushato.
 - [x] Utente informato: “Onda 6.5 completata, pronta per l'Onda 7”.
+
+---
+
+## 13. Correzioni al menubar — 2026-11-15
+
+**Contesto:** sessione di bugfix sul menu principale dopo la chiusura
+dell'Onda 7. Solo resa DOM e sincronizzazione UI: nessun `menu_id`, `item_id`,
+`command_id`, preferenza o file `core.yml` è cambiato. Versione **2.0.1**.
+
+**Baseline:** il working tree era rimasto non committato dopo la sessione; il
+diario è stato aggiornato insieme al commit di correzione, come per
+`22ce9e2` (fix della console registrato nel diario dell'Onda 4).
+
+| Bug | Causa | Correzione |
+|---|---|---|
+| Su viewport strette il menubar scorreva in orizzontale e le voci oltre il bordo restavano nascoste | `flex-wrap: nowrap` + `overflow-x: auto` sul contenitore | `.rcmdr-menubar` va a capo (`flex-wrap: wrap`, `overflow: visible`); lo scroll orizzontale è rimosso anche nel breakpoint ≤991px |
+| Il dropdown mobile usava `position: fixed; top: 7.5rem` e si sovrapponeva al contenuto | posizione fissa slegata dal gruppo e dall'altezza reale della barra | il pannello resta ancorato al gruppo e `rcmdrAlignDropdown()` calcola `left`/`top` dentro il viewport |
+| Dopo il re-render del server il menu si chiudeva subito o entrava in loop | `tick()` ricrea i `<details>` aperti; il browser emette un `toggle` per lo stato già noto, l'observer riscriveva `menu_expanded` e ri-renderizzava | il JS ignora la chiusura di un nodo rimosso (`target.isConnected`), ricorda il gruppo aperto via `data-menu-group` e lo riapre dopo il re-render; l'observer scarta gli echo con `menu_toggle_is_echo()` |
+| Il click su una voce lasciava il dropdown aperto | nessuna chiusura esplicita prima dell'azione | il listener in fase di cattura chiude i gruppi quando si attiva un `.rcmdr-menu-item` |
+
+**File:** `R/app.R` (CSS, JS, observer), `R/menus.R` (`data-menu-group`,
+`menu_toggle_is_echo()`), `tests/testthat/test-menus.R`.
+
+**Test ed evidenze:**
+
+| Verifica | Comando | Esito |
+|---|---|---|
+| Unit menu | `pkgload::load_all(); testthat::test_file("tests/testthat/test-menus.R")` | 36 pass, 0 fail (2 warning `rgl`/X11 ambientali) |
+| Suite completa | `testthat::test_local()` | 3333 pass, 0 fail, 20 skip |
+| `R CMD check` | build + `R CMD check --no-manual` su 2.0.1 | **Status: OK** |
+| E2E browser | `RCMDRSHINY_E2E=1 ... test-menu-platform-e2e.R` | non rieseguiti in questa sessione |
+
+**Nuovi test:**
+
+- l'attributo `data-menu-group` è presente sui gruppi di primo livello;
+- `menu_toggle_is_echo()` riconosce echo e cambi reali, inclusi `NULL`,
+  `character(0)` e `NA`.
+
+**Debito residuo:** il fix non è coperto da un test browser; un E2E che
+riapra un gruppo dopo `tick()` e verifichi l'assenza di loop resta il modo
+migliore per bloccarlo in regressione.
+

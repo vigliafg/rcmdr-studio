@@ -1,3 +1,22 @@
+# RcmdrShiny Studio 2.0.1
+
+## Menubar fixes (2026-11-15)
+
+- **Wrapping menubar**: on narrow viewports the menubar wraps onto a second
+  row instead of scrolling horizontally, so no top-level menu stays hidden
+  off-screen. The mobile breakpoint no longer leaves a scroll container behind.
+- **Anchored dropdowns**: the mobile dropdown stays attached to its group and
+  is repositioned inside the viewport by `rcmdrAlignDropdown()`, replacing the
+  fixed `top` that could overlap the page content.
+- **Closing on selection**: choosing an item closes the dropdown, as a menubar
+  is expected to do.
+- **Stable open group**: re-rendering the menu tree no longer closes the open
+  group or loops forever. The open group is remembered by `data-menu-group`
+  and restored after the re-render; a close reported by a node that has been
+  removed from the page is ignored, while the server drops toggle events that
+  only echo the state it already has (`menu_toggle_is_echo()`).
+- Unit tests pin the `data-menu-group` DOM contract and the echo detection.
+
 # RcmdrShiny Studio 2.0.0
 
 ## Wave 7 — Platform, projects, plugins and quality

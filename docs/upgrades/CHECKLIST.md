@@ -369,6 +369,11 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              cache e lazy loading; SDK plugin v2 con hook additivi; health
              panel e diagnostics esteso; matrice test, visual snapshot,
              audit accessibilita e release checklist Studio 2.0.
-             Suite 3328 pass, `R CMD check` 2.0.0 OK, E2E core/menu/navigation/
+             Suite 3333 pass, `R CMD check` 2.0.0 OK, E2E core/menu/navigation/
              progetto verdi, benchmark entro budget.
+2026-11-15 — Correzioni al menubar (2.0.1): a capo invece di scroll
+             orizzontale, dropdown mobile ancorato e riallineato nel viewport,
+             chiusura del menu alla selezione, gruppo aperto ripristinato dopo
+             il re-render (`data-menu-group`, `menu_toggle_is_echo()`) senza
+             loop di toggle. Nessun ID o comando cambiato; suite 3333 pass.
 ```

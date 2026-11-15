@@ -340,6 +340,7 @@ menubar_top_ui <- function(node, status = function(node) "enabled",
   }
   htmltools::tags$details(
     class = "rcmdr-menubar-group",
+    `data-menu-group` = node$id,
     htmltools::tags$summary(menu_label(node$label)),
     htmltools::tags$div(
       class = "rcmdr-menubar-dropdown",
@@ -477,6 +478,24 @@ menu_set_expanded <- function(state, commands = NULL, expand = TRUE) {
   }
   state_touch(state)
   invisible(state$menu_expanded)
+}
+
+#' Is a menu toggle an echo of the stored state?
+#'
+#' Re-rendering the menu tree recreates the open `<details>` elements, so the
+#' browser reports a toggle for the state the session already has. Applying it
+#' again would re-render the tree and loop, so callers ignore echoes.
+#'
+#' @param expanded Expanded menu ids.
+#' @param id Menu id carried by the toggle event.
+#' @param open Whether the browser reports the group as open.
+#' @return `TRUE` when the event does not change `expanded`.
+#' @keywords internal
+menu_toggle_is_echo <- function(expanded, id, open) {
+  if (is.null(id) || length(id) != 1L || is.na(id) || !nzchar(id)) {
+    return(TRUE)
+  }
+  identical(isTRUE(open), id %in% (expanded %||% character()))
 }
 
 #' Toggle one menu group
