@@ -96,6 +96,7 @@ Le decisioni sono registrate in forma di ADR in
 | **6** | [`06-help-i18n-onboarding.md`](06-help-i18n-onboarding.md) | Help full-text, “Try it”, mappa errori, tour, italiano, cambio lingua | 0 |
 | **7** | [`07-platform-plugins-quality.md`](07-platform-plugins-quality.md) | Progetto `.rcmdrproj`, autosave/recovery, performance, Plugin SDK v2, QA | 0–6 |
 | **8** | [`08-hardening-menus-plugins.md`](08-hardening-menus-plugins.md) | Debito del menu, accessibilità, robustezza e ciclo di vita dei plugin | 0–7 |
+| **9** | [`09-ggplot-integration.md`](09-ggplot-integration.md) | ggplot2 di prima classe: 11 tipi, mapping estesi, temi, facet, scale | 0–8 |
 
 Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il

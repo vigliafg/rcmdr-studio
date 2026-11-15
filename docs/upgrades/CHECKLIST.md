@@ -333,6 +333,24 @@ Rilascio pianificato: 2.0.2 (H8.1–H8.7) e 2.1.0 (H8.8–H8.12).
 
 ---
 
+## Onda 9 — ggplot2 di prima classe
+
+Documento di settore: [`09-ggplot-integration.md`](09-ggplot-integration.md).
+Rilascio: 2.2.0.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| G9.1 | Mapping esteso facet/size/label | [x] | Solo con engine ggplot2 |
+| G9.2 | Builder ggplot per 11 tipi | [x] | `R/chart-ggplot.R`, preview 11/11 |
+| G9.3 | Opzioni comuni ggplot | [x] | alpha, position, binwidth, smooth/se, jitter, flip, shape |
+| G9.4 | Temi, scale log, palette, labs | [x] | title/subtitle/tag/caption |
+| G9.5 | Facet wrap con scales e ncol | [x] | |
+| G9.6 | Comando ggplot unico | [x] | Niente prefisso base né `title()` |
+| G9.7 | Interattività ggplotly | [x] | Gated sulla compatibilità plotly/ggplot2 |
+| G9.8 | Test e documentazione | [x] | `test-chart-ggplot.R`, suite e check verdi |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
@@ -426,4 +444,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              avviso strict sulle chiavi di memoria sconosciute. Corretto il
              comando Spearman che perdeva `method="spearman"`. Audit
              aggiornato con la Parte C.
+2026-11-15 — Onda 9 (2.2.0): ggplot2 di prima classe per gli 11 tipi del
+             Chart Studio, mapping facet/size/label, opzioni comuni, temi,
+             scale log, palette, labs con subtitle/tag, facet wrap, comando
+             unico senza prefisso base, interattività ggplotly con gate di
+             compatibilità. Corretti doppia etichettatura e scatter+smooth.
+             Suite 3576 pass, check OK.
 ```

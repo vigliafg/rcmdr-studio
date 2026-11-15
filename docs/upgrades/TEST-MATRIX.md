@@ -5,7 +5,7 @@
 
 | Livello | Cosa copre | Comando | Evidenza corrente |
 |---|---|---|---|
-| Unit | Funzioni pure, parser, builder, schema progetto, cache | `Rscript -e 'testthat::test_local()'` | 3 438 test |
+| Unit | Funzioni pure, parser, builder, schema progetto, cache | `Rscript -e 'testthat::test_local()'` | 3 576 test |
 | Integration | Server Shiny, dialoghi, stato, progetto, checkpoint | `testthat::test_local()` | `test-app-integration.R`, `test-menu-availability.R`, `test-project.R`, `test-session-checkpoints.R` |
 | Golden | Comandi esistenti invariati | `test-command-builders-*.R` | tutti i builder |
 | Menu contract | ID stabili, copertura comandi, moduli first-party | `test-menu-registry.R`, `test-plugins-compat.R` | 782/782 comandi |
@@ -16,6 +16,7 @@
 | Visual | Grafici deterministici | `vdiffr` (opzionale) | `test-visual.R` |
 | Accessibility | Landmark, ARIA, focus, skip link | `test-accessibility.R` + `docs/upgrades/ACCESSIBILITY.md` | checklist |
 | Dialog contract | 235 dialoghi: UI e `on_ok` ben formati; mapping core | `test-dialog-contract.R`, `test-dialogs-core-mapping.R` | 235 dialoghi |
+| Chart engines | Base R per 11 tipi; ggplot2 per 11 tipi, mapping estesi, facet, temi, scale | `test-chart-ggplot.R`, `test-chart-spec.R` | 11/11 preview, apply/export |
 | Performance | Avvio, import, griglia, cache, cap | `tests/benchmarks/benchmark.R` | `test-performance.R`; scenari plugin (load, lazy, tree) |
 | Package | Core e 15 plugin | `R CMD check` | core OK |
 

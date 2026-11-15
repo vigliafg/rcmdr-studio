@@ -85,11 +85,31 @@ and greys.
 
 ## ggplot2 engine
 
-When `ggplot2` is installed, the engine selector offers an opt-in ggplot2
-engine for histogram, density, boxplot, scatterplot, line graph and bar graph.
-The applied command is a single `print(ggplot(...))` expression with an explicit
-theme, palette and labels. The base engine remains the default for
-compatibility.
+When `ggplot2` is installed, the engine selector offers a full ggplot2 engine
+for **all 11 chart types**. The applied command is a single
+`print(ggplot(...))` expression; the base palette, `par()` and `title()` are not
+mixed in.
+
+Extra mappings appear only with this engine:
+
+- **Facet**: one conditioning variable, with fixed/free/free-x/free-y scales and
+  an optional column count.
+- **Size** and **Label** for scatterplots (numeric size and text label).
+
+Shared options: alpha, bar position (identity/dodge/stack/fill), bin width,
+smooth method (lm/loess/gam) with confidence band, jitter, point shape,
+coordinate flip, ggplot2 theme (minimal, black and white, classic, light, dark,
+void), grid, legend position and background. Labels include title, subtitle,
+tag, axis labels and caption. Log axes and the five palettes are applied as
+ggplot2 scales; multi-series line graphs get one layer per series with named
+colours.
+
+The preview evaluates the same command in the isolated preview device. When the
+installed plotly and ggplot2 versions can convert ggplot objects, the gallery
+also offers the interactive version and the HTML export; otherwise those
+actions are hidden.
+
+The base engine remains the default and its commands are unchanged.
 
 ## Gallery
 

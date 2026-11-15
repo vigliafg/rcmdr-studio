@@ -14,6 +14,8 @@ wave-04-workbench.md
 wave-05-navigation-dialogs-workflows.md
 wave-06-help-i18n-onboarding.md
 wave-07-platform-plugins-quality.md
+wave-08-hardening.md
+wave-09-ggplot.md
 ```
 
 ## Regole

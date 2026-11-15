@@ -1,3 +1,29 @@
+# RcmdrShiny Studio 2.2.0
+
+## Wave 9 — ggplot2 as a first-class engine
+
+- **All 11 chart types** now have a ggplot2 implementation: histogram,
+  density, boxplot, scatterplot, line graph, bar graph, dot plot, strip chart,
+  quantile-comparison plot, plot of means and XY conditioning plot.
+- **Extended mappings** only for ggplot2: facet, size and label, on top of the
+  base x/y/group slots. Base commands and specs are unchanged.
+- **Shared ggplot2 options**: alpha, bar position, bin width, smooth method and
+  confidence band, jitter, point shape, coordinate flip, facet scales and
+  columns, ggplot2 theme (minimal, bw, classic, light, dark, void).
+- **Labels**: title, subtitle, tag, axis labels and caption via `labs()`.
+- **Scales**: log axes, manual fill/colour palettes, facets with free scales,
+  multi-series lines with named colours.
+- **Single command**: a ggplot2 spec emits one `print(ggplot(...))`; the base
+  palette/par/title prefix is no longer added. This also fixes the duplicated
+  labels and the malformed scatter + smooth expression.
+- **Interactivity**: ggplot2 plots can be converted with `plotly::ggplotly()`
+  when the installed plotly and ggplot2 versions are compatible; the HTML
+  export follows the same capability gate.
+- **Validation** is engine-aware: extended slots are checked, unknown facet or
+  size variables are reported, and missing ggplot2 is explained.
+- New tests: 11/11 command generation, facets/themes/scales/labels, preview,
+  apply and export, base engine regression.
+
 # RcmdrShiny Studio 2.1.0
 
 ## Wave 8 — Plugin selection and diagnostics

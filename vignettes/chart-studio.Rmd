@@ -136,6 +136,21 @@ run_command(state, command)
 
 The subset is a normal command and the new data set becomes active.
 
+# ggplot2 engine
+
+Installing `ggplot2` enables a full alternative engine for all 11 chart types.
+The builder adds facet, size and label mappings only in this mode, plus alpha,
+position, bin width, smooth method and band, jitter, shape, coordinate flip,
+facet scales/columns and a ggplot2 theme. Labels support title, subtitle, tag,
+axis labels and caption; palettes and log axes become ggplot2 scales.
+
+The applied command is a single `print(ggplot(...))`; the base `palette()`,
+`par()` and `title()` calls are never mixed in. Previews, apply, gallery and
+export reuse the same command path.
+
+If the installed `plotly` and `ggplot2` versions can convert ggplot objects,
+the gallery also offers the interactive version and HTML export.
+
 # Design notes
 
 - The base engine remains the default; ggplot2 is opt-in.
