@@ -11,7 +11,23 @@
 #' @keywords internal
 chart_type_ids <- function() {
   c("histogram", "density", "boxplot", "scatter", "line", "bar", "dot",
-    "strip", "qq", "means", "xyplot")
+    "strip", "qq", "means", "xyplot", "violin", "ecdf", "density_2d",
+    "heatmap")
+}
+
+#' Engines supported by a chart type
+#' @keywords internal
+chart_type_engines <- function(info) {
+  engines <- info$engines %||% c("base", "ggplot2")
+  engines <- as.character(engines)
+  engines[nzchar(engines)]
+}
+
+#' Whether a chart type is available for an engine
+#' @keywords internal
+chart_type_available <- function(id, engine = "base") {
+  info <- chart_type(id)
+  !is.null(info) && engine %in% chart_type_engines(info)
 }
 
 #' Chart type descriptor
@@ -589,6 +605,115 @@ chart_types_builtin <- function() {
              type = spec$options$type %||% "p",
              layout = spec$options$layout %||% "")
       }
+    ),
+    violin = list(
+      label = tr("Violin plot"),
+      icon = "violin",
+      group = "distribution",
+      description = tr("Density of a numeric variable by group (ggplot2)."),
+      engines = "ggplot2",
+      mapping = list(
+        x = list(label = tr("Variable (pick one)"), kind = "numeric"),
+        group = list(label = tr("Groups (optional)"), kind = "factor",
+                     optional = TRUE)
+      ),
+      defaults = list(trim = TRUE, scale = "area", adjust = 0,
+                      show_box = TRUE),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          checkbox_input("chart_opt_trim", tr("Trim tails"),
+                         isTRUE(options$trim %||% TRUE)),
+          selectInput(
+            "chart_opt_scale", tr("Violin scale"),
+            choices = stats::setNames(
+              c("area", "count", "width"),
+              c("Area", "Count", "Width")
+            ),
+            selected = options$scale %||% "area"
+          ),
+          spin_input("chart_opt_adjust", tr("Bandwidth adjust"),
+                     options$adjust %||% 0, min = 0, step = 0.1),
+          checkbox_input("chart_opt_show_box", tr("Overlay a boxplot"),
+                         isTRUE(options$show_box %||% TRUE))
+        )
+      }
+    ),
+    ecdf = list(
+      label = tr("Empirical CDF"),
+      icon = "ecdf",
+      group = "distribution",
+      description = tr("Empirical cumulative distribution (ggplot2)."),
+      engines = "ggplot2",
+      mapping = list(
+        x = list(label = tr("Variable (pick one)"), kind = "numeric"),
+        group = list(label = tr("Groups (optional)"), kind = "factor",
+                     optional = TRUE)
+      ),
+      defaults = list(pad = FALSE, linetype = "solid"),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          checkbox_input("chart_opt_pad", tr("Pad the curve"),
+                         isTRUE(options$pad)),
+          selectInput(
+            "chart_opt_linetype", tr("Line style"),
+            choices = stats::setNames(
+              c("solid", "dashed", "dotted", "longdash"),
+              c("Solid", "Dashed", "Dotted", "Long dash")
+            ),
+            selected = options$linetype %||% "solid"
+          )
+        )
+      }
+    ),
+    density_2d = list(
+      label = tr("2D density"),
+      icon = "density2d",
+      group = "relationship",
+      description = tr("Two-dimensional density contours (ggplot2)."),
+      engines = "ggplot2",
+      mapping = list(
+        x = list(label = tr("Horizontal axis (pick one)"), kind = "numeric"),
+        y = list(label = tr("Vertical axis (pick one)"), kind = "numeric")
+      ),
+      defaults = list(bins = 0, bandwidth = 0, points = TRUE),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          spin_input("chart_opt_bins", tr("Contour bins (0 = auto)"),
+                     options$bins %||% 0, min = 0, step = 1),
+          spin_input("chart_opt_bandwidth", tr("Bandwidth (0 = auto)"),
+                     options$bandwidth %||% 0, min = 0, step = 0.1),
+          checkbox_input("chart_opt_points", tr("Show points"),
+                         isTRUE(options$points %||% TRUE))
+        )
+      }
+    ),
+    heatmap = list(
+      label = tr("Heatmap"),
+      icon = "heatmap",
+      group = "relationship",
+      description = tr("Tile heatmap of a numeric value by two variables (ggplot2)."),
+      engines = "ggplot2",
+      mapping = list(
+        x = list(label = tr("X variable (pick one)"), kind = "any"),
+        y = list(label = tr("Y variable (pick one)"), kind = "any"),
+        fill = list(label = tr("Value (numeric)"), kind = "numeric")
+      ),
+      defaults = list(low = "#f7fbff", high = "#08306b",
+                      show_values = FALSE),
+      controls = function(spec) {
+        options <- spec$options %||% list()
+        htmltools::tagList(
+          textInput("chart_opt_low", tr("Low colour"),
+                    options$low %||% "#f7fbff"),
+          textInput("chart_opt_high", tr("High colour"),
+                    options$high %||% "#08306b"),
+          checkbox_input("chart_opt_show_values", tr("Show values"),
+                         isTRUE(options$show_values))
+        )
+      }
     )
   )
 }
@@ -663,8 +788,13 @@ chart_mapping_controls <- function(state, spec, pending = NULL) {
 
 #' Available chart types by family
 #' @keywords internal
-chart_type_choices <- function() {
+chart_type_choices <- function(engine = NULL) {
   types <- chart_types()
+  if (!is.null(engine)) {
+    types <- types[vapply(types, function(info) {
+      engine %in% chart_type_engines(info)
+    }, logical(1))]
+  }
   labels <- vapply(types, function(info) info$label, character(1))
   stats::setNames(names(types), unname(labels))
 }

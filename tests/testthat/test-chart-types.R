@@ -8,9 +8,11 @@ test_that("every chart type has the metadata the builder needs", {
     expect_true(nzchar(info$label))
     expect_true(is.list(info$mapping))
     expect_true(length(info$mapping) > 0L)
-    expect_true(is.function(info$command))
-    expect_true(nzchar(info$dialog))
-    expect_true(is.function(info$dialog_memory))
+    if ("base" %in% chart_type_engines(info)) {
+      expect_true(is.function(info$command), info = id)
+      expect_true(nzchar(info$dialog), info = id)
+      expect_true(is.function(info$dialog_memory), info = id)
+    }
     for (slot in names(info$mapping)) {
       rule <- info$mapping[[slot]]
       expect_true(nzchar(rule$label))
@@ -93,6 +95,17 @@ test_that("type choices are labelled and stable", {
   expect_true(all(nzchar(names(choices))))
   expect_equal(chart_type("histogram")$label, "Histogram")
   expect_null(chart_type("unknown"))
+
+  base <- chart_type_choices("base")
+  expect_true("histogram" %in% unname(base))
+  expect_false("violin" %in% unname(base))
+  ggplot <- chart_type_choices("ggplot2")
+  expect_true(all(c("violin", "ecdf", "density_2d", "heatmap") %in%
+                    unname(ggplot)))
+  expect_true(chart_type_available("histogram", "base"))
+  expect_false(chart_type_available("violin", "base"))
+  expect_true(chart_type_available("violin", "ggplot2"))
+  expect_match(chart_type("violin")$engines, "ggplot2")
 })
 
 test_that("dialog memory matches the existing dialogs", {

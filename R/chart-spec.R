@@ -109,6 +109,8 @@ chart_spec <- function(type = "histogram", dataset = NULL,
   }
   theme <- utils::modifyList(chart_theme_defaults(), theme)
   if (!is.null(engine)) theme$engine <- engine
+  if (is.null(mapping) || !is.list(mapping)) mapping <- list()
+  if (is.null(options) || !is.list(options)) options <- list()
   spec <- list(
     version = 1L,
     id = id,
@@ -148,9 +150,15 @@ chart_spec_validate <- function(spec, state = NULL) {
   if (is.null(info)) {
     return(sprintf("Unknown chart type: %s", spec$type %||% ""))
   }
+  engine <- chart_spec_engine(spec)
+  if (!chart_type_available(spec$type, engine)) {
+    problems <- c(problems, sprintf(
+      "The %s chart is only available with the ggplot2 engine.",
+      info$label %||% spec$type
+    ))
+  }
 
   mapping <- spec$mapping %||% list()
-  engine <- chart_spec_engine(spec)
   slots <- chart_mapping_slots(info, engine, spec$type)
   for (slot in names(slots)) {
     rule <- slots[[slot]]
@@ -304,6 +312,10 @@ chart_spec_command <- function(spec) {
   if (identical(chart_spec_engine(spec), "ggplot2")) {
     return(chart_ggplot_command(spec))
   }
+  if (!chart_type_available(spec$type, "base")) {
+    stop("This chart type is only available with the ggplot2 engine.",
+         call. = FALSE)
+  }
   paste(
     c(chart_theme_prefix(spec), chart_spec_plot_command(spec),
       chart_label_commands(spec)),
@@ -376,6 +388,12 @@ chart_spec_title <- function(spec) {
     qq = sprintf(tr("Quantile-comparison plot of %s"), x),
     means = sprintf(tr("Means of %s by %s"), x, group),
     xyplot = sprintf(tr("%s versus %s"), y, x),
+    violin = sprintf(tr("Violin plot of %s"), x),
+    ecdf = sprintf(tr("ECDF of %s"), x),
+    density_2d = sprintf(tr("2D density of %s and %s"), x,
+                         paste(y, collapse = ", ")),
+    heatmap = sprintf(tr("Heatmap of %s"),
+                      paste(mapping$fill %||% "", collapse = ", ")),
     tr("Chart")
   )
   as.character(title)[[1L]]

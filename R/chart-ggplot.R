@@ -276,6 +276,28 @@ chart_ggplot_object <- function(spec) {
     if (nzchar(group) && !nzchar(facet)) {
       facet_code <- chart_gg_facet(group, options, options$layout)
     }
+  } else if (identical(type, "violin")) {
+    if (nzchar(group)) {
+      aes_items <- c(sprintf("x = %s", group), sprintf("y = %s", x),
+                     sprintf("fill = %s", group))
+      use_fill <- TRUE
+    } else {
+      aes_items <- c("x = factor(1)", sprintf("y = %s", x))
+    }
+  } else if (identical(type, "ecdf")) {
+    aes_items <- c(sprintf("x = %s", x))
+    if (nzchar(group)) {
+      aes_items <- c(aes_items, sprintf("colour = %s", group))
+      use_colour <- TRUE
+    }
+  } else if (identical(type, "density_2d")) {
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y))
+  } else if (identical(type, "heatmap")) {
+    fill_by <- chart_gg_optional(mapping$fill)
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y))
+    if (nzchar(fill_by)) {
+      aes_items <- c(aes_items, sprintf("fill = %s", fill_by))
+    }
   }
 
   if (identical(type, "histogram")) {
@@ -516,6 +538,68 @@ chart_ggplot_object <- function(spec) {
     }
     if (isTRUE(options$smooth)) {
       layers <- c(layers, "ggplot2::geom_smooth(method = \"lm\", se = FALSE)")
+    }
+  } else if (identical(type, "violin")) {
+    violin_scale <- options$scale %||% "area"
+    if (!violin_scale %in% c("area", "count", "width")) violin_scale <- "area"
+    adjust <- chart_gg_number(options$adjust, default = 0, min = 0)
+    arguments <- c(
+      sprintf("trim = %s", if (isTRUE(options$trim %||% TRUE)) "TRUE" else "FALSE"),
+      sprintf("scale = %s", chart_quote(violin_scale)),
+      alpha,
+      if (adjust > 0) sprintf("adjust = %s", format(adjust, digits = 3))
+    )
+    layers <- sprintf("ggplot2::geom_violin(%s)",
+                      paste(arguments, collapse = ", "))
+    if (isTRUE(options$show_box %||% TRUE)) {
+      layers <- c(layers, paste0(
+        "ggplot2::geom_boxplot(width = 0.1, fill = \"white\", ",
+        "colour = \"black\", outlier.shape = NA)"
+      ))
+    }
+  } else if (identical(type, "ecdf")) {
+    linetype <- options$linetype %||% "solid"
+    layers <- sprintf(
+      "ggplot2::stat_ecdf(geom = \"step\", pad = %s, linetype = %s, linewidth = 1)",
+      if (isTRUE(options$pad)) "TRUE" else "FALSE",
+      chart_quote(linetype)
+    )
+  } else if (identical(type, "density_2d")) {
+    bins <- chart_gg_number(options$bins %||% 0, default = 0, min = 0)
+    bandwidth <- chart_gg_number(options$bandwidth %||% 0,
+                                 default = 0, min = 0)
+    if (isTRUE(options$points %||% TRUE)) {
+      layers <- c(layers, sprintf("ggplot2::geom_point(alpha = %s)",
+                                  format(min(chart_gg_number(
+                                    options$alpha %||% 0.5,
+                                    default = 0.5, min = 0, max = 1
+                                  ) * 0.6, 0.6), digits = 3)))
+    }
+    arguments <- c(
+      if (bins > 0) sprintf("bins = %d", as.integer(bins)),
+      if (bandwidth > 0) sprintf(
+        "h = c(%s, %s)", format(bandwidth, digits = 3),
+        format(bandwidth, digits = 3)
+      )
+    )
+    layers <- c(layers, sprintf(
+      "ggplot2::geom_density_2d(%s)",
+      paste(arguments, collapse = ", ")
+    ))
+  } else if (identical(type, "heatmap")) {
+    low <- options$low %||% "#f7fbff"
+    high <- options$high %||% "#08306b"
+    layers <- c(layers, "ggplot2::geom_tile()")
+    scales <- c(scales, sprintf(
+      "ggplot2::scale_fill_gradient(low = %s, high = %s)",
+      chart_quote(low), chart_quote(high)
+    ))
+    if (isTRUE(options$show_values)) {
+      fill_by <- chart_gg_optional(mapping$fill)
+      layers <- c(layers, sprintf(
+        "ggplot2::geom_text(ggplot2::aes(label = round(%s, 2)), size = 3)",
+        fill_by
+      ))
     }
   }
 

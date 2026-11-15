@@ -13,10 +13,15 @@ chart_gg_spec <- function(type, mapping = NULL, options = list(),
     strip = list(x = "y"),
     qq = list(x = "y"),
     means = list(x = "y", group = "g"),
-    xyplot = list(x = "x", y = "y", group = "g")
+    xyplot = list(x = "x", y = "y", group = "g"),
+    violin = list(x = "y", group = "g"),
+    ecdf = list(x = "y", group = "g"),
+    density_2d = list(x = "x", y = "y"),
+    heatmap = list(x = "g", y = "g2", fill = "y")
   )
   chart_spec(
-    type, "D", mapping %||% defaults[[type]], options = options,
+    type, "D", mapping %||% defaults[[type]] %||% list(),
+    options = options,
     theme = utils::modifyList(list(engine = "ggplot2"), theme),
     labels = labels
   )
@@ -292,4 +297,82 @@ test_that("the ggplot xyplot maps smooth and layout", {
   expect_match(command, "ggplot2::geom_line")
   expect_match(command, "ggplot2::geom_smooth\\(method = \"lm\"")
   expect_match(command, "ncol = 2")
+})
+
+test_that("ggplot-only types are gated to the ggplot2 engine", {
+  for (type in c("violin", "ecdf", "density_2d", "heatmap")) {
+    expect_true(chart_type_available(type, "ggplot2"), info = type)
+    expect_false(chart_type_available(type, "base"), info = type)
+    expect_false(type %in% unname(chart_type_choices("base")), info = type)
+    expect_true(type %in% unname(chart_type_choices("ggplot2")), info = type)
+  }
+
+  base_violin <- chart_spec("violin", "D", list(x = "y"))
+  expect_match(chart_spec_validate(base_violin, chart_test_state()),
+               "only available with the ggplot2 engine")
+  expect_error(chart_spec_command(base_violin), "only available")
+})
+
+test_that("violin and ECDF map their statistical options", {
+  violin <- chart_gg_spec(
+    "violin", mapping = list(x = "y", group = "g"),
+    options = list(trim = FALSE, scale = "count", adjust = 0.5,
+                   show_box = TRUE)
+  )
+  command <- chart_spec_command(violin)
+  expect_match(command, "ggplot2::geom_violin\\(trim = FALSE, scale = \"count\"")
+  expect_match(command, "adjust = 0.5")
+  expect_match(command, "ggplot2::geom_boxplot\\(width = 0.1")
+  expect_match(command, "ggplot2::aes\\(x = g, y = y, fill = g\\)")
+
+  ecdf <- chart_gg_spec(
+    "ecdf", mapping = list(x = "y", group = "g"),
+    options = list(pad = TRUE, linetype = "dashed")
+  )
+  command <- chart_spec_command(ecdf)
+  expect_match(command, "ggplot2::stat_ecdf\\(geom = \"step\", pad = TRUE")
+  expect_match(command, "linetype = \"dashed\"")
+  expect_match(command, "colour = g")
+})
+
+test_that("2D density and heatmap map their options", {
+  density <- chart_gg_spec(
+    "density_2d", mapping = list(x = "x", y = "y"),
+    options = list(bins = 12, bandwidth = 0.4, points = TRUE)
+  )
+  command <- chart_spec_command(density)
+  expect_match(command, "ggplot2::geom_density_2d\\(bins = 12, h = c\\(0.4, 0.4\\)\\)")
+  expect_match(command, "ggplot2::geom_point")
+
+  heatmap <- chart_gg_spec(
+    "heatmap", mapping = list(x = "g", y = "g2", fill = "y"),
+    options = list(low = "#ffffff", high = "#000000", show_values = TRUE)
+  )
+  command <- chart_spec_command(heatmap)
+  expect_match(command, "ggplot2::geom_tile\\(\\)")
+  expect_match(command, "scale_fill_gradient\\(low = \"#ffffff\", high = \"#000000\"\\)")
+  expect_match(command, "geom_text\\(ggplot2::aes\\(label = round\\(y, 2\\)\\)")
+  expect_match(command, "ggplot2::aes\\(x = g, y = g2, fill = y\\)")
+})
+
+test_that("ggplot-only types validate, preview and apply", {
+  skip_if_not_installed("ggplot2")
+  state <- chart_test_state()
+  specs <- list(
+    violin = chart_gg_spec("violin", mapping = list(x = "y", group = "g")),
+    ecdf = chart_gg_spec("ecdf", mapping = list(x = "y", group = "g")),
+    density_2d = chart_gg_spec("density_2d", mapping = list(x = "x", y = "y")),
+    heatmap = chart_gg_spec(
+      "heatmap", mapping = list(x = "g", y = "g2", fill = "y")
+    )
+  )
+  for (id in names(specs)) {
+    expect_equal(chart_spec_validate(specs[[id]], state), character(),
+                 info = id)
+    preview <- chart_preview(state, specs[[id]], 400, 300)
+    expect_identical(preview$type, "image", info = id)
+    expect_null(preview$error, info = id)
+    applied <- chart_apply(state, specs[[id]])
+    expect_true(applied$ok, info = id)
+  }
 })

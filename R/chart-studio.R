@@ -476,7 +476,7 @@ chart_builder_ui <- function() {
         htmltools::tags$h6(tr("Chart")),
         selectInput(
           "chart_type", tr("Chart type"),
-          choices = chart_type_choices(), selected = "histogram",
+          choices = chart_type_choices("base"), selected = "histogram",
           width = "100%"
         ),
         uiOutput("chart_dataset_ui"),
@@ -1102,6 +1102,19 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     chart_spec_from_inputs()
   })
 
+  observeEvent(input$chart_engine, {
+    engine <- input$chart_engine %||% "base"
+    choices <- chart_type_choices(engine)
+    current <- isolate(input$chart_type %||% "histogram")
+    selected <- if (current %in% unname(choices)) {
+      current
+    } else {
+      unname(choices)[[1L]]
+    }
+    updateSelectInput(session, "chart_type", choices = choices,
+                      selected = selected)
+  }, ignoreInit = TRUE)
+
   output$chart_dataset_ui <- renderUI({
     chart_revision()
     registry <- dataset_registry(state)
@@ -1425,7 +1438,11 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       }
       chart_env$pending <- spec
       updateRadioButtons(session, "chart_mode", selected = "build")
-      updateSelectInput(session, "chart_type", selected = spec$type)
+      updateSelectInput(session, "chart_type",
+                        choices = chart_type_choices(
+                          spec$theme$engine %||% "base"
+                        ),
+                        selected = spec$type)
       updateSelectInput(session, "chart_dataset", selected = spec$dataset)
       updateSelectInput(session, "chart_engine",
                         selected = spec$theme$engine %||% "base")
