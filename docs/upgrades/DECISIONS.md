@@ -469,3 +469,43 @@ on-demand (per gruppo di menu) e un registro per-sessione.
   plugin 831 ms, tree caldo 100 ms).
 - Le misure e le prove sono in
   [`audit-menu-plugin.md`](audit-menu-plugin.md).
+
+---
+
+## ADR-015 — ggplot2 e plotly come dipendenze obbligatorie
+
+**Stato:** accettata
+**Data:** 2026-11-15
+
+### Contesto
+
+`ggplot2` e `plotly` erano in `Suggests`: l'engine ggplot2 e l'interattività
+dipendevano da un'installazione separata, con documentazione condizionale e
+funzionalità che cambiavano da macchina a macchina. L'installazione standard
+non li installava.
+
+### Decisione
+
+- Spostare `ggplot2` e `plotly` in `Imports`.
+- Accettare il costo di dipendenze obbligatorie e transitive.
+- Mantenere il probe `ggplotly_available()`: l'installazione garantisce i
+  pacchetti, non la compatibilità delle versioni.
+
+### Conseguenze
+
+- `install.packages("RcmdrShiny")` installa automaticamente i due pacchetti.
+- L'engine ggplot2 è sempre disponibile; plotly e HTML export sono sempre
+  offerti quando il tipo ha un'espressione interattiva.
+- `R CMD check` richiede entrambi i pacchetti; il peso dell'installazione
+  aumenta.
+- `svglite`, `htmlwidgets`, `rgl` e i pacchetti di report restano in
+  `Suggests`.
+
+### Alternative scartate
+
+- Istruzioni di installazione manuale o prompt in `start.sh`: non è
+  un'installazione automatica.
+- `configure`/`.onLoad` che installano pacchetti: vietato dalle policy e non
+  riproducibile.
+- Meta-pacchetto: garantisce l'installazione ma aggiunge un artefatto da
+  mantenere.

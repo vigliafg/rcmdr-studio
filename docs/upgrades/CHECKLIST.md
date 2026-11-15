@@ -534,4 +534,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              sorgente separata, selezione punti e creazione dataset dal
              builder; helper `chart_subset_selected()` condiviso con la
              galleria. Suite 3767 pass, check OK.
+2026-11-15 — Onda 14 (2.7.0): ggplot2 e plotly spostati in Imports;
+             installazione automatica con il pacchetto, engine ggplot sempre
+             disponibile, plotly/HTML sempre offerti. ADR-015, docs e README
+             aggiornati. Check OK.
 ```

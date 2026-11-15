@@ -138,7 +138,8 @@ The subset is a normal command and the new data set becomes active.
 
 # ggplot2 engine
 
-Installing `ggplot2` enables a full alternative engine for all 11 chart types.
+`ggplot2` is a hard dependency: the engine selector always offers the full
+ggplot2 engine for every chart type.
 The builder adds facet, size and label mappings only in this mode, plus alpha,
 position, bin width, smooth method and band, jitter, shape, coordinate flip,
 facet scales/columns and a ggplot2 theme. Labels support title, subtitle, tag,

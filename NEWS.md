@@ -1,3 +1,16 @@
+# RcmdrShiny Studio 2.7.0
+
+## Dependencies — ggplot2 and plotly are now required
+
+- `ggplot2` and `plotly` moved from `Suggests` to `Imports`: installing
+  RcmdrShiny now installs both automatically.
+- The ggplot2 engine is always offered; plotly interactivity and HTML export
+  no longer depend on an optional install.
+- The `ggplotly` capability probe remains, because a plotly/ggplot2 version
+  mismatch can still prevent conversion.
+- Documentation and the requirements list were updated; `svglite`,
+  `htmlwidgets`, `rgl` and the reporting packages remain optional.
+
 # RcmdrShiny Studio 2.6.0
 
 ## Wave 13 — Interactive preview in the builder

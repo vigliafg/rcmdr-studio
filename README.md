@@ -58,9 +58,8 @@ report workspaces, and a Classic mode for compatibility.
 - R >= 4.1
 - A modern browser
 - Packages: `shiny`, `bslib`, `DT`, `shinyAce`, `shinyFiles`,
-  `rhandsontable`, `RcmdrMisc` (plus their dependencies)
-- Optional: `rgl` for the 3D plot pane, `plotly` for interactive charts,
-  `ggplot2` for the optional engine, `svglite` for SVG export, `rmarkdown`,
+  `rhandsontable`, `RcmdrMisc`, `ggplot2`, `plotly` (plus their dependencies)
+- Optional: `rgl` for the 3D plot pane, `svglite` for SVG export, `rmarkdown`,
   `knitr` and Pandoc for report previews and knits, `commonmark` for the fast
   Markdown preview, `yaml` for front matter parsing and `styler` for script
   formatting

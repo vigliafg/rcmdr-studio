@@ -141,8 +141,8 @@ and greys.
 
 ## ggplot2 engine
 
-When `ggplot2` is installed, the engine selector offers a full ggplot2 engine
-for **all 11 chart types**. The applied command is a single
+`ggplot2` is a hard dependency, so the engine selector always offers the
+ggplot2 engine for **every chart type**. The applied command is a single
 `print(ggplot(...))` expression; the base palette, `par()` and `title()` are not
 mixed in.
 
@@ -189,10 +189,10 @@ to the script. Deleting a chart never removes the command from the log.
 
 ## Interactive plots and selection
 
-When `plotly` is installed, supported charts also have an interactive version.
-Select points in an ungrouped scatterplot and use **Subset selected points** to
-create a new data set from the selection. The subset is a reproducible R
-command and the new data set becomes active.
+`plotly` is a hard dependency: supported charts always have an interactive
+version. Select points in an ungrouped scatterplot and use **Subset selected
+points** to create a new data set from the selection. The subset is a
+reproducible R command and the new data set becomes active.
 
 ## Reproducibility rules
 

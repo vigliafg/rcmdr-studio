@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
 Title: A Browser-Native Statistical Workbench Inspired by the R Commander
-Version: 2.6.0
+Version: 2.7.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),
@@ -47,13 +47,14 @@ Imports:
     utils,
     stats,
     grDevices,
-    graphics
+    graphics,
+    ggplot2,
+    plotly
 Suggests:
     testthat (>= 3.0.0),
     shinytest2,
     rgl,
     lattice,
-    ggplot2,
     knitr,
     rmarkdown,
     readxl,
@@ -78,7 +79,6 @@ Suggests:
     pkgdown,
     commonmark,
     yaml,
-    plotly,
     htmlwidgets,
     svglite,
     styler
