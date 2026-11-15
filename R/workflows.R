@@ -432,14 +432,20 @@ workflow_action_run <- function(state, action) {
 }
 
 workflow_mark_index <- function(state, index, commands = character(),
-                                history_ids = character()) {
+                                history_ids = character(),
+                                dialog_id = NULL) {
   active <- state$workflow
   if (is.null(active)) return(invisible(FALSE))
+  step_id <- active$spec$steps[[index]]$id
   active$statuses[[index]] <- "done"
+  if (!is.null(dialog_id)) {
+    active$dialogs <- active$dialogs %||% list()
+    active$dialogs[[step_id]] <- dialog_id
+  }
   if (length(commands) > 0L) {
-    active$commands[[active$spec$steps[[index]]$id]] <- commands
+    active$commands[[step_id]] <- commands
   } else {
-    active$commands[[active$spec$steps[[index]]$id]] <- character()
+    active$commands[[step_id]] <- character()
   }
   active$history_ids <- unique(c(active$history_ids, history_ids))
   active$current <- index
@@ -465,7 +471,7 @@ workflow_mark_step <- function(state, dialog_id, result = NULL,
     commands <- result$script
   }
   workflow_mark_index(state, index, commands = commands,
-                      history_ids = history_ids)
+                      history_ids = history_ids, dialog_id = dialog_id)
   invisible(TRUE)
 }
 
@@ -535,6 +541,34 @@ workflow_progress <- function(state) {
       available = isTRUE(availability$ok),
       reason = availability$reason %||% "",
       current = identical(i, active$current),
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, rows)
+}
+
+#' Trace of the dialog and commands recorded for each step
+#'
+#' `traced_dialog` is the dialog that actually completed the step; it should
+#' match `dialog` for dialog steps.  `commands` lists what the step produced.
+#' @keywords internal
+workflow_step_trace <- function(state) {
+  active <- workflow_active(state)
+  if (is.null(active)) {
+    return(data.frame(
+      step = character(), dialog = character(), traced_dialog = character(),
+      status = character(), commands = character(), stringsAsFactors = FALSE
+    ))
+  }
+  dialogs <- active$dialogs %||% list()
+  rows <- lapply(active$spec$steps, function(step) {
+    data.frame(
+      step = step$id,
+      dialog = step$dialog %||% "",
+      traced_dialog = dialogs[[step$id]] %||% "",
+      status = active$statuses[[step$id]] %||% "pending",
+      commands = paste(active$commands[[step$id]] %||% character(),
+                       collapse = " | "),
       stringsAsFactors = FALSE
     )
   })

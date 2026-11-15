@@ -97,6 +97,37 @@ get_dialog <- function(id) {
   spec
 }
 
+# Memory keys are consumed by name.  A dialog may expose a field under a
+# different input id (model_name is stored, linearModel_model is rendered), so
+# known aliases are declared here.  Used by the strict-memory warning.
+.dialog_memory_aliases <- list(
+  linearModel = "model_name"
+)
+
+#' Input ids rendered by a dialog
+#' @keywords internal
+dialog_ui_field_ids <- function(spec, state) {
+  if (is.null(spec) || !is.function(spec$ui)) return(character())
+  html <- tryCatch(as.character(spec$ui(state, list())), error = function(e) "")
+  if (!nzchar(html)) return(character())
+  ids <- regmatches(html, gregexpr('id="[^"]+"', html))[[1L]]
+  if (length(ids) == 0L) return(character())
+  ids <- sub('^id="(.*)"$', "\\1", ids)
+  prefix <- paste0(spec$id, "_")
+  unique(sub(paste0("^", prefix), "", ids[startsWith(ids, prefix)]))
+}
+
+#' Memory keys a dialog does not consume
+#' @keywords internal
+dialog_memory_unknown_keys <- function(id, values, state) {
+  if (!is.list(values) || length(values) == 0L) return(character())
+  spec <- get_dialog_spec(id)
+  if (is.null(spec)) return(character())
+  known <- unique(c(dialog_ui_field_ids(spec, state),
+                    .dialog_memory_aliases[[id]] %||% character()))
+  setdiff(names(values) %||% character(), known)
+}
+
 .implemented_commands_cache <- new.env(parent = emptyenv())
 
 #' Dialog identifiers, cached per plugin revision

@@ -40,6 +40,7 @@ cmd_statistics_table <- function(dataset, response, groups, statistic = "mean") 
 #' @keywords internal
 cmd_correlation_matrix <- function(dataset, variables, type = "pearson",
                                    use = "complete", pvalues = FALSE) {
+  type <- tolower(type %||% "pearson")
   vars <- paste0('"', variables, '"', collapse = ",")
   if (identical(type, "partial")) {
     return(paste0(

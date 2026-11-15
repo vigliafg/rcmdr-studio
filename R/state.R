@@ -367,6 +367,17 @@ get_dialog_memory <- function(state, id) {
 
 #' @keywords internal
 set_dialog_memory <- function(state, id, values) {
+  if (isTRUE(getOption("RcmdrShiny.strict_memory", FALSE)) &&
+      is.list(values) && length(values) > 0L) {
+    unknown <- tryCatch(dialog_memory_unknown_keys(id, values, state),
+                        error = function(e) character())
+    if (length(unknown) > 0L) {
+      warning(sprintf(
+        "Dialog '%s' received unknown memory keys: %s",
+        id, paste(unknown, collapse = ", ")
+      ), call. = FALSE)
+    }
+  }
   state$dialog_memory[[id]] <- values
   invisible(values)
 }
