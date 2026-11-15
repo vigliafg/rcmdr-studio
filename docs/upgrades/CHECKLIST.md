@@ -351,6 +351,22 @@ Rilascio: 2.2.0.
 
 ---
 
+## Onda 10 — Opzioni grafiche
+
+Documento di settore: [`10-graph-options.md`](10-graph-options.md).
+Rilascio: 2.3.0.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| G10.1 | Boxplot completo base e ggplot | [x] | notch, notchwidth, varwidth, orizzontale, outlier, width |
+| G10.2 | Jitter nel boxplot ggplot | [x] | `geom_jitter` |
+| G10.3 | Istogramma ggplot con scala | [x] | frequency/density/percent |
+| G10.4 | Scatter regressione/ellisse/griglia/jitter | [x] | base e ggplot |
+| G10.5 | Loess e banda di confidenza ggplot | [x] | `geom_smooth(se=)` |
+| G10.6 | Test e documentazione | [x] | suite 3594, check OK |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
@@ -450,4 +466,10 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              unico senza prefisso base, interattività ggplotly con gate di
              compatibilità. Corretti doppia etichettatura e scatter+smooth.
              Suite 3576 pass, check OK.
+2026-11-15 — Onda 10 (2.3.0): boxplot completo (notch, notchwidth,
+             varwidth, orizzontale, outlier, width, jitter ggplot), istogramma
+             ggplot con scala after_stat, scatter con regressione, ellisse,
+             griglia e jitter in entrambi gli engine. Corretti
+             `Boxplot(horizontal=TRUE)` e `jitter=TRUE` con gruppi. Suite
+             3594 pass, check OK.
 ```

@@ -151,6 +151,18 @@ export reuse the same command path.
 If the installed `plotly` and `ggplot2` versions can convert ggplot objects,
 the gallery also offers the interactive version and HTML export.
 
+# Boxplot, histogram and scatter options
+
+The boxplot builder exposes notch, notch width, variable width, horizontal
+layout, outlier visibility and box width. Horizontal uses `boxplot()` in the
+base engine (car refuses it) and `coord_flip()` in ggplot2; the common jitter
+control overlays points in ggplot2.
+
+The histogram scale selector is honoured by both engines. The scatterplot adds
+a regression line, a confidence ellipse, a grid and jitter; ggplot2 maps the
+smooth choice and the confidence band to `geom_smooth(method=, se=)` and the
+ellipse to `stat_ellipse()`.
+
 # Design notes
 
 - The base engine remains the default; ggplot2 is opt-in.

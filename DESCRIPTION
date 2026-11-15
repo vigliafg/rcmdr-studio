@@ -1,7 +1,7 @@
 Package: RcmdrShiny
 Type: Package
 Title: A Browser-Native Statistical Workbench Inspired by the R Commander
-Version: 2.2.0
+Version: 2.3.0
 Authors@R: c(
     person("RcmdrShiny", "Contributors", role = c("aut", "cre"),
            email = "vigliafg@gmail.com"),

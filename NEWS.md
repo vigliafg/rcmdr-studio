@@ -1,3 +1,25 @@
+# RcmdrShiny Studio 2.3.0
+
+## Wave 10 — Boxplot, histogram and scatter options
+
+- **Boxplot (base and ggplot2)**: notch, notchwidth, variable width, horizontal
+  layout, outlier visibility and box width. The horizontal base layout uses
+  `boxplot()` because `car::Boxplot()` rejects `horizontal = TRUE`; defaults
+  keep the exact `Boxplot(...)` command.
+- **Boxplot points (ggplot2)**: optional jitter overlay from the jitter
+  control.
+- **Histogram (ggplot2)**: the frequency/density/percent selector now maps to
+  `after_stat()` instead of being ignored.
+- **Scatterplot (base and ggplot2)**: regression line, confidence ellipse,
+  grid and jitter. Base emits `regLine`, `ellipse`, `grid` and
+  `jitter = list(x =, y =)`; ggplot2 uses `geom_smooth(method = "lm")`,
+  `stat_ellipse()` and `geom_jitter()`, with the confidence band controlled by
+  the existing “Confidence band” option.
+- **Loess vs regression**: the same checkbox pair chooses `lm` or `loess` in
+  ggplot2 and `regLine` or `smooth` in base.
+- Default commands are unchanged; new arguments appear only when the option is
+  changed.
+
 # RcmdrShiny Studio 2.2.0
 
 ## Wave 9 — ggplot2 as a first-class engine

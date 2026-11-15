@@ -16,6 +16,7 @@ wave-06-help-i18n-onboarding.md
 wave-07-platform-plugins-quality.md
 wave-08-hardening.md
 wave-09-ggplot.md
+wave-10-graph-options.md
 ```
 
 ## Regole

@@ -51,6 +51,24 @@ The mapping fields are generated from the type: numeric slots list numeric
 variables, factor slots list factors and characters, and optional slots include
 `<none>`.
 
+## Boxplot options
+
+For both engines the boxplot exposes notched boxes, notch width, variable box
+width and box width. **Horizontal** works in both: the base engine switches to
+`boxplot(..., horizontal = TRUE)` because `car::Boxplot()` rejects it, while
+ggplot2 uses `coord_flip()`. Outliers can be hidden. In ggplot2 the common
+jitter control overlays the points.
+
+## Histogram and scatter options
+
+The histogram scale selector (frequency, density, percent) is honoured by both
+engines; ggplot2 maps it to `after_stat()`.
+
+The scatterplot exposes a regression line, a confidence ellipse, a grid and
+jitter in both engines. In ggplot2 the “Smooth” choice and the “Confidence
+band” option produce `geom_smooth(method = "lm" | "loess", se = TRUE/FALSE)`;
+the ellipse is `stat_ellipse()`.
+
 ## Preview
 
 The preview is isolated. It runs in a child of the session environment, never
