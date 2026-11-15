@@ -152,3 +152,26 @@ test_that("the workflow panel renders the registry and the active steps", {
   expect_match(html, "Numerical summaries")
   expect_match(html, "Skip")
 })
+
+test_that("the step trace records the dialog that completed it", {
+  state <- workflow_test_state()
+  workflow_start(state, "describe")
+
+  workflow_mark_step(
+    state, "numericalSummaries",
+    list(commands = "numSummary(Dataset[, c(\"x\")], statistics=c(\"mean\"))"),
+    history_ids = "hist-0001"
+  )
+
+  trace <- workflow_step_trace(state)
+  expect_equal(nrow(trace), 4L)
+  summary <- trace[trace$step == "summary", , drop = FALSE]
+  expect_identical(summary$dialog, "numericalSummaries")
+  expect_identical(summary$traced_dialog, "numericalSummaries")
+  expect_identical(summary$status, "done")
+  expect_match(summary$commands, "numSummary")
+
+  pending <- trace[trace$step != "summary", , drop = FALSE]
+  expect_true(all(pending$status == "pending"))
+  expect_true(all(pending$traced_dialog == ""))
+})
