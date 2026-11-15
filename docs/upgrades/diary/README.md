@@ -17,6 +17,7 @@ wave-07-platform-plugins-quality.md
 wave-08-hardening.md
 wave-09-ggplot.md
 wave-10-graph-options.md
+wave-11-remaining-types.md
 ```
 
 ## Regole

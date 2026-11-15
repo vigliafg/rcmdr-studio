@@ -1,3 +1,24 @@
+# RcmdrShiny Studio 2.4.0
+
+## Wave 11 — Remaining chart types completed
+
+- **Density**: kernel, adjust, rug and grid in base; adjust in ggplot2.
+- **Line graph**: line/step/area, line style, line width and an optional
+  grouping variable for colour (ggplot2).
+- **Bar graph**: bar width and count/percent statistic (ggplot2).
+- **Dot plot**: binned dots in base; bin axis, stack direction, dot size and
+  bin width in ggplot2.
+- **Strip chart**: stack/jitter method plus jitter width/height and point
+  shape (ggplot2).
+- **QQ plot**: normal/uniform/exponential distribution, reference line,
+  confidence envelope and grid; ggplot2 uses `stat_qq(distribution=)`.
+- **Plot of means**: connect the means, error-bar width and point size;
+  ggplot2 uses `stat_summary` for points, error bars and the connecting line.
+- **XY conditioning plot**: points/lines/both plus an optional smooth and
+  facet layout.
+- All defaults are unchanged; new arguments appear only when the option is
+  changed.
+
 # RcmdrShiny Studio 2.3.0
 
 ## Wave 10 — Boxplot, histogram and scatter options

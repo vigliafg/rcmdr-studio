@@ -367,6 +367,25 @@ Rilascio: 2.3.0.
 
 ---
 
+## Onda 11 — Completamento degli altri tipi
+
+Documento di settore: [`11-remaining-types.md`](11-remaining-types.md).
+Rilascio: 2.4.0.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| G11.1 | Densità: kernel, adjust, rug, grid | [x] | adjust anche ggplot |
+| G11.2 | Linee: step/area, stile, spessore, gruppo | [x] | gruppo solo ggplot |
+| G11.3 | Barre: width e percentuale | [x] | ggplot |
+| G11.4 | Dot plot: bin, binaxis, stackdir, dotsize, binwidth | [x] | |
+| G11.5 | Strip: metodo, jitter, shape | [x] | |
+| G11.6 | QQ: distribuzione, linea, envelope, grid | [x] | |
+| G11.7 | Medie: connect, errore, punto | [x] | |
+| G11.8 | XYplot: type, layout, smooth | [x] | |
+| G11.9 | Test e documentazione | [x] | suite 3631, check OK |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
@@ -472,4 +491,9 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              griglia e jitter in entrambi gli engine. Corretti
              `Boxplot(horizontal=TRUE)` e `jitter=TRUE` con gruppi. Suite
              3594 pass, check OK.
+2026-11-15 — Onda 11 (2.4.0): completati densità (kernel/adjust/rug/grid),
+             linee (step/area/stile/gruppo), barre (width/percent), dot
+             (bin/binaxis/stackdir), strip (jitter/shape), QQ (distribuzione/
+             linea/envelope/grid), medie (connect/errore/punto), xyplot
+             (type/layout/smooth). Default invariati. Suite 3631 pass, check OK.
 ```

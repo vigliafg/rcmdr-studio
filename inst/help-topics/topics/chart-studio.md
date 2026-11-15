@@ -69,6 +69,22 @@ jitter in both engines. In ggplot2 the “Smooth” choice and the “Confidence
 band” option produce `geom_smooth(method = "lm" | "loess", se = TRUE/FALSE)`;
 the ellipse is `stat_ellipse()`.
 
+## Other chart options
+
+- **Density**: kernel, adjust, rug and grid in the base engine; ggplot2 uses
+  adjust.
+- **Line graph**: line/step/area, line style and width; an optional grouping
+  variable colours the line in ggplot2.
+- **Bar graph**: bar width and count/percent statistic in ggplot2.
+- **Dot plot**: binned dots in base; bin axis, stack direction, dot size and
+  bin width in ggplot2.
+- **Strip chart**: stack or jitter, with jitter width/height and point shape in
+  ggplot2.
+- **QQ plot**: normal, uniform or exponential distribution, reference line,
+  confidence envelope and grid.
+- **Plot of means**: connect the means, error-bar width and point size.
+- **XY conditioning plot**: points, lines or both, optional layout and smooth.
+
 ## Preview
 
 The preview is isolated. It runs in a child of the session environment, never

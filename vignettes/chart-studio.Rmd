@@ -163,6 +163,16 @@ a regression line, a confidence ellipse, a grid and jitter; ggplot2 maps the
 smooth choice and the confidence band to `geom_smooth(method=, se=)` and the
 ellipse to `stat_ellipse()`.
 
+# Remaining chart options
+
+Density exposes kernel, adjust, rug and grid (adjust in ggplot2). Line graphs
+support line/step/area, style and width, with optional colour grouping in
+ggplot2. Bar graphs expose width and count/percent statistics. Dot plots add
+binning and ggplot2 bin axis/stack direction/size. Strip charts control jitter
+and point shape. QQ plots choose the distribution, reference line, envelope and
+grid. Plots of means connect the means and control error-bar width and point
+size. XY plots combine points/lines with an optional smooth and layout.
+
 # Design notes
 
 - The base engine remains the default; ggplot2 is opt-in.
