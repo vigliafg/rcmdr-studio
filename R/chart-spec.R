@@ -69,14 +69,15 @@ chart_theme_defaults <- function() {
     base_size = 12,
     grid = TRUE,
     legend = "right",
-    background = "white"
+    background = "white",
+    ggplot_theme = "minimal"
   )
 }
 
 #' Default chart labels
 #' @keywords internal
 chart_label_defaults <- function() {
-  list(title = "", x = "", y = "", caption = "")
+  list(title = "", subtitle = "", x = "", y = "", caption = "", tag = "")
 }
 
 #' Default chart size
@@ -149,8 +150,10 @@ chart_spec_validate <- function(spec, state = NULL) {
   }
 
   mapping <- spec$mapping %||% list()
-  for (slot in names(info$mapping %||% list())) {
-    rule <- info$mapping[[slot]]
+  engine <- chart_spec_engine(spec)
+  slots <- chart_mapping_slots(info, engine, spec$type)
+  for (slot in names(slots)) {
+    rule <- slots[[slot]]
     value <- mapping[[slot]]
     value <- value[!is.na(value) & nzchar(as.character(value))]
     if (!isTRUE(rule$optional) && length(value) == 0L) {
@@ -183,8 +186,8 @@ chart_spec_validate <- function(spec, state = NULL) {
             "Unknown variable(s): %s", paste(missing, collapse = ", ")
           ))
         }
-        for (slot in names(info$mapping %||% list())) {
-          rule <- info$mapping[[slot]]
+        for (slot in names(slots)) {
+          rule <- slots[[slot]]
           value <- as.character(mapping[[slot]] %||% character())
           value <- value[nzchar(value)]
           if (length(value) == 0L) next
@@ -221,16 +224,9 @@ chart_spec_validate <- function(spec, state = NULL) {
     problems <- c(problems, "The preview height must be at least 150 pixels.")
   }
 
-  if (identical(chart_spec_engine(spec), "ggplot2")) {
-    if (!requireNamespace("ggplot2", quietly = TRUE)) {
-      problems <- c(problems,
-                    "The ggplot2 engine requires the ggplot2 package.")
-    }
-    if (!spec$type %in% chart_ggplot_types()) {
-      problems <- c(problems, sprintf(
-        "The ggplot2 engine does not support %s yet.", spec$type
-      ))
-    }
+  if (identical(engine, "ggplot2") && !requireNamespace("ggplot2", quietly = TRUE)) {
+    problems <- c(problems,
+                  "The ggplot2 engine requires the ggplot2 package.")
   }
 
   problems
@@ -305,13 +301,12 @@ chart_label_commands <- function(spec) {
 #' when the user changes them.
 #' @keywords internal
 chart_spec_command <- function(spec) {
-  plot_command <- if (identical(chart_spec_engine(spec), "ggplot2")) {
-    chart_ggplot_command(spec)
-  } else {
-    chart_spec_plot_command(spec)
+  if (identical(chart_spec_engine(spec), "ggplot2")) {
+    return(chart_ggplot_command(spec))
   }
   paste(
-    c(chart_theme_prefix(spec), plot_command, chart_label_commands(spec)),
+    c(chart_theme_prefix(spec), chart_spec_plot_command(spec),
+      chart_label_commands(spec)),
     collapse = "\n"
   )
 }
@@ -319,6 +314,11 @@ chart_spec_command <- function(spec) {
 #' Interactive plot expression of a specification
 #' @keywords internal
 chart_spec_interactive <- function(spec) {
+  if (identical(chart_spec_engine(spec), "ggplot2")) {
+    code <- tryCatch(chart_ggplot_interactive(spec),
+                     error = function(e) NULL)
+    return(if (is.null(code) || !nzchar(code)) NULL else code)
+  }
   info <- chart_type(spec$type)
   if (is.null(info) || is.null(info$interactive)) return(NULL)
   code <- tryCatch(info$interactive(spec), error = function(e) NULL)
@@ -379,144 +379,4 @@ chart_spec_title <- function(spec) {
     tr("Chart")
   )
   as.character(title)[[1L]]
-}
-
-#' ggplot2 engine types
-#' @keywords internal
-chart_ggplot_types <- function() {
-  c("histogram", "density", "boxplot", "scatter", "line", "bar")
-}
-
-#' ggplot2 command for a specification
-#'
-#' The command is a single `print(ggplot(...))` expression so that it draws
-#' when evaluated in the plotting device and is recognised as a plot command.
-#' @keywords internal
-chart_ggplot_command <- function(spec) {
-  dataset <- spec$dataset %||% "data"
-  mapping <- spec$mapping %||% list()
-  options <- spec$options %||% list()
-  theme <- spec$theme %||% chart_theme_defaults()
-  labels <- spec$labels %||% chart_label_defaults()
-  x <- mapping$x %||% ""
-  y <- paste(mapping$y %||% "", collapse = ", ")
-  group <- mapping$group %||% ""
-  palette <- chart_palette_colors(theme$palette %||% "default")
-  base_size <- suppressWarnings(as.numeric(theme$base_size %||% 12))
-  if (is.na(base_size) || base_size <= 0) base_size <- 12
-
-  colour <- if (nzchar(group)) sprintf(", colour = %s", group) else ""
-  fill <- if (nzchar(group)) sprintf(", fill = %s", group) else ""
-
-  aes_code <- switch(
-    spec$type,
-    histogram = sprintf("ggplot2::aes(x = %s%s)", x, fill),
-    density = sprintf("ggplot2::aes(x = %s%s)", x,
-                      if (nzchar(group)) sprintf(", colour = %s, fill = %s",
-                                                 group, group) else ""),
-    boxplot = if (nzchar(group)) {
-      sprintf("ggplot2::aes(x = %s, y = %s, fill = %s)", group, x, group)
-    } else {
-      sprintf("ggplot2::aes(x = factor(1), y = %s)", x)
-    },
-    scatter = sprintf("ggplot2::aes(x = %s, y = %s%s)", x, y, colour),
-    line = sprintf("ggplot2::aes(x = %s, y = %s%s, group = %s)",
-                   x, y, colour, if (nzchar(group)) group else "1"),
-    bar = sprintf("ggplot2::aes(x = %s%s)", x, fill),
-    sprintf("ggplot2::aes(x = %s, y = %s)", x, y)
-  )
-
-  bins <- as.integer(options$bins %||% 30L)
-  layer <- switch(
-    spec$type,
-    histogram = if (nzchar(group)) {
-      sprintf(
-        "ggplot2::geom_histogram(bins = %d, colour = \"white\", alpha = 0.7, position = \"identity\")",
-        bins
-      )
-    } else {
-      sprintf(
-        "ggplot2::geom_histogram(bins = %d, fill = \"#4E79A7\", colour = \"white\", alpha = 0.85)",
-        bins
-      )
-    },
-    density = sprintf("ggplot2::geom_density(linewidth = 1, alpha = 0.35)"),
-    boxplot = "ggplot2::geom_boxplot()",
-    scatter = paste0(
-      "ggplot2::geom_point(alpha = 0.8)",
-      if (isTRUE(options$smooth)) {
-        ", ggplot2::geom_smooth(method = \"lm\", se = FALSE)"
-      } else ""
-    ),
-    line = "ggplot2::geom_line(linewidth = 1)",
-    bar = if (nzchar(group)) {
-      "ggplot2::geom_bar(position = \"dodge\")"
-    } else {
-      "ggplot2::geom_bar()"
-    },
-    "ggplot2::geom_point()"
-  )
-
-  scale <- ""
-  if (!is.null(palette) && length(palette) > 0L) {
-    values <- paste(chart_quote(palette), collapse = ", ")
-    if (spec$type %in% c("histogram", "density", "boxplot", "bar") &&
-        nzchar(group)) {
-      scale <- sprintf("ggplot2::scale_fill_manual(values = c(%s))", values)
-    } else if (nzchar(group)) {
-      scale <- sprintf("ggplot2::scale_colour_manual(values = c(%s))", values)
-    }
-  }
-
-  theme_code <- sprintf("ggplot2::theme_minimal(base_size = %d)", base_size)
-  theme_extra <- character()
-  if (isFALSE(theme$grid)) {
-    theme_extra <- c(theme_extra,
-                     "panel.grid = ggplot2::element_blank()")
-  }
-  if (nzchar(theme$legend %||% "")) {
-    theme_extra <- c(theme_extra, sprintf(
-      "legend.position = %s", chart_quote(theme$legend)
-    ))
-  }
-  if (!identical(theme$background %||% "white", "white")) {
-    theme_extra <- c(theme_extra, sprintf(
-      "plot.background = ggplot2::element_rect(fill = %s, colour = NA)",
-      chart_quote(theme$background)
-    ))
-  }
-  if (length(theme_extra) > 0L) {
-    theme_code <- paste0(
-      theme_code, " + ggplot2::theme(",
-      paste(theme_extra, collapse = ", "), ")"
-    )
-  }
-
-  lab_args <- character()
-  if (nzchar(labels$title %||% "")) {
-    lab_args <- c(lab_args, sprintf("title = %s", chart_quote(labels$title)))
-  }
-  if (nzchar(labels$x %||% "")) {
-    lab_args <- c(lab_args, sprintf("x = %s", chart_quote(labels$x)))
-  }
-  if (nzchar(labels$y %||% "")) {
-    lab_args <- c(lab_args, sprintf("y = %s", chart_quote(labels$y)))
-  }
-  if (nzchar(labels$caption %||% "")) {
-    lab_args <- c(lab_args, sprintf("caption = %s",
-                                    chart_quote(labels$caption)))
-  }
-  labs_code <- if (length(lab_args) > 0L) {
-    sprintf("ggplot2::labs(%s)", paste(lab_args, collapse = ", "))
-  } else ""
-
-  pieces <- c(
-    sprintf("ggplot2::ggplot(%s, %s)", dataset, aes_code),
-    layer,
-    scale,
-    theme_code,
-    labs_code
-  )
-  pieces <- pieces[nzchar(pieces)]
-  sprintf("print(%s)", paste(pieces, collapse = " + "))
 }

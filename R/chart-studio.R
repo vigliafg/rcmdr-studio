@@ -533,6 +533,100 @@ chart_builder_ui <- function() {
             checkboxInput("chart_grid", tr("Grid"), value = TRUE)
           )
         ),
+        conditionalPanel(
+          "input.chart_engine === 'ggplot2'",
+          htmltools::tags$hr(),
+          htmltools::tags$h6(tr("ggplot2 options")),
+          htmltools::div(
+            class = "row g-2",
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_theme", tr("ggplot2 theme"),
+                choices = stats::setNames(
+                  c("minimal", "bw", "classic", "light", "dark", "void"),
+                  c("Minimal", "Black and white", "Classic", "Light",
+                    "Dark", "Void")
+                ),
+                selected = "minimal"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_position", tr("Position"),
+                choices = stats::setNames(
+                  c("identity", "dodge", "stack", "fill"),
+                  c("Identity", "Dodge", "Stack", "Fill")
+                ),
+                selected = "identity"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              numericInput("chart_gg_alpha", tr("Alpha"), 0.7,
+                           min = 0, max = 1, step = 0.05)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              numericInput("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
+                           min = 0, step = 0.1)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_smooth", tr("Smooth"),
+                choices = stats::setNames(
+                  c("lm", "loess", "gam"),
+                  c("Linear", "LOESS", "GAM")
+                ),
+                selected = "lm"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              numericInput("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
+                           min = 0, step = 0.05)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              numericInput("chart_gg_shape", tr("Point shape"), 19,
+                           min = 0, max = 25, step = 1)
+            ),
+            htmltools::div(
+              class = "col-sm-6 d-flex align-items-end",
+              checkboxInput("chart_gg_se", tr("Confidence band"), FALSE)
+            ),
+            htmltools::div(
+              class = "col-sm-6 d-flex align-items-end",
+              checkboxInput("chart_gg_flip", tr("Flip coordinates"), FALSE)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_facet_scales", tr("Facet scales"),
+                choices = stats::setNames(
+                  c("fixed", "free", "free_x", "free_y"),
+                  c("Fixed", "Free", "Free X", "Free Y")
+                ),
+                selected = "fixed"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              numericInput("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
+                           0, min = 0, step = 1)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              textInput("chart_gg_subtitle", tr("Subtitle"), "")
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              textInput("chart_gg_tag", tr("Tag"), "")
+            )
+          )
+        ),
         htmltools::tags$hr(),
         textInput("chart_title", tr("Title"), ""),
         htmltools::div(
@@ -939,13 +1033,15 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     type <- input$chart_type %||% "histogram"
     info <- chart_type(type)
     if (is.null(info)) return(NULL)
+    engine <- input$chart_engine %||% "base"
+    slots <- chart_mapping_slots(info, engine, type)
 
     dataset <- input$chart_dataset %||% active_dataset(state)
-    mapping <- lapply(names(info$mapping), function(slot) {
+    mapping <- lapply(names(slots), function(slot) {
       value <- input[[paste0("chart_map_", slot)]]
       if (is.null(value)) NULL else value
     })
-    names(mapping) <- names(info$mapping)
+    names(mapping) <- names(slots)
 
     option_names <- names(info$defaults %||% list())
     options <- lapply(option_names, function(name) {
@@ -954,20 +1050,38 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     })
     names(options) <- option_names
     options <- Filter(Negate(is.null), options)
+    if (identical(engine, "ggplot2")) {
+      gg <- list(
+        alpha = input$chart_gg_alpha %||% 0.7,
+        position = input$chart_gg_position %||% "identity",
+        binwidth = input$chart_gg_binwidth %||% 0,
+        smooth_method = input$chart_gg_smooth %||% "lm",
+        smooth_se = isTRUE(input$chart_gg_se),
+        jitter = input$chart_gg_jitter %||% 0,
+        flip = isTRUE(input$chart_gg_flip),
+        facet_scales = input$chart_gg_facet_scales %||% "fixed",
+        facet_ncol = input$chart_gg_facet_ncol %||% 0,
+        shape = input$chart_gg_shape %||% 19
+      )
+      options <- utils::modifyList(options, gg)
+    }
 
     labels <- list(
       title = input$chart_title %||% "",
+      subtitle = input$chart_gg_subtitle %||% "",
       x = input$chart_xlab %||% "",
       y = input$chart_ylab %||% "",
-      caption = input$chart_caption %||% ""
+      caption = input$chart_caption %||% "",
+      tag = input$chart_gg_tag %||% ""
     )
     theme <- list(
-      engine = input$chart_engine %||% "base",
+      engine = engine,
       palette = input$chart_palette %||% "default",
       base_size = as.numeric(input$chart_base_size %||% 12),
       grid = isTRUE(input$chart_grid %||% TRUE),
       legend = input$chart_legend %||% "right",
-      background = input$chart_background %||% "white"
+      background = input$chart_background %||% "white",
+      ggplot_theme = input$chart_gg_theme %||% "minimal"
     )
     size <- list(
       width = as.integer(input$chart_width %||% 800),
@@ -1013,17 +1127,21 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     type <- input$chart_type %||% "histogram"
     info <- chart_type(type)
     if (is.null(info)) return(NULL)
+    engine <- input$chart_engine %||% "base"
+    slots <- chart_mapping_slots(info, engine, type)
     dataset <- input$chart_dataset %||% active_dataset(state)
-    mapping <- lapply(names(info$mapping), function(slot) {
+    mapping <- lapply(names(slots), function(slot) {
       input[[paste0("chart_map_", slot)]]
     })
-    names(mapping) <- names(info$mapping)
-    chart_spec(type = type, dataset = dataset, mapping = mapping)
+    names(mapping) <- names(slots)
+    chart_spec(type = type, dataset = dataset, mapping = mapping,
+               engine = engine)
   }
 
   output$chart_mapping_ui <- renderUI({
     input$chart_type
     input$chart_dataset
+    input$chart_engine
     chart_revision()
     spec <- chart_mapping_spec()
     if (is.null(spec)) return(NULL)
@@ -1142,8 +1260,10 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     chart_env$pending <- NULL
     info <- chart_type(input$chart_type %||% "histogram")
     if (!is.null(info)) {
-      for (slot in names(info$mapping)) {
-        rule <- info$mapping[[slot]]
+      engine <- input$chart_engine %||% "base"
+      slots <- chart_mapping_slots(info, engine, input$chart_type %||% "histogram")
+      for (slot in names(slots)) {
+        rule <- slots[[slot]]
         choices <- chart_mapping_choices(state, rule)
         selected <- if (isTRUE(rule$optional)) "" else {
           if (length(choices) > 0L) choices[[1L]] else ""
@@ -1178,6 +1298,19 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     updateTextInput(session, "chart_xlab", value = "")
     updateTextInput(session, "chart_ylab", value = "")
     updateTextInput(session, "chart_caption", value = "")
+    updateSelectInput(session, "chart_gg_theme", selected = "minimal")
+    updateSelectInput(session, "chart_gg_position", selected = "identity")
+    updateSelectInput(session, "chart_gg_smooth", selected = "lm")
+    updateSelectInput(session, "chart_gg_facet_scales", selected = "fixed")
+    updateNumericInput(session, "chart_gg_alpha", value = 0.7)
+    updateNumericInput(session, "chart_gg_binwidth", value = 0)
+    updateNumericInput(session, "chart_gg_jitter", value = 0)
+    updateNumericInput(session, "chart_gg_shape", value = 19)
+    updateNumericInput(session, "chart_gg_facet_ncol", value = 0)
+    updateCheckboxInput(session, "chart_gg_se", value = FALSE)
+    updateCheckboxInput(session, "chart_gg_flip", value = FALSE)
+    updateTextInput(session, "chart_gg_subtitle", value = "")
+    updateTextInput(session, "chart_gg_tag", value = "")
     updateNumericInput(session, "chart_width", value = 800)
     updateNumericInput(session, "chart_height", value = 600)
     chart_preview_cache_clear()
@@ -1320,6 +1453,32 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       updateTextInput(session, "chart_ylab", value = spec$labels$y %||% "")
       updateTextInput(session, "chart_caption",
                       value = spec$labels$caption %||% "")
+      updateTextInput(session, "chart_gg_subtitle",
+                      value = spec$labels$subtitle %||% "")
+      updateTextInput(session, "chart_gg_tag",
+                      value = spec$labels$tag %||% "")
+      updateSelectInput(session, "chart_gg_theme",
+                        selected = spec$theme$ggplot_theme %||% "minimal")
+      updateSelectInput(session, "chart_gg_position",
+                        selected = spec$options$position %||% "identity")
+      updateSelectInput(session, "chart_gg_smooth",
+                        selected = spec$options$smooth_method %||% "lm")
+      updateSelectInput(session, "chart_gg_facet_scales",
+                        selected = spec$options$facet_scales %||% "fixed")
+      updateNumericInput(session, "chart_gg_alpha",
+                         value = spec$options$alpha %||% 0.7)
+      updateNumericInput(session, "chart_gg_binwidth",
+                         value = spec$options$binwidth %||% 0)
+      updateNumericInput(session, "chart_gg_jitter",
+                         value = spec$options$jitter %||% 0)
+      updateNumericInput(session, "chart_gg_shape",
+                         value = spec$options$shape %||% 19)
+      updateNumericInput(session, "chart_gg_facet_ncol",
+                         value = spec$options$facet_ncol %||% 0)
+      updateCheckboxInput(session, "chart_gg_se",
+                          value = isTRUE(spec$options$smooth_se))
+      updateCheckboxInput(session, "chart_gg_flip",
+                          value = isTRUE(spec$options$flip))
       updateNumericInput(session, "chart_width",
                          value = spec$size$width %||% 800)
       updateNumericInput(session, "chart_height",

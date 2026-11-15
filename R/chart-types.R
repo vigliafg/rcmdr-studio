@@ -458,9 +458,10 @@ chart_mapping_controls <- function(state, spec, pending = NULL) {
       identical(pending$dataset, spec$dataset)) {
     values <- utils::modifyList(values, pending$mapping %||% list())
   }
+  slots <- chart_mapping_slots(info, chart_spec_engine(spec), spec$type)
 
-  controls <- lapply(names(info$mapping), function(slot) {
-    rule <- info$mapping[[slot]]
+  controls <- lapply(names(slots), function(slot) {
+    rule <- slots[[slot]]
     choices <- chart_mapping_choices(state, rule)
     value <- values[[slot]]
     if (isTRUE(rule$optional) && !isTRUE(rule$multiple)) {
