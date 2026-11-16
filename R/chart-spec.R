@@ -61,10 +61,13 @@ chart_mapping_defaults <- function(type_info) {
 }
 
 #' Default chart theme
+#'
+#' The Studio has a single engine: ggplot2.  The argument is kept so that
+#' legacy specifications keep validating.
 #' @keywords internal
-chart_theme_defaults <- function() {
+chart_theme_defaults <- function(engine = "ggplot2") {
   list(
-    engine = "base",
+    engine = engine,
     palette = "default",
     base_size = 12,
     grid = TRUE,
@@ -127,9 +130,13 @@ chart_spec <- function(type = "histogram", dataset = NULL,
 }
 
 #' Chart engine of a specification
+#'
+#' Legacy specifications stored `engine = "base"`; they are normalised to the
+#' only engine the Studio has.
 #' @keywords internal
 chart_spec_engine <- function(spec) {
-  spec$theme$engine %||% "base"
+  engine <- spec$theme$engine %||% "ggplot2"
+  if (identical(engine, "base")) "ggplot2" else "ggplot2"
 }
 
 #' Chart type descriptor of a specification
@@ -152,10 +159,18 @@ chart_spec_validate <- function(spec, state = NULL) {
   }
   engine <- chart_spec_engine(spec)
   if (!chart_type_available(spec$type, engine)) {
-    problems <- c(problems, sprintf(
-      "The %s chart is only available with the ggplot2 engine.",
-      info$label %||% spec$type
-    ))
+    missing <- chart_ext_missing(info$requires)
+    if (length(missing) > 0L) {
+      problems <- c(problems, sprintf(
+        "The %s chart needs the %s package.",
+        info$label %||% spec$type, paste(missing, collapse = ", ")
+      ))
+    } else {
+      problems <- c(problems, sprintf(
+        "The %s chart is not available in this installation.",
+        info$label %||% spec$type
+      ))
+    }
   }
 
   mapping <- spec$mapping %||% list()
@@ -188,6 +203,14 @@ chart_spec_validate <- function(spec, state = NULL) {
       } else {
         used <- unlist(mapping, use.names = FALSE)
         used <- as.character(used[!is.na(used) & nzchar(as.character(used))])
+        # Model mappings name an object in the session, not a column.
+        model_slots <- names(slots)[vapply(slots, function(rule) {
+          identical(rule$kind %||% "", "model")
+        }, logical(1))]
+        if (length(model_slots) > 0L) {
+          models <- as.character(unlist(mapping[model_slots], use.names = FALSE))
+          used <- setdiff(used, models[!is.na(models)])
+        }
         missing <- setdiff(used, names(df))
         if (length(missing) > 0L) {
           problems <- c(problems, sprintf(
@@ -203,6 +226,7 @@ chart_spec_validate <- function(spec, state = NULL) {
             rule$kind %||% "any",
             numeric = numeric_variables(state),
             factor = factor_variables(state),
+            model = list_all_models(state),
             any = variables(state),
             variables(state)
           )
@@ -232,9 +256,16 @@ chart_spec_validate <- function(spec, state = NULL) {
     problems <- c(problems, "The preview height must be at least 150 pixels.")
   }
 
-  if (identical(engine, "ggplot2") && !requireNamespace("ggplot2", quietly = TRUE)) {
-    problems <- c(problems,
-                  "The ggplot2 engine requires the ggplot2 package.")
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    problems <- c(problems, "The Chart Studio requires the ggplot2 package.")
+  }
+
+  if (identical(spec$type, "compose")) {
+    children <- chart_compose_children(spec)
+    if (length(children) < 2L) {
+      problems <- c(problems,
+                    "A composition needs at least two charts from the gallery.")
+    }
   }
 
   problems
@@ -304,36 +335,28 @@ chart_label_commands <- function(spec) {
 
 #' Complete command of a specification
 #'
-#' With the default theme and empty labels this is exactly the command of the
-#' equivalent dialog.  Palette, device settings and labels are emitted only
-#' when the user changes them.
+#' Types that need their own code generator (ggstatsplot and compositions)
+#' carry a `code` function in the registry; every other type is a ggplot2
+#' object wrapped in `print()`.
 #' @keywords internal
 chart_spec_command <- function(spec) {
-  if (identical(chart_spec_engine(spec), "ggplot2")) {
-    return(chart_ggplot_command(spec))
+  info <- chart_type(spec$type)
+  generator <- if (is.list(info)) info$code else NULL
+  if (is.function(generator)) {
+    return(generator(spec))
   }
-  if (!chart_type_available(spec$type, "base")) {
-    stop("This chart type is only available with the ggplot2 engine.",
-         call. = FALSE)
-  }
-  paste(
-    c(chart_theme_prefix(spec), chart_spec_plot_command(spec),
-      chart_label_commands(spec)),
-    collapse = "\n"
-  )
+  chart_ggplot_command(spec)
 }
 
 #' Interactive plot expression of a specification
+#'
+#' Compositions and statistical charts are not converted to plotly: the first
+#' is a patchwork assembly, the second is rendered by ggstatsplot itself.
 #' @keywords internal
 chart_spec_interactive <- function(spec) {
-  if (identical(chart_spec_engine(spec), "ggplot2")) {
-    code <- tryCatch(chart_ggplot_interactive(spec),
-                     error = function(e) NULL)
-    return(if (is.null(code) || !nzchar(code)) NULL else code)
-  }
-  info <- chart_type(spec$type)
-  if (is.null(info) || is.null(info$interactive)) return(NULL)
-  code <- tryCatch(info$interactive(spec), error = function(e) NULL)
+  if (identical(spec$type, "compose")) return(NULL)
+  if (chart_stat_type(spec$type)) return(NULL)
+  code <- tryCatch(chart_ggplot_interactive(spec), error = function(e) NULL)
   if (is.null(code) || !nzchar(code)) NULL else code
 }
 
@@ -394,7 +417,11 @@ chart_spec_title <- function(spec) {
                          paste(y, collapse = ", ")),
     heatmap = sprintf(tr("Heatmap of %s"),
                       paste(mapping$fill %||% "", collapse = ", ")),
-    tr("Chart")
+    compose = chart_compose_title(spec),
+    NULL
   )
+  if (is.null(title) || length(title) == 0L) {
+    title <- (chart_type(spec$type) %||% list())$label %||% tr("Chart")
+  }
   as.character(title)[[1L]]
 }

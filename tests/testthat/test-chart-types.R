@@ -7,7 +7,9 @@ test_that("every chart type has the metadata the builder needs", {
     info <- types[[id]]
     expect_true(nzchar(info$label))
     expect_true(is.list(info$mapping))
-    expect_true(length(info$mapping) > 0L)
+    if (!identical(id, "compose")) {
+      expect_true(length(info$mapping) > 0L, info = id)
+    }
     if ("base" %in% chart_type_engines(info)) {
       expect_true(is.function(info$command), info = id)
       expect_true(nzchar(info$dialog), info = id)
@@ -16,7 +18,8 @@ test_that("every chart type has the metadata the builder needs", {
     for (slot in names(info$mapping)) {
       rule <- info$mapping[[slot]]
       expect_true(nzchar(rule$label))
-      expect_true(rule$kind %in% c("numeric", "factor", "any"))
+      expect_true(rule$kind %in% c("numeric", "factor", "any", "model"),
+                  info = id)
     }
   }
 })
@@ -43,22 +46,19 @@ test_that("each type produces a command and a valid spec", {
   }
 })
 
-test_that("interactive expressions are available for the plotly types", {
+test_that("interactive expressions are built from the ggplot2 object", {
   state <- chart_test_state()
-  supported <- c("histogram", "boxplot", "scatter", "line")
-  for (id in chart_type_ids()) {
-    info <- chart_type(id)
-    if (id %in% supported) {
-      expect_true(is.function(info$interactive), info = id)
-    }
+  scatter <- chart_spec("scatter", "D", list(x = "x", y = "y"))
+  code <- chart_spec_interactive(scatter)
+  if (is.null(code)) {
+    # plotly cannot convert this ggplot2 version: the Studio hides the widget.
+    expect_false(ggplotly_available())
+  } else {
+    expect_match(code, "plotly::ggplotly\\(", perl = TRUE)
   }
 
-  scatter <- chart_spec("scatter", "D", list(x = "x", y = "y"))
-  expect_match(chart_spec_interactive(scatter), "plotly::plot_ly")
-  expect_match(chart_spec_interactive(scatter), "event_register\\(\"plotly_selected\"\\)")
-
-  histogram <- chart_spec("histogram", "D", list(x = "y"))
-  expect_match(chart_spec_interactive(histogram), "type = \"histogram\"")
+  composed <- chart_spec("compose", "D")
+  expect_null(chart_spec_interactive(composed))
 })
 
 test_that("mapping choices follow the declared kind", {
@@ -91,7 +91,10 @@ test_that("mapping controls render selectors for every required slot", {
 
 test_that("type choices are labelled and stable", {
   choices <- chart_type_choices()
-  expect_equal(unname(choices), chart_type_ids())
+  # Types whose optional extension is missing are hidden from the selector.
+  available <- chart_type_ids()[vapply(chart_type_ids(), chart_type_available,
+                                       logical(1))]
+  expect_setequal(unname(choices), available)
   expect_true(all(nzchar(names(choices))))
   expect_equal(chart_type("histogram")$label, "Histogram")
   expect_null(chart_type("unknown"))

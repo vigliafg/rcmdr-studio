@@ -463,14 +463,6 @@ chart_apply <- function(state, spec, source = "chart") {
 
 # UI -------------------------------------------------------------------------
 
-chart_engine_choices <- function() {
-  choices <- c("Base R" = "base")
-  if (requireNamespace("ggplot2", quietly = TRUE)) {
-    choices <- c(choices, "ggplot2" = "ggplot2")
-  }
-  choices
-}
-
 #' Chart Studio toolbar and mode switch
 #' @keywords internal
 chart_studio_ui <- function() {
@@ -482,8 +474,8 @@ chart_studio_ui <- function() {
         radioButtons(
           "chart_mode", NULL,
           choices = stats::setNames(
-            c("build", "gallery"),
-            c(tr("Build"), tr("Gallery"))
+            c("build", "models", "gallery"),
+            c(tr("Build"), tr("Models"), tr("Gallery"))
           ),
           selected = "build", inline = TRUE
         ),
@@ -496,6 +488,10 @@ chart_studio_ui <- function() {
     conditionalPanel(
       "input.chart_mode === 'build' || input.chart_mode === null",
       chart_builder_ui()
+    ),
+    conditionalPanel(
+      "input.chart_mode === 'models'",
+      chart_models_ui()
     ),
     conditionalPanel(
       "input.chart_mode === 'gallery'",
@@ -523,13 +519,14 @@ chart_builder_ui <- function() {
         htmltools::tags$h6(tr("Chart")),
         selectInput(
           "chart_type", tr("Chart type"),
-          choices = chart_type_choices("base"), selected = "histogram",
+          choices = chart_type_choices_by_analysis(), selected = "histogram",
           width = "100%"
         ),
         uiOutput("chart_dataset_ui"),
         uiOutput("chart_mapping_ui"),
+        uiOutput("chart_compose_ui"),
         help_text(tr(
-          "The mapping fields change with the chart type. The Advanced button opens the full Rcmdr dialog."
+          "The mapping fields change with the chart type. The last button opens the matching classic Rcmdr dialog."
         ))
       ),
       htmltools::div(
@@ -542,11 +539,6 @@ chart_builder_ui <- function() {
         htmltools::tags$h6(tr("Theme and labels")),
         htmltools::div(
           class = "row g-2",
-          htmltools::div(
-            class = "col-sm-6",
-            selectInput("chart_engine", tr("Engine"),
-                        choices = chart_engine_choices(), selected = "base")
-          ),
           htmltools::div(
             class = "col-sm-6",
             selectInput("chart_palette", tr("Palette"),
@@ -580,24 +572,18 @@ chart_builder_ui <- function() {
             checkboxInput("chart_grid", tr("Grid"), value = TRUE)
           )
         ),
-        conditionalPanel(
-          "input.chart_engine === 'ggplot2'",
-          htmltools::tags$hr(),
-          htmltools::tags$h6(tr("ggplot2 options")),
+        htmltools::tags$hr(),
+        htmltools::tags$h6(tr("ggplot2 options")),
+        htmltools::div(
+          class = "row g-2",
           htmltools::div(
-            class = "row g-2",
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_theme", tr("ggplot2 theme"),
-                choices = stats::setNames(
-                  c("minimal", "bw", "classic", "light", "dark", "void"),
-                  c("Minimal", "Black and white", "Classic", "Light",
-                    "Dark", "Void")
-                ),
-                selected = "minimal"
-              )
-            ),
+            class = "col-sm-6",
+            selectInput(
+              "chart_gg_theme", tr("ggplot2 theme"),
+              choices = chart_gg_theme_choices(),
+              selected = "minimal"
+            )
+          ),
             htmltools::div(
               class = "col-sm-6",
               selectInput(
@@ -671,9 +657,34 @@ chart_builder_ui <- function() {
             htmltools::div(
               class = "col-sm-6",
               textInput("chart_gg_tag", tr("Tag"), "")
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_x_format", tr("X axis format"),
+                choices = chart_axis_format_choices(), selected = "auto"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_y_format", tr("Y axis format"),
+                choices = chart_axis_format_choices(), selected = "auto"
+              )
+            ),
+            htmltools::div(
+              class = "col-sm-6 d-flex align-items-end",
+              checkboxInput("chart_gg_polar", tr("Polar coordinates"), FALSE)
+            ),
+            htmltools::div(
+              class = "col-sm-6",
+              selectInput(
+                "chart_gg_polar_theta", tr("Polar angle"),
+                choices = stats::setNames(c("x", "y"), c("X", "Y")),
+                selected = "x"
+              )
             )
-          )
-        ),
+          ),
         htmltools::tags$hr(),
         textInput("chart_title", tr("Title"), ""),
         htmltools::div(
@@ -695,7 +706,7 @@ chart_builder_ui <- function() {
         ),
         if (!requireNamespace("ggplot2", quietly = TRUE)) {
           help_text(tr(
-            "Install ggplot2 to enable the optional ggplot2 engine."
+            "Install ggplot2 to enable the Chart Studio."
           ))
         }
       )
@@ -722,7 +733,8 @@ chart_builder_ui <- function() {
                      class = "btn-sm btn-success"),
         actionButton("chart_reset", tr("Reset"),
                      class = "btn-sm btn-outline-secondary"),
-        actionButton("chart_advanced", tr("Advanced..."),
+        actionButton("chart_advanced",
+                     tr("Open in the classic dialog (base R code)"),
                      class = "btn-sm btn-outline-primary")
       )
     )
@@ -738,12 +750,20 @@ chart_gallery_ui <- function() {
       htmltools::div(
         class = "row g-2 align-items-end",
         htmltools::div(
-          class = "col-md-4",
+          class = "col-md-3",
           textInput("chart_gallery_query", NULL,
                     placeholder = tr("Search charts..."))
         ),
         htmltools::div(
-          class = "col-md-3",
+          class = "col-md-2",
+          selectInput(
+            "chart_gallery_analysis", NULL,
+            choices = c(stats::setNames("all", tr("All analyses")),
+                        chart_analysis_levels())
+          )
+        ),
+        htmltools::div(
+          class = "col-md-2",
           selectInput(
             "chart_gallery_type", NULL,
             choices = c(stats::setNames("all", tr("All types")),
@@ -841,6 +861,97 @@ chart_gallery_ui_cards <- function(table) {
             chart_action_link(tr("Reopen"), row$index, "reopen",
                               "btn btn-sm btn-outline-secondary"),
             chart_copy_link(plot)
+          )
+        )
+      )
+    })
+  )
+}
+
+#' Models gallery
+#' @keywords internal
+chart_models_ui <- function() {
+  htmltools::tagList(
+    htmltools::div(
+      class = "rcmdr-toolbar rcmdr-chart-gallery-toolbar",
+      htmltools::div(
+        class = "row g-2 align-items-end",
+        htmltools::div(
+          class = "col-md-3",
+          selectInput(
+            "chart_models_analysis", NULL,
+            choices = c(stats::setNames("all", tr("All analyses")),
+                        chart_analysis_levels())
+          )
+        ),
+        htmltools::div(
+          class = "col-md-3",
+          selectInput(
+            "chart_models_type", NULL,
+            choices = c(stats::setNames("all", tr("All types")),
+                        chart_type_choices())
+          )
+        ),
+        htmltools::div(
+          class = "col-md-4",
+          textInput("chart_models_query", NULL,
+                    placeholder = tr("Search models..."))
+        ),
+        htmltools::div(
+          class = "col-md-2",
+          help_text(tr("Open a model, then pick the variables."))
+        )
+      )
+    ),
+    uiOutput("chart_models_grid")
+  )
+}
+
+chart_model_action_link <- function(id, label) {
+  htmltools::tags$a(
+    href = "#", class = "btn btn-sm btn-outline-primary",
+    onclick = sprintf(
+      "Shiny.setInputValue('chart_model_action', {id: '%s'}, {priority: 'event'}); return false;",
+      id
+    ),
+    label
+  )
+}
+
+#' Model cards
+#' @keywords internal
+chart_models_cards <- function(table) {
+  if (is.null(table) || nrow(table) == 0L) {
+    return(empty_state(
+      tr("No models match the filters"),
+      tr("Clear the search or choose another analysis family.")
+    ))
+  }
+  htmltools::div(
+    class = "rcmdr-chart-grid",
+    lapply(seq_len(nrow(table)), function(i) {
+      row <- table[i, , drop = FALSE]
+      htmltools::div(
+        class = paste("rcmdr-chart-card", if (!row$installed) "disabled"),
+        htmltools::div(
+          class = "rcmdr-chart-card-body",
+          htmltools::tags$h6(row$label),
+          htmltools::tags$p(
+            class = "small text-muted mb-1",
+            sprintf("%s - %s", chart_analysis_label(row$analysis),
+                    row$type_label)
+          ),
+          htmltools::tags$p(class = "small mb-2", row$description),
+          htmltools::div(
+            class = "d-flex gap-1 flex-wrap align-items-center",
+            if (isTRUE(row$installed)) {
+              chart_model_action_link(row$id, tr("Open"))
+            } else {
+              htmltools::span(
+                class = "badge bg-secondary",
+                sprintf(tr("%s missing"), row$requires)
+              )
+            }
           )
         )
       )
@@ -1081,8 +1192,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     type <- input$chart_type %||% "histogram"
     info <- chart_type(type)
     if (is.null(info)) return(NULL)
-    engine <- input$chart_engine %||% "base"
-    slots <- chart_mapping_slots(info, engine, type)
+    slots <- chart_mapping_slots(info, "ggplot2", type)
 
     dataset <- input$chart_dataset %||% active_dataset(state)
     mapping <- lapply(names(slots), function(slot) {
@@ -1098,20 +1208,36 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     })
     names(options) <- option_names
     options <- Filter(Negate(is.null), options)
-    if (identical(engine, "ggplot2")) {
-      gg <- list(
-        alpha = input$chart_gg_alpha %||% 0.7,
-        position = input$chart_gg_position %||% "identity",
-        binwidth = input$chart_gg_binwidth %||% 0,
-        smooth_method = input$chart_gg_smooth %||% "lm",
-        smooth_se = isTRUE(input$chart_gg_se),
-        jitter = input$chart_gg_jitter %||% 0,
-        flip = isTRUE(input$chart_gg_flip),
-        facet_scales = input$chart_gg_facet_scales %||% "fixed",
-        facet_ncol = input$chart_gg_facet_ncol %||% 0,
-        shape = input$chart_gg_shape %||% 19
-      )
-      options <- utils::modifyList(options, gg)
+    gg <- list(
+      alpha = input$chart_gg_alpha %||% 0.7,
+      position = input$chart_gg_position %||% "identity",
+      binwidth = input$chart_gg_binwidth %||% 0,
+      smooth_method = input$chart_gg_smooth %||% "lm",
+      smooth_se = isTRUE(input$chart_gg_se),
+      jitter = input$chart_gg_jitter %||% 0,
+      flip = isTRUE(input$chart_gg_flip),
+      facet_scales = input$chart_gg_facet_scales %||% "fixed",
+      facet_ncol = input$chart_gg_facet_ncol %||% 0,
+      shape = input$chart_gg_shape %||% 19,
+      x_format = input$chart_gg_x_format %||% "auto",
+      y_format = input$chart_gg_y_format %||% "auto",
+      polar = isTRUE(input$chart_gg_polar),
+      polar_theta = input$chart_gg_polar_theta %||% "x"
+    )
+    options <- utils::modifyList(options, gg)
+
+    if (identical(type, "compose")) {
+      plots <- state$plots %||% list()
+      indices <- suppressWarnings(as.integer(input$chart_compose_plots %||%
+                                              integer()))
+      indices <- indices[!is.na(indices) & indices >= 1L &
+                           indices <= length(plots)]
+      children <- lapply(plots[indices], function(plot) plot$spec)
+      children <- Filter(function(child) {
+        is.list(child) && !identical(child$type %||% "", "compose")
+      }, children)
+      options$children <- unname(children)
+      mapping <- list()
     }
 
     labels <- list(
@@ -1123,7 +1249,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       tag = input$chart_gg_tag %||% ""
     )
     theme <- list(
-      engine = engine,
+      engine = "ggplot2",
       palette = input$chart_palette %||% "default",
       base_size = as.numeric(input$chart_base_size %||% 12),
       grid = isTRUE(input$chart_grid %||% TRUE),
@@ -1150,18 +1276,6 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     chart_spec_from_inputs()
   })
 
-  observeEvent(input$chart_engine, {
-    engine <- input$chart_engine %||% "base"
-    choices <- chart_type_choices(engine)
-    current <- isolate(input$chart_type %||% "histogram")
-    selected <- if (current %in% unname(choices)) {
-      current
-    } else {
-      unname(choices)[[1L]]
-    }
-    updateSelectInput(session, "chart_type", choices = choices,
-                      selected = selected)
-  }, ignoreInit = TRUE)
 
   output$chart_dataset_ui <- renderUI({
     chart_revision()
@@ -1188,26 +1302,106 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     type <- input$chart_type %||% "histogram"
     info <- chart_type(type)
     if (is.null(info)) return(NULL)
-    engine <- input$chart_engine %||% "base"
-    slots <- chart_mapping_slots(info, engine, type)
+    slots <- chart_mapping_slots(info, "ggplot2", type)
     dataset <- input$chart_dataset %||% active_dataset(state)
     mapping <- lapply(names(slots), function(slot) {
       input[[paste0("chart_map_", slot)]]
     })
     names(mapping) <- names(slots)
-    chart_spec(type = type, dataset = dataset, mapping = mapping,
-               engine = engine)
+    chart_spec(type = type, dataset = dataset, mapping = mapping)
   }
 
   output$chart_mapping_ui <- renderUI({
     input$chart_type
     input$chart_dataset
-    input$chart_engine
     chart_revision()
     spec <- chart_mapping_spec()
     if (is.null(spec)) return(NULL)
     chart_mapping_controls(state, spec, chart_env$pending)
   })
+
+  output$chart_compose_ui <- renderUI({
+    if (!identical(input$chart_type, "compose")) return(NULL)
+    chart_revision()
+    app_tick()
+    plots <- state$plots %||% list()
+    if (length(plots) < 2L) {
+      return(help_text(tr(
+        "Apply at least two charts first: the composition combines gallery charts."
+      )))
+    }
+    titles <- vapply(seq_along(plots), function(i) {
+      sprintf("%d. %s", i, plot_title(plots[[i]]))
+    }, character(1))
+    selected <- chart_env$compose_selection %||%
+      as.character(seq_len(min(2L, length(plots))))
+    selected <- as.character(selected)
+    selected <- selected[selected %in% as.character(seq_along(plots))]
+    checkboxGroupInput(
+      "chart_compose_plots", tr("Charts to combine"),
+      choiceNames = titles,
+      choiceValues = as.character(seq_along(plots)),
+      selected = selected, width = "100%"
+    )
+  })
+
+  observeEvent(input$chart_compose_plots, {
+    chart_env$compose_selection <- input$chart_compose_plots
+  }, ignoreInit = TRUE)
+
+  output$chart_models_grid <- renderUI({
+    table <- chart_model_table(
+      analysis = input$chart_models_analysis %||% "all",
+      type = input$chart_models_type %||% "all",
+      query = input$chart_models_query %||% ""
+    )
+    chart_models_cards(table)
+  })
+
+  observeEvent(input$chart_model_action, {
+    id <- input$chart_model_action$id %||% ""
+    model <- chart_model(id)
+    if (is.null(model)) return()
+    if (!chart_ext_available(model$requires)) {
+      showNotification(
+        sprintf(
+          tr("This model needs the %s package. %s"),
+          paste(model$requires, collapse = ", "),
+          chart_ext_hint(model$requires)
+        ),
+        type = "message", duration = 10
+      )
+      return()
+    }
+    chart_env$pending <- chart_model_spec(model,
+                                          input$chart_dataset %||%
+                                            active_dataset(state))
+    updateRadioButtons(session, "chart_mode", selected = "build")
+    updateSelectInput(session, "chart_type",
+                      choices = chart_type_choices_by_analysis(),
+                      selected = model$type)
+    theme <- model$theme %||% list()
+    if (!is.null(theme$ggplot_theme)) {
+      updateSelectInput(session, "chart_gg_theme",
+                        choices = chart_gg_theme_choices(),
+                        selected = theme$ggplot_theme)
+    }
+    for (name in names(model$options %||% list())) {
+      input_id <- chart_option_input_id(name)
+      value <- model$options[[name]]
+      if (is.logical(value)) {
+        updateCheckboxInput(session, input_id, value = value)
+      } else if (is.numeric(value)) {
+        updateNumericInput(session, input_id, value = value)
+      } else {
+        updateSelectInput(session, input_id, selected = as.character(value))
+      }
+    }
+    chart_preview_cache_clear()
+    chart_revision(chart_revision() + 1L)
+    showNotification(sprintf(tr("Model loaded: %s"), model$label),
+                     type = "message", duration = 4)
+  }, ignoreInit = TRUE)
 
   chart_options_spec <- function() {
     type <- input$chart_type %||% "histogram"
@@ -1394,8 +1588,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     chart_build_selection(NULL)
     info <- chart_type(input$chart_type %||% "histogram")
     if (!is.null(info)) {
-      engine <- input$chart_engine %||% "base"
-      slots <- chart_mapping_slots(info, engine, input$chart_type %||% "histogram")
+      slots <- chart_mapping_slots(info, "ggplot2",
+                                   input$chart_type %||% "histogram")
       for (slot in names(slots)) {
         rule <- slots[[slot]]
         choices <- chart_mapping_choices(state, rule)
@@ -1422,7 +1616,6 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
         }
       }
     }
-    updateSelectInput(session, "chart_engine", selected = "base")
     updateSelectInput(session, "chart_palette", selected = "default")
     updateNumericInput(session, "chart_base_size", value = 12)
     updateCheckboxInput(session, "chart_grid", value = TRUE)
@@ -1432,7 +1625,12 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     updateTextInput(session, "chart_xlab", value = "")
     updateTextInput(session, "chart_ylab", value = "")
     updateTextInput(session, "chart_caption", value = "")
-    updateSelectInput(session, "chart_gg_theme", selected = "minimal")
+    updateSelectInput(session, "chart_gg_theme",
+                      choices = chart_gg_theme_choices(), selected = "minimal")
+    updateSelectInput(session, "chart_gg_x_format", selected = "auto")
+    updateSelectInput(session, "chart_gg_y_format", selected = "auto")
+    updateCheckboxInput(session, "chart_gg_polar", value = FALSE)
+    updateSelectInput(session, "chart_gg_polar_theta", selected = "x")
     updateSelectInput(session, "chart_gg_position", selected = "identity")
     updateSelectInput(session, "chart_gg_smooth", selected = "lm")
     updateSelectInput(session, "chart_gg_facet_scales", selected = "fixed")
@@ -1462,6 +1660,13 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       type = input$chart_gallery_type %||% "all",
       pinned = isTRUE(input$chart_gallery_pinned)
     )
+    analysis <- input$chart_gallery_analysis %||% "all"
+    if (nrow(table) > 0L && !identical(analysis, "all")) {
+      keep <- vapply(table$type, function(type) {
+        identical(chart_type_analysis(chart_type(type)), analysis)
+      }, logical(1))
+      table <- table[keep %in% TRUE, , drop = FALSE]
+    }
     chart_gallery_ui_cards(table)
   })
 
@@ -1560,13 +1765,9 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       chart_env$pending <- spec
       updateRadioButtons(session, "chart_mode", selected = "build")
       updateSelectInput(session, "chart_type",
-                        choices = chart_type_choices(
-                          spec$theme$engine %||% "base"
-                        ),
+                        choices = chart_type_choices_by_analysis(),
                         selected = spec$type)
       updateSelectInput(session, "chart_dataset", selected = spec$dataset)
-      updateSelectInput(session, "chart_engine",
-                        selected = spec$theme$engine %||% "base")
       updateSelectInput(session, "chart_palette",
                         selected = spec$theme$palette %||% "default")
       updateNumericInput(session, "chart_base_size",
@@ -1596,7 +1797,16 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       updateTextInput(session, "chart_gg_tag",
                       value = spec$labels$tag %||% "")
       updateSelectInput(session, "chart_gg_theme",
+                        choices = chart_gg_theme_choices(),
                         selected = spec$theme$ggplot_theme %||% "minimal")
+      updateSelectInput(session, "chart_gg_x_format",
+                        selected = spec$options$x_format %||% "auto")
+      updateSelectInput(session, "chart_gg_y_format",
+                        selected = spec$options$y_format %||% "auto")
+      updateCheckboxInput(session, "chart_gg_polar",
+                         value = isTRUE(spec$options$polar))
+      updateSelectInput(session, "chart_gg_polar_theta",
+                        selected = spec$options$polar_theta %||% "x")
       updateSelectInput(session, "chart_gg_position",
                         selected = spec$options$position %||% "identity")
       updateSelectInput(session, "chart_gg_smooth",

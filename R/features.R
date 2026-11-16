@@ -71,18 +71,63 @@ set_ui_mode <- function(state, mode = c("studio", "classic")) {
   invisible(mode)
 }
 
+#' Supported visual themes
+#'
+#' `system` follows the operating-system appearance.  The light and the dark
+#' families each ship three palettes, plus the high-contrast theme.
+#'
+#' @return A character vector of theme identifiers.
+#' @keywords internal
+ui_themes <- function() {
+  c(
+    "system",
+    "light", "light-warm", "light-cool",
+    "dark", "dark-dim", "dark-graphite",
+    "contrast"
+  )
+}
+
+#' Theme selector choices, grouped by family
+#'
+#' @return A named list suitable for [shiny::selectInput()].
+#' @keywords internal
+theme_choices <- function() {
+  stats::setNames(
+    list(
+      stats::setNames(
+        c("light", "light-warm", "light-cool"),
+        c(tr("Light neutral"), tr("Light warm"), tr("Light cool"))
+      ),
+      stats::setNames(
+        c("dark", "dark-dim", "dark-graphite"),
+        c(tr("Dark midnight"), tr("Dark dim"), tr("Dark graphite"))
+      ),
+      stats::setNames(
+        c("system", "contrast"),
+        c(tr("Follow system"), tr("High contrast"))
+      )
+    ),
+    c(tr("Light"), tr("Dark"), tr("Other"))
+  )
+}
+
 #' Current visual theme
-#' @return `"system"`, `"light"`, `"dark"` or `"contrast"`.
+#' @return One of [ui_themes()].
 #' @keywords internal
 ui_theme <- function(state) {
   theme <- state$options$theme %||% "system"
-  if (!theme %in% c("system", "light", "dark", "contrast")) "system" else theme
+  if (is.character(theme) && length(theme) == 1L && theme %in% ui_themes()) {
+    theme
+  } else {
+    "system"
+  }
 }
 
 #' Set visual theme
 #' @keywords internal
-set_ui_theme <- function(state, theme = c("system", "light", "dark", "contrast")) {
-  theme <- match.arg(theme)
+set_ui_theme <- function(state, theme = "system") {
+  theme <- as.character(theme %||% "system")[[1L]]
+  if (!theme %in% ui_themes()) theme <- "system"
   state$options$theme <- theme
   state_touch(state)
   invisible(theme)

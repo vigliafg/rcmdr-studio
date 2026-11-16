@@ -1,3 +1,47 @@
+# RcmdrShiny Studio 2.8.0
+
+## Chart Studio — one engine and four extensions
+
+- The **base R engine is gone from the Chart Studio**: every chart is a ggplot2
+  object. `chart_spec_engine()` normalises legacy `engine = "base"`
+  specifications, and the Engine selector disappeared from the builder. The
+  classic Graphs dialogs are untouched and keep emitting base R code; the
+  builder button is now labelled *Open in the classic dialog (base R code)*.
+- **patchwork**: new `compose` chart type that assembles two or more gallery
+  charts with layout presets (side by side, stacked, 2x2, top + two below,
+  automatic wrap), collected legends and panel tags.
+- **ggstatsplot**: nine statistical types (`stat_compare`, `stat_within`,
+  `stat_hist`, `stat_dot`, `stat_scatter`, `stat_corrmat`, `stat_pie`,
+  `stat_bar`, `stat_coef`) that print the test result in the subtitle.
+  `stat_coef` graphs a model already estimated in the session. The types are
+  hidden when the package is missing; the Bayesian approach warns about
+  `BayesFactor`.
+- **hrbrthemes**: six editorial themes in the theme selector and axis formats
+  (percent, thousands separator), with an automatic fallback to the system sans
+  when the expected font is not installed.
+- **Quarto**: the Report Studio can download the open document as `.qmd` with a
+  format preset (HTML, Word, PDF via typst, GitHub Markdown). *Render with
+  Quarto* appears only when the R package and the CLI answer. The chart
+  chunk helper writes `#| label: fig-...` and `#| fig-cap:` for cross
+  references.
+- **Models view**: a new tab next to Build and Gallery groups ready-made chart
+  recipes by analysis family and by chart type, with search, extension badges
+  and a direct *Open* that loads the type, theme and options in the builder.
+  The gallery gained an analysis filter.
+- **Dependencies**: `patchwork`, `ggstatsplot`, `hrbrthemes`, `systemfonts`
+  and `quarto` moved to `Imports`, so installing the package installs the whole
+  ecosystem. The runtime checks remain, and every chart still degrades
+  gracefully if a package is removed; only the Quarto CLI (a system tool, not
+  an R package) is still optional.
+- Options → *Optional extensions* reports what is installed, what is missing
+  and the exact `install.packages()` call.
+- The hrbrthemes entries in the theme selector sent their label instead of the
+  theme id, so choosing *Ipsum RC* silently produced `theme_minimal()`; the
+  selector now emits `theme_ipsum_rc` and friends.
+- `tests/testthat/test-chart-extensions-e2e.R` drives the new structure in a
+  real browser (ggstatsplot preview, axis formats, patchwork composition,
+  Models view, `.qmd` download).
+
 # RcmdrShiny Studio 2.7.0
 
 ## Dependencies — ggplot2 and plotly are now required

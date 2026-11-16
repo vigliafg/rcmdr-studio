@@ -36,27 +36,19 @@ test_that("the Chart Studio flow works in a browser", {
   )
   on.exit(app$stop(), add = TRUE)
 
-  app$wait_for_js(
-    "document.querySelectorAll('.rcmdr-menu-item').length > 0",
-    timeout = 60000
-  )
-
-  leaves <- RcmdrShiny::menu_leaves(RcmdrShiny::menu_tree())
-  key <- leaves$key[leaves$command == "selectActiveDataSet"][[1L]]
-  app$run_js(sprintf("document.getElementById('%s').click();", key))
-  app$wait_for_js(
-    "document.getElementById('selectActiveDataSet_dataset') !== null",
-    timeout = 60000
-  )
-  app$set_inputs(selectActiveDataSet_dataset = "Dataset", wait_ = FALSE)
-  app$click("dialog_ok")
-  app$wait_for_js("document.querySelector('.modal') === null",
+  app$wait_for_js("document.querySelectorAll('.nav-link').length > 0",
                   timeout = 60000)
-  app$wait_for_idle()
+  # The first-run tour is a modal backdrop: in a browser it would intercept
+  # every click on the page, so the test dismisses it up front.
+  app$run_js(
+    "localStorage.setItem('rcmdr-tour-dismissed','1'); document.querySelectorAll('.modal').forEach(function(m){ m.remove(); });"
+  )
 
   chart_studio_switch_tab(app, "Charts")
-  app$wait_for_js("document.getElementById('chart_type') !== null",
-                  timeout = 30000)
+  app$wait_for_js(
+    "document.getElementById('chart_type') !== null && document.getElementById('chart_dataset') !== null",
+    timeout = 30000
+  )
 
   # Build a histogram.
   app$set_inputs(
@@ -71,7 +63,8 @@ test_that("the Chart Studio flow works in a browser", {
     "document.querySelector('#chart_preview_image img') !== null",
     timeout = 30000
   )
-  expect_match(app$get_text("#chart_command_text"), "Hist\\(y")
+  expect_match(app$get_text("#chart_command_text"),
+               "ggplot2::ggplot(Dataset", fixed = TRUE)
   expect_match(app$get_text("#chart_preview_message"), "isolated")
 
   app$click("chart_apply")

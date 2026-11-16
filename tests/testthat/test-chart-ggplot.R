@@ -29,6 +29,8 @@ chart_gg_spec <- function(type, mapping = NULL, options = list(),
 
 test_that("all chart types produce a ggplot2 command", {
   for (type in chart_type_ids()) {
+    if (!chart_type_available(type, "ggplot2")) next
+    if (identical(type, "compose") || chart_stat_type(type)) next
     command <- chart_spec_command(chart_gg_spec(type))
     expect_match(command, "^print\\(ggplot2::ggplot\\(D", info = type)
     expect_match(command, "ggplot2::geom_|ggplot2::stat_", info = type)
@@ -42,6 +44,8 @@ test_that("all ggplot2 specs validate", {
   skip_if_not_installed("ggplot2")
   state <- chart_test_state()
   for (type in chart_type_ids()) {
+    if (!chart_type_available(type, "ggplot2")) next
+    if (identical(type, "compose") || chart_stat_type(type)) next
     problems <- chart_spec_validate(chart_gg_spec(type), state)
     expect_equal(problems, character(), info = type)
   }
@@ -112,11 +116,10 @@ test_that("multi-series lines get one layer and a named palette", {
   expect_match(command, "scale_colour_manual\\(values = c\\(y = ")
 })
 
-test_that("base engine commands are unchanged by the ggplot2 options", {
-  base <- chart_spec("histogram", "D", list(x = "y"))
-  command <- chart_spec_command(base)
-  expect_false(grepl("ggplot2::", command, fixed = TRUE))
-  expect_match(command, "Hist\\(y")
+test_that("legacy base-engine specs are normalised to ggplot2", {
+  legacy <- chart_spec("histogram", "D", list(x = "y"), engine = "base")
+  expect_equal(chart_spec_engine(legacy), "ggplot2")
+  expect_match(chart_spec_command(legacy), "ggplot2::ggplot", fixed = TRUE)
 })
 
 test_that("ggplot2 validation catches wrong extended mappings", {
@@ -138,6 +141,8 @@ test_that("every ggplot2 type previews without an error", {
   skip_if_not_installed("ggplot2")
   state <- chart_test_state()
   for (type in chart_type_ids()) {
+    if (!chart_type_available(type, "ggplot2")) next
+    if (identical(type, "compose") || chart_stat_type(type)) next
     preview <- chart_preview(state, chart_gg_spec(type), 400, 300)
     expect_identical(preview$type, "image", info = type)
     expect_null(preview$error, info = type)
@@ -307,10 +312,8 @@ test_that("ggplot-only types are gated to the ggplot2 engine", {
     expect_true(type %in% unname(chart_type_choices("ggplot2")), info = type)
   }
 
-  base_violin <- chart_spec("violin", "D", list(x = "y"))
-  expect_match(chart_spec_validate(base_violin, chart_test_state()),
-               "only available with the ggplot2 engine")
-  expect_error(chart_spec_command(base_violin), "only available")
+  violin <- chart_spec("violin", "D", list(x = "y"))
+  expect_length(chart_spec_validate(violin, chart_test_state()), 0L)
 })
 
 test_that("violin and ECDF map their statistical options", {

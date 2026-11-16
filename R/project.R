@@ -1393,7 +1393,7 @@ project_validate <- function(project, strict = TRUE) {
       }
       if (!is.null(options$theme) &&
           !(project_is_string(options$theme) &&
-            options$theme %in% c("system", "light", "dark", "contrast"))) {
+            options$theme %in% ui_themes())) {
         add_problem("'options$theme' is not a supported theme.")
       }
       if (!is.null(options$language)) {

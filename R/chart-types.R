@@ -12,7 +12,7 @@
 chart_type_ids <- function() {
   c("histogram", "density", "boxplot", "scatter", "line", "bar", "dot",
     "strip", "qq", "means", "xyplot", "violin", "ecdf", "density_2d",
-    "heatmap")
+    "heatmap", names(chart_compose_types()), chart_stat_type_ids())
 }
 
 #' Engines supported by a chart type
@@ -23,11 +23,17 @@ chart_type_engines <- function(info) {
   engines[nzchar(engines)]
 }
 
-#' Whether a chart type is available for an engine
+#' Whether a chart type is available
+#'
+#' A type is available when the engine supports it and the optional package it
+#' needs is installed.  Chart types that need an extension are therefore simply
+#' absent from the selectors instead of failing at render time.
 #' @keywords internal
-chart_type_available <- function(id, engine = "base") {
+chart_type_available <- function(id, engine = "ggplot2") {
   info <- chart_type(id)
-  !is.null(info) && engine %in% chart_type_engines(info)
+  if (is.null(info)) return(FALSE)
+  if (!is.null(engine) && !engine %in% chart_type_engines(info)) return(FALSE)
+  chart_ext_available(info$requires)
 }
 
 #' Chart type descriptor
@@ -41,9 +47,26 @@ chart_type <- function(type) {
 #' Registry of chart types
 #'
 #' The registry is rebuilt on demand so translated labels follow the current
-#' language and optional engines are discovered at runtime.
+#' language and optional extensions are discovered at runtime.
 #' @keywords internal
 chart_types_builtin <- function() {
+  core <- chart_types_core()
+  stat <- lapply(chart_stat_types(), function(info) {
+    info$engines <- "ggplot2"
+    info$code <- chart_stat_command
+    info
+  })
+  compose <- lapply(chart_compose_types(), function(info) {
+    info$engines <- "ggplot2"
+    info$code <- chart_compose_command
+    info
+  })
+  c(core, stat, compose)
+}
+
+#' Core chart types (built-in ggplot2 charts)
+#' @keywords internal
+chart_types_core <- function() {
   list(
     histogram = list(
       label = tr("Histogram"),
@@ -734,6 +757,7 @@ chart_mapping_choices <- function(state, rule) {
     kind,
     numeric = numeric_variables(state),
     factor = factor_variables(state),
+    model = list_all_models(state),
     any = variables(state),
     variables(state)
   )
@@ -756,6 +780,11 @@ chart_mapping_controls <- function(state, spec, pending = NULL) {
     rule <- slots[[slot]]
     choices <- chart_mapping_choices(state, rule)
     value <- values[[slot]]
+    if (identical(rule$kind, "model") && length(choices) == 0L) {
+      return(help_text(tr(
+        "Estimate a model first: statistical charts can graph a saved model."
+      )))
+    }
     if (isTRUE(rule$optional) && !isTRUE(rule$multiple)) {
       choices <- c(stats::setNames("", tr("<none>")),
                    stats::setNames(choices, choices))
@@ -787,12 +816,20 @@ chart_mapping_controls <- function(state, spec, pending = NULL) {
 }
 
 #' Available chart types by family
+#'
+#' @param engine Engine to filter by; `NULL` keeps every type.
+#' @param analysis Optional analysis family to filter by.
 #' @keywords internal
-chart_type_choices <- function(engine = NULL) {
+chart_type_choices <- function(engine = "ggplot2", analysis = NULL) {
   types <- chart_types()
-  if (!is.null(engine)) {
+  types <- types[vapply(types, function(info) {
+    chart_ext_available(info$requires) &&
+      (is.null(engine) || engine %in% chart_type_engines(info))
+  }, logical(1))]
+  if (!is.null(analysis) && nzchar(analysis) &&
+      !identical(analysis, "all")) {
     types <- types[vapply(types, function(info) {
-      engine %in% chart_type_engines(info)
+      identical(chart_type_analysis(info), analysis)
     }, logical(1))]
   }
   labels <- vapply(types, function(info) info$label, character(1))
@@ -807,5 +844,14 @@ chart_types <- function() {
   for (id in names(extras)) {
     if (!id %in% names(registry)) registry[[id]] <- extras[[id]]
   }
-  registry
+  # Every descriptor knows its identifier, so helpers can classify a type
+  # without walking the registry again.
+  stats::setNames(
+    lapply(names(registry), function(id) {
+      entry <- registry[[id]]
+      if (is.null(entry$id)) entry$id <- id
+      entry
+    }),
+    names(registry)
+  )
 }

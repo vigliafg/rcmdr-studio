@@ -31,7 +31,13 @@ chart_ggplot_slots <- function(type) {
 chart_mapping_slots <- function(info, engine = "base", type = NULL) {
   slots <- info$mapping %||% list()
   if (identical(engine, "ggplot2")) {
-    slots <- c(slots, chart_ggplot_slots(type %||% ""))
+    # A type may declare its own facet slot; the ggplot2 defaults only fill
+    # the gaps.
+    for (name in names(chart_ggplot_slots(type %||% ""))) {
+      if (is.null(slots[[name]])) {
+        slots[[name]] <- chart_ggplot_slots(type %||% "")[[name]]
+      }
+    }
   }
   slots
 }
@@ -49,7 +55,11 @@ chart_ggplot_option_defaults <- function() {
     flip = FALSE,
     facet_scales = "fixed",
     facet_ncol = 0,
-    shape = 19
+    shape = 19,
+    x_format = "auto",
+    y_format = "auto",
+    polar = FALSE,
+    polar_theta = "x"
   )
 }
 
@@ -58,12 +68,80 @@ chart_ggplot_theme_functions <- c(
   light = "theme_light", dark = "theme_dark", void = "theme_void"
 )
 
+# hrbrthemes expects specific families.  When the font is missing the theme
+# falls back to the system sans instead of failing at render time.
+chart_gg_theme_families <- c(
+  theme_ipsum = "Arial Narrow",
+  theme_ipsum_rc = "Roboto Condensed",
+  theme_ipsum_ps = "IBM Plex Sans",
+  theme_ipsum_pub = "Source Sans Pro",
+  theme_modern_rc = "Roboto Condensed",
+  theme_ft_rc = "Roboto Condensed"
+)
+
+#' Font family usable by the hrbrthemes themes
+#' @keywords internal
+chart_gg_family <- function(family) {
+  family <- family %||% ""
+  if (!nzchar(family)) return("")
+  if (!requireNamespace("systemfonts", quietly = TRUE)) return("")
+  match <- tryCatch(systemfonts::match_font(family), error = function(e) NULL)
+  if (is.null(match) || length(match$path) == 0L || is.na(match$path)) ""
+  else family
+}
+
+#' Editor themes from hrbrthemes, available only when installed
+#' @keywords internal
+chart_gg_ext_theme_labels <- function() {
+  # Choices are named by their label and carry the theme id as the value, so
+  # the selector sends "theme_ipsum_rc" and not its label.
+  stats::setNames(
+    names(chart_gg_theme_families),
+    c("Ipsum", "Ipsum RC", "Ipsum PS", "Ipsum Publication",
+      "Modern RC", "FT RC")
+  )
+}
+
+#' Choices for the ggplot2 theme selector
+#' @keywords internal
+chart_gg_theme_choices <- function() {
+  choices <- stats::setNames(
+    c("minimal", "bw", "classic", "light", "dark", "void"),
+    c("Minimal", "Black and white", "Classic", "Light", "Dark", "Void")
+  )
+  if (chart_ext_available("hrbrthemes")) {
+    choices <- c(choices, chart_gg_ext_theme_labels())
+  }
+  choices
+}
+
 #' ggplot2 theme function name
 #' @keywords internal
 chart_ggplot_theme_function <- function(theme) {
   name <- theme$ggplot_theme %||% "minimal"
+  if (name %in% names(chart_gg_theme_families)) {
+    return(unname(name))
+  }
   if (!name %in% names(chart_ggplot_theme_functions)) name <- "minimal"
   unname(chart_ggplot_theme_functions[[name]])
+}
+
+#' Code of a ggplot2 theme
+#' @keywords internal
+chart_gg_theme_code <- function(theme, base_size = 12) {
+  size <- format(base_size, digits = 3)
+  name <- theme$ggplot_theme %||% "minimal"
+  if (name %in% names(chart_gg_theme_families)) {
+    if (!chart_ext_available("hrbrthemes")) name <- "minimal"
+    else {
+      family <- chart_gg_family(chart_gg_theme_families[[name]])
+      return(sprintf("hrbrthemes::%s(base_size = %s, base_family = %s)",
+                     name, size, chart_quote(family)))
+    }
+  }
+  if (!name %in% names(chart_ggplot_theme_functions)) name <- "minimal"
+  sprintf("ggplot2::%s(base_size = %s)",
+          unname(chart_ggplot_theme_functions[[name]]), size)
 }
 
 chart_gg_optional <- function(value) {
@@ -84,6 +162,24 @@ chart_gg_aes <- function(items) {
   items <- items[!is.na(items) & nzchar(items)]
   if (length(items) == 0L) return("ggplot2::aes()")
   sprintf("ggplot2::aes(%s)", paste(items, collapse = ", "))
+}
+
+#' Choices for the axis format selectors
+#' @keywords internal
+chart_axis_format_choices <- function() {
+  stats::setNames(
+    c("auto", "percent", "comma"),
+    c(tr("Automatic"), tr("Percent"), tr("Thousands separator"))
+  )
+}
+
+#' Axis label formatter expression
+#' @keywords internal
+chart_gg_axis_format <- function(format) {
+  format <- format %||% "auto"
+  if (identical(format, "percent")) return("scales::percent")
+  if (identical(format, "comma")) return("scales::comma")
+  NULL
 }
 
 chart_gg_alpha <- function(options) {
@@ -149,9 +245,7 @@ chart_gg_theme <- function(spec) {
   options <- spec$options %||% list()
   base_size <- chart_gg_number(theme$base_size %||% 12, default = 12,
                                min = 6, max = 32)
-  code <- sprintf("ggplot2::%s(base_size = %s)",
-                  chart_ggplot_theme_function(theme),
-                  format(base_size, digits = 3))
+  code <- chart_gg_theme_code(theme, base_size)
   extra <- character()
   if (isFALSE(theme$grid %||% TRUE)) {
     extra <- c(extra, "panel.grid = ggplot2::element_blank()")
@@ -619,9 +713,31 @@ chart_ggplot_object <- function(spec) {
   if (grepl("y", log, fixed = TRUE)) {
     scales <- c(scales, "ggplot2::scale_y_log10()")
   }
+  if (!grepl("x", log, fixed = TRUE)) {
+    format <- chart_gg_axis_format(options$x_format)
+    if (!is.null(format)) {
+      scales <- c(scales, sprintf("ggplot2::scale_x_continuous(labels = %s)",
+                                  format))
+    }
+  }
+  if (!grepl("y", log, fixed = TRUE)) {
+    format <- chart_gg_axis_format(options$y_format)
+    if (!is.null(format)) {
+      scales <- c(scales, sprintf("ggplot2::scale_y_continuous(labels = %s)",
+                                  format))
+    }
+  }
   flip <- isTRUE(options$flip) ||
     (identical(type, "boxplot") && isTRUE(options$horizontal))
-  coord <- if (flip) "ggplot2::coord_flip()" else NULL
+  coord <- if (isTRUE(options$polar)) {
+    theta <- options$polar_theta %||% "x"
+    if (!theta %in% c("x", "y")) theta <- "x"
+    sprintf("ggplot2::coord_polar(theta = %s)", chart_quote(theta))
+  } else if (flip) {
+    "ggplot2::coord_flip()"
+  } else {
+    NULL
+  }
 
   pieces <- c(
     sprintf("ggplot2::ggplot(%s, %s)", dataset, chart_gg_aes(aes_items)),
@@ -676,3 +792,28 @@ chart_ggplot_interactive <- function(spec) {
 #' Types supported by the ggplot2 engine
 #' @keywords internal
 chart_ggplot_types <- function() chart_type_ids()
+
+#' Input id of a chart option
+#'
+#' The common ggplot2 options live in the theme panel and keep their historical
+#' ids; type-specific options are generated from the type descriptor.
+#' @keywords internal
+chart_option_input_id <- function(name) {
+  gg <- c(
+    alpha = "chart_gg_alpha",
+    position = "chart_gg_position",
+    binwidth = "chart_gg_binwidth",
+    smooth_method = "chart_gg_smooth",
+    smooth_se = "chart_gg_se",
+    jitter = "chart_gg_jitter",
+    flip = "chart_gg_flip",
+    facet_scales = "chart_gg_facet_scales",
+    facet_ncol = "chart_gg_facet_ncol",
+    shape = "chart_gg_shape",
+    x_format = "chart_gg_x_format",
+    y_format = "chart_gg_y_format",
+    polar = "chart_gg_polar",
+    polar_theta = "chart_gg_polar_theta"
+  )
+  gg[[name]] %||% paste0("chart_opt_", name)
+}

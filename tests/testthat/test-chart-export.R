@@ -30,6 +30,7 @@ test_that("PNG, PDF and SVG exports produce non-empty files", {
 test_that("HTML export is available for interactive plots", {
   skip_if_not_installed("plotly")
   skip_if_not_installed("htmlwidgets")
+  skip_if(!ggplotly_available(), "plotly cannot convert this ggplot2 version")
   state <- export_state()
   chart_apply(state, chart_spec("scatter", "D", list(x = "x", y = "y")))
   html <- tempfile(fileext = ".html")

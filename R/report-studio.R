@@ -458,6 +458,19 @@ report_studio_ui <- function() {
           ),
           actionButton("report_knit", tr("Knit"),
                        class = "btn-sm btn-primary")
+        ),
+        htmltools::div(
+          class = "d-flex gap-1 align-items-end",
+          selectInput("report_quarto_format", NULL,
+                      choices = quarto_formats(), width = "120px"),
+          downloadButton("report_download_qmd", tr("Quarto (.qmd)"),
+                         class = "btn-sm btn-outline-secondary"),
+          if (isTRUE(quarto_status()$ready)) {
+            actionButton("report_quarto_render", tr("Render with Quarto"),
+                         class = "btn-sm btn-outline-secondary")
+          } else {
+            NULL
+          }
         )
       ),
       uiOutput("report_status_ui")
@@ -1281,6 +1294,68 @@ report_studio_server <- function(input, output, session, state, refresh,
       writeLines(current_text(), file, useBytes = TRUE)
     }
   )
+
+  output$report_download_qmd <- downloadHandler(
+    filename = function() {
+      paste0("RcmdrShiny-report-", Sys.Date(), ".qmd")
+    },
+    content = function(file) {
+      writeLines(
+        quarto_document(
+          current_text(),
+          title = document_title(state) %||% "RcmdrShiny report",
+          format = input$report_quarto_format %||% "html"
+        ),
+        file, useBytes = TRUE
+      )
+    }
+  )
+
+  observeEvent(input$report_quarto_render, {
+    status <- quarto_status()
+    if (!isTRUE(status$ready)) {
+      showNotification(
+        tr("Quarto is not available. Install the quarto R package and the Quarto CLI."),
+        type = "error", duration = 8
+      )
+      return()
+    }
+    format <- input$report_quarto_format %||% "html"
+    path <- file.path(tempdir(), sprintf(
+      "RcmdrShiny-%s.qmd", format(Sys.time(), "%Y%m%d-%H%M%S")
+    ))
+    writeLines(
+      quarto_document(current_text(),
+                      title = document_title(state) %||% "RcmdrShiny report",
+                      format = format),
+      path, useBytes = TRUE
+    )
+    started <- Sys.time()
+    state$busy <- TRUE
+    result <- tryCatch(quarto_render(path, output_format = format),
+                       error = function(e) list(ok = FALSE,
+                                                error = conditionMessage(e)))
+    state$busy <- FALSE
+    elapsed <- as.numeric(difftime(Sys.time(), started, units = "secs")) * 1000
+    if (!isTRUE(result$ok)) {
+      state$knit_history <- c(list(list(
+        format = "quarto", status = "error", time = Sys.time(),
+        duration_ms = elapsed, error = result$error
+      )), state$knit_history %||% list())
+      showNotification(result$error, type = "error", duration = 10)
+    } else {
+      state$knit_result <- list(file = result$output, format = format)
+      state$knit_history <- c(list(list(
+        format = "quarto", status = "ok", time = Sys.time(),
+        duration_ms = elapsed, file = result$output, url = ""
+      )), state$knit_history %||% list())
+      showNotification(
+        sprintf(tr("Quarto document rendered: %s."), basename(result$output)),
+        type = "message", duration = 6
+      )
+    }
+    bump(global = TRUE)
+  }, ignoreInit = TRUE)
 
   # -- autosave and recovery ----------------------------------------------
 

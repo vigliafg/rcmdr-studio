@@ -9,94 +9,47 @@ test_that("chart specs have stable defaults", {
   expect_null(spec$mapping$group)
   expect_equal(spec$options$scale, "frequency")
   expect_equal(spec$options$breaks, "Sturges")
-  expect_equal(spec$theme$engine, "base")
+  expect_equal(spec$theme$engine, "ggplot2")
   expect_equal(spec$theme$palette, "default")
   expect_equal(spec$labels$title, "")
   expect_equal(spec$size$width, 800L)
   expect_error(chart_spec("unknown", "D"), "Unknown chart type")
 })
 
-test_that("the base command matches the equivalent dialog for every type", {
-  state <- chart_test_state()
-
-  expect_equal(
-    chart_spec_command(chart_spec("histogram", "D", list(x = "y"))),
-    cmd_histogram("D", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec(
-      "histogram", "D", list(x = "y", group = "g"),
-      options = list(scale = "density", breaks = "10")
-    )),
-    cmd_histogram("D", "y", "g", "density", "10")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("density", "D", list(x = "y"))),
-    cmd_density_plot("D", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec(
-      "boxplot", "D", list(x = "y", group = "g")
-    )),
-    cmd_boxplot("D", "y", response = "y", group = "g")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("scatter", "D", list(x = "x", y = "y"))),
-    cmd_scatterplot("D", "x", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec(
-      "scatter", "D", list(x = "x", y = "y", group = "g"),
-      options = list(smooth = TRUE, boxplots = TRUE, log = "xy")
-    )),
-    cmd_scatterplot("D", "x", "y", "g", TRUE, TRUE, "xy")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("line", "D", list(x = "x", y = c("y")))),
-    cmd_lineplot("D", "x", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("bar", "D", list(x = "g"))),
-    cmd_barplot("D", "g")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("dot", "D", list(x = "y"))),
-    cmd_dotplot("D", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("strip", "D", list(x = "y"))),
-    cmd_stripchart("D", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("qq", "D", list(x = "y"))),
-    cmd_qqplot("D", "y")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec(
-      "means", "D", list(x = "y", group = "g")
-    )),
-    cmd_plot_means("D", "y", "g")
-  )
-  expect_equal(
-    chart_spec_command(chart_spec("xyplot", "D", list(x = "x", y = "y"))),
-    cmd_xyplot("D", "x", "y")
-  )
+test_that("every chart type produces a ggplot2 command", {
+  types <- setdiff(chart_type_ids(), c(chart_stat_type_ids(), "compose"))
+  for (type in types) {
+    info <- chart_type(type)
+    mapping <- lapply(names(info$mapping %||% list()), function(slot) {
+      rule <- info$mapping[[slot]]
+      if (isTRUE(rule$optional)) return(NULL)
+      switch(rule$kind %||% "any", numeric = "y", factor = "g", "y")
+    })
+    names(mapping) <- names(info$mapping %||% list())
+    mapping <- Filter(Negate(is.null), mapping)
+    spec <- chart_spec(type, "D", mapping)
+    command <- chart_spec_command(spec)
+    expect_match(command, "^print\\(ggplot2::", info = type)
+  }
 })
 
-test_that("theme and labels are emitted only when changed", {
+test_that("theme and labels are emitted in the ggplot2 command", {
   spec <- chart_spec(
-    "histogram", "D", list(x = "y"),
+    "histogram", "D", list(x = "y", group = "g"),
     theme = list(palette = "colorblind", background = "#f5f5f5",
-                 base_size = 14),
+                 base_size = 14, ggplot_theme = "bw"),
     labels = list(title = "Distribution", x = "Value", y = "Count",
                   caption = "Session data")
   )
   command <- chart_spec_command(spec)
-  expect_match(command, "^palette\\(c\\(\"#0072B2\"", perl = TRUE)
-  expect_match(command, "par\\(bg = \"#f5f5f5\", cex = 1.17\\)")
-  expect_match(command, cmd_histogram("D", "y"), fixed = TRUE)
-  expect_match(command, 'title(main = "Distribution", xlab = "Value", ylab = "Count", sub = "Session data")',
+  expect_match(command, "ggplot2::theme_bw\\(base_size = 14\\)")
+  expect_match(command, "ggplot2::scale_fill_manual")
+  expect_match(command, "#0072B2", fixed = TRUE)
+  expect_match(command, "plot.background = ggplot2::element_rect",
                fixed = TRUE)
+  expect_match(command, 'title = "Distribution"', fixed = TRUE)
+  expect_match(command, 'x = "Value"', fixed = TRUE)
+  expect_match(command, 'caption = "Session data"', fixed = TRUE)
 })
 
 test_that("colour-blind and custom palettes are available", {
@@ -167,6 +120,9 @@ test_that("every chart type has a ggplot2 engine", {
   skip_if_not_installed("ggplot2")
   state <- chart_test_state()
   for (id in chart_type_ids()) {
+    if (!chart_type_available(id, "ggplot2")) next
+    # Compositions and statistical charts have their own generators.
+    if (identical(id, "compose") || chart_stat_type(id)) next
     info <- chart_type(id)
     mapping <- lapply(names(info$mapping), function(slot) {
       rule <- info$mapping[[slot]]

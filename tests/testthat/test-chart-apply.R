@@ -10,7 +10,7 @@ test_that("applying a chart logs the command and registers the plot", {
   expect_true(result$ok, info = result$error)
   expect_equal(result$index, 1L)
   expect_equal(length(state$plots), 1L)
-  expect_true(any(grepl("Hist(y", state$log, fixed = TRUE)))
+  expect_true(any(grepl("ggplot2::ggplot(D", state$log, fixed = TRUE)))
 
   plot <- state$plots[[1L]]
   expect_equal(plot$spec$type, "histogram")
@@ -58,14 +58,13 @@ test_that("applying the same chart twice creates two gallery entries", {
   expect_false(identical(state$plots[[1L]]$id, state$plots[[2L]]$id))
 })
 
-test_that("applied charts keep the exact dialog command in the log", {
+test_that("applied charts keep the generated ggplot2 command in the log", {
   state <- chart_test_state()
   spec <- chart_spec("boxplot", "D", list(x = "y", group = "g"),
                      labels = list(title = "By group"))
   result <- chart_apply(state, spec)
   expect_true(result$ok)
   log <- paste(state$log, collapse = "\n")
-  expect_match(log, cmd_boxplot("D", "y", response = "y", group = "g"),
-               fixed = TRUE)
-  expect_match(log, 'title(main = "By group")', fixed = TRUE)
+  expect_match(log, "ggplot2::geom_boxplot", fixed = TRUE)
+  expect_match(log, 'title = "By group"', fixed = TRUE)
 })

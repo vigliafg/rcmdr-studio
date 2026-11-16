@@ -11,7 +11,7 @@ test_that("a valid preview produces an isolated PNG", {
   expect_true(file.exists(result$file))
   expect_gt(file.info(result$file)$size, 0)
   expect_null(result$error)
-  expect_match(result$command, cmd_histogram("D", "y"), fixed = TRUE)
+  expect_match(result$command, "ggplot2::ggplot(D", fixed = TRUE)
 
   expect_equal(state$log, log_before)
   expect_equal(length(state$plots), plots_before)
@@ -52,8 +52,9 @@ test_that("the preview cache is bounded", {
   expect_lte(length(.chart_preview_cache$entries), 2L)
 })
 
-test_that("plotly previews are built when the engine supports them", {
+test_that("plotly previews are built when ggplotly can convert the object", {
   skip_if_not_installed("plotly")
+  skip_if(!ggplotly_available(), "plotly cannot convert this ggplot2 version")
   state <- chart_test_state()
   spec <- chart_spec("scatter", "D", list(x = "x", y = "y"))
   result <- chart_preview(state, spec, width = 320, height = 240)
@@ -64,8 +65,8 @@ test_that("plotly previews are built when the engine supports them", {
 
 test_that("themes are reflected in the preview command", {
   state <- chart_test_state()
-  spec <- chart_spec("histogram", "D", list(x = "y"),
+  spec <- chart_spec("histogram", "D", list(x = "y", group = "g"),
                      theme = list(palette = "tableau"))
   result <- chart_preview(state, spec, width = 320, height = 240)
-  expect_match(result$command, "^palette\\(c\\(\"#4E79A7\"")
+  expect_match(result$command, "scale_fill_manual")
 })

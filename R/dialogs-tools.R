@@ -34,10 +34,7 @@ options_dialog <- function() {
         ),
         selectInput(
           ns("theme"), tr("Theme"),
-          choices = stats::setNames(
-            c("system", "light", "dark", "contrast"),
-            c(tr("System"), tr("Light"), tr("Dark"), tr("High contrast"))
-          ),
+          choices = theme_choices(),
           selected = m$theme %||% "system",
           width = "100%"
         ),
@@ -76,7 +73,9 @@ options_dialog <- function() {
         ),
         help_text(tr(
           "The document commands are always available from the Script tab; these options keep the corresponding File and Edit entries visible after a restart."
-        ))
+        )),
+        htmltools::tags$hr(),
+        chart_ext_ui()
       )
     },
     on_ok = function(input, state) {

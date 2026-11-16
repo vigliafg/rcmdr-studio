@@ -47,10 +47,11 @@ test_that("the ggplot2 theme is encoded in the command", {
 
 test_that("the selected palette reaches the applied command", {
   state <- chart_test_state()
-  spec <- chart_spec("histogram", "D", list(x = "y"),
+  spec <- chart_spec("histogram", "D", list(x = "y", group = "g"),
                      theme = list(palette = "greys"))
   result <- chart_apply(state, spec)
   expect_true(result$ok)
   log <- paste(state$log, collapse = "\n")
-  expect_match(log, "^palette\\(c\\(\"#4D4D4D\"", perl = TRUE)
+  expect_match(log, "scale_fill_manual\\(values = c", perl = TRUE)
+  expect_match(log, "#4D4D4D", fixed = TRUE)
 })

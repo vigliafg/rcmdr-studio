@@ -96,8 +96,7 @@ preferences_load <- function(state, path = preferences_file(state)) {
     state$options$language <- i18n_normalize(language)
   }
   theme <- value$theme %||% NULL
-  if (is.character(theme) && length(theme) == 1L &&
-      theme %in% c("system", "light", "dark", "contrast")) {
+  if (is.character(theme) && length(theme) == 1L && theme %in% ui_themes()) {
     state$options$theme <- theme
   }
   invisible(TRUE)
