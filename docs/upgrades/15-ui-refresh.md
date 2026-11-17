@@ -148,7 +148,7 @@ codice.
 |---|---|---|
 | U0.1 | Estrarre il CSS nei file di `inst/www/css/`; `app_css()` diventa un compositore | `R/app.R`, `inst/www/css/*` |
 | U0.2 | Estrarre il JS nei file di `inst/www/js/`; `app_js()` diventa un compositore | `R/app.R`, `inst/www/js/*` |
-| U0.3 | `rcmdr_icon()` con il set Bootstrap Icons usato dalla UI (SVG inline) | `R/ui-components.R` |
+| U0.3 | `rcmdr_icon()` con un set stroke 24x24 proprio (SVG inline, stile Bootstrap Icons) | `R/ui-components.R` |
 | U0.4 | Documentare token e scala in `docs/upgrades/UI-TOKENS.md` | docs |
 
 **Accettazione:** applicazione visivamente identica a prima; `test-density`,

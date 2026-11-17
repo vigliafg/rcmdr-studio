@@ -424,9 +424,9 @@ Stato: pianificata.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| U0.1 | CSS in `inst/www/css/`, `app_css()` compositore | [ ] | nessun cambio visivo |
-| U0.2 | JS in `inst/www/js/`, `app_js()` compositore | [ ] | tema, densità, drag, palette |
-| U0.3 | `rcmdr_icon()` con SVG inline | [ ] | nessun nuovo `Imports` |
+| U0.1 | CSS in `inst/www/css/`, `app_css()` compositore | [x] | `658abf9`, testo identico |
+| U0.2 | JS in `inst/www/js/`, `app_js()` compositore | [x] | `40990e5`, testo identico |
+| U0.3 | `rcmdr_icon()` con SVG inline | [x] | `093df03`, 17 icone, test dedicati |
 | U0.4 | `docs/upgrades/UI-TOKENS.md` | [ ] | scala, colori, stati |
 | U1.1 | Scala tipografica, spaziature, raggi, ombre | [ ] | token, non valori hard-coded |
 | U1.2 | Controlli a altezza uniforme e focus unico | [ ] | 8 temi |
