@@ -35,7 +35,7 @@ token con un ruolo**, non scrivere un valore nel selettore.
 | File | Contenuto |
 |---|---|
 | `00-tokens.css` | palette (7 regole colore), scala tipografica, spaziature, raggi, ombre, focus |
-| `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`) |
+| `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-btn-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`) e i componenti `field`, switch, segmented |
 | `40-dialogs.css` | usa i token; nessuna definizione |
 | altri file | solo `var(--rcmdr-…)` |
 

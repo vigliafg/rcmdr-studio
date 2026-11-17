@@ -34,7 +34,7 @@ Al termine dell'onda:
 | Componenti | `R/ui-components.R` esiste ma è quasi inutilizzato: `section_card` 0 usi, `metric_card` 0, `split_view` 0, `empty_state` 18, `status_pill` 9 | La shell è costruita a mano con div e classi Bootstrap |
 | bslib | In `Imports`, **0 componenti** usati (`card`, `accordion`, `input_switch`, `navset`, `layout_columns`) | Bootstrap 5 usato come HTML grezzo |
 | Icone | 0 `icon()` / `bsicons` in tutta l'interfaccia | Azioni solo testuali, bottoni indistinguibili |
-| Input nativi | 72 `selectInput`, 39 `textInput`, 13 `numericInput`, 17 `checkboxInput` diretti, 144 `actionButton` | Selectize di default, checkbox quadrati, bottoni identici |
+| Input nativi | 72 `selectInput`, 39 `textInput`, 13 `numericInput`, 15 `checkboxInput` diretti, 144 `actionButton` | Selectize di default, checkbox quadrati, bottoni identici |
 | Dialoghi | 157 `dialog_spec()`, corpo reso in `.rcmdr-field-grid.rcmdr-dialog-grid` | Un solo wrapper, ma 1.053 righe di CSS non bastano a gerarchizzare |
 | Temi | 8 temi + 2 densità via classi su `body` e variabili CSS | Base solida: i token esistono già |
 | Test | 124 file; 15 e2e shinytest2 con ~100 selettori `.rcmdr-*` e 65 ID di input | Ogni rinomina è un test rotto: si aggiunge, non si rinomina |
