@@ -61,3 +61,13 @@ test_that("the checklist card shows completed and unavailable items", {
   expect_match(disabled, "unavailable")
   expect_false(grepl("home_check_project", disabled, fixed = TRUE))
 })
+
+test_that("the checklist card uses the card head and the note component", {
+  html <- as.character(onboarding_checklist_ui(AppState(new.env())))
+  expect_match(html, "rcmdr-card-head", fixed = TRUE)
+  expect_match(html, "rcmdr-badge", fixed = TRUE)
+  expect_match(html, "rcmdr-checklist-action", fixed = TRUE)
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  expect_false(grepl("ms-auto", html, fixed = TRUE))
+  expect_false(grepl("text-bg-", html, fixed = TRUE))
+})

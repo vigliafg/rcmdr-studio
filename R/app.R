@@ -225,8 +225,7 @@ home_pane_ui <- function() {
       htmltools::tags$p(tr(
         "A browser-native statistical workbench inspired by the R Commander. Every action still produces reproducible R code."
       )),
-      htmltools::div(
-        class = "d-flex gap-2 flex-wrap",
+      action_row(
         actionButton("home_import", tr("Import data"), class = "btn-light btn-sm"),
         actionButton("home_report", tr("New report"), class = "btn-light btn-sm"),
         actionButton("home_workflows", tr("Guided workflows"),
@@ -244,15 +243,14 @@ home_pane_ui <- function() {
       uiOutput("home_health"),
       htmltools::div(
         class = "rcmdr-home-card",
-        htmltools::tags$h5(tr("Keyboard")),
-        htmltools::tags$p(class = "small text-muted mb-1",
-                          tr("Ctrl+K opens the command palette.")),
-        htmltools::tags$p(class = "small text-muted mb-1",
-                          tr("Ctrl+Enter runs the selection or the current chunk.")),
-        htmltools::tags$p(class = "small text-muted mb-2",
-                          tr("Ctrl+S saves the current document.")),
-        actionButton("home_shortcuts", tr("All keyboard shortcuts"),
-                     class = "btn-sm btn-outline-secondary")
+        card_head(htmltools::tags$h5(tr("Keyboard"))),
+        note(tr("Ctrl+K opens the command palette.")),
+        note(tr("Ctrl+Enter runs the selection or the current chunk.")),
+        note(tr("Ctrl+S saves the current document.")),
+        action_row(
+          actionButton("home_shortcuts", tr("All keyboard shortcuts"),
+                       class = "btn-sm btn-outline-secondary")
+        )
       )
     )
   )
@@ -1899,23 +1897,13 @@ app_server <- function(env = globalenv()) {
       model_name <- active_model(state)
       htmltools::tags$div(
         class = "rcmdr-home-card",
-        htmltools::tags$h5(tr("Continue")),
-        htmltools::tags$p(
-          class = "small text-muted mb-1",
-          sprintf(tr("Active data: %s"),
-                  dataset_name %||% tr("none"))
-        ),
-        htmltools::tags$p(
-          class = "small text-muted mb-1",
-          sprintf(tr("Active model: %s"),
-                  model_name %||% tr("none"))
-        ),
-        htmltools::tags$p(
-          class = "small text-muted mb-2",
-          sprintf(tr("Document: %s"), document_mode(state))
-        ),
-        htmltools::tags$div(
-          class = "d-flex gap-2 flex-wrap",
+        card_head(htmltools::tags$h5(tr("Continue"))),
+        note(sprintf(tr("Active data: %s"),
+                     dataset_name %||% tr("none"))),
+        note(sprintf(tr("Active model: %s"),
+                     model_name %||% tr("none"))),
+        note(sprintf(tr("Document: %s"), document_mode(state))),
+        action_row(
           actionButton("home_view_data", tr("View data"),
                        class = "btn-sm btn-outline-secondary"),
           actionButton("home_script", tr("Open script"),
@@ -1938,13 +1926,12 @@ app_server <- function(env = globalenv()) {
       entries <- history_recent(state, 5L)
       htmltools::tags$div(
         class = "rcmdr-home-card",
-        htmltools::tags$h5(tr("Recent commands")),
+        card_head(htmltools::tags$h5(tr("Recent commands"))),
         if (length(entries) == 0L) {
-          htmltools::tags$p(class = "small text-muted mb-0",
-                            tr("No commands yet."))
+          note(tr("No commands yet."))
         } else {
           htmltools::tags$ul(
-            class = "small mb-0",
+            class = "rcmdr-home-list",
             lapply(entries, function(entry) {
               htmltools::tags$li(
                 paste0(history_command_label(entry, 70L), " \u00b7 ",

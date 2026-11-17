@@ -657,24 +657,20 @@ workflow_panel_ui <- function(state) {
     cards <- lapply(workflows, function(workflow) {
       htmltools::tags$div(
         class = "rcmdr-workflow-card",
-        htmltools::tags$h6(workflow$title),
-        htmltools::tags$p(class = "small text-muted mb-2",
-                          workflow$description),
-        htmltools::tags$p(
-          class = "small text-muted mb-2",
-          sprintf(tr("%d steps"), length(workflow$steps))
-        ),
-        workflow_button("start", workflow$id, tr("Start"), "btn-primary")
+        card_head(htmltools::tags$h6(workflow$title)),
+        note(workflow$description),
+        note(sprintf(tr("%d steps"), length(workflow$steps))),
+        action_row(
+          workflow_button("start", workflow$id, tr("Start"), "btn-primary")
+        )
       )
     })
     return(htmltools::tags$div(
       id = "workflow_panel",
       class = "rcmdr-workflow-panel",
-      htmltools::tags$div(
-        class = "d-flex justify-content-between align-items-center mb-2",
+      card_head(
         htmltools::tags$h5(tr("Guided workflows")),
-        htmltools::tags$span(class = "small text-muted",
-                             tr("Every step uses an existing dialog or command."))
+        note(tr("Every step uses an existing dialog or command."))
       ),
       htmltools::tags$div(class = "rcmdr-workflow-grid", cards)
     ))
@@ -688,28 +684,24 @@ workflow_panel_ui <- function(state) {
       status <- "blocked"
     }
     htmltools::tags$div(
-      class = paste("rcmdr-workflow-step",
-                    if (isTRUE(row$current[[1L]])) "current"),
-      htmltools::tags$div(
-        class = "d-flex justify-content-between align-items-center gap-2",
+      class = c("rcmdr-workflow-step",
+                if (isTRUE(row$current[[1L]])) "current"),
+      card_head(
         htmltools::tags$span(
           htmltools::tags$strong(sprintf("%d. %s", row$index[[1L]],
                                          row$title[[1L]])),
           if (isTRUE(row$optional[[1L]])) {
-            htmltools::tags$span(class = "small text-muted",
-                                 tr(" (optional)"))
+            note(tr(" (optional)"), inline = TRUE)
           }
         ),
-        htmltools::tags$div(
-          class = "d-flex gap-1 align-items-center",
-          workflow_status_pill(status)
-        )
+        workflow_status_pill(status)
       ),
       if (!isTRUE(row$available[[1L]])) {
-        htmltools::tags$p(class = "small text-warning mb-1", row$reason[[1L]])
+        htmltools::tags$p(class = "rcmdr-note text-warning",
+                          row$reason[[1L]])
       },
-      htmltools::tags$div(
-        class = "d-flex gap-1 flex-wrap mt-1",
+      action_row(
+        tight = TRUE,
         if (isTRUE(row$available[[1L]]) &&
             !identical(row$status[[1L]], "done")) {
           workflow_button("open", row$id[[1L]],
@@ -734,15 +726,13 @@ workflow_panel_ui <- function(state) {
     id = "workflow_panel",
     class = "rcmdr-workflow-panel active",
     studio_breadcrumb(c(tr("Workflows"), active$spec$title)),
-    htmltools::tags$div(
-      class = "d-flex justify-content-between align-items-center mb-2",
+    card_head(
       htmltools::tags$h5(active$spec$title),
-      htmltools::tags$span(class = "small text-muted",
-                           active$spec$description)
+      note(active$spec$description)
     ),
     htmltools::tags$div(class = "rcmdr-workflow-steps", rows),
-    htmltools::tags$div(
-      class = "d-flex gap-1 flex-wrap mt-2",
+    action_row(
+      tight = TRUE,
       workflow_button("back", NULL, tr("Back")),
       workflow_button("cancel", NULL, tr("Cancel"), "btn-outline-danger"),
       if (nzchar(section)) {

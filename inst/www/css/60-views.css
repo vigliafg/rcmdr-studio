@@ -106,3 +106,90 @@
     @media (max-width: 991.98px) {
       .rcmdr-data-layout { grid-template-columns: minmax(0, 1fr); }
     }
+
+    /* Home: a hero over a grid of cards.  The cards are the same surface,
+       border and padding as the section cards, so the Home reads as a view
+       and not as a second design. */
+    .rcmdr-home-hero {
+      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%,
+                                  var(--rcmdr-hero-to) 100%);
+      color: var(--rcmdr-on-primary);
+      border-radius: var(--rcmdr-radius-lg);
+      padding: var(--rcmdr-space-5);
+      margin-bottom: var(--rcmdr-space-4);
+    }
+    .rcmdr-home-hero h2 {
+      font-size: var(--rcmdr-text-2xl);
+      line-height: var(--rcmdr-leading-tight);
+      margin: 0 0 var(--rcmdr-space-1);
+    }
+    .rcmdr-home-hero p {
+      color: var(--rcmdr-on-primary-muted);
+      max-width: 60ch;
+      margin: 0 0 var(--rcmdr-space-4);
+    }
+    .rcmdr-home-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+      gap: var(--rcmdr-space-4);
+      align-items: start;
+    }
+    .rcmdr-home-card {
+      min-width: 0;
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      padding: var(--rcmdr-space-3) var(--rcmdr-space-4);
+    }
+    .rcmdr-home-card h5 { font-size: var(--rcmdr-text-lg); }
+    .rcmdr-home-card > :last-child { margin-bottom: 0; }
+    .rcmdr-home-card > .rcmdr-table {
+      margin-bottom: var(--rcmdr-space-2);
+    }
+    /* A list of recent commands: the small step, no trailing margin. */
+    .rcmdr-home-list {
+      margin: 0; padding-left: 1.1rem;
+      font-size: var(--rcmdr-text-sm);
+    }
+    .rcmdr-home-list li + li { margin-top: var(--rcmdr-space-1); }
+
+    /* Guided workflows: a grid of cards, then the steps of the active one. */
+    .rcmdr-workflow-panel { margin-bottom: var(--rcmdr-space-4); }
+    .rcmdr-workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: var(--rcmdr-space-4);
+      align-items: start;
+    }
+    .rcmdr-workflow-card {
+      min-width: 0;
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      padding: var(--rcmdr-space-3) var(--rcmdr-space-4);
+    }
+    .rcmdr-workflow-card h6 { font-size: var(--rcmdr-text-md); }
+    .rcmdr-workflow-card > :last-child { margin-bottom: 0; }
+    .rcmdr-workflow-steps {
+      display: flex; flex-direction: column; gap: var(--rcmdr-space-2);
+    }
+    .rcmdr-workflow-step {
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+    }
+    .rcmdr-workflow-step.current {
+      border-color: var(--rcmdr-accent);
+      box-shadow: var(--rcmdr-focus-ring);
+    }
+    .rcmdr-workflow-step > .rcmdr-card-head { margin-bottom: 0; }
+    .rcmdr-workflow-steps + .rcmdr-actions { margin-top: var(--rcmdr-space-2); }
+    .rcmdr-workflow-draft { margin-top: var(--rcmdr-space-2); }
+    .rcmdr-workflow-draft pre {
+      max-height: 16rem; overflow: auto;
+      font-size: var(--rcmdr-text-sm);
+      background: var(--rcmdr-surface-muted);
+      padding: var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius);
+    }

@@ -172,40 +172,34 @@ health_panel_ui <- function(state = NULL) {
 
   htmltools::tags$div(
     class = "rcmdr-home-card rcmdr-health",
-    htmltools::tags$div(
-      class = "d-flex justify-content-between align-items-center mb-1",
-      htmltools::tags$h5(class = "mb-0", tr("Health")),
-      htmltools::tags$span(
-        class = "badge text-bg-success", tr("ready")
-      )
+    card_head(
+      htmltools::tags$h5(tr("Health")),
+      badge(tr("ready"), "ok")
     ),
     htmltools::tags$table(
-      class = "table table-sm small mb-2",
+      class = "table table-sm rcmdr-table rcmdr-health-table",
       htmltools::tags$tbody(
         lapply(seq_len(nrow(table)), function(i) {
+          status <- table$status[[i]]
           htmltools::tags$tr(
             htmltools::tags$td(table$item[[i]]),
             htmltools::tags$td(class = "text-muted", table$value[[i]]),
             htmltools::tags$td(
-              htmltools::tags$span(
-                class = paste0("badge text-bg-",
-                               if (table$status[[i]] %in% c("ok", "optional")) {
-                                 "light"
-                               } else if (identical(table$status[[i]], "error")) {
-                                 "danger"
-                               } else {
-                                 "warning"
-                               }),
-                table$status[[i]]
-              )
+              badge(status, switch(
+                status,
+                ok = "ok",
+                error = "error",
+                warning = "warning",
+                "neutral"
+              ))
             )
           )
         })
       )
     ),
-    htmltools::tags$div(
-      class = "d-flex gap-2 flex-wrap",
-      actionButton("health_refresh", tr("Refresh"), class = "btn-sm btn-outline-secondary"),
+    action_row(
+      actionButton("health_refresh", tr("Refresh"),
+                   class = "btn-sm btn-outline-secondary"),
       actionButton("health_diagnostics", tr("Diagnostics"),
                    class = "btn-sm btn-outline-secondary"),
       htmltools::tags$button(

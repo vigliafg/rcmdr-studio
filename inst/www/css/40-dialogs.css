@@ -8,18 +8,6 @@
     .rcmdr-dialog-grid > .shiny-input-checkboxgroup { grid-column: span 2; }
     .rcmdr-dialog-grid > .rcmdr-field-wide { grid-column: 1 / -1; }
     .rcmdr-breadcrumb { margin-bottom: .5rem; }
-    .rcmdr-home-hero {
-      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%, var(--rcmdr-hero-to) 100%);
-      color: var(--rcmdr-on-primary); border-radius: var(--rcmdr-radius-lg); padding: 1.4rem 1.6rem; margin-bottom: var(--rcmdr-space);
-    }
-    .rcmdr-home-hero h2 { font-size: var(--rcmdr-text-2xl); margin-bottom: .25rem; }
-    .rcmdr-home-hero p { color: var(--rcmdr-on-primary-muted); margin-bottom: 1rem; }
-    .rcmdr-home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--rcmdr-space); }
-    .rcmdr-home-card {
-      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
-      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
-    }
-    .rcmdr-home-card h5 { font-size: var(--rcmdr-text-lg); margin-bottom: .5rem; }
     .rcmdr-history-card {
       background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius); padding: .6rem .75rem;
@@ -83,28 +71,6 @@
     .rcmdr-dialog-errors { margin-bottom: .75rem; }
     .rcmdr-dialog-errors ul { padding-left: 1.1rem; }
     .rcmdr-dialog-errors a { color: inherit; text-decoration: underline; }
-    .rcmdr-workflow-panel { margin-bottom: var(--rcmdr-space); }
-    .rcmdr-workflow-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: var(--rcmdr-space);
-    }
-    .rcmdr-workflow-card {
-      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
-      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
-    }
-    .rcmdr-workflow-card h6 { margin-bottom: .35rem; }
-    .rcmdr-workflow-steps { display: flex; flex-direction: column; gap: .5rem; }
-    .rcmdr-workflow-step {
-      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
-      border-radius: var(--rcmdr-radius); padding: .55rem .7rem;
-    }
-    .rcmdr-workflow-step.current {
-      border-color: var(--rcmdr-accent); box-shadow: var(--rcmdr-focus-ring);
-    }
-    .rcmdr-workflow-draft pre {
-      max-height: 16rem; overflow: auto; font-size: var(--rcmdr-text-sm);
-      background: var(--rcmdr-surface-muted); padding: .6rem;
-      border-radius: var(--rcmdr-radius); }
     .rcmdr-variable-suggestions {
       border-top: 1px dashed var(--rcmdr-border); margin-top: .65rem;
       padding-top: .65rem;

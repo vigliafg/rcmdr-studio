@@ -175,3 +175,19 @@ test_that("the step trace records the dialog that completed it", {
   expect_true(all(pending$status == "pending"))
   expect_true(all(pending$traced_dialog == ""))
 })
+
+test_that("the workflow panel uses the shared components", {
+  state <- workflow_test_state()
+  html <- as.character(workflow_panel_ui(state))
+  expect_match(html, "rcmdr-card-head", fixed = TRUE)
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-actions"', fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
+
+  workflow_start(state, "describe")
+  html <- as.character(workflow_panel_ui(state))
+  expect_match(html, "rcmdr-workflow-step current", fixed = TRUE)
+  expect_match(html, "rcmdr-card-head", fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
+  expect_false(grepl("mt-1", html, fixed = TRUE))
+})

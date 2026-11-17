@@ -59,3 +59,14 @@ test_that("the issue URL is pre-filled and encoded", {
                 grepl("Diagnostic+report", url, fixed = TRUE) ||
                 grepl("Diagnostic%20report", url))
 })
+
+test_that("the health card uses the card frame and the badge component", {
+  html <- as.character(health_panel_ui(AppState(new.env())))
+  expect_match(html, 'class="rcmdr-home-card rcmdr-health"', fixed = TRUE)
+  expect_match(html, "rcmdr-card-head", fixed = TRUE)
+  expect_match(html, "rcmdr-badge", fixed = TRUE)
+  expect_match(html, "rcmdr-table", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-actions"', fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
+  expect_false(grepl("text-bg-", html, fixed = TRUE))
+})

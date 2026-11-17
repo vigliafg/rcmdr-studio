@@ -385,20 +385,15 @@ project_home_ui <- function(state) {
 
   htmltools::tags$div(
     class = "rcmdr-home-card",
-    htmltools::tags$h5(tr("Project")),
-    htmltools::tags$p(
-      class = "small text-muted mb-1",
+    card_head(htmltools::tags$h5(tr("Project"))),
+    note(
       sprintf(tr("Project: %s"), summary$title),
       if (summary$dirty) htmltools::tags$span(
         class = "text-warning", paste0(" \u00b7 ", tr("unsaved changes"))
       )
     ),
-    htmltools::tags$p(
-      class = "small text-muted mb-2",
-      if (is.null(summary$path)) tr("Not saved yet") else summary$path
-    ),
-    htmltools::tags$div(
-      class = "d-flex gap-2 flex-wrap mb-2",
+    note(if (is.null(summary$path)) tr("Not saved yet") else summary$path),
+    action_row(
       actionButton("home_project_new", tr("New project"),
                    class = "btn-sm btn-outline-secondary"),
       actionButton("home_project_open", tr("Open project"),

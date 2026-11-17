@@ -221,16 +221,12 @@ onboarding_checklist_ui <- function(state) {
   progress <- onboarding_progress(state)
   htmltools::tags$div(
     class = "rcmdr-home-card rcmdr-checklist",
-    htmltools::tags$div(
-      class = "d-flex justify-content-between align-items-center mb-2",
-      htmltools::tags$h5(class = "mb-0", tr("First steps")),
-      htmltools::tags$span(
-        class = "badge text-bg-light",
-        sprintf(tr("%d of %d"), progress$done, progress$total)
-      )
+    card_head(
+      htmltools::tags$h5(tr("First steps")),
+      badge(sprintf(tr("%d of %d"), progress$done, progress$total), "neutral")
     ),
     htmltools::tags$div(
-      class = "progress rcmdr-checklist-progress mb-2",
+      class = "progress rcmdr-checklist-progress",
       htmltools::tags$div(
         class = "progress-bar",
         role = "progressbar",
@@ -255,14 +251,13 @@ onboarding_checklist_ui <- function(state) {
           htmltools::tags$span(
             class = "rcmdr-checklist-label",
             htmltools::tags$strong(check$label),
-            htmltools::tags$span(class = "small text-muted d-block",
-                                 check$description)
+            note(check$description, inline = TRUE)
           ),
           if (!isTRUE(check$done) && isTRUE(check$available)) {
             shiny::actionButton(
               paste0("home_check_", check$id),
               tr("Start"),
-              class = "btn-sm btn-outline-secondary ms-auto"
+              class = "btn-sm btn-outline-secondary rcmdr-checklist-action"
             )
           }
         )

@@ -194,11 +194,16 @@
       padding: .4rem 0; border-bottom: 1px solid var(--rcmdr-border); }
     .rcmdr-checklist-item:last-child { border-bottom: 0; }
     .rcmdr-checklist-mark { color: var(--rcmdr-muted); font-weight: 700; }
+    .rcmdr-checklist-label { min-width: 0; }
+    .rcmdr-checklist-label .rcmdr-note { display: block; }
+    .rcmdr-checklist-action { margin-left: auto; flex: none; }
     .rcmdr-checklist-item.done .rcmdr-checklist-mark { color: var(--rcmdr-success); }
     .rcmdr-checklist-item.done .rcmdr-checklist-label strong {
       text-decoration: line-through; color: var(--rcmdr-muted); }
     .rcmdr-checklist-item.unavailable { opacity: .65; }
-    .rcmdr-checklist-progress { height: .45rem; }
+    .rcmdr-checklist-progress {
+      height: .45rem; margin-bottom: var(--rcmdr-space-2);
+    }
     .rcmdr-tour-highlight { outline: 3px solid #f59e0b !important;
       outline-offset: 3px; box-shadow: 0 0 0 6px rgba(245, 158, 11, .25);
       border-radius: var(--rcmdr-radius-sm); }
