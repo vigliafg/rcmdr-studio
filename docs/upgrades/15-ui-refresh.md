@@ -1,7 +1,7 @@
 # Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** in corso — U0, U1, U2, U3.1 e U3.2 completate il 17 novembre 2026  
+**Stato:** in corso — U0–U3 completate il 17 novembre 2026; U4–U5 da fare  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 0 (token e shell), Onda 5 (piattaforma dialoghi)  
 **Documento padre:** [`README.md`](README.md)
@@ -299,4 +299,5 @@ direzione piace.
 2. U0.1–U0.2: estrarre CSS e JS, nessun cambio visivo, test verdi.
 3. U1: token e tipografia.
 4. U2 + U3.1: componenti e dialogo *Options*.
-5. Rivedere la schermata, poi proseguire con i lotti U3.2–U3.5.
+5. U3 completata: i cinque lotti dei dialoghi sono migrati. Proseguire con
+   U4 (shell e viste, Chart Studio compreso) e U5 (QA).

@@ -420,7 +420,7 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: in corso (U0, U1, U2, U3.1 e U3.2 completate).
+Stato: in corso (U0–U3 completate; U4–U5 da fare).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -438,9 +438,9 @@ Stato: in corso (U0, U1, U2, U3.1 e U3.2 completate).
 | U2.4 | Sostituire i 15 `checkboxInput` diretti | [x] | `d3c13bb`, 3 preferenze a switch, 12 parametri restano checkbox |
 | U3.1 | Chrome comune + dialogo *Options* | [x] | `17fc642`, chrome su tutti gli ID, *Options* a segmented/switch |
 | U3.2 | Lotto dati e import | [x] | `17fc642`, segmented dove le etichette sono corte |
-| U3.3 | Lotto statistiche | [ ] | |
-| U3.4 | Lotto grafici | [ ] | |
-| U3.5 | Lotto modelli, report, progetto, script | [ ] | |
+| U3.3 | Lotto statistiche | [x] | `95b4808`, segmented per le scelte corte, `number_input()` per gli undici numeri |
+| U3.4 | Lotto grafici | [x] | `95b4808`, tipo, scala, assi, coda |
+| U3.5 | Lotto modelli, report, progetto, script | [x] | `95b4808`, modelli e documenti; report e progetto senza modifiche |
 | U4.1 | Home e shell | [ ] | 991/1280/1600 px |
 | U4.2 | Data Studio | [ ] | |
 | U4.3 | Chart Studio | [ ] | |

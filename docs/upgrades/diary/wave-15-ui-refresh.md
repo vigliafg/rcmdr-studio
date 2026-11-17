@@ -1,9 +1,9 @@
 # Diario di handoff — Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** parziale — U0, U1, U2, U3.1 e U3.2 completate; U3.3–U5 da fare  
+**Stato:** parziale — U0–U3 completate; U4–U5 da fare  
 **Ondata precedente:** `wave-14-dependencies.md` (Onda 14, 2.7.0)  
-**Ondata successiva:** Onda 15 — continuazione (U3.3 → U4 → U5)  
+**Ondata successiva:** Onda 15 — continuazione (U4 → U5)  
 **Documento di settore:** [`15-ui-refresh.md`](../15-ui-refresh.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
 **Checklist:** [`CHECKLIST.md`](../CHECKLIST.md)
@@ -108,13 +108,33 @@ controlli, dialoghi e viste con una sola grammatica visiva.
   per righe e colonne del nuovo data set. Le etichette lunghe (metodo di
   binning, contrasti, i cinque delimitatori) restano radio: una striscia di
   pillole che va a capo è peggio di una lista.
+- **U3.3 — statistiche.** `dialogs-stats.R` e `dialogs-summaries.R` perdono
+  gli undici spinner a favore di `number_input()` e passano al segmented le
+  scelte corte: ipotesi alternativa (nell'helper condiviso, quindi anche nei
+  dialoghi dei modelli), univariato/multivariato, centro di Levene, rotazione
+  e punteggi della fattorizzazione, famiglia del modello misto, tipo dei
+  riassunti. Restano radio le etichette lunghe — le sei prove di normalità, le
+  percentuali, i sette metodi di clustering, le distanze, le famiglie di
+  contrasti. I checkbox sono parametri di comando e restano checkbox.
+- **U3.4 — grafici.** Tipo di grafico, scala dell'istogramma, assi
+  logaritmici, tipo XY, stack/jitter e coda delle distribuzioni diventano
+  strisce; dimensione del campione, numero di campioni e seed diventano campi
+  numerici. Barre d'errore e funzione tracciata restano radio: una delle
+  etichette è lunga.
+- **U3.5 — modelli, documenti, resto.** Criterio di stepwise, tipo e test
+  dell'ANOVA, confronto di modelli, intervalli e ricampionamento del bootstrap,
+  livello delle sezioni e dimensioni delle figure adottano il vocabolario;
+  `nbest`, campioni del bootstrap e punti da identificare passano a
+  `number_input()`. `report-studio.R` e `project-dialogs.R` non avevano
+  spinner né radio corte da migrare: restano invariati.
 
-**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.2.
+**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.5.
 
 **Cosa non è pronto:** nessuna verifica visiva registrata (vedi § 7);
 `tabs_strip()` aspetta il primo consumatore (U4); i modali secondari
-(palette, scorciatoie, tour) non usano ancora il chrome comune; i lotti U3.3–
-U3.5 non sono migrati.
+(palette, scorciatoie, tour) non usano ancora il chrome comune; le viste U4–U5
+non sono ridisegnate; Chart Studio (`chart-types.R`) usa ancora `spin_input()`,
+che è un alias identico di `number_input()`.
 
 ---
 
@@ -135,6 +155,7 @@ U3.5 non sono migrati.
 | `9b6178a` | `feat(ui): form helpers for fields, switches, segments and numbers` | U2.1, nessun cambio di markup nei dialoghi |
 | `d3c13bb` | `feat(ui): shared components, refreshed shell and preference switches` | U2.2–U2.4 condividono il commit: `app.R` contiene sia la shell sia l'adozione di `switch_input()` |
 | `17fc642` | `feat(ui): dialog chrome, Options showcase and the data/import batch` | U3.1 e U3.2: chrome, *Options* e i due dialoghi dati condividono il commit perché il vocabolario è lo stesso |
+| `95b4808` | `feat(ui): finish the dialog batches — statistics, graphs and the rest` | U3.3–U3.5: stesso vocabolario e stessa suite di verifica, un commit solo |
 
 ---
 
@@ -186,21 +207,25 @@ U3.5 non sono migrati.
 | Contratto | `test_local(filter="dialog-contract")` | verde: chrome su tutti gli ID |
 | *Options* | `test_local(filter="phase1")` | verde |
 | Dati e import | `test_local(filter="data-studio-dialogs")` | verde |
+| Statistiche | `test_local(filter="dialogs-stat")` | verde: segmented e campi numerici |
+| Grafici | `test_local(filter="dialogs-graphs")` | verde |
+| Modelli | `test_local(filter="dialogs-models")` | verde |
+| Documenti | `test_local(filter="document")` | verde |
 | Integrazione | `test_local(filter="app-integration")` | verde (warning rgl senza X11) |
 | Struttura CSS | controllo su graffe e dichiarazioni | 0 problemi |
 
 ### 4.1 Esito della suite
 
-`EXIT=0`. Nessun failure, 22 test e2e saltati (richiedono
+`EXIT=0`. Nessun failure, 26 test e2e saltati (richiedono
 `RCMDRSHINY_E2E=1`), 3 warning già noti: rgl senza X11, `rgl.init` in fallback,
 `match_font()` deprecato in systemfonts. I quattro file di test nuovi o
 aggiornati sono verdi; `test-shell.R` aggiunge due warning rgl perché avvia il server per
 leggere la barra di stato, e `test-dialog-contract.R` impiega circa due minuti
 perché rende il chrome di tutti i dialoghi.
 
-**Artefatti:** `/tmp/opencode/tests-u3a.log` (batch corrente),
-`/tmp/opencode/tests-u2d.log`, `/tmp/opencode/tests-u2.log`,
-`/tmp/opencode/tests-u1.log`.
+**Artefatti:** `/tmp/opencode/tests-u3b.log` (batch corrente),
+`/tmp/opencode/tests-u3a.log`, `/tmp/opencode/tests-u2d.log`,
+`/tmp/opencode/tests-u2.log`, `/tmp/opencode/tests-u1.log`.
 
 ---
 
@@ -313,6 +338,7 @@ perché rende il chrome di tutti i dialoghi.
 | U2.2 | cinque componenti nuovi | primo consumatore reale solo per `badge()` e `toolbar()` | `modal_header()`/`modal_footer()` servono a U3.1 e `tabs_strip()` a U4: si aggiungono ora perché i test li fissano prima dell'uso |
 | U2.4 | 15 `checkboxInput` → `switch_input()` | 3 switch, 12 checkbox | gli altri sono parametri di comando, opzioni di salvataggio o filtri: un interruttore mentirebbe sull'effetto |
 | U2.3 | “la shell non contiene più classi Bootstrap scritte a mano” | la shell usa ancora utility (`d-flex`, `gap-2`) | sono il layout di Bootstrap, non un secondo sistema di colore; la loro sostituzione è U4.1, dove la shell viene rifatta |
+| U3.3–U3.5 | un commit per lotto | un commit per tre lotti | il vocabolario è lo stesso e la suite completa copre tutti e tre; separarli avrebbe prodotto tre commit verdi identici |
 | U3.1 | un componente `modal_header()`/`modal_footer()` per ogni modale | i dialoghi del catalogo li usano; palette, scorciatoie e tour no | hanno footer e bisogni diversi (nessun footer, `easyClose = TRUE`); il chrome comune si estende quando U4 rifà quelle viste |
 
 ---
@@ -327,7 +353,7 @@ perché rende il chrome di tutti i dialoghi.
 | I modali secondari hanno il chrome vecchio | palette, scorciatoie e tour usano `modalDialog(title=)` | non sono dialoghi del catalogo e hanno footer propri; si allineano in U4/U5 | U4 |
 | Utility Bootstrap nella shell | l'accettazione di U2 chiede una shell senza classi scritte a mano | rimandato: U4.1 rifà la shell, sostituirle ora sarebbe lavoro buttato | U4.1 |
 | Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; gli e2e restano la verifica di struttura | U5.1 |
-| 22 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli prima della chiusura di U3 | U3 |
+| 26 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli nella QA, prima di chiudere l'ondata | U5.1 |
 
 ---
 
@@ -352,30 +378,22 @@ perché rende il chrome di tutti i dialoghi.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. **U3.3 — statistiche.** `R/dialogs-stats.R` (11 `spin_input`, 25
-   `radio_input`) e `R/dialogs-summaries.R`: `number_input()` per i numeri,
-   `segmented_input()` per le scelte corte (tipo di intervallo, ipotesi,
-   correzione), radio dove le etichette sono lunghe. I test dei costruttori di
-   comando (`test-command-builders-stats.R`) sono la rete: stessi ID, stessi
-   valori.
-2. **U3.4 — grafici.** `R/dialogs-graphs.R`, con particolare attenzione alle
-   opzioni che finiscono nei comandi ggplot.
-3. **U3.5 — modelli, report, progetto, script.** `dialogs-models*.R`,
-   `report-studio.R`, `project-dialogs.R`, `document-dialogs.R`.
-
-Poi **U4.1** rifà la shell (e chiude l'accettazione “niente utility a mano”),
-**U4.2–U4.5** le viste, **U5** la matrice temi e la QA.
+1. **U4.1 — shell.** Rifare topbar, sidebar, barra di stato e striscia delle
+   viste senza utility Bootstrap scritte a mano (`d-flex`, `gap-2`, `ms-auto`),
+   con classi `rcmdr-*` e i token. Chiude l'accettazione di U2.3 e libera U4.2.
+2. **U4.2–U4.5 — viste.** Data, Chart, Report, Workbench: prima consumatrice di
+   `tabs_strip()` è la striscia dei documenti. I modali secondari (palette,
+   scorciatoie, tour) passano al chrome comune qui.
+3. **U5 — QA.** Matrice 8 temi × 2 densità, e2e con `RCMDRSHINY_E2E=1`,
+   `NEWS.md`.
 
 ### Task dell'ondata
 
 | ID | Task | Priorità | Note |
 |---|---|---|---|
-| U3.3 | Lotto statistiche | alta | 11 numeri, 25 radio |
-| U3.4 | Lotto grafici | alta | opzioni nei comandi ggplot |
-| U3.5 | Modelli, report, progetto, script | media | ultimo lotto |
 | U4.1 | Shell | alta | chiude le utility a mano |
 | U4.2–U4.5 | Viste | media | Data, Chart, Report, Workbench |
-| U5 | Matrice temi, QA, NEWS | media | |
+| U5 | Matrice temi, QA, NEWS | media | e2e inclusi |
 
 ---
 
@@ -391,7 +409,7 @@ Rscript -e 'pkgload::load_all("."); cat(as.character(app_css()))' | grep -c -- '
 RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 ```
 
-**Baseline attesa:** suite completa verde, 22 skip e2e, 3 warning noti
+**Baseline attesa:** suite completa verde, 26 skip e2e, 3 warning noti
 (rgl, `match_font`). `app_css()` cresce di circa 2 KB per la scala e di circa
 1,5 KB per badge, schede e chrome dei modali.
 
@@ -416,7 +434,7 @@ RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 
 ## 12. Aggiornamenti alla checklist
 
-- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3.1, U3.2).
+- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3).
 - [x] `15-ui-refresh.md` e `README.md` segnano l'onda in corso.
 - [x] `UI-TOKENS.md` scritto e coerente con il codice.
 - [x] Diario scritto.
