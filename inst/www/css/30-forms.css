@@ -60,6 +60,106 @@
       margin: .15rem 0 0;
     }
 
+    /* Components built on the form helpers --------------------------------- */
+    .rcmdr-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--rcmdr-label-gap);
+      margin-bottom: var(--rcmdr-field-gap);
+      min-width: 0;
+    }
+    .rcmdr-field > .form-label {
+      margin-bottom: 0;
+      font-size: var(--rcmdr-label-size);
+    }
+    .rcmdr-field > .form-text { margin: 0; }
+
+    /* Switch: a native checkbox with the browser chrome removed, so the
+       keyboard and the screen reader keep working while the shape is a track
+       and a knob.  A switch promises an immediate effect: preferences only. */
+    .rcmdr-switch .form-group { margin-bottom: 0; }
+    .rcmdr-switch .checkbox { margin: 0; }
+    .rcmdr-switch .checkbox label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--rcmdr-space-2);
+      margin: 0;
+      cursor: pointer;
+      font-size: var(--rcmdr-label-size);
+    }
+    .rcmdr-switch input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      flex: none;
+      width: 2.25rem;
+      height: 1.25rem;
+      margin: 0;
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+      background-color: var(--rcmdr-border-strong);
+      background-image: radial-gradient(circle at .6rem 50%,
+        var(--rcmdr-surface) 0 .34rem, transparent .35rem);
+      cursor: pointer;
+      transition: background-color .12s ease;
+    }
+    .rcmdr-switch input[type="checkbox"]:checked {
+      background-color: var(--rcmdr-primary);
+      border-color: var(--rcmdr-primary);
+      background-image: radial-gradient(circle at calc(100% - .6rem) 50%,
+        var(--rcmdr-on-primary) 0 .34rem, transparent .35rem);
+    }
+    .rcmdr-switch input[type="checkbox"]:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    /* Segmented control: a radio group the user reads as a single choice from
+       a strip.  The radios stay in the DOM and in the tab order; the visible
+       state is the label, which is why the focus ring lives on the label. */
+    .rcmdr-segmented .shiny-options-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      padding: 2px;
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    .rcmdr-segmented .radio-inline,
+    .rcmdr-segmented .radio { padding-left: 0; margin: 0; }
+    .rcmdr-segmented .shiny-options-group label {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: .25rem .8rem;
+      border-radius: var(--rcmdr-radius-pill);
+      color: var(--rcmdr-text);
+      font-size: var(--rcmdr-text-sm);
+      cursor: pointer;
+    }
+    .rcmdr-segmented .shiny-options-group label:hover {
+      background: var(--rcmdr-hover);
+    }
+    .rcmdr-segmented input[type="radio"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .rcmdr-segmented .shiny-options-group label:has(input:checked) {
+      background: var(--rcmdr-primary);
+      color: var(--rcmdr-on-primary);
+      font-weight: var(--rcmdr-weight-strong);
+    }
+    .rcmdr-segmented .shiny-options-group label:has(input:focus-visible) {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
+
     .rcmdr-topbar { background: var(--rcmdr-primary); }
     .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
     .rcmdr-topbar .form-select { max-width: 9rem; }

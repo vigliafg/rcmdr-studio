@@ -2,9 +2,12 @@
 \alias{plugin-widgets}
 \alias{var_input}
 \alias{checkbox_input}
+\alias{switch_input}
 \alias{checkboxes_input}
 \alias{radio_input}
+\alias{segmented_input}
 \alias{entry_input}
+\alias{number_input}
 \alias{spin_input}
 \alias{slider_input}
 \alias{combo_input}
@@ -18,11 +21,17 @@ var_input(id, label, choices, selected = NULL, multiple = FALSE,
 
 checkbox_input(id, label, value = FALSE)
 
+switch_input(id, label, value = FALSE)
+
 checkboxes_input(prefix, choices, selected = character(), ncol = 1L)
 
 radio_input(id, label, choices, selected = NULL, inline = TRUE)
 
+segmented_input(id, label, choices, selected = NULL)
+
 entry_input(id, label, value = "", placeholder = NULL, width = NULL)
+
+number_input(id, label, value = 0, min = NA, max = NA, step = 1)
 
 spin_input(id, label, value = 0, min = NA, max = NA, step = 1)
 
@@ -80,6 +89,11 @@ An HTML tag or Shiny input, suitable for the \code{ui} function of
 These widgets mirror the Rcmdr widgets used by the original plugins
 (\code{variableListBox()}, \code{checkBoxes()}, \code{radioButtons()} and so
 on), so a Tk dialog can be ported without rewriting its validation logic.
+
+\code{switch_input()}, \code{segmented_input()} and \code{number_input()} are
+presentation variants: they build the same checkbox, radio group and number
+field that Shiny binds, with the same ids and the same submitted values, so a
+dialog can adopt them without touching its \code{on_ok()} logic.
 }
 \examples{
 \dontrun{

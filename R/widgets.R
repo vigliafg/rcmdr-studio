@@ -18,6 +18,33 @@ form_group <- function(label, input, help = NULL) {
   )
 }
 
+#' Field container
+#'
+#' A label, a control and a help line with the spacing of the field grid.
+#' Use it for hand-built controls; Shiny's own inputs already carry their
+#' label and container.
+#' @keywords internal
+field <- function(input, label = NULL, help = NULL, class = NULL,
+                   for_id = NULL) {
+  htmltools::div(
+    class = c("rcmdr-field", class),
+    if (!is.null(label)) {
+      htmltools::tags$label(label, class = "form-label", `for` = for_id)
+    },
+    input,
+    if (!is.null(help)) htmltools::tags$div(class = "form-text", help)
+  )
+}
+
+#' Grid of fields
+#'
+#' The same `.rcmdr-field-grid` the dialog bodies already use, so a component
+#' can join the layout without repeating the class name.
+#' @keywords internal
+field_grid <- function(..., class = NULL) {
+  htmltools::div(class = c("rcmdr-field-grid", class), ...)
+}
+
 #' Variable selector
 #'
 #' Shiny equivalent of Rcmdr's `variableListBox()`.
@@ -79,6 +106,19 @@ checkbox_input <- function(id, label, value = FALSE) {
   checkboxInput(id, label, value = isTRUE(value))
 }
 
+#' Switch
+#'
+#' The same `<input type="checkbox">` Shiny would build (same id, same value),
+#' dressed as a switch.  A switch promises an immediate effect, so use it for
+#' preferences, not for parameters of a command.
+#' @export
+switch_input <- function(id, label, value = FALSE) {
+  htmltools::div(
+    class = "rcmdr-switch",
+    checkboxInput(id, label, value = isTRUE(value))
+  )
+}
+
 #' Group of checkboxes laid out in a grid
 #'
 #' `choices` is a named character vector: names are the suffixes used to build
@@ -114,6 +154,19 @@ radio_input <- function(id, label, choices, selected = NULL, inline = TRUE) {
   )
 }
 
+#' Segmented control
+#'
+#' A radio group under a pill-shaped skin, for two to four short choices.
+#' Same ids, same names and same selected value as [radio_input()]: only the
+#' presentation changes.
+#' @export
+segmented_input <- function(id, label, choices, selected = NULL) {
+  htmltools::div(
+    class = "rcmdr-segmented",
+    radio_input(id, label, choices, selected = selected, inline = TRUE)
+  )
+}
+
 #' Text entry
 #' @export
 entry_input <- function(id, label, value = "", placeholder = NULL, width = NULL) {
@@ -121,9 +174,19 @@ entry_input <- function(id, label, value = "", placeholder = NULL, width = NULL)
 }
 
 #' Numeric entry
+#'
+#' Shiny's `numericInput()` already renders `<input type="number">`: this alias
+#' exists so a component reads in the same vocabulary as [field()] and
+#' [switch_input()].  The markup and the value Shiny reads are unchanged.
+#' @export
+number_input <- function(id, label, value = 0, min = NA, max = NA, step = 1) {
+  numericInput(id, label, value = value, min = min, max = max, step = step)
+}
+
+#' Numeric entry (Rcmdr name)
 #' @export
 spin_input <- function(id, label, value = 0, min = NA, max = NA, step = 1) {
-  numericInput(id, label, value = value, min = min, max = max, step = step)
+  number_input(id, label, value = value, min = min, max = max, step = step)
 }
 
 #' Slider
