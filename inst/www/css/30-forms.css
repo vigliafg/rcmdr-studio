@@ -160,26 +160,6 @@
       outline-offset: var(--rcmdr-focus-offset);
     }
 
-    .rcmdr-topbar { background: var(--rcmdr-primary); }
-    .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
-    .rcmdr-topbar .form-select { max-width: 9rem; }
-    .rcmdr-sidebar {
-      background: var(--rcmdr-surface);
-      border-right: 1px solid var(--rcmdr-border);
-      min-height: calc(100vh - 90px); padding: var(--rcmdr-space);
-      max-height: calc(100vh - 90px); overflow-y: auto;
-    }
-    .rcmdr-statusbar {
-      background: var(--rcmdr-surface-muted);
-      border-top: 1px solid var(--rcmdr-border);
-    }
-    .rcmdr-toolbar {
-      background: var(--rcmdr-surface);
-      border: 1px solid var(--rcmdr-border);
-      border-radius: var(--rcmdr-radius); padding: .5rem .65rem; margin-bottom: var(--rcmdr-space);
-    }
-    .rcmdr-toolbar-field .form-group,
-    .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
     .rcmdr-dialog-category {
       font-size: var(--rcmdr-text-xs); font-weight: 400; text-transform: uppercase;
       letter-spacing: .04em; color: var(--rcmdr-muted);

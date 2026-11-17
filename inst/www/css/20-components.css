@@ -178,7 +178,6 @@
     .rcmdr-tour-highlight { outline: 3px solid #f59e0b !important;
       outline-offset: 3px; box-shadow: 0 0 0 6px rgba(245, 158, 11, .25);
       border-radius: var(--rcmdr-radius-sm); }
-    .rcmdr-busy { color: var(--rcmdr-warning); font-weight: 600; }
     .rcmdr-skip-link { position: absolute; left: .5rem; top: .5rem;
       background: var(--rcmdr-surface); color: var(--rcmdr-heading); padding: .4rem .7rem;
       border-radius: var(--rcmdr-radius-xs); z-index: 2000; }
@@ -188,3 +187,71 @@
     }
 
     .rcmdr-icon { display: inline-block; vertical-align: -.15em; flex: none; }
+
+    /* Toolbars: one row of filters and actions. */
+    .rcmdr-toolbar {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .5rem .65rem;
+      margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-toolbar-field .form-group,
+    .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
+
+    /* Badges, tabs, dialog chrome ------------------------------------------
+       Four small components of the shared vocabulary.  Every colour is a
+       token pair that test-contrast.R measures, so the same markup is legible
+       in all seven palettes. */
+    .rcmdr-badge {
+      display: inline-flex; align-items: center; gap: var(--rcmdr-space-1);
+      padding: .08rem .45rem; border: 1px solid transparent;
+      border-radius: var(--rcmdr-radius-pill);
+      font-size: var(--rcmdr-text-xs); font-weight: var(--rcmdr-weight-strong);
+      line-height: var(--rcmdr-leading-ui); white-space: nowrap;
+    }
+    .rcmdr-badge-neutral {
+      background: var(--rcmdr-surface-muted); color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    .rcmdr-badge-info {
+      background: var(--rcmdr-surface-muted); color: var(--rcmdr-link);
+      border-color: var(--rcmdr-border-strong);
+    }
+    .rcmdr-badge-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-ok-fg); }
+    .rcmdr-badge-warning {
+      background: var(--rcmdr-warn-bg); color: var(--rcmdr-warn-fg);
+    }
+    .rcmdr-badge-error {
+      background: var(--rcmdr-err-bg); color: var(--rcmdr-err-fg);
+    }
+    .rcmdr-tabs {
+      display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px;
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    .rcmdr-tabs-item {
+      display: inline-flex; align-items: center; gap: var(--rcmdr-space-1);
+      padding: .18rem .7rem; border: 0; background: transparent;
+      border-radius: var(--rcmdr-radius-pill);
+      color: var(--rcmdr-text); font-size: var(--rcmdr-text-sm);
+      line-height: var(--rcmdr-leading-ui); cursor: pointer;
+    }
+    .rcmdr-tabs-item:hover { background: var(--rcmdr-hover); }
+    .rcmdr-tabs-item.active {
+      background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
+      font-weight: var(--rcmdr-weight-strong);
+    }
+    .rcmdr-modal-header { gap: var(--rcmdr-space-2); align-items: flex-start; }
+    .rcmdr-dialog-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: none; width: 2rem; height: 2rem; margin-top: -.1rem;
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface-muted); color: var(--rcmdr-accent);
+    }
+    .rcmdr-modal-heading { min-width: 0; flex: 1 1 auto; }
+    .rcmdr-modal-heading .modal-title { margin-bottom: 0; }
+    .rcmdr-modal-footer { align-items: center; }
+    .rcmdr-modal-primary {
+      display: flex; gap: var(--rcmdr-space-2); flex-wrap: wrap;
+      margin-left: auto;
+    }

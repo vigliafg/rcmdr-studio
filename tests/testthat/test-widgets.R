@@ -89,3 +89,22 @@ test_that("the helpers are styled by tokens and keep a visible focus ring", {
                "background: var(--rcmdr-primary);\n      color: var(--rcmdr-on-primary);",
                fixed = TRUE)
 })
+
+test_that("the switch is used for preferences, not for command parameters", {
+  script <- as.character(script_pane_ui())
+  expect_match(script, 'class="rcmdr-switch"', fixed = TRUE)
+  expect_match(script, 'id="auto_append"', fixed = TRUE)
+  expect_match(script, 'type="checkbox"', fixed = TRUE)
+
+  hint <- as.character(result_hint_ui(
+    list(tab = "data", command = "Data > Active data set"), auto = TRUE
+  ))
+  expect_match(hint, 'class="rcmdr-switch"', fixed = TRUE)
+  expect_match(hint, 'id="result_hint_auto"', fixed = TRUE)
+
+  # A command parameter is a value that ends up in a command: flipping it does
+  # not change the application, so it keeps the square checkbox.
+  controls <- as.character(chart_stat_controls(list(options = list())))
+  expect_match(controls, 'class="shiny-input-checkbox"', fixed = TRUE)
+  expect_false(grepl("rcmdr-switch", controls, fixed = TRUE))
+})

@@ -80,13 +80,138 @@ split_view <- function(left, right, proportions = c(2, 3)) {
 }
 
 #' A studio toolbar
+#'
+#' A single row of filters and actions.  `left` and `right` are the two ends of
+#' the bar; unnamed children go in the middle.  Named, it is announced as a
+#' toolbar; unnamed, it is a plain group of controls.
 #' @keywords internal
-studio_toolbar <- function(..., left = NULL, right = NULL) {
+toolbar <- function(..., left = NULL, right = NULL, label = NULL) {
   htmltools::tags$div(
     class = "rcmdr-toolbar d-flex gap-2 align-items-center flex-wrap",
+    role = if (is.null(label)) NULL else "toolbar",
+    `aria-label` = label,
     left,
     ...,
-    if (!is.null(right)) htmltools::tags$div(class = "ms-auto d-flex gap-2", right)
+    if (!is.null(right)) {
+      htmltools::tags$div(class = "ms-auto d-flex gap-2 align-items-center", right)
+    }
+  )
+}
+
+#' @keywords internal
+studio_toolbar <- function(..., left = NULL, right = NULL, label = NULL) {
+  toolbar(..., left = left, right = right, label = label)
+}
+
+#' A status badge
+#'
+#' A short label with a semantic colour.  The colour is never the only signal:
+#' the label itself says what the state is, and the icon is decorative.
+#'
+#' @param label Visible text.
+#' @param status One of `neutral`, `ok`, `warning`, `error`, `info`.
+#' @param icon Optional icon name from [rcmdr_icon_paths()].
+#' @param title Optional tooltip.
+#' @return A `<span>` tag.
+#' @keywords internal
+badge <- function(label, status = c("neutral", "ok", "warning", "error", "info"),
+                  icon = NULL, title = NULL) {
+  status <- match.arg(status)
+  htmltools::tags$span(
+    class = paste0("rcmdr-badge rcmdr-badge-", status),
+    title = title,
+    if (!is.null(icon)) rcmdr_icon(icon, size = 12),
+    label
+  )
+}
+
+#' Dialog header
+#'
+#' The full `.modal-header` of a dialog: icon chip, title, category and the
+#' close button.  It belongs to a modal skeleton built with
+#' `.modal-dialog`/`.modal-content`; [shiny::modalDialog()] keeps its own
+#' header, so this component is for the dialogs that build their chrome.
+#' @keywords internal
+modal_header <- function(title, category = NULL, icon = NULL, close = TRUE,
+                         close_label = tr("Close"), id = NULL) {
+  htmltools::tags$div(
+    class = "modal-header rcmdr-modal-header",
+    if (!is.null(icon)) {
+      htmltools::tags$span(class = "rcmdr-dialog-icon", rcmdr_icon(icon, 18))
+    },
+    htmltools::tags$div(
+      class = "rcmdr-modal-heading",
+      htmltools::tags$h4(class = "modal-title", id = id, title),
+      if (!is.null(category) && nzchar(category)) {
+        htmltools::tags$div(class = "rcmdr-dialog-category", category)
+      }
+    ),
+    if (isTRUE(close)) {
+      htmltools::tags$button(
+        type = "button", class = "btn-close",
+        `data-bs-dismiss` = "modal", `aria-label` = close_label
+      )
+    }
+  )
+}
+
+#' Dialog footer
+#'
+#' The actions of a dialog.  The primary action is passed separately and
+#' lands on the right, the way the eye reads a form: decide, then apply.
+#' @keywords internal
+modal_footer <- function(..., primary = NULL) {
+  htmltools::tags$div(
+    class = "modal-footer rcmdr-modal-footer",
+    ...,
+    if (!is.null(primary)) {
+      htmltools::tags$div(class = "rcmdr-modal-primary", primary)
+    }
+  )
+}
+
+#' Tab strip
+#'
+#' A row of small tabs for hand-built views: each tab sets `id` to its value,
+#' the same contract the script document tabs already use.  The items are
+#' toggle buttons (`aria-pressed`), not ARIA tabs, because the component does
+#' not implement the arrow-key navigation the tab pattern promises.
+#'
+#' @param id Shiny input to update.
+#' @param tabs Named character vector: label = value.
+#' @param selected Value of the active tab.  Defaults to the first.
+#' @param label Accessible name for the strip.
+#' @return A `<div>` tag, or `NULL` when `tabs` is empty.
+#' @keywords internal
+tabs_strip <- function(id, tabs, selected = NULL, label = NULL) {
+  if (length(tabs) == 0L) return(NULL)
+  if (is.null(names(tabs)) || any(!nzchar(names(tabs)))) {
+    stop("tabs_strip() needs a named character vector: label = value.",
+         call. = FALSE)
+  }
+  values <- unname(as.character(tabs))
+  invalid <- !grepl("^[A-Za-z0-9_.-]+$", c(id, values))
+  if (any(invalid)) {
+    stop("tabs_strip() ids and values must be simple identifiers.",
+         call. = FALSE)
+  }
+  selected <- selected %||% values[[1L]]
+  htmltools::tags$div(
+    class = "rcmdr-tabs", role = "group", `aria-label` = label,
+    lapply(seq_along(values), function(i) {
+      active <- identical(values[[i]], selected)
+      htmltools::tags$button(
+        type = "button",
+        class = paste0("rcmdr-tabs-item", if (active) " active" else ""),
+        `aria-pressed` = if (active) "true" else "false",
+        `data-value` = values[[i]],
+        onclick = sprintf(
+          "Shiny.setInputValue('%s', '%s', {priority: 'event'});",
+          id, values[[i]]
+        ),
+        names(tabs)[[i]]
+      )
+    })
   )
 }
 

@@ -108,7 +108,7 @@ script_pane_ui <- function() {
       actionButton("clear_script", tr("Clear"), class = "btn-sm btn-outline-secondary"),
       downloadButton("download_script", tr("Download"),
                      class = "btn-sm btn-outline-secondary"),
-      checkboxInput("auto_append", tr("Append generated commands"), value = TRUE)
+      switch_input("auto_append", tr("Append generated commands"), value = TRUE)
     ),
     uiOutput("script_editor_ui")
   )
@@ -473,8 +473,8 @@ result_hint_ui <- function(info, mode = "studio", auto = FALSE) {
       class = "d-flex align-items-center gap-2 flex-wrap",
       actionButton("result_hint_open", tr("Show result"),
                    class = "btn-sm btn-primary"),
-      checkboxInput("result_hint_auto", tr("Open automatically"),
-                    value = isTRUE(auto)),
+      switch_input("result_hint_auto", tr("Open automatically"),
+                   value = isTRUE(auto)),
       actionButton("result_hint_close", tr("Dismiss"),
                    class = "btn-sm btn-outline-secondary")
     )
@@ -486,10 +486,13 @@ app_topbar_ui <- function(theme = "system") {
   current <- current_language()
   if (!current %in% languages) languages <- c(current, languages)
   htmltools::div(
-    class = "rcmdr-topbar d-flex justify-content-between align-items-center px-3 py-2",
+    class = paste("rcmdr-topbar d-flex justify-content-between",
+                  "align-items-center gap-2 px-3 py-2 flex-wrap"),
     role = "banner",
     htmltools::div(
-      class = "d-flex align-items-center gap-2",
+      class = "d-flex align-items-center gap-2 rcmdr-brand",
+      htmltools::tags$span(class = "rcmdr-brand-mark",
+                           rcmdr_icon("sliders", 18)),
       htmltools::tags$strong(tr("RcmdrShiny Studio"), class = "fs-5"),
       htmltools::tags$small(tr("Inspired by R Commander"),
                             class = "rcmdr-brand-sub")
@@ -503,13 +506,18 @@ app_topbar_ui <- function(theme = "system") {
       ),
       uiOutput("dataset_badge", inline = TRUE),
       uiOutput("model_badge", inline = TRUE),
+      # The two selects carry no visible label: the bar is dense and the
+      # current value is the label.  A visually hidden one keeps the control
+      # named for a screen reader.
       selectInput(
-        "language", NULL,
+        "language",
+        htmltools::tags$span(class = "visually-hidden", tr("Language")),
         choices = stats::setNames(languages, toupper(languages)),
         selected = current, width = "90px"
       ),
       selectInput(
-        "theme", NULL,
+        "theme",
+        htmltools::tags$span(class = "visually-hidden", tr("Theme")),
         choices = theme_choices(),
         selected = theme,
         width = "160px"
@@ -542,8 +550,12 @@ app_ui <- function() {
           role = "navigation", `aria-label` = tr("Application menus"),
           htmltools::div(
             class = "rcmdr-menu-search",
-            textInput("menu_search", NULL,
-                      placeholder = tr("Search menus..."), width = "100%"),
+            textInput(
+              "menu_search",
+              htmltools::tags$span(class = "visually-hidden",
+                                   tr("Search menus")),
+              placeholder = tr("Search menus..."), width = "100%"
+            ),
             htmltools::div(
               class = "d-flex gap-2 align-items-center rcmdr-menu-actions",
               actionLink("menu_expand_all", tr("Expand all")),
@@ -2987,26 +2999,38 @@ app_server <- function(env = globalenv()) {
       } else {
         sprintf("%d x %d", nrow(df), ncol(df))
       }
+      # One item per fact: the separators are CSS borders, so a screen reader
+      # reads the facts, not a row of pipes.
       htmltools::tagList(
-        htmltools::tags$span(sprintf(tr("RcmdrShiny Studio %s"), version)),
-        htmltools::tags$span(" | "),
-        htmltools::tags$span(toupper(ui_mode(state))),
-        htmltools::tags$span(" | "),
-        htmltools::tags$span(dimensions),
-        htmltools::tags$span(" | "),
-        htmltools::tags$span(sprintf(tr("%d command(s)"), length(state$log))),
-        htmltools::tags$span(" | "),
-        htmltools::tags$span(sprintf(tr("%d history step(s)"),
-                                      length(state$history %||% list()))),
-        htmltools::tags$span(" | "),
-        htmltools::tags$span(sprintf(tr("%d plot(s)"), length(state$plots))),
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("RcmdrShiny Studio %s"), version)
+        ),
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          badge(toupper(ui_mode(state)), "neutral")
+        ),
+        htmltools::tags$span(class = "rcmdr-status-item", dimensions),
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("%d command(s)"), length(state$log))
+        ),
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("%d history step(s)"), length(state$history %||% list()))
+        ),
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("%d plot(s)"), length(state$plots))
+        ),
         if (isTRUE(state$busy)) {
-          htmltools::tags$span(class = "rcmdr-busy", tr(" | busy"))
+          htmltools::tags$span(class = "rcmdr-status-item",
+                               badge(tr("busy"), "warning"))
         },
         if (!is.null(state$last_error)) {
           htmltools::tags$span(
-            class = "text-danger",
-            sprintf(tr(" | last error: %s"), state$last_error)
+            class = "rcmdr-status-item text-danger",
+            sprintf(tr("last error: %s"), state$last_error)
           )
         }
       )

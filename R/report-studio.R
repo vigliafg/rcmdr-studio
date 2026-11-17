@@ -577,14 +577,13 @@ report_studio_ui <- function() {
 
 report_cell_card <- function(chunk, output) {
   status <- output$status %||% "idle"
-  badge <- switch(
+  state_badge <- switch(
     status,
-    ok = htmltools::tags$span(class = "badge bg-success", tr("ok")),
-    error = htmltools::tags$span(class = "badge bg-danger", tr("error")),
-    empty = htmltools::tags$span(class = "badge bg-secondary", tr("empty")),
-    missing = htmltools::tags$span(class = "badge bg-warning text-dark",
-                                   tr("missing")),
-    htmltools::tags$span(class = "badge bg-light text-dark", tr("not run"))
+    ok = badge(tr("ok"), "ok", icon = "check"),
+    error = badge(tr("error"), "error"),
+    empty = badge(tr("empty"), "neutral"),
+    missing = badge(tr("missing"), "warning"),
+    badge(tr("not run"), "neutral")
   )
   body <- NULL
   if (!is.null(output)) {
@@ -612,7 +611,7 @@ report_cell_card <- function(chunk, output) {
       ),
       htmltools::div(
         class = "d-flex gap-1 align-items-center",
-        badge,
+        state_badge,
         htmltools::tags$a(
           href = "#", class = "btn btn-sm btn-outline-primary",
           onclick = sprintf(

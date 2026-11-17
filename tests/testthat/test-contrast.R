@@ -113,3 +113,24 @@ test_that("the measured minimum does not regress below the documented floor", {
   expect_gte(floor_of("--rcmdr-on-primary-muted", "--rcmdr-hero-to"), 5)
   expect_gte(floor_of("--rcmdr-border-strong", "--rcmdr-surface-muted"), 3)
 })
+
+test_that("the component pairs introduced in U2 meet AA", {
+  palettes <- palette_tokens()
+  pairs <- list(
+    c("badge info", "--rcmdr-link", "--rcmdr-surface-muted"),
+    c("dialog icon", "--rcmdr-accent", "--rcmdr-surface-muted"),
+    c("brand mark", "--rcmdr-primary", "--rcmdr-on-primary-muted"),
+    c("tab hover", "--rcmdr-heading", "--rcmdr-hover")
+  )
+  for (name in names(palettes)) {
+    palette <- palettes[[name]]
+    for (pair in pairs) {
+      ratio <- contrast_ratio(palette[[pair[2]]], palette[[pair[3]]])
+      expect_gte(
+        ratio, aa_text,
+        label = sprintf("%s: %s (%s on %s) = %.2f",
+                        name, pair[1], pair[2], pair[3], ratio)
+      )
+    }
+  }
+})

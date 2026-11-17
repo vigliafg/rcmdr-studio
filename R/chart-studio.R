@@ -883,10 +883,7 @@ chart_models_cards <- function(table) {
             if (isTRUE(row$installed)) {
               chart_model_action_link(row$id, tr("Open"))
             } else {
-              htmltools::span(
-                class = "badge bg-secondary",
-                sprintf(tr("%s missing"), row$requires)
-              )
+              badge(sprintf(tr("%s missing"), row$requires), "warning")
             }
           )
         )

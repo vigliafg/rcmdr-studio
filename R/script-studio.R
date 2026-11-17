@@ -494,7 +494,7 @@ script_studio_ui <- function() {
       actionButton("clear_script", tr("Clear"), class = "btn-sm btn-outline-secondary"),
       downloadButton("download_script", tr("Download"),
                      class = "btn-sm btn-outline-secondary"),
-      checkboxInput("auto_append", tr("Append generated commands"), value = TRUE)
+      switch_input("auto_append", tr("Append generated commands"), value = TRUE)
     ),
     htmltools::div(
       class = "rcmdr-script-workspace row g-2",
@@ -535,11 +535,12 @@ script_studio_ui <- function() {
 
 script_output_card <- function(entry) {
   if (is.null(entry)) return(NULL)
-  badge <- switch(
-    entry$status %||% "ok",
-    ok = htmltools::tags$span(class = "badge bg-success", tr("ok")),
-    error = htmltools::tags$span(class = "badge bg-danger", tr("error")),
-    htmltools::tags$span(class = "badge bg-secondary", entry$status %||% "ok")
+  status <- entry$status %||% "ok"
+  state_badge <- switch(
+    status,
+    ok = badge(tr("ok"), "ok", icon = "check"),
+    error = badge(tr("error"), "error"),
+    badge(status, "neutral")
   )
   lines <- c(entry$output %||% character(), entry$messages %||% character())
   htmltools::div(
@@ -547,7 +548,7 @@ script_output_card <- function(entry) {
     htmltools::div(
       class = "d-flex justify-content-between align-items-center gap-2",
       htmltools::tags$span(class = "small", entry$id %||% ""),
-      htmltools::div(class = "d-flex gap-1 align-items-center", badge,
+      htmltools::div(class = "d-flex gap-1 align-items-center", state_badge,
                      htmltools::tags$span(
                        class = "rcmdr-history-time",
                        format(entry$time %||% Sys.time(), "%H:%M:%S")

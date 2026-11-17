@@ -2,14 +2,27 @@
     body { background: var(--rcmdr-bg); }
     .rcmdr-topbar { background: var(--rcmdr-primary); color: var(--rcmdr-on-primary); }
     .rcmdr-topbar .badge-box { color: var(--rcmdr-on-primary-muted); font-size: var(--rcmdr-text-md); }
-    .rcmdr-topbar .form-select { max-width: 8rem; }
+    .rcmdr-topbar .rcmdr-brand { min-width: 0; }
+    .rcmdr-brand-mark {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: none; width: 1.9rem; height: 1.9rem;
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-on-primary-muted); color: var(--rcmdr-primary);
+    }
+    .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
+    /* The bar is dense: the selects carry a visually hidden label, so the
+       label element must not take a row. */
+    .rcmdr-topbar .form-group,
+    .rcmdr-topbar .shiny-input-container { margin-bottom: 0; }
+    .rcmdr-topbar .control-label { margin: 0; }
+    .rcmdr-topbar .form-select { max-width: 9rem; }
     /* Selectize renders its own dropdown at z-index 1000; the menubar and the
        toolbar sit at 1040, so the language and theme lists were painted under
        them.  Keep every select list above those bars. */
     .selectize-control .selectize-dropdown { z-index: 1050; }
     .rcmdr-sidebar {
       background: var(--rcmdr-surface); border-right: 1px solid var(--rcmdr-border);
-      min-height: calc(100vh - 90px); padding: .75rem .65rem;
+      min-height: calc(100vh - 90px); padding: var(--rcmdr-space);
       max-height: calc(100vh - 90px); overflow-y: auto;
     }
     .rcmdr-menu-group > summary {
@@ -55,5 +68,39 @@
       color: var(--rcmdr-link); }
     .rcmdr-menu-item:hover { color: var(--rcmdr-accent); text-decoration: underline; }
     .rcmdr-menu-item.disabled { color: var(--rcmdr-disabled); cursor: not-allowed; }
-    .rcmdr-statusbar { background: var(--rcmdr-surface-muted); border-top: 1px solid var(--rcmdr-border);
-      padding: .25rem .75rem; font-size: var(--rcmdr-text-sm); color: var(--rcmdr-muted); }
+    .rcmdr-statusbar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .6rem;
+      background: var(--rcmdr-surface-muted);
+      border-top: 1px solid var(--rcmdr-border);
+      padding: .25rem .75rem; font-size: var(--rcmdr-text-sm);
+      color: var(--rcmdr-muted);
+    }
+    /* A separator is decoration, so it is a border and not a "|" the screen
+       reader would read as content. */
+    .rcmdr-status-item + .rcmdr-status-item {
+      padding-left: .6rem; border-left: 1px solid var(--rcmdr-border);
+    }
+
+    /* Main views ------------------------------------------------------------
+       The views are windows on the workspace, not a second menu: a segmented
+       strip keeps them visually distinct from the menubar, and the active one
+       uses the guaranteed primary pair. */
+    #main_tabs.nav-tabs {
+      display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px;
+      margin-bottom: var(--rcmdr-space);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+      background: var(--rcmdr-surface-muted);
+    }
+    #main_tabs .nav-link {
+      border: 0; border-radius: var(--rcmdr-radius-pill);
+      padding: .22rem .7rem; font-size: var(--rcmdr-text-sm);
+      color: var(--rcmdr-text);
+    }
+    #main_tabs .nav-link:hover {
+      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
+    }
+    #main_tabs .nav-link.active {
+      background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
+      font-weight: var(--rcmdr-weight-strong);
+    }
