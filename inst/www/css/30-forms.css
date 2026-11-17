@@ -11,6 +11,10 @@
       --rcmdr-control-pad: .4rem .5rem;
       --rcmdr-control-h: 2.125rem;
       --rcmdr-control-min: var(--rcmdr-control-h);
+      /* A button is as tall as a field; the small variant is one step shorter
+         so a toolbar of six actions still fits on one line. */
+      --rcmdr-btn-h: var(--rcmdr-control-h);
+      --rcmdr-btn-h-sm: calc(var(--rcmdr-control-h) - .375rem);
       --rcmdr-section-gap: .4rem;
       --rcmdr-help-size: var(--rcmdr-text-xs);
     }

@@ -16,6 +16,7 @@
       --rcmdr-muted: #47566a;
       --rcmdr-disabled: #7b8794;
       --rcmdr-border: #bcc8d6;
+      --rcmdr-border-strong: #7a8391;
       --rcmdr-primary: #1f3a5f;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d9e5f2;
@@ -88,6 +89,7 @@
       --rcmdr-muted: #5a4e3c;
       --rcmdr-disabled: #857a66;
       --rcmdr-border: #cdb999;
+      --rcmdr-border-strong: #8c7550;
       --rcmdr-primary: #47391f;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #eedfca;
@@ -98,7 +100,7 @@
       --rcmdr-mark-bg: #ffe08a;
       --rcmdr-mark-text: #3a2a00;
       --rcmdr-hero-from: #4a3a1f;
-      --rcmdr-hero-to: #7a5a28;
+      --rcmdr-hero-to: #745423;
       --rcmdr-ok-bg: #e3f3d9;
       --rcmdr-ok-fg: #2c5a10;
       --rcmdr-warn-bg: #fbeac2;
@@ -123,6 +125,7 @@
       --rcmdr-muted: #3f5468;
       --rcmdr-disabled: #77889a;
       --rcmdr-border: #b0c3d8;
+      --rcmdr-border-strong: #6b839d;
       --rcmdr-primary: #123a5e;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d2e3f3;
@@ -133,7 +136,7 @@
       --rcmdr-mark-bg: #ffe9a8;
       --rcmdr-mark-text: #3a2a00;
       --rcmdr-hero-from: #123a5e;
-      --rcmdr-hero-to: #276c9f;
+      --rcmdr-hero-to: #22608d;
       --rcmdr-ok-bg: #d8f2e6;
       --rcmdr-ok-fg: #05563a;
       --rcmdr-warn-bg: #fdeec6;
@@ -158,6 +161,7 @@
       --rcmdr-muted: #b4c2d3;
       --rcmdr-disabled: #8b99ab;
       --rcmdr-border: #3a4757;
+      --rcmdr-border-strong: #627893;
       --rcmdr-primary: #234870;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d9e7f6;
@@ -193,6 +197,7 @@
       --rcmdr-muted: #c2c9d2;
       --rcmdr-disabled: #949ca6;
       --rcmdr-border: #454b52;
+      --rcmdr-border-strong: #737c88;
       --rcmdr-primary: #33475e;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #dbe4ef;
@@ -228,6 +233,7 @@
       --rcmdr-muted: #c1c7cd;
       --rcmdr-disabled: #8f979e;
       --rcmdr-border: #3e4348;
+      --rcmdr-border-strong: #6e7780;
       --rcmdr-primary: #2f3a3d;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d8e2e3;
@@ -263,6 +269,7 @@
       --rcmdr-muted: #1f1f1f;
       --rcmdr-disabled: #4a4a4a;
       --rcmdr-border: #000000;
+      --rcmdr-border-strong: #000000;
       --rcmdr-primary: #000000;
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #ffffff;

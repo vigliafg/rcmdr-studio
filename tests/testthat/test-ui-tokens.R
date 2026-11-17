@@ -1,33 +1,7 @@
 # Design tokens ----------------------------------------------------------------
 
-tokens_source <- function() as.character(app_css())
-
-palette_names <- c("light", "light-warm", "light-cool", "dark", "dark-dim",
-                   "dark-graphite", "contrast")
-
-palette_tokens <- function(css) {
-  blocks <- regmatches(
-    css,
-    gregexpr("body\\.rcmdr-[a-z-]+\\s*\\{[^}]*\\}", css, perl = TRUE)
-  )[[1]]
-  names <- sub("^body\\.rcmdr-([a-z-]+)\\s*\\{.*$", "\\1", blocks)
-  keep <- names %in% palette_names
-  blocks <- blocks[keep]
-  names <- names[keep]
-  values <- lapply(blocks, function(block) {
-    pairs <- regmatches(
-      block,
-      gregexpr("--rcmdr-[a-z0-9-]+\\s*:\\s*[^;]+", block, perl = TRUE)
-    )[[1]]
-    keys <- trimws(sub("\\s*:.*$", "", pairs))
-    vals <- trimws(sub("^[^:]+:\\s*", "", pairs))
-    stats::setNames(vals, keys)
-  })
-  stats::setNames(values, names)
-}
-
 test_that("every palette defines the same tokens", {
-  palettes <- palette_tokens(tokens_source())
+  palettes <- palette_tokens()
   expect_setequal(names(palettes), palette_names)
 
   reference <- sort(names(palettes$light))
@@ -39,7 +13,7 @@ test_that("every palette defines the same tokens", {
 })
 
 test_that("the focus token is the accent of its palette", {
-  palettes <- palette_tokens(tokens_source())
+  palettes <- palette_tokens()
   expect_length(palettes, length(palette_names))
   for (name in names(palettes)) {
     expect_identical(
@@ -50,7 +24,7 @@ test_that("the focus token is the accent of its palette", {
 })
 
 test_that("the type, spacing and radius scales are declared once", {
-  css <- tokens_source()
+  css <- token_css()
   for (token in c("--rcmdr-text-xs: .75rem",
                   "--rcmdr-text-sm: .8125rem",
                   "--rcmdr-text-md: .875rem",
@@ -80,7 +54,7 @@ test_that("the type, spacing and radius scales are declared once", {
 })
 
 test_that("font sizes and radii always go through a token", {
-  css <- tokens_source()
+  css <- token_css()
   sizes <- regmatches(css, gregexpr("font-size\\s*:\\s*[^;}]+", css))[[1]]
   expect_gt(length(sizes), 10L)
   expect_true(all(grepl("var\\(--rcmdr-", sizes)))
@@ -91,7 +65,7 @@ test_that("font sizes and radii always go through a token", {
 })
 
 test_that("density resolves to the scale instead of repeating sizes", {
-  css <- tokens_source()
+  css <- token_css()
   # Default (compact) block.
   expect_match(css, "--rcmdr-label-size: var(--rcmdr-text-sm);", fixed = TRUE)
   expect_match(css, "--rcmdr-control-size: var(--rcmdr-text-md);", fixed = TRUE)
@@ -110,7 +84,7 @@ test_that("density resolves to the scale instead of repeating sizes", {
 })
 
 test_that("there is a single global focus ring built from the tokens", {
-  css <- tokens_source()
+  css <- token_css()
   global <- regmatches(
     css,
     gregexpr("(?m)^\\s*:focus-visible\\s*\\{[^}]*\\}", css, perl = TRUE)

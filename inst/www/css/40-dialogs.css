@@ -9,7 +9,7 @@
     .rcmdr-dialog-grid > .rcmdr-field-wide { grid-column: 1 / -1; }
     .rcmdr-breadcrumb { margin-bottom: .5rem; }
     .rcmdr-home-hero {
-      background: linear-gradient(135deg, var(--rcmdr-primary) 0%, var(--rcmdr-accent) 100%);
+      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%, var(--rcmdr-hero-to) 100%);
       color: var(--rcmdr-on-primary); border-radius: var(--rcmdr-radius-lg); padding: 1.4rem 1.6rem; margin-bottom: var(--rcmdr-space);
     }
     .rcmdr-home-hero h2 { font-size: var(--rcmdr-text-2xl); margin-bottom: .25rem; }

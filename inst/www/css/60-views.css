@@ -68,20 +68,6 @@
     }
     body.rcmdr-dark .modal-header .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
     body.rcmdr-dark .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
-    body.rcmdr-dark .btn-light,
-    body.rcmdr-dark .btn-default,
-    body.rcmdr-dark .btn-outline-secondary,
-    body.rcmdr-dark .btn-outline-dark {
-      background: var(--rcmdr-surface-muted); color: var(--rcmdr-text);
-      border-color: var(--rcmdr-border);
-    }
-    body.rcmdr-dark .btn-light:hover,
-    body.rcmdr-dark .btn-default:hover,
-    body.rcmdr-dark .btn-outline-secondary:hover,
-    body.rcmdr-dark .btn-outline-dark:hover {
-      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
-    }
-    body.rcmdr-dark .btn-link { color: var(--rcmdr-link); }
     body.rcmdr-dark a { color: var(--rcmdr-link); }
     body.rcmdr-dark .dropdown-item.active,
     body.rcmdr-dark .dropdown-item:active { background: var(--rcmdr-selection); color: var(--rcmdr-heading); }
@@ -95,11 +81,6 @@
     body.rcmdr-dark .shiny-output-error,
     body.rcmdr-dark .shiny-output-error-validation,
     body.rcmdr-dark .shiny-output-error-error { color: var(--rcmdr-danger) !important; }
-    body.rcmdr-dark .btn-danger {
-      background-color: #b42318; border-color: #d92d20; color: #ffffff;
-    }
-    body.rcmdr-dark .btn-danger:hover { background-color: #d92d20; color: #ffffff; }
-    body.rcmdr-dark .btn-outline-danger { color: var(--rcmdr-danger); border-color: var(--rcmdr-danger); }
     body.rcmdr-dark .text-secondary { color: var(--rcmdr-muted) !important; }
     body.rcmdr-dark .bg-white,
     body.rcmdr-dark .bg-light { background-color: var(--rcmdr-surface) !important; }

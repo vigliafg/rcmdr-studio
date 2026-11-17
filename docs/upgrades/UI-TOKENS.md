@@ -47,7 +47,7 @@ componenti verranno riscritti comunque.
 
 ## 3. Token di colore
 
-Ogni palette definisce gli stessi 32 token. Le palette sono:
+Ogni palette definisce gli stessi 33 token. Le palette sono:
 
 `light` (default), `light-warm`, `light-cool`, `dark`, `dark-dim`,
 `dark-graphite`, `contrast` (alto contrasto, chiaro).
@@ -63,7 +63,8 @@ Ogni palette definisce gli stessi 32 token. Le palette sono:
 | `--rcmdr-muted` | testo secondario e help | ≥ 6.38:1 |
 | `--rcmdr-disabled` | testo disabilitato | esente WCAG; ≥ 3.5:1 comunque |
 | `--rcmdr-link` | link | distinto dall'accento |
-| `--rcmdr-border` | bordi decorativi | **non** sufficiente per il confine dei campi (§ 4) |
+| `--rcmdr-border` | bordi decorativi | card, tabelle, separatori; non il confine di un controllo |
+| `--rcmdr-border-strong` | confine dei controlli | ≥ 3:1 su ogni superficie (§ 4) |
 | `--rcmdr-primary` | barra superiore, intestazioni | |
 | `--rcmdr-on-primary` | testo sul primario | ≥ 9.41:1 |
 | `--rcmdr-on-primary-muted` | testo secondario sul primario | ≥ 7.42:1 |
@@ -109,26 +110,35 @@ non testuali 3:1.
 | `on-primary` su `primary` | 9.41 | 21.00 | AA |
 | `on-primary-muted` su `primary` | 7.42 | 21.00 | AA |
 | `accent` su `surface` | 5.83 | 9.68 | AA (anche 3:1 UI) |
-| `ok-fg` su `ok-bg` | 5.99 | 10.95 | AA |
-| `warn-fg` su `warn-bg` | 5.43 | 10.17 | AA |
+| `focus` su `surface` | 5.83 | 9.68 | AA (3:1 UI) |
+| `ok-fg` su `ok-bg` | 6.88 | 10.66 | AA |
+| `warn-fg` su `warn-bg` | 5.99 | 10.95 | AA |
 | `err-fg` su `err-bg` | 6.68 | 10.89 | AA |
 | `danger` su `surface` | 6.50 | 8.88 | AA |
 | `warning` su `surface` | 5.43 | 10.47 | AA |
 | `success` su `surface` | 5.69 | 11.33 | AA |
+| `on-primary` su `hero-from` | 10.96 | 21.00 | AA |
+| `on-primary` su `hero-to` | 6.72 | 21.00 | AA |
+| `on-primary-muted` su `hero-from` | 8.37 | 21.00 | AA |
+| `on-primary-muted` su `hero-to` | 5.13 | 21.00 | AA |
+| `border-strong` su `surface` | 3.53 | 21.00 | 3:1 UI |
+| `border-strong` su `surface-muted` | 3.07 | 18.76 | 3:1 UI |
+| `border-strong` su `surface-sunken` | 3.61 | 19.26 | 3:1 UI |
 | `disabled` su `surface` | 3.57 | 8.86 | esente (testo inattivo) |
-| `on-primary-muted` su `hero-to` | **4.29** | 21.00 | **sotto AA in `light-cool`** |
-| `border` su `surface` | **1.62** | 21.00 | **sotto 3:1** |
+| `border` su `surface` | **1.62** | 21.00 | decorativo, mai confine di un controllo |
 
-### Lacune note
+### Lacune chiuse in U1.4
 
-| Lacuna | Dettaglio | Dove si chiude |
-|---|---|---|
-| Bordo dei campi | `--rcmdr-border` è un bordo decorativo (1.6–1.9:1). WCAG 1.4.11 chiede 3:1 per il confine di un controllo. Serve `--rcmdr-border-strong`, non un ritocco del bordo esistente. | U1.4 |
-| Sottotitolo della hero in `light-cool` | 4.29:1: sotto AA per testo normale. Si alza `hero-to` o `on-primary-muted` di quella palette. | U1.4 |
-| Alone del focus | l'alone in `rgba(..., .28)` non raggiunge 3:1. Per questo il focus usa un `outline` pieno in `--rcmdr-focus` (5.83:1 minimo) e l'alone resta solo come rinforzo visivo. | U1.2 |
+| Lacuna | Com'è stata chiusa |
+|---|---|
+| Bordo dei campi | nuovo token `--rcmdr-border-strong` (≥ 3.07:1 su ogni superficie), applicato a `form-control`, `form-select`, `form-check-input` e selectize. `--rcmdr-border` resta per i bordi decorativi. |
+| Sottotitolo della hero | il gradiente ora usa `--rcmdr-hero-from`/`--rcmdr-hero-to` invece di `primary → accent`: l'accento è chiaro nei temi scuri e il testo bianco scendeva a **1.67:1**. Con i token della hero il minimo è 5.13:1. In `light-cool` e `light-warm` la seconda tinta è stata scurita per lasciare margine. |
+| Badge della topbar | `text-white-50` di Bootstrap scendeva a 4.14:1 sulla barra primaria: ora è `--rcmdr-on-primary-muted` (≥ 7.42:1). Rimossi i due colori fissi `#7ee2a8` e `#ffb3ad`, che erano rimasti senza consumatori. |
+| Alone del focus | l'alone in `rgba(..., .28)` non raggiunge 3:1. Per questo il focus usa un `outline` pieno in `--rcmdr-focus` (5.83:1 minimo) e l'alone resta solo come rinforzo visivo. |
 
-La verifica sarà automatizzata in U1.4 con un test che ricalcola questa tabella
-dai token, così una palette nuova non può entrare senza i suoi numeri.
+`tests/testthat/test-contrast.R` ricalcola questa tabella da `app_css()`: ogni
+coppia è un'asserzione, quindi una palette nuova non può entrare senza i suoi
+numeri.
 
 ---
 
@@ -241,18 +251,49 @@ Altezza unica dei controlli:
 
 La stessa altezza vale per `input`, `select`, `selectize` e i gruppi di input.
 Le aree di testo (`textarea`) hanno `min-height`, non `height`: devono poter
-crescere. I pulsanti hanno le loro varianti (`sm`, default) e ricevono
-l'altezza uniforme in U1.3, insieme alle varianti di colore.
+crescere.
+
+### 9.1 Pulsanti
+
+| Token | `compact` | `comfortable` |
+|---|---|---|
+| `--rcmdr-btn-h` | `var(--rcmdr-control-h)` (34 px) | idem (40 px) |
+| `--rcmdr-btn-h-sm` | `calc(var(--rcmdr-control-h) - .375rem)` (28 px) | 34 px |
+
+Un pulsante è alto come un campo; `btn-sm` scende di 6 px, che è la misura che
+fa stare sei azioni su una riga di toolbar. Il contenuto è centrato con
+`inline-flex`, quindi un'icona e il testo non hanno bisogno di margini
+artificiali; `white-space: nowrap` evita che un'etichetta vada a capo dentro un
+gruppo.
+
+Sei ruoli, tutti sulle classi Bootstrap già presenti nei dialoghi:
+
+| Ruolo | Classi | Colori |
+|---|---|---|
+| primario | `btn-primary` | riempimento `primary` / testo `on-primary` |
+| secondario | `btn-outline-secondary`, `btn-outline-dark`, `btn-light`, `btn-default` | `surface` + `border`; hover `hover`, attivo `selection` |
+| contorno d'accento | `btn-outline-primary` | testo e bordo `accent`; hover `hover` + `heading` |
+| fantasma | `btn-link` | trasparente; hover `hover` |
+| distruttivo | `btn-outline-danger` (contorno), `btn-danger` (tinta) | `danger` / `err-fg` su `err-bg` |
+| stato | `btn-success`, `btn-warning` | coppie `ok-*`, `warn-*` |
+| sulla barra primaria | `btn-outline-light` | `on-primary`; hover invertito con `primary` |
+
+Regola dura: un riempimento pieno usa solo una coppia garantita
+(`primary`/`on-primary`). L'accento e i colori di stato sono **chiari** nei
+temi scuri: usarli come sfondo con testo bianco scenderebbe sotto 2:1. Per
+questo l'hover dei pulsanti pieni è un `filter: brightness()` (che scala testo
+e sfondo insieme) e l'hover dei pulsanti a contorno è una superficie
+(`hover`/`selection`/`err-bg`), non un riempimento saturo.
 
 Stati e token:
 
 | Stato | Come si vede | Token |
 |---|---|---|
-| default | superficie + bordo | `surface`, `border` |
+| default | superficie + bordo | `surface`, `border`, `border-strong` |
 | hover | sfondo leggermente pieno | `hover` |
 | focus | anello unico | `focus`, `focus-width`, `focus-offset` |
 | attivo/selezionato | accento su superficie | `accent`, `selection` |
-| disabilitato | testo attenuato, cursore `not-allowed` | `disabled` |
+| disabilitato | una superficie piatta, cursore `not-allowed` | `surface-muted`, `border`, `disabled` |
 | errore | bordo e testo di errore | `err-fg`, `danger` |
 | caricamento | testo/icona di avviso, nessuna animazione obbligatoria | `warning` |
 
@@ -313,10 +354,10 @@ usa viene rimosso.
 # I token sono definiti una volta e usati
 Rscript -e 'pkgload::load_all("."); cat(as.character(app_css()))' | grep -c -- '--rcmdr-'
 
-# Densità e focus
-Rscript -e 'testthat::test_local(filter="density|accessibility")'
+# Densità, pulsanti e focus
+Rscript -e 'testthat::test_local(filter="density|buttons|accessibility")'
 
-# Contrasto (da U1.4)
+# Contrasto: ricalcola la tabella del § 4 da tutte le palette
 Rscript -e 'testthat::test_local(filter="contrast")'
 ```
 

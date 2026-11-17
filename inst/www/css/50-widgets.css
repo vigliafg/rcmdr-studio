@@ -5,7 +5,16 @@
     body .input-group-text {
       background-color: var(--rcmdr-surface);
       color: var(--rcmdr-text);
-      border-color: var(--rcmdr-border);
+      /* The boundary of a control is information: WCAG 1.4.11 asks for 3:1,
+         which the decorative border does not reach. */
+      border-color: var(--rcmdr-border-strong);
+    }
+    /* The checked glyph is painted white by Bootstrap: the fill must be dark
+       in every palette, so it uses the primary pair, not the accent. */
+    body .form-check-input:checked,
+    body .form-check-input:indeterminate {
+      background-color: var(--rcmdr-primary);
+      border-color: var(--rcmdr-primary);
     }
     .form-text, .help-block { color: var(--rcmdr-muted); }
     /* Bootstrap paints its own blue halo on :focus.  The Studio uses one ring,
@@ -16,11 +25,166 @@
       border-color: var(--rcmdr-focus);
       box-shadow: none;
     }
+    /* Buttons ---------------------------------------------------------------
+       Six roles on top of the Bootstrap classes the dialogs already use.
+       Nothing is renamed: .btn-primary is the primary action,
+       .btn-outline-secondary and .btn-light are secondary, .btn-link is the
+       ghost action, .btn-outline-primary is the accent outline,
+       .btn-outline-danger and .btn-danger are destructive, and the success
+       and warning buttons are tinted.  Solid fills only use a guaranteed pair
+       (--rcmdr-primary / --rcmdr-on-primary): in the dark palettes the accent
+       and the status colours are light, so white text on them would fail. */
+    body .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--rcmdr-space-1);
+      min-height: var(--rcmdr-btn-h);
+      padding: 0 var(--rcmdr-space-3);
+      border: 1px solid transparent;
+      border-radius: var(--rcmdr-radius-md);
+      font-size: var(--rcmdr-control-size);
+      font-weight: var(--rcmdr-weight-strong);
+      line-height: var(--rcmdr-leading-ui);
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background-color .12s ease, border-color .12s ease,
+        color .12s ease;
+    }
+    body .btn-sm {
+      min-height: var(--rcmdr-btn-h-sm);
+      padding: 0 var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius-sm);
+      font-size: var(--rcmdr-text-sm);
+    }
+    body .btn-primary {
+      background-color: var(--rcmdr-primary);
+      border-color: var(--rcmdr-primary);
+      color: var(--rcmdr-on-primary);
+    }
+    body .btn-primary:hover { filter: brightness(.92); }
+    body .btn-primary:active { filter: brightness(.86); }
+    body .btn-outline-secondary,
+    body .btn-outline-dark,
+    body .btn-light,
+    body .btn-default {
+      background-color: var(--rcmdr-surface);
+      border-color: var(--rcmdr-border);
+      color: var(--rcmdr-text);
+    }
+    body .btn-outline-secondary:hover,
+    body .btn-outline-dark:hover,
+    body .btn-light:hover,
+    body .btn-default:hover {
+      background-color: var(--rcmdr-hover);
+      border-color: var(--rcmdr-border);
+      color: var(--rcmdr-heading);
+    }
+    body .btn-outline-secondary:active,
+    body .btn-outline-dark:active,
+    body .btn-light:active,
+    body .btn-default:active {
+      background-color: var(--rcmdr-selection);
+      color: var(--rcmdr-heading);
+    }
+    body .btn-outline-primary {
+      background-color: var(--rcmdr-surface);
+      border-color: var(--rcmdr-accent);
+      color: var(--rcmdr-accent);
+    }
+    body .btn-outline-primary:hover {
+      background-color: var(--rcmdr-hover);
+      border-color: var(--rcmdr-accent);
+      color: var(--rcmdr-heading);
+    }
+    body .btn-outline-primary:active {
+      background-color: var(--rcmdr-selection);
+      color: var(--rcmdr-heading);
+    }
+    /* Ghost: no chrome until hover.  The destructives keep the error pair, so
+       the hover state is legible in every palette without inventing a fill. */
+    body .btn-link {
+      background-color: transparent;
+      border-color: transparent;
+      color: var(--rcmdr-link);
+    }
+    body .btn-link:hover {
+      background-color: var(--rcmdr-hover);
+      color: var(--rcmdr-heading);
+      text-decoration: none;
+    }
+    body .btn-link:active {
+      background-color: var(--rcmdr-selection);
+      color: var(--rcmdr-heading);
+    }
+    body .btn-outline-danger {
+      background-color: var(--rcmdr-surface);
+      border-color: var(--rcmdr-danger);
+      color: var(--rcmdr-danger);
+    }
+    body .btn-outline-danger:hover,
+    body .btn-outline-danger:active {
+      background-color: var(--rcmdr-err-bg);
+      border-color: var(--rcmdr-danger);
+      color: var(--rcmdr-err-fg);
+    }
+    body .btn-danger,
+    body .btn-success,
+    body .btn-warning {
+      border-width: 1px;
+      border-style: solid;
+    }
+    body .btn-danger {
+      background-color: var(--rcmdr-err-bg);
+      border-color: var(--rcmdr-danger);
+      color: var(--rcmdr-err-fg);
+    }
+    body .btn-success {
+      background-color: var(--rcmdr-ok-bg);
+      border-color: var(--rcmdr-success);
+      color: var(--rcmdr-ok-fg);
+    }
+    body .btn-warning {
+      background-color: var(--rcmdr-warn-bg);
+      border-color: var(--rcmdr-warning);
+      color: var(--rcmdr-warn-fg);
+    }
+    body .btn-danger:hover,
+    body .btn-success:hover,
+    body .btn-warning:hover { filter: brightness(.95); }
+    body .btn-danger:active,
+    body .btn-success:active,
+    body .btn-warning:active { filter: brightness(.9); }
+    /* The one outline that lives on the primary bar inverts on hover. */
+    body .btn-outline-light {
+      background-color: transparent;
+      border-color: var(--rcmdr-on-primary-muted);
+      color: var(--rcmdr-on-primary);
+    }
+    body .btn-outline-light:hover,
+    body .btn-outline-light:active {
+      background-color: var(--rcmdr-on-primary);
+      border-color: var(--rcmdr-on-primary);
+      color: var(--rcmdr-primary);
+    }
+    /* Disabled wins over every variant: one flat, obviously inert surface. */
+    body .btn:disabled,
+    body .btn.disabled {
+      background-color: var(--rcmdr-surface-muted);
+      border-color: var(--rcmdr-border);
+      color: var(--rcmdr-disabled);
+      filter: none;
+      opacity: 1;
+      cursor: not-allowed;
+    }
     body .btn:focus { box-shadow: none; }
     .text-success { color: var(--rcmdr-success); }
     .text-danger { color: var(--rcmdr-danger); }
-    .rcmdr-topbar .text-success { color: #7ee2a8; }
-    .rcmdr-topbar .text-danger { color: #ffb3ad; }
+    /* Bootstrap paints the muted badge at 50% white, which lands under 4.5:1
+       on the primary bar.  "Muted on the primary" is exactly the token. */
+    .rcmdr-topbar .text-white-50 {
+      color: var(--rcmdr-on-primary-muted) !important;
+    }
     .form-control::placeholder { color: var(--rcmdr-muted); opacity: 1; }
     body.rcmdr-dark .form-control::placeholder { color: var(--rcmdr-disabled); }
     /* selectize ships its own white stylesheet, so these need to outrank it. */
@@ -33,7 +197,7 @@
     body .selectize-control .selectize-dropdown {
       background-color: var(--rcmdr-surface);
       color: var(--rcmdr-text);
-      border-color: var(--rcmdr-border);
+      border-color: var(--rcmdr-border-strong);
     }
     body .selectize-control .selectize-input.focus {
       box-shadow: var(--rcmdr-focus-ring);
