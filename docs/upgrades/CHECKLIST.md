@@ -420,7 +420,7 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: in corso (U0, U1 e U2 completate).
+Stato: in corso (U0, U1, U2, U3.1 e U3.2 completate).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -436,8 +436,8 @@ Stato: in corso (U0, U1 e U2 completate).
 | U2.2 | `toolbar()`, `modal_header()`, `modal_footer()`, `tabs_strip()`, `badge()` | [x] | `d3c13bb`, `badge()` già usato in tre viste |
 | U2.3 | Restyle topbar, tab strip, statusbar, sidebar | [x] | `d3c13bb`, etichette nascoste, striscia a pillola |
 | U2.4 | Sostituire i 15 `checkboxInput` diretti | [x] | `d3c13bb`, 3 preferenze a switch, 12 parametri restano checkbox |
-| U3.1 | Chrome comune + dialogo *Options* | [ ] | vetrina |
-| U3.2 | Lotto dati e import | [ ] | test aggiornati |
+| U3.1 | Chrome comune + dialogo *Options* | [x] | `17fc642`, chrome su tutti gli ID, *Options* a segmented/switch |
+| U3.2 | Lotto dati e import | [x] | `17fc642`, segmented dove le etichette sono corte |
 | U3.3 | Lotto statistiche | [ ] | |
 | U3.4 | Lotto grafici | [ ] | |
 | U3.5 | Lotto modelli, report, progetto, script | [ ] | |

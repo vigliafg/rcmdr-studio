@@ -1,9 +1,9 @@
 # Diario di handoff — Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** parziale — U0, U1 e U2 completate; U3.1–U5 da fare  
+**Stato:** parziale — U0, U1, U2, U3.1 e U3.2 completate; U3.3–U5 da fare  
 **Ondata precedente:** `wave-14-dependencies.md` (Onda 14, 2.7.0)  
-**Ondata successiva:** Onda 15 — continuazione (U3.1 → U4 → U5)  
+**Ondata successiva:** Onda 15 — continuazione (U3.3 → U4 → U5)  
 **Documento di settore:** [`15-ui-refresh.md`](../15-ui-refresh.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
 **Checklist:** [`CHECKLIST.md`](../CHECKLIST.md)
@@ -81,11 +81,40 @@ controlli, dialoghi e viste con una sola grammatica visiva.
   di vista (galleria, output, palette): un interruttore prometterebbe un
   effetto immediato che non hanno. Un test fissa la distinzione.
 
-**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4.
+- **U3.1 — chrome.** `dialog_modal()` non riscrive più il proprio modale:
+  chiama `shiny::modalDialog()` con titolo e footer vuoti — così restano id
+  `shiny-modal`, backdrop statico, `data-bs-keyboard="false"`, taglia e script
+  di inizializzazione di Shiny — e inserisce `modal_header()` e
+  `modal_footer()` nel `.modal-content` con `tagQuery()`. Il footer conserva i
+  sei ID (`dialog_help`, `dialog_insert_script`, `dialog_reset`,
+  `dialog_cancel`, `dialog_apply`, `dialog_ok`), il loro ordine nel DOM e
+  quindi l'ordine di tabulazione; l'azione primaria sta nel gruppo di destra.
+  Il titolo `h4` prende `id="rcmdr-dialog-title"` e il modale lo referenzia con
+  `aria-labelledby`: prima nessun dialogo aveva un nome accessibile. Niente
+  pulsante di chiusura: `Esc` e il backdrop sono disattivati, quindi una X
+  chiuderebbe il modale senza passare dal gestore di *Cancel*. L'icona segue
+  il ramo di menu del dialogo (dati: tabella, analisi: output, grafici:
+  grafico, file: documento, modifica: codice, utilità: slider, aiuto: aiuto);
+  `dialog_spec()` accetta un'icona esplicita e il set cresce di una voce,
+  `chart`.
+- **U3.1 — *Options*.** Interfaccia e densità sono due domande binarie e
+  passano a `segmented_input()`; `stringsAsFactors`, `use_markdown` e
+  `use_knitr` sono preferenze e passano a `switch_input()`; i tre numeri usano
+  `number_input()`, il nome canonico. ID, valori e `on_ok()` invariati.
+- **U3.2 — dati e import.** Stesso vocabolario in `dialogs-data.R` e
+  `dialogs-import-text.R`: segmented per livelli del fattore, nomi dei
+  livelli, separatore in esportazione, direzione del merge, statistica
+  dell'aggregazione, provenienza dei dati e segno decimale; `number_input()`
+  per righe e colonne del nuovo data set. Le etichette lunghe (metodo di
+  binning, contrasti, i cinque delimitatori) restano radio: una striscia di
+  pillole che va a capo è peggio di una lista.
+
+**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.2.
 
 **Cosa non è pronto:** nessuna verifica visiva registrata (vedi § 7);
-`tabs_strip()` e il chrome dei modali aspettano il primo consumatore (U4 e
-U3.1); `segmented_input()` non è ancora usato da nessun dialogo (U3.1).
+`tabs_strip()` aspetta il primo consumatore (U4); i modali secondari
+(palette, scorciatoie, tour) non usano ancora il chrome comune; i lotti U3.3–
+U3.5 non sono migrati.
 
 ---
 
@@ -105,6 +134,7 @@ U3.1); `segmented_input()` non è ancora usato da nessun dialogo (U3.1).
 | `b314130` | `feat(ui): button roles, accessible boundaries and measured contrast` | U1.3 e U1.4; condividono il commit perché `50-widgets.css` contiene sia i bottoni sia il bordo dei campi |
 | `9b6178a` | `feat(ui): form helpers for fields, switches, segments and numbers` | U2.1, nessun cambio di markup nei dialoghi |
 | `d3c13bb` | `feat(ui): shared components, refreshed shell and preference switches` | U2.2–U2.4 condividono il commit: `app.R` contiene sia la shell sia l'adozione di `switch_input()` |
+| `17fc642` | `feat(ui): dialog chrome, Options showcase and the data/import batch` | U3.1 e U3.2: chrome, *Options* e i due dialoghi dati condividono il commit perché il vocabolario è lo stesso |
 
 ---
 
@@ -152,6 +182,10 @@ U3.1); `segmented_input()` non è ancora usato da nessun dialogo (U3.1).
 | Accessibilità | `test_local(filter="accessibility")` | verde |
 | Componenti | `test_local(filter="ui-components")` | verde (158 asserzioni) |
 | Shell | `test_local(filter="shell")` | verde (10 asserzioni) |
+| Chrome dei dialoghi | `test_local(filter="dialogs")` | verde |
+| Contratto | `test_local(filter="dialog-contract")` | verde: chrome su tutti gli ID |
+| *Options* | `test_local(filter="phase1")` | verde |
+| Dati e import | `test_local(filter="data-studio-dialogs")` | verde |
 | Integrazione | `test_local(filter="app-integration")` | verde (warning rgl senza X11) |
 | Struttura CSS | controllo su graffe e dichiarazioni | 0 problemi |
 
@@ -161,10 +195,12 @@ U3.1); `segmented_input()` non è ancora usato da nessun dialogo (U3.1).
 `RCMDRSHINY_E2E=1`), 3 warning già noti: rgl senza X11, `rgl.init` in fallback,
 `match_font()` deprecato in systemfonts. I quattro file di test nuovi o
 aggiornati sono verdi; `test-shell.R` aggiunge due warning rgl perché avvia il server per
-leggere la barra di stato.
+leggere la barra di stato, e `test-dialog-contract.R` impiega circa due minuti
+perché rende il chrome di tutti i dialoghi.
 
-**Artefatti:** `/tmp/opencode/tests-u2d.log` (batch corrente),
-`/tmp/opencode/tests-u2.log`, `/tmp/opencode/tests-u1.log`.
+**Artefatti:** `/tmp/opencode/tests-u3a.log` (batch corrente),
+`/tmp/opencode/tests-u2d.log`, `/tmp/opencode/tests-u2.log`,
+`/tmp/opencode/tests-u1.log`.
 
 ---
 
@@ -222,6 +258,22 @@ leggere la barra di stato.
 - **`spin_input()` delega a `number_input()`.** Due nomi per la stessa cosa non
   sono due implementazioni: `number_input()` è il nome canonico, `spin_input()`
   resta per i dialoghi Rcmdr e chiama il primo.
+- **La shell del modale resta di Shiny.** Costruire a mano `#shiny-modal`,
+  backdrop e script di bootstrap avrebbe voluto dire copiare gli interni di
+  Shiny e restare indietro a ogni aggiornamento. `tagQuery()` inserisce il
+  nostro chrome dentro la shell che Shiny genera: attributi, taglia e
+  inizializzazione restano suoi, l'aspetto è nostro.
+- **Niente X nel dialogo.** `Esc` e il backdrop sono disattivati perché il
+  dialogo ha un `Cancel` che azzera lo stato; una X di Bootstrap lo
+  aggirerebbe. Se un giorno i dialoghi diventassero annullabili senza stato da
+  pulire, la X si aggiunge con `modal_header(close = TRUE)`.
+- **L'icona segue il ramo di menu, non il singolo dialogo.** 157 dialoghi non
+  giustificano 157 icone: il ramo (`data`, `analyze`, `graphs`, …) dà
+  un'indagine visiva immediata e `dialog_spec(icon=)` lascia la scelta
+  esplicita dove serve.
+- **Segmented solo per etichette corte.** Due o tre parole stanno in una
+  striscia; «Treatment (dummy) contrasts» no. La regola è la lunghezza
+  dell'etichetta, non il numero di scelte.
 - **Un solo `toolbar()`.** `studio_toolbar()` resta come alias delegante: i
   tre chiamanti non cambiano, ma l'implementazione è una. Il ruolo ARIA
   `toolbar` compare solo quando c'è un'etichetta, così non si annuncia una
@@ -261,6 +313,7 @@ leggere la barra di stato.
 | U2.2 | cinque componenti nuovi | primo consumatore reale solo per `badge()` e `toolbar()` | `modal_header()`/`modal_footer()` servono a U3.1 e `tabs_strip()` a U4: si aggiungono ora perché i test li fissano prima dell'uso |
 | U2.4 | 15 `checkboxInput` → `switch_input()` | 3 switch, 12 checkbox | gli altri sono parametri di comando, opzioni di salvataggio o filtri: un interruttore mentirebbe sull'effetto |
 | U2.3 | “la shell non contiene più classi Bootstrap scritte a mano” | la shell usa ancora utility (`d-flex`, `gap-2`) | sono il layout di Bootstrap, non un secondo sistema di colore; la loro sostituzione è U4.1, dove la shell viene rifatta |
+| U3.1 | un componente `modal_header()`/`modal_footer()` per ogni modale | i dialoghi del catalogo li usano; palette, scorciatoie e tour no | hanno footer e bisogni diversi (nessun footer, `easyClose = TRUE`); il chrome comune si estende quando U4 rifà quelle viste |
 
 ---
 
@@ -270,8 +323,8 @@ leggere la barra di stato.
 |---|---|---|---|
 | Evidenziazione del tour in `#f59e0b` | colore intenzionale, non un token di tema | lasciato | U5.2 |
 | `filter: brightness()` sui bottoni pieni | non è un token: è una trasformazione | accettato: scala testo e sfondo insieme e non aggiunge palette; se un tema lo rende sporco si passa a una coppia `-hover` per tema | U5.2 |
-| `tabs_strip()`, `modal_header()` e `modal_footer()` senza consumatore | codice coperto dai test ma non ancora usato | il primo uso arriva in U3.1 (chrome) e U4 (striscia documenti); se cambiano forma, si cambiano una volta sola | U3.1 / U4 |
-| `segmented_input()` non usato da nessun dialogo | il controllo esiste, i dialoghi usano ancora i radio | *Options* è il primo posto giusto: interfaccia e densità sono due scelte binarie | U3.1 |
+| `tabs_strip()` senza consumatore | codice coperto dai test ma non ancora usato | il primo uso arriva in U4 (striscia dei documenti), che è anche il posto dove il componente può cambiare forma | U4 |
+| I modali secondari hanno il chrome vecchio | palette, scorciatoie e tour usano `modalDialog(title=)` | non sono dialoghi del catalogo e hanno footer propri; si allineano in U4/U5 | U4 |
 | Utility Bootstrap nella shell | l'accettazione di U2 chiede una shell senza classi scritte a mano | rimandato: U4.1 rifà la shell, sostituirle ora sarebbe lavoro buttato | U4.1 |
 | Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; gli e2e restano la verifica di struttura | U5.1 |
 | 22 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli prima della chiusura di U3 | U3 |
@@ -299,18 +352,16 @@ leggere la barra di stato.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. **U3.1 — chrome dei dialoghi.** `dialog_modal()` passa a
-   `modal_header()`/`modal_footer()`: icona dal catalogo (senza cambiare gli
-   ID), corpo in `field_grid`, azione primaria a destra. Il footer deve
-   mantenere `dialog_help`, `dialog_insert_script`, `dialog_reset`,
-   `dialog_cancel`, `dialog_apply`, `dialog_ok`: stessi ID, stesso ordine di
-   tabulazione, `Esc` invariato.
-2. **U3.1 — *Options*.** `segmented_input()` per interfaccia e densità (due
-   scelte), `switch_input()` per `stringsAsFactors`, `use_markdown`,
-   `use_knitr`; `number_input()` per digits, width e soglia. Gli `on_ok()` non
-   cambiano: gli ID sono gli stessi.
-3. **U3.2 — lotto dati e import.** Applicare gli helper ai dialoghi dati, con i
-   test dei costruttori di comando come rete.
+1. **U3.3 — statistiche.** `R/dialogs-stats.R` (11 `spin_input`, 25
+   `radio_input`) e `R/dialogs-summaries.R`: `number_input()` per i numeri,
+   `segmented_input()` per le scelte corte (tipo di intervallo, ipotesi,
+   correzione), radio dove le etichette sono lunghe. I test dei costruttori di
+   comando (`test-command-builders-stats.R`) sono la rete: stessi ID, stessi
+   valori.
+2. **U3.4 — grafici.** `R/dialogs-graphs.R`, con particolare attenzione alle
+   opzioni che finiscono nei comandi ggplot.
+3. **U3.5 — modelli, report, progetto, script.** `dialogs-models*.R`,
+   `report-studio.R`, `project-dialogs.R`, `document-dialogs.R`.
 
 Poi **U4.1** rifà la shell (e chiude l'accettazione “niente utility a mano”),
 **U4.2–U4.5** le viste, **U5** la matrice temi e la QA.
@@ -319,8 +370,9 @@ Poi **U4.1** rifà la shell (e chiude l'accettazione “niente utility a mano”
 
 | ID | Task | Priorità | Note |
 |---|---|---|---|
-| U3.1 | Chrome + *Options* | alta | prima pillola visibile |
-| U3.2–U3.5 | Lotti dei dialoghi | alta | dati, statistiche, grafici, resto |
+| U3.3 | Lotto statistiche | alta | 11 numeri, 25 radio |
+| U3.4 | Lotto grafici | alta | opzioni nei comandi ggplot |
+| U3.5 | Modelli, report, progetto, script | media | ultimo lotto |
 | U4.1 | Shell | alta | chiude le utility a mano |
 | U4.2–U4.5 | Viste | media | Data, Chart, Report, Workbench |
 | U5 | Matrice temi, QA, NEWS | media | |
@@ -364,7 +416,7 @@ RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 
 ## 12. Aggiornamenti alla checklist
 
-- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2).
+- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3.1, U3.2).
 - [x] `15-ui-refresh.md` e `README.md` segnano l'onda in corso.
 - [x] `UI-TOKENS.md` scritto e coerente con il codice.
 - [x] Diario scritto.
