@@ -174,3 +174,16 @@ test_that("note() is secondary text in both shapes", {
   expect_match(inline, "rcmdr-note-inline", fixed = TRUE)
   expect_match(inline, "<span", fixed = TRUE)
 })
+
+test_that("card_head() keeps the title and one end slot on a line", {
+  html <- as.character(card_head(
+    htmltools::tags$h6("Title"),
+    htmltools::tags$span(id = "end", "x")
+  ))
+  expect_match(html, 'class="rcmdr-card-head"', fixed = TRUE)
+  expect_lt(regexpr("Title", html, fixed = TRUE),
+            regexpr('id="end"', html, fixed = TRUE))
+  # Without an end slot the heading is still one block.
+  solo <- as.character(card_head(htmltools::tags$h6("Title")))
+  expect_match(solo, 'class="rcmdr-card-head"', fixed = TRUE)
+})

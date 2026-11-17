@@ -72,10 +72,9 @@ report_preview_markdown <- function(text, mode = "rmd") {
   }
   if (identical(mode, "rnw")) {
     empty$html <- htmltools::tagList(
-      htmltools::tags$p(
-        class = "text-muted small",
-        tr("LaTeX documents are previewed after knitting. The fast preview is available for R Markdown.")
-      ),
+      note(tr(
+        "LaTeX documents are previewed after knitting. The fast preview is available for R Markdown."
+      )),
       htmltools::tags$pre(class = "rcmdr-report-source", text)
     )
     return(empty)
@@ -435,22 +434,24 @@ report_document_choices <- function(state) {
 #' @keywords internal
 report_studio_ui <- function() {
   htmltools::tagList(
-    htmltools::div(
-      class = "rcmdr-toolbar rcmdr-report-toolbar",
-      htmltools::div(
-        class = "d-flex gap-2 align-items-end flex-wrap",
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
         uiOutput("report_document_ui", inline = TRUE),
-        actionButton("report_new", tr("New"), class = "btn-sm btn-outline-secondary"),
+        actionButton("report_new", tr("New"),
+                     class = "btn-sm btn-outline-secondary"),
         actionButton("report_template", tr("Template"),
                      class = "btn-sm btn-outline-secondary"),
-        actionButton("report_open", tr("Open"), class = "btn-sm btn-outline-secondary"),
-        actionButton("report_save", tr("Save"), class = "btn-sm btn-outline-secondary"),
+        actionButton("report_open", tr("Open"),
+                     class = "btn-sm btn-outline-secondary"),
+        actionButton("report_save", tr("Save"),
+                     class = "btn-sm btn-outline-secondary"),
         actionButton("report_save_as", tr("Save as"),
                      class = "btn-sm btn-outline-secondary"),
         actionButton("report_yaml", tr("YAML..."),
                      class = "btn-sm btn-outline-secondary"),
         htmltools::div(
-          class = "d-flex gap-1 align-items-end",
+          class = "rcmdr-toolbar-cluster",
           selectInput(
             "report_knit_format", NULL,
             choices = c("HTML" = "html", "PDF" = "pdf", "Word" = "word"),
@@ -460,7 +461,7 @@ report_studio_ui <- function() {
                        class = "btn-sm btn-primary")
         ),
         htmltools::div(
-          class = "d-flex gap-1 align-items-end",
+          class = "rcmdr-toolbar-cluster",
           selectInput("report_quarto_format", NULL,
                       choices = quarto_formats(), width = "120px"),
           downloadButton("report_download_qmd", tr("Quarto (.qmd)"),
@@ -473,13 +474,13 @@ report_studio_ui <- function() {
           }
         )
       ),
-      uiOutput("report_status_ui")
+      label = tr("Report Studio")
     ),
+    uiOutput("report_status_ui"),
     uiOutput("report_recovery_ui"),
     htmltools::div(
-      class = "row g-2 rcmdr-report-workspace",
+      class = "rcmdr-report-workspace",
       htmltools::div(
-        class = "col-xl-3",
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Outline")),
@@ -488,8 +489,8 @@ report_studio_ui <- function() {
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Chunks")),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap mb-2",
+          action_row(
+            tight = TRUE,
             actionButton("report_run_all", tr("Run all"),
                          class = "btn-sm btn-outline-primary")
           ),
@@ -502,26 +503,19 @@ report_studio_ui <- function() {
         )
       ),
       htmltools::div(
-        class = "col-xl-5",
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Editor")),
           uiOutput("report_editor_ui"),
           htmltools::tags$details(
-            class = "rcmdr-report-insert mt-2",
+            class = "rcmdr-report-insert",
             htmltools::tags$summary(tr("Insert")),
             htmltools::div(
-              class = "row g-2",
-              htmltools::div(
-                class = "col-sm-6",
-                uiOutput("report_history_select_ui")
-              ),
-              htmltools::div(
-                class = "col-sm-6",
-                uiOutput("report_plot_select_ui")
-              ),
-              htmltools::div(
-                class = "col-12 d-flex gap-1 flex-wrap",
+              class = "rcmdr-report-insert-grid",
+              htmltools::div(uiOutput("report_history_select_ui")),
+              htmltools::div(uiOutput("report_plot_select_ui")),
+              action_row(
+                tight = TRUE,
                 actionButton("report_insert_output", tr("Output"),
                              class = "btn-sm btn-outline-secondary"),
                 actionButton("report_insert_plot", tr("Plot"),
@@ -544,21 +538,20 @@ report_studio_ui <- function() {
         )
       ),
       htmltools::div(
-        class = "col-xl-4",
         htmltools::div(
           class = "rcmdr-section-card rcmdr-report-preview-card",
-          htmltools::div(
-            class = "d-flex justify-content-between align-items-center",
+          card_head(
             htmltools::tags$h6(tr("Preview")),
-            radioButtons(
+            segmented_input(
               "report_preview_mode", NULL,
-              choices = c("Markdown" = "markdown", "HTML" = "html",
-                          "Source" = "source"),
-              selected = "markdown", inline = TRUE
+              c("Markdown" = "markdown", "HTML" = "html",
+                "Source" = "source"),
+              selected = "markdown"
             )
           ),
           uiOutput("report_preview_message"),
-          htmltools::div(class = "rcmdr-report-preview", uiOutput("report_preview"))
+          htmltools::div(class = "rcmdr-report-preview",
+                         uiOutput("report_preview"))
         ),
         htmltools::div(
           class = "rcmdr-section-card",
@@ -597,20 +590,19 @@ report_cell_card <- function(chunk, output) {
                             class = "rcmdr-cell-plot")
       },
       if (!is.null(output$error)) {
-        htmltools::tags$p(class = "text-danger small mb-0", output$error)
+        htmltools::tags$p(class = "rcmdr-note rcmdr-note-error", output$error)
       }
     )
   }
   htmltools::div(
     class = "rcmdr-cell-card",
-    htmltools::div(
-      class = "d-flex justify-content-between align-items-center gap-2",
-      htmltools::tags$span(
-        class = "small",
-        if (nzchar(chunk$label %||% "")) chunk$label else chunk$id
+    card_head(
+      note(
+        if (nzchar(chunk$label %||% "")) chunk$label else chunk$id,
+        inline = TRUE
       ),
-      htmltools::div(
-        class = "d-flex gap-1 align-items-center",
+      action_row(
+        tight = TRUE,
         state_badge,
         htmltools::tags$a(
           href = "#", class = "btn btn-sm btn-outline-primary",
@@ -874,7 +866,7 @@ report_studio_server <- function(input, output, session, state, refresh,
     choices <- report_document_choices(state)
     if (length(choices) == 0L) return(NULL)
     htmltools::div(
-      class = "d-flex gap-1 align-items-end",
+      class = "rcmdr-toolbar-cluster",
       selectInput(
         "report_document", NULL, choices = choices,
         selected = state$active_document %||% "", width = "220px"
@@ -1013,29 +1005,29 @@ report_studio_server <- function(input, output, session, state, refresh,
     report_revision()
     tick_reactive()
     htmltools::div(
-      class = "rcmdr-report-status small text-muted mt-2",
+      class = "rcmdr-report-status",
       htmltools::tags$span(
-        class = if (document_dirty(state)) "text-warning" else "text-success",
-        if (document_dirty(state)) tr("Unsaved changes") else tr("Saved")
+        class = "rcmdr-status-item rcmdr-report-state",
+        htmltools::tags$span(
+          class = if (document_dirty(state)) "text-warning" else "text-success",
+          if (document_dirty(state)) tr("Unsaved changes") else tr("Saved")
+        )
       ),
-      htmltools::tags$span(" | "),
-      htmltools::tags$span(document_title(state)),
+      htmltools::tags$span(class = "rcmdr-status-item",
+                           document_title(state)),
       if (!is.null(state$autosave_time)) {
-        htmltools::tagList(
-          htmltools::tags$span(" | "),
-          htmltools::tags$span(sprintf(
-            tr("autosave %s"), format(state$autosave_time, "%H:%M:%S")
-          ))
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("autosave %s"),
+                  format(state$autosave_time, "%H:%M:%S"))
         )
       },
       if (!is.null(state$knit_result)) {
-        htmltools::tagList(
-          htmltools::tags$span(" | "),
-          htmltools::tags$span(sprintf(
-            tr("knit %s %s"),
-            toupper(state$knit_result$format %||% ""),
-            format(state$knit_result$time %||% Sys.time(), "%H:%M:%S")
-          ))
+        htmltools::tags$span(
+          class = "rcmdr-status-item",
+          sprintf(tr("knit %s %s"),
+                  toupper(state$knit_result$format %||% ""),
+                  format(state$knit_result$time %||% Sys.time(), "%H:%M:%S"))
         )
       }
     )
@@ -1048,7 +1040,7 @@ report_studio_server <- function(input, output, session, state, refresh,
       label <- recoveries$title[[1L]]
       path <- recoveries$path[[1L]]
       return(htmltools::div(
-        class = "alert alert-warning d-flex justify-content-between align-items-center",
+        class = "alert alert-warning rcmdr-alert-row",
         htmltools::tags$span(sprintf(
           tr("Unsaved work found for %s."), label
         )),
@@ -1243,7 +1235,7 @@ report_studio_server <- function(input, output, session, state, refresh,
       class = "rcmdr-knit-history",
       lapply(utils::head(history, 8L), function(entry) {
         htmltools::div(
-          class = "rcmdr-knit-entry small",
+          class = "rcmdr-knit-entry",
           htmltools::tags$span(
             class = if (identical(entry$status, "ok")) {
               "text-success"
@@ -1267,7 +1259,7 @@ report_studio_server <- function(input, output, session, state, refresh,
             )
           },
           if (!is.null(entry$error) && nzchar(entry$error)) {
-            htmltools::tags$p(class = "text-danger mb-0", entry$error)
+            htmltools::tags$p(class = "rcmdr-note rcmdr-note-error", entry$error)
           }
         )
       })

@@ -103,6 +103,20 @@ studio_toolbar <- function(..., left = NULL, right = NULL, label = NULL) {
   toolbar(..., left = left, right = right, label = label)
 }
 
+#' A card heading with an optional end slot
+#'
+#' The heading of a card or of a small view: the title on the left, one
+#' control or badge on the right.  It wraps as a unit, so a long title never
+#' pushes the end slot off the card.
+#' @keywords internal
+card_head <- function(title, aside = NULL) {
+  htmltools::tags$div(
+    class = "rcmdr-card-head",
+    title,
+    if (!is.null(aside)) aside
+  )
+}
+
 #' A wrapped row of actions
 #'
 #' The buttons of a card or a view travel together: they wrap as a group and

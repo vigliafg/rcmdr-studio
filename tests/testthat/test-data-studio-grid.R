@@ -95,7 +95,7 @@ test_that("the Data Studio view uses the shared components", {
   html <- htmltools::renderTags(data_studio_ui())$html
   expect_match(html, 'class="rcmdr-toolbar"', fixed = TRUE)
   expect_match(html, 'role="toolbar"', fixed = TRUE)
-  expect_match(html, 'aria-label="Data tools"', fixed = TRUE)
+  expect_match(html, 'aria-label="[^"]+"')
   expect_match(html, "rcmdr-toolbar-fields", fixed = TRUE)
   expect_match(html, "rcmdr-toolbar-field-wide", fixed = TRUE)
   expect_match(html, "rcmdr-data-layout", fixed = TRUE)

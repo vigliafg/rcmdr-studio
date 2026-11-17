@@ -1012,7 +1012,7 @@ data_studio_ui <- function() {
       downloadButton("download_dataset_rdata", tr("Save .RData"),
                      class = "btn-sm btn-outline-secondary"),
       right = uiOutput("data_info", inline = TRUE),
-      label = tr("Data tools")
+      label = tr("Data Studio")
     ),
     htmltools::div(
       class = "rcmdr-data-layout",

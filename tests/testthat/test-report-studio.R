@@ -2,7 +2,7 @@
 
 test_that("the Report Studio UI exposes the workspace", {
   html <- htmltools::renderTags(report_studio_ui())$html
-  expect_match(html, "rcmdr-report-toolbar")
+  expect_match(html, "rcmdr-toolbar")
   expect_match(html, "report_document_ui")
   expect_match(html, "report_new")
   expect_match(html, "report_template")
@@ -122,5 +122,36 @@ test_that("the Report Studio knits and exposes the HTML preview", {
     session$setInputs(report_preview_mode = "html")
     preview <- htmltools::renderTags(output$report_preview)$html
     expect_match(preview, "<iframe")
+  })
+})
+
+test_that("the Report Studio view uses the shared frame", {
+  html <- htmltools::renderTags(report_studio_ui())$html
+  expect_match(html, 'class="rcmdr-toolbar"', fixed = TRUE)
+  expect_match(html, "rcmdr-toolbar-fields", fixed = TRUE)
+  expect_match(html, "rcmdr-toolbar-cluster", fixed = TRUE)
+  expect_match(html, "rcmdr-report-workspace", fixed = TRUE)
+  expect_match(html, "rcmdr-report-insert-grid", fixed = TRUE)
+  expect_match(html, "rcmdr-card-head", fixed = TRUE)
+  expect_match(html, "rcmdr-actions-tight", fixed = TRUE)
+  # Preview mode is a three-choice parameter with short labels.
+  expect_match(html, 'name="report_preview_mode"', fixed = TRUE)
+  expect_match(html, "rcmdr-segmented", fixed = TRUE)
+  # No hand-written layout utility survives in the view.
+  for (utility in c("d-flex", "row g-2", "col-xl-3", "col-xl-5", "col-xl-4",
+                    "col-sm-6", "col-12", "align-items-end",
+                    "justify-content-between")) {
+    expect_false(grepl(utility, html, fixed = TRUE),
+                 label = paste("Report Studio still writes", utility))
+  }
+})
+
+test_that("the report status line is a row of facts, not pipes", {
+  skip_if_not_installed("shiny")
+  shiny::testServer(app_server(new.env(parent = globalenv())), {
+    session$setInputs(menu_search = "")
+    html <- htmltools::renderTags(output$report_status_ui)$html
+    expect_match(html, "rcmdr-status-item", fixed = TRUE)
+    expect_false(grepl("|", html, fixed = TRUE))
   })
 })
