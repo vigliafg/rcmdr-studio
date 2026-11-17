@@ -103,6 +103,38 @@ studio_toolbar <- function(..., left = NULL, right = NULL, label = NULL) {
   toolbar(..., left = left, right = right, label = label)
 }
 
+#' A wrapped row of actions
+#'
+#' The buttons of a card or a view travel together: they wrap as a group and
+#' the gap is the spacing token.  `tight` is the compact row used inside a
+#' card, where a full step of space would break the column rhythm.
+#' @keywords internal
+action_row <- function(..., tight = FALSE) {
+  htmltools::tags$div(
+    class = c("rcmdr-actions",
+              if (isTRUE(tight)) "rcmdr-actions-tight"),
+    ...
+  )
+}
+
+#' A muted note
+#'
+#' One sentence of secondary text under a heading or beside a value.  It is the
+#' view counterpart of `help_text()`: the same muted colour and small step,
+#' without the form-group margins.
+#' @keywords internal
+note <- function(..., inline = FALSE) {
+  tag <- if (isTRUE(inline)) htmltools::tags$span else htmltools::tags$p
+  tag(
+    class = if (isTRUE(inline)) {
+      "rcmdr-note rcmdr-note-inline"
+    } else {
+      "rcmdr-note"
+    },
+    ...
+  )
+}
+
 #' A status badge
 #'
 #' A short label with a semantic colour.  The colour is never the only signal:

@@ -94,3 +94,15 @@
       border-color: var(--rcmdr-border);
     }
 
+
+    /* Data Studio: the grid on the left, the inspector column on the right,
+       stacked below the large breakpoint.  Two tracks in the same 2:1
+       proportion the old Bootstrap columns had, with a token gap. */
+    .rcmdr-data-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+      gap: var(--rcmdr-space-3); align-items: start;
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-data-layout { grid-template-columns: minmax(0, 1fr); }
+    }

@@ -2210,7 +2210,7 @@ app_server <- function(env = globalenv()) {
       if (!selected %in% names(df)) selected <- ""
       value <- isolate(input$data_filter_value %||% "")
       htmltools::div(
-        class = "d-flex gap-2 align-items-end",
+        class = "rcmdr-toolbar-fields",
         selectInput("data_filter_column", NULL, choices = choices,
                     selected = selected, width = "190px"),
         textInput("data_filter_value", NULL, value = value,

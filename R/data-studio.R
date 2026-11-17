@@ -976,22 +976,18 @@ open_dialog_memory <- function(state, id, memory = list()) {
 #' @keywords internal
 data_studio_ui <- function() {
   htmltools::tagList(
-    htmltools::div(
-      class = "rcmdr-toolbar rcmdr-data-toolbar",
-      htmltools::div(
-        class = "d-flex gap-2 align-items-end flex-wrap",
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
         htmltools::div(
-          class = "rcmdr-toolbar-field",
-          style = "min-width: 220px;",
+          class = "rcmdr-toolbar-field rcmdr-toolbar-field-wide",
           uiOutput("data_dataset_selector")
         ),
         htmltools::div(
           class = "rcmdr-toolbar-field",
-          radioButtons(
+          segmented_input(
             "data_mode", NULL,
-            choices = stats::setNames(c("view", "edit"),
-                                      c(tr("View"), tr("Edit"))),
-            inline = TRUE
+            stats::setNames(c("view", "edit"), c(tr("View"), tr("Edit")))
           )
         ),
         htmltools::div(
@@ -999,37 +995,37 @@ data_studio_ui <- function() {
           textInput("data_search", NULL,
                     placeholder = tr("Search rows..."), width = "190px")
         ),
-        uiOutput("data_filter_ui"),
-        actionButton("data_import_wizard", tr("Import..."),
-                     class = "btn-sm btn-outline-primary"),
-        actionButton("data_refresh", tr("Refresh"),
+        uiOutput("data_filter_ui")
+      ),
+      actionButton("data_import_wizard", tr("Import..."),
+                   class = "btn-sm btn-outline-primary"),
+      actionButton("data_refresh", tr("Refresh"),
+                   class = "btn-sm btn-outline-secondary"),
+      actionButton("data_apply", tr("Apply changes"),
+                   class = "btn-sm btn-primary"),
+      actionButton("data_checkpoints", tr("Checkpoints"),
+                   class = "btn-sm btn-outline-secondary"),
+      actionButton("data_dictionary", tr("Dictionary"),
+                   class = "btn-sm btn-outline-secondary"),
+      downloadButton("download_dataset", tr("Download CSV"),
                      class = "btn-sm btn-outline-secondary"),
-        actionButton("data_apply", tr("Apply changes"),
-                     class = "btn-sm btn-primary"),
-        actionButton("data_checkpoints", tr("Checkpoints"),
+      downloadButton("download_dataset_rdata", tr("Save .RData"),
                      class = "btn-sm btn-outline-secondary"),
-        actionButton("data_dictionary", tr("Dictionary"),
-                     class = "btn-sm btn-outline-secondary"),
-        downloadButton("download_dataset", tr("Download CSV"),
-                       class = "btn-sm btn-outline-secondary"),
-        downloadButton("download_dataset_rdata", tr("Save .RData"),
-                       class = "btn-sm btn-outline-secondary"),
-        uiOutput("data_info", inline = TRUE)
-      )
+      right = uiOutput("data_info", inline = TRUE),
+      label = tr("Data tools")
     ),
     htmltools::div(
-      class = "row g-3",
-      htmltools::div(class = "col-lg-8", uiOutput("data_grid")),
+      class = "rcmdr-data-layout",
+      htmltools::div(uiOutput("data_grid")),
       htmltools::div(
-        class = "col-lg-4",
         uiOutput("data_inspector"),
         # The action buttons live outside the dynamic inspector: re-rendering
         # the profile must not recreate (and re-trigger) the action inputs.
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Column actions")),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap",
+          action_row(
+            tight = TRUE,
             actionButton("data_col_summary", tr("Summary"),
                          class = "btn-sm btn-outline-secondary"),
             actionButton("data_col_plot", tr("Plot"),
@@ -1049,8 +1045,8 @@ data_studio_ui <- function() {
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Columns")),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap",
+          action_row(
+            tight = TRUE,
             actionButton("data_add_column", tr("Add column"),
                          class = "btn-sm btn-outline-secondary"),
             actionButton("data_duplicate_column", tr("Duplicate"),
@@ -1061,8 +1057,8 @@ data_studio_ui <- function() {
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Rows")),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap",
+          action_row(
+            tight = TRUE,
             actionButton("data_add_row", tr("Add row"),
                          class = "btn-sm btn-outline-secondary"),
             actionButton("data_duplicate_rows", tr("Duplicate selection"),
@@ -1092,31 +1088,25 @@ data_inspector_ui <- function(profile) {
 
   stats_ui <- if (!is.null(profile$stats)) {
     htmltools::tags$dl(
-      class = "row small mb-0",
-      htmltools::tags$dt(class = "col-5", tr("Minimum")),
-      htmltools::tags$dd(class = "col-7", format(profile$stats$min,
-                                                 digits = 4)),
-      htmltools::tags$dt(class = "col-5", tr("Maximum")),
-      htmltools::tags$dd(class = "col-7", format(profile$stats$max,
-                                                 digits = 4)),
-      htmltools::tags$dt(class = "col-5", tr("Mean")),
-      htmltools::tags$dd(class = "col-7", format(profile$stats$mean,
-                                                 digits = 4)),
-      htmltools::tags$dt(class = "col-5", tr("Median")),
-      htmltools::tags$dd(class = "col-7", format(profile$stats$median,
-                                                 digits = 4)),
-      htmltools::tags$dt(class = "col-5", tr("SD")),
-      htmltools::tags$dd(class = "col-7", format(profile$stats$sd,
-                                                 digits = 4)),
-      htmltools::tags$dt(class = "col-5", tr("Q1 - Q3")),
-      htmltools::tags$dd(class = "col-7",
-                         sprintf("%s - %s",
+      class = "rcmdr-dl",
+      htmltools::tags$dt(tr("Minimum")),
+      htmltools::tags$dd(format(profile$stats$min, digits = 4)),
+      htmltools::tags$dt(tr("Maximum")),
+      htmltools::tags$dd(format(profile$stats$max, digits = 4)),
+      htmltools::tags$dt(tr("Mean")),
+      htmltools::tags$dd(format(profile$stats$mean, digits = 4)),
+      htmltools::tags$dt(tr("Median")),
+      htmltools::tags$dd(format(profile$stats$median, digits = 4)),
+      htmltools::tags$dt(tr("SD")),
+      htmltools::tags$dd(format(profile$stats$sd, digits = 4)),
+      htmltools::tags$dt(tr("Q1 - Q3")),
+      htmltools::tags$dd(sprintf("%s - %s",
                                  format(profile$stats$q1, digits = 4),
                                  format(profile$stats$q3, digits = 4)))
     )
   } else if (!is.null(profile$levels)) {
     htmltools::tags$table(
-      class = "table table-sm small mb-0",
+      class = "table table-sm rcmdr-table",
       htmltools::tags$thead(
         htmltools::tags$tr(
           htmltools::tags$th(tr("Value")),
@@ -1133,30 +1123,21 @@ data_inspector_ui <- function(profile) {
       )
     )
   } else {
-    htmltools::tags$p(class = "small text-muted mb-0",
-                      tr("No values to summarise."))
+    note(tr("No values to summarise."))
   }
 
   htmltools::tags$div(
     class = "rcmdr-data-inspector",
     htmltools::tags$h6(profile$variable),
-    htmltools::tags$p(
-      class = "small text-muted mb-1",
-      sprintf("%s - %s", profile$class, profile$type)
-    ),
+    note(sprintf("%s - %s", profile$class, profile$type)),
     if (nzchar(profile$label %||% "")) {
-      htmltools::tags$p(class = "small mb-1",
-                        htmltools::tags$strong(profile$label))
+      note(htmltools::tags$strong(profile$label))
     },
     if (nzchar(profile$units %||% "")) {
-      htmltools::tags$p(class = "small text-muted mb-1",
-                        sprintf(tr("Units: %s"), profile$units))
+      note(sprintf(tr("Units: %s"), profile$units))
     },
-    htmltools::tags$p(
-      class = "small text-muted mb-2",
-      sprintf(tr("%d values, %d missing, %d unique"),
-              profile$n, profile$missing, profile$unique)
-    ),
+    note(sprintf(tr("%d values, %d missing, %d unique"),
+                 profile$n, profile$missing, profile$unique)),
     stats_ui,
     if (!is.null(profile$histogram) || !is.null(profile$levels)) {
       htmltools::tags$div(
@@ -1362,8 +1343,7 @@ data_subset_dialog <- function() {
         help_text(tr(
           "The subset is generated as an R command and appears in the script log."
         )),
-        htmltools::tags$p(class = "small text-muted",
-                          selection_summary(state))
+        note(selection_summary(state))
       )
     },
     on_ok = function(input, state) {
@@ -1510,8 +1490,7 @@ data_dictionary_dialog <- function() {
           ns("upload"), tr("Import dictionary (CSV)"),
           accept = ".csv"
         ),
-        htmltools::div(
-          class = "d-flex gap-2 flex-wrap",
+        action_row(
           downloadButton("download_dictionary_csv", tr("Export CSV"),
                          class = "btn-sm btn-outline-secondary"),
           if (requireNamespace("yaml", quietly = TRUE)) {

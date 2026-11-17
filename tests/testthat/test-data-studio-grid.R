@@ -28,7 +28,7 @@ test_that("missingness is computed per variable", {
 
 test_that("the Data Studio UI renders its toolbar and containers", {
   html <- htmltools::renderTags(data_studio_ui())$html
-  expect_match(html, "rcmdr-data-toolbar")
+  expect_match(html, "rcmdr-toolbar")
   expect_match(html, "data_dataset_selector")
   expect_match(html, "data_grid")
   expect_match(html, "data_inspector")
@@ -89,4 +89,37 @@ test_that("the Data Studio server renders and runs row operations", {
     session$flushReact()
     expect_equal(nrow(state$env$D), 7L)
   })
+})
+
+test_that("the Data Studio view uses the shared components", {
+  html <- htmltools::renderTags(data_studio_ui())$html
+  expect_match(html, 'class="rcmdr-toolbar"', fixed = TRUE)
+  expect_match(html, 'role="toolbar"', fixed = TRUE)
+  expect_match(html, 'aria-label="Data tools"', fixed = TRUE)
+  expect_match(html, "rcmdr-toolbar-fields", fixed = TRUE)
+  expect_match(html, "rcmdr-toolbar-field-wide", fixed = TRUE)
+  expect_match(html, "rcmdr-data-layout", fixed = TRUE)
+  expect_match(html, "rcmdr-actions-tight", fixed = TRUE)
+  # View/Edit is a two-choice parameter: it becomes the shared strip.
+  expect_match(html, 'name="data_mode"', fixed = TRUE)
+  expect_match(html, "rcmdr-segmented", fixed = TRUE)
+  # No hand-written layout utility survives in the view.
+  for (utility in c("d-flex", "gap-1", "gap-2", "row g-3", "col-lg-8",
+                    "col-lg-4", "align-items-end")) {
+    expect_false(grepl(utility, html, fixed = TRUE),
+                 label = paste("Data Studio still writes", utility))
+  }
+})
+
+test_that("the inspector uses the token grid and the note component", {
+  html <- htmltools::renderTags(data_inspector_ui(list(
+    variable = "y", class = "numeric", type = "numeric", label = "",
+    units = "", n = 10L, missing = 0L, unique = 10L,
+    stats = list(min = 1, max = 2, mean = 1.5, median = 1.5, sd = 0.5,
+                 q1 = 1.25, q3 = 1.75)
+  )))$html
+  expect_match(html, 'class="rcmdr-dl"', fixed = TRUE)
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  expect_false(grepl("col-5", html, fixed = TRUE))
+  expect_false(grepl("row small", html, fixed = TRUE))
 })

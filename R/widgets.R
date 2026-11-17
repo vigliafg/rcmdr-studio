@@ -306,7 +306,7 @@ dialog_tabs <- function(...) {
 
 #' @keywords internal
 button_row <- function(...) {
-  htmltools::div(class = "d-flex gap-2 flex-wrap", ...)
+  action_row(...)
 }
 
 #' Model formula builder

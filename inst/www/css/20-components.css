@@ -200,8 +200,44 @@
       display: flex; align-items: center; gap: var(--rcmdr-space-2);
       margin-left: auto;
     }
+    /* Fields inside a toolbar sit on one baseline: the labels are above the
+       controls, so the controls must align at their bottom edge, not centre. */
+    .rcmdr-toolbar-fields {
+      display: flex; flex-wrap: wrap; align-items: flex-end;
+      gap: var(--rcmdr-space-2);
+    }
+    .rcmdr-toolbar-field-wide { min-width: 14rem; }
     .rcmdr-toolbar-field .form-group,
     .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
+
+    /* A card's actions wrap together and take the spacing token for their
+       gap.  `tight` is the in-card rhythm. */
+    .rcmdr-actions {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: var(--rcmdr-space-2);
+    }
+    .rcmdr-actions-tight { gap: var(--rcmdr-space-1); }
+
+    /* Secondary text in a view: the small step in the muted colour. */
+    .rcmdr-note {
+      color: var(--rcmdr-muted); font-size: var(--rcmdr-text-sm);
+      margin: 0 0 var(--rcmdr-space-1);
+    }
+    .rcmdr-note:last-child { margin-bottom: 0; }
+    .rcmdr-note-inline { display: inline; margin: 0; }
+
+    /* Tables in a view carry the small step and no trailing margin. */
+    .rcmdr-table {
+      font-size: var(--rcmdr-text-sm); margin-bottom: 0;
+    }
+    /* Two-column definition list: term and value, no Bootstrap grid. */
+    .rcmdr-dl {
+      display: grid; grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      margin: 0; font-size: var(--rcmdr-text-sm);
+    }
+    .rcmdr-dl dt { font-weight: var(--rcmdr-weight-normal); color: var(--rcmdr-muted); }
+    .rcmdr-dl dd { margin: 0; }
 
     /* Badges, tabs, dialog chrome ------------------------------------------
        Four small components of the shared vocabulary.  Every colour is a

@@ -147,3 +147,30 @@ test_that("the components are styled by tokens", {
   expect_match(block, "background: var(--rcmdr-primary);", fixed = TRUE)
   expect_match(block, "color: var(--rcmdr-on-primary);", fixed = TRUE)
 })
+
+test_that("action_row() wraps its actions with the token gap", {
+  html <- as.character(action_row(
+    htmltools::tags$button(id = "a", "A"),
+    htmltools::tags$button(id = "b", "B")
+  ))
+  expect_match(html, 'class="rcmdr-actions"', fixed = TRUE)
+  expect_lt(regexpr('id="a"', html, fixed = TRUE),
+            regexpr('id="b"', html, fixed = TRUE))
+
+  tight <- as.character(action_row(htmltools::tags$button("x"), tight = TRUE))
+  expect_match(tight, 'class="rcmdr-actions rcmdr-actions-tight"',
+               fixed = TRUE)
+
+  # The dialog helper is the same component.
+  expect_identical(as.character(button_row(htmltools::tags$span("x"))),
+                   as.character(action_row(htmltools::tags$span("x"))))
+})
+
+test_that("note() is secondary text in both shapes", {
+  block <- as.character(note("One line"))
+  expect_match(block, '<p class="rcmdr-note">One line</p>', fixed = TRUE)
+
+  inline <- as.character(note("One line", inline = TRUE))
+  expect_match(inline, "rcmdr-note-inline", fixed = TRUE)
+  expect_match(inline, "<span", fixed = TRUE)
+})
