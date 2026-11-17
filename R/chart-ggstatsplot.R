@@ -72,11 +72,11 @@ chart_stat_controls <- function(spec, extras = NULL) {
       ),
       selected = options$p_adjust %||% "holm", width = "100%"
     ),
-    numericInput("chart_opt_digits", tr("Digits"), options$digits %||% 2L,
+    number_input("chart_opt_digits", tr("Digits"), options$digits %||% 2L,
                  min = 0, max = 6, step = 1),
     if (!is.null(extras)) extras,
     htmltools::div(
-      class = "d-flex flex-column gap-1",
+      class = "rcmdr-check-stack",
       checkboxInput("chart_opt_results_subtitle", tr("Test result in subtitle"),
                     value = isTRUE(options$results_subtitle)),
       checkboxInput("chart_opt_pairwise", tr("Show significant pairwise tests"),

@@ -467,24 +467,20 @@ chart_apply <- function(state, spec, source = "chart") {
 #' @keywords internal
 chart_studio_ui <- function() {
   htmltools::tagList(
-    htmltools::div(
-      class = "rcmdr-toolbar rcmdr-chart-toolbar",
-      htmltools::div(
-        class = "d-flex gap-2 align-items-center flex-wrap",
-        radioButtons(
-          "chart_mode", NULL,
-          choices = stats::setNames(
-            c("build", "models", "gallery"),
-            c(tr("Build"), tr("Models"), tr("Gallery"))
-          ),
-          selected = "build", inline = TRUE
+    toolbar(
+      segmented_input(
+        "chart_mode", NULL,
+        stats::setNames(
+          c("build", "models", "gallery"),
+          c(tr("Build"), tr("Models"), tr("Gallery"))
         ),
-        htmltools::tags$span(
-          class = "text-muted small",
-          tr("Create a chart, preview its command, then apply it to the gallery.")
-        )
-      )
+        selected = "build"
+      ),
+      label = tr("Chart Studio")
     ),
+    note(tr(
+      "Create a chart, preview its command, then apply it to the gallery."
+    )),
     conditionalPanel(
       "input.chart_mode === 'build' || input.chart_mode === null",
       chart_builder_ui()
@@ -511,9 +507,9 @@ chart_studio_ui <- function() {
 #' @keywords internal
 chart_builder_ui <- function() {
   htmltools::div(
-    class = "row g-3",
+    class = "rcmdr-chart-layout",
     htmltools::div(
-      class = "col-xl-5",
+      class = "rcmdr-chart-builder",
       htmltools::div(
         class = "rcmdr-section-card",
         htmltools::tags$h6(tr("Chart")),
@@ -545,7 +541,7 @@ chart_builder_ui <- function() {
           selectInput("chart_palette", tr("Palette"),
                       choices = chart_palette_choices(),
                       selected = "default"),
-          numericInput("chart_base_size", tr("Base size"), 12,
+          number_input("chart_base_size", tr("Base size"), 12,
                        min = 6, max = 32, step = 1),
           selectInput(
             "chart_legend", tr("Legend"),
@@ -577,9 +573,9 @@ chart_builder_ui <- function() {
             ),
             selected = "identity"
           ),
-          numericInput("chart_gg_alpha", tr("Alpha"), 0.7,
+          number_input("chart_gg_alpha", tr("Alpha"), 0.7,
                        min = 0, max = 1, step = 0.05),
-          numericInput("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
+          number_input("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
                        min = 0, step = 0.1),
           selectInput(
             "chart_gg_smooth", tr("Smooth"),
@@ -589,9 +585,9 @@ chart_builder_ui <- function() {
             ),
             selected = "lm"
           ),
-          numericInput("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
+          number_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
                        min = 0, step = 0.05),
-          numericInput("chart_gg_shape", tr("Point shape"), 19,
+          number_input("chart_gg_shape", tr("Point shape"), 19,
                        min = 0, max = 25, step = 1),
           checkboxInput("chart_gg_se", tr("Confidence band"), FALSE),
           checkboxInput("chart_gg_flip", tr("Flip coordinates"), FALSE),
@@ -603,7 +599,7 @@ chart_builder_ui <- function() {
             ),
             selected = "fixed"
           ),
-          numericInput("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
+          number_input("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
                        0, min = 0, step = 1),
           textInput("chart_gg_subtitle", tr("Subtitle"), ""),
           textInput("chart_gg_tag", tr("Tag"), ""),
@@ -635,9 +631,9 @@ chart_builder_ui <- function() {
           ),
           textInput("chart_xlab", tr("X label"), ""),
           textInput("chart_ylab", tr("Y label"), ""),
-          numericInput("chart_width", tr("Width (px)"), 800,
+          number_input("chart_width", tr("Width (px)"), 800,
                        min = 200, max = 4000, step = 50),
-          numericInput("chart_height", tr("Height (px)"), 600,
+          number_input("chart_height", tr("Height (px)"), 600,
                        min = 150, max = 4000, step = 50)
         ),
         if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -648,7 +644,7 @@ chart_builder_ui <- function() {
       )
     ),
     htmltools::div(
-      class = "col-xl-7",
+      class = "rcmdr-chart-preview-column",
       htmltools::div(
         class = "rcmdr-section-card rcmdr-chart-preview",
         htmltools::tags$h6(tr("Preview")),
@@ -658,11 +654,11 @@ chart_builder_ui <- function() {
           uiOutput("chart_preview_media")
         ),
         uiOutput("chart_preview_selection"),
-        htmltools::tags$h6(class = "mt-3", tr("Generated command")),
+        htmltools::tags$h6(class = "rcmdr-section-subhead",
+                           tr("Generated command")),
         verbatimTextOutput("chart_command_text")
       ),
-      htmltools::div(
-        class = "d-flex gap-2 flex-wrap mt-2",
+      action_row(
         actionButton("chart_preview", tr("Refresh preview"),
                      class = "btn-sm btn-primary"),
         actionButton("chart_apply", tr("Apply"),
@@ -681,17 +677,16 @@ chart_builder_ui <- function() {
 #' @keywords internal
 chart_gallery_ui <- function() {
   htmltools::tagList(
-    htmltools::div(
-      class = "rcmdr-toolbar rcmdr-chart-gallery-toolbar",
-      htmltools::div(
-        class = "row g-2 align-items-end",
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
         htmltools::div(
-          class = "col-md-3",
+          class = "rcmdr-toolbar-field rcmdr-toolbar-field-wide",
           textInput("chart_gallery_query", NULL,
                     placeholder = tr("Search charts..."))
         ),
         htmltools::div(
-          class = "col-md-2",
+          class = "rcmdr-toolbar-field",
           selectInput(
             "chart_gallery_analysis", NULL,
             choices = c(stats::setNames("all", tr("All analyses")),
@@ -699,7 +694,7 @@ chart_gallery_ui <- function() {
           )
         ),
         htmltools::div(
-          class = "col-md-2",
+          class = "rcmdr-toolbar-field",
           selectInput(
             "chart_gallery_type", NULL,
             choices = c(stats::setNames("all", tr("All types")),
@@ -707,19 +702,20 @@ chart_gallery_ui <- function() {
           )
         ),
         htmltools::div(
-          class = "col-md-2 d-flex align-items-end",
+          class = "rcmdr-toolbar-field",
           checkboxInput("chart_gallery_pinned",
                         tr("Pinned only"), value = FALSE)
-        ),
-        htmltools::div(
-          class = "col-md-3 d-flex gap-2 align-items-end",
-          actionButton("chart_gallery_refresh", tr("Refresh"),
-                       class = "btn-sm btn-outline-secondary"),
-          actionButton("chart_selection_subset",
-                       tr("Subset selected points"),
-                       class = "btn-sm btn-outline-primary")
         )
-      )
+      ),
+      right = action_row(
+        tight = TRUE,
+        actionButton("chart_gallery_refresh", tr("Refresh"),
+                     class = "btn-sm btn-outline-secondary"),
+        actionButton("chart_selection_subset",
+                     tr("Subset selected points"),
+                     class = "btn-sm btn-outline-primary")
+      ),
+      label = tr("Gallery")
     ),
     uiOutput("chart_gallery_grid"),
     uiOutput("chart_detail")
@@ -782,12 +778,9 @@ chart_gallery_ui_cards <- function(table) {
         htmltools::div(
           class = "rcmdr-chart-card-body",
           htmltools::tags$h6(row$title),
-          htmltools::tags$p(
-            class = "small text-muted mb-1",
-            sprintf("%s - %s", row$type %||% "", row$time)
-          ),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap",
+          note(sprintf("%s - %s", row$type %||% "", row$time)),
+          action_row(
+            tight = TRUE,
             chart_action_link(tr("Detail"), row$index, "detail",
                               "btn btn-sm btn-outline-primary"),
             chart_action_link(
@@ -808,12 +801,11 @@ chart_gallery_ui_cards <- function(table) {
 #' @keywords internal
 chart_models_ui <- function() {
   htmltools::tagList(
-    htmltools::div(
-      class = "rcmdr-toolbar rcmdr-chart-gallery-toolbar",
-      htmltools::div(
-        class = "row g-2 align-items-end",
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
         htmltools::div(
-          class = "col-md-3",
+          class = "rcmdr-toolbar-field",
           selectInput(
             "chart_models_analysis", NULL,
             choices = c(stats::setNames("all", tr("All analyses")),
@@ -821,7 +813,7 @@ chart_models_ui <- function() {
           )
         ),
         htmltools::div(
-          class = "col-md-3",
+          class = "rcmdr-toolbar-field",
           selectInput(
             "chart_models_type", NULL,
             choices = c(stats::setNames("all", tr("All types")),
@@ -829,16 +821,14 @@ chart_models_ui <- function() {
           )
         ),
         htmltools::div(
-          class = "col-md-4",
+          class = "rcmdr-toolbar-field rcmdr-toolbar-field-wide",
           textInput("chart_models_query", NULL,
                     placeholder = tr("Search models..."))
-        ),
-        htmltools::div(
-          class = "col-md-2",
-          help_text(tr("Open a model, then pick the variables."))
         )
-      )
+      ),
+      label = tr("Models")
     ),
+    note(tr("Open a model, then pick the variables.")),
     uiOutput("chart_models_grid")
   )
 }
@@ -872,14 +862,11 @@ chart_models_cards <- function(table) {
         htmltools::div(
           class = "rcmdr-chart-card-body",
           htmltools::tags$h6(row$label),
-          htmltools::tags$p(
-            class = "small text-muted mb-1",
-            sprintf("%s - %s", chart_analysis_label(row$analysis),
-                    row$type_label)
-          ),
-          htmltools::tags$p(class = "small mb-2", row$description),
-          htmltools::div(
-            class = "d-flex gap-1 flex-wrap align-items-center",
+          note(sprintf("%s - %s", chart_analysis_label(row$analysis),
+                       row$type_label)),
+          note(row$description),
+          action_row(
+            tight = TRUE,
             if (isTRUE(row$installed)) {
               chart_model_action_link(row$id, tr("Open"))
             } else {
@@ -904,22 +891,19 @@ chart_detail_ui <- function(plot, index) {
   spec <- plot$spec
   htmltools::div(
     class = "rcmdr-chart-detail",
-    htmltools::div(
-      class = "d-flex justify-content-between align-items-start flex-wrap gap-2",
+    card_head(
       htmltools::div(
+        class = "rcmdr-chart-detail-title",
         htmltools::tags$h5(plot_title(plot)),
-        htmltools::tags$p(
-          class = "small text-muted mb-1",
-          sprintf(
-            "%s - %s - %s",
-            spec$type %||% chart_type_from_code(plot$code),
-            spec$dataset %||% tr("unknown data set"),
-            format(plot$time %||% Sys.time(), "%Y-%m-%d %H:%M:%S")
-          )
-        )
+        note(sprintf(
+          "%s - %s - %s",
+          spec$type %||% chart_type_from_code(plot$code),
+          spec$dataset %||% tr("unknown data set"),
+          format(plot$time %||% Sys.time(), "%Y-%m-%d %H:%M:%S")
+        ))
       ),
-      htmltools::div(
-        class = "d-flex gap-1 flex-wrap",
+      action_row(
+        tight = TRUE,
         chart_action_link(tr("Reopen in builder"), index, "reopen",
                           "btn btn-sm btn-primary"),
         chart_action_link(tr("Rename"), index, "rename",
@@ -944,12 +928,12 @@ chart_detail_ui <- function(plot, index) {
     },
     shiny::uiOutput("chart_detail_plotly_ui"),
     htmltools::tags$h6(tr("Command")),
-    htmltools::tags$pre(class = "small", plot$code %||% ""),
+    htmltools::tags$pre(class = "rcmdr-pre", plot$code %||% ""),
     if (!is.null(spec)) {
       htmltools::tagList(
         htmltools::tags$h6(tr("Specification")),
         htmltools::tags$pre(
-          class = "small",
+          class = "rcmdr-pre",
           paste(utils::capture.output(utils::str(spec[c(
             "type", "dataset", "mapping", "options", "theme", "labels"
           )])), collapse = "\n")
@@ -1054,17 +1038,13 @@ chart_export_dialog <- function() {
         )),
         radio_input(ns("format"), tr("Format"), formats,
                     memory$format %||% "png"),
-        htmltools::div(
-          class = "row g-2",
-          htmltools::div(class = "col-sm-4",
-                         numericInput(ns("width"), tr("Width (px)"), 800,
-                                      min = 200, max = 4000, step = 50)),
-          htmltools::div(class = "col-sm-4",
-                         numericInput(ns("height"), tr("Height (px)"), 600,
-                                      min = 150, max = 4000, step = 50)),
-          htmltools::div(class = "col-sm-4",
-                         numericInput(ns("dpi"), tr("DPI"), 96,
-                                      min = 72, max = 600, step = 12))
+        field_grid(
+          number_input(ns("width"), tr("Width (px)"), 800,
+                       min = 200, max = 4000, step = 50),
+          number_input(ns("height"), tr("Height (px)"), 600,
+                       min = 150, max = 4000, step = 50),
+          number_input(ns("dpi"), tr("DPI"), 96,
+                       min = 72, max = 600, step = 12)
         )
       )
     },
@@ -1423,7 +1403,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     }
     if (!is.null(result$error)) {
       return(htmltools::tags$div(
-        class = "alert alert-warning py-2",
+        class = "alert alert-warning rcmdr-alert-compact",
         sprintf(tr("Preview: %s"), result$error)
       ))
     }
@@ -1444,10 +1424,9 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
         rows
       )))
     }
-    htmltools::div(
-      class = "d-flex gap-2 align-items-center flex-wrap mt-1",
-      htmltools::tags$span(class = "small text-muted",
-                           sprintf(tr("%d point(s) selected."), rows)),
+    action_row(
+      tight = TRUE,
+      note(sprintf(tr("%d point(s) selected."), rows), inline = TRUE),
       actionButton("chart_build_subset",
                    tr("Create data set from selection"),
                    class = "btn-sm btn-outline-primary")

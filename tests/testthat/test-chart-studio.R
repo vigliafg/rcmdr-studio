@@ -2,7 +2,7 @@
 
 test_that("the Chart Studio UI exposes the builder and gallery", {
   html <- htmltools::renderTags(chart_studio_ui())$html
-  expect_match(html, "rcmdr-chart-toolbar")
+  expect_match(html, "rcmdr-toolbar")
   expect_match(html, "chart_mode")
   expect_match(html, "chart_type")
   expect_match(html, "chart_dataset_ui")
@@ -174,4 +174,39 @@ test_that("the composition panel lists the gallery charts", {
     command <- output$chart_command_text
     expect_match(command, "patchwork::plot_layout", fixed = TRUE)
   }))
+})
+
+test_that("the Chart Studio frame uses the shared components", {
+  html <- htmltools::renderTags(chart_studio_ui())$html
+  expect_match(html, 'class="rcmdr-toolbar"', fixed = TRUE)
+  expect_match(html, "rcmdr-segmented", fixed = TRUE)
+  expect_match(html, "rcmdr-chart-layout", fixed = TRUE)
+  expect_match(html, "rcmdr-toolbar-fields", fixed = TRUE)
+  expect_match(html, "rcmdr-actions", fixed = TRUE)
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  # Build/Models/Gallery are three short labels: one segmented control.
+  expect_match(html, 'name="chart_mode"', fixed = TRUE)
+  for (utility in c("d-flex", "row g-3", "row g-2", "col-xl-5",
+                    "col-xl-7", "col-md-3", "col-md-4", "align-items-end")) {
+    expect_false(grepl(utility, html, fixed = TRUE),
+                 label = paste("Chart Studio still writes", utility))
+  }
+})
+
+test_that("the gallery and model cards use the shared components", {
+  table <- data.frame(
+    index = 1L, id = "plot-0001", title = "A", type = "histogram",
+    dataset = "D", time = "now", pinned = FALSE, code = "Hist(...)",
+    url = "", stringsAsFactors = FALSE
+  )
+  html <- htmltools::renderTags(chart_gallery_ui_cards(table))$html
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-actions rcmdr-actions-tight"', fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
+
+  models <- chart_model_table()
+  html <- htmltools::renderTags(chart_models_cards(models))$html
+  expect_match(html, "rcmdr-note", fixed = TRUE)
+  expect_match(html, "rcmdr-actions-tight", fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
 })

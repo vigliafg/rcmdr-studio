@@ -90,7 +90,7 @@ chart_types_core <- function() {
           ),
           entry_input("chart_opt_breaks", tr("Breaks:"),
                       options$breaks %||% "Sturges"),
-          spin_input("chart_opt_bins", tr("Bins (ggplot2 engine)"),
+          number_input("chart_opt_bins", tr("Bins (ggplot2 engine)"),
                      options$bins %||% 30L, min = 1, max = 200)
         )
       },
@@ -144,7 +144,7 @@ chart_types_core <- function() {
             ),
             selected = options$kernel %||% ""
           ),
-          spin_input("chart_opt_adjust", tr("Adjust (0 = auto)"),
+          number_input("chart_opt_adjust", tr("Adjust (0 = auto)"),
                      options$adjust %||% 0, min = 0, step = 0.1),
           checkbox_input("chart_opt_rug", tr("Rug"), isTRUE(options$rug)),
           checkbox_input("chart_opt_grid", tr("Grid"), isTRUE(options$grid))
@@ -188,7 +188,7 @@ chart_types_core <- function() {
         htmltools::tagList(
           checkbox_input("chart_opt_notch", tr("Notched box"),
                          isTRUE(options$notch)),
-          spin_input("chart_opt_notchwidth", tr("Notch width"),
+          number_input("chart_opt_notchwidth", tr("Notch width"),
                      options$notchwidth %||% 0.5, min = 0, max = 1,
                      step = 0.05),
           checkbox_input("chart_opt_varwidth", tr("Width by group size"),
@@ -197,7 +197,7 @@ chart_types_core <- function() {
                          isTRUE(options$horizontal)),
           checkbox_input("chart_opt_outline", tr("Show outliers"),
                          isTRUE(options$outline %||% TRUE)),
-          spin_input("chart_opt_width", tr("Box width (0 = auto)"),
+          number_input("chart_opt_width", tr("Box width (0 = auto)"),
                      options$width %||% 0, min = 0, step = 0.1)
         )
       },
@@ -262,7 +262,7 @@ chart_types_core <- function() {
           checkbox_input("chart_opt_boxplots", tr("Marginal boxplots"),
                          options$boxplots),
           checkbox_input("chart_opt_grid", tr("Grid"), options$grid),
-          spin_input("chart_opt_jitter", tr("Jitter (0 = off)"),
+          number_input("chart_opt_jitter", tr("Jitter (0 = off)"),
                      options$jitter %||% 0, min = 0, step = 0.02),
           radio_input(
             "chart_opt_log", tr("Log axes"),
@@ -337,7 +337,7 @@ chart_types_core <- function() {
             ),
             selected = options$linetype %||% "solid"
           ),
-          spin_input("chart_opt_linewidth", tr("Line width"),
+          number_input("chart_opt_linewidth", tr("Line width"),
                      options$linewidth %||% 1, min = 0.1, step = 0.1),
           help_text(tr("Each selected numeric variable becomes one line."))
         )
@@ -374,7 +374,7 @@ chart_types_core <- function() {
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
-          spin_input("chart_opt_width", tr("Bar width (0 = auto)"),
+          number_input("chart_opt_width", tr("Bar width (0 = auto)"),
                      options$width %||% 0, min = 0, step = 0.1),
           selectInput(
             "chart_opt_bar_stat", tr("Statistic (ggplot2)"),
@@ -429,9 +429,9 @@ chart_types_core <- function() {
             ),
             selected = options$stackdir %||% "center"
           ),
-          spin_input("chart_opt_dotsize", tr("Dot size"),
+          number_input("chart_opt_dotsize", tr("Dot size"),
                      options$dotsize %||% 1, min = 0.1, step = 0.1),
-          spin_input("chart_opt_binwidth", tr("Bin width (0 = auto)"),
+          number_input("chart_opt_binwidth", tr("Bin width (0 = auto)"),
                      options$binwidth %||% 0, min = 0, step = 0.1)
         )
       },
@@ -468,11 +468,11 @@ chart_types_core <- function() {
             c("Stack" = "stack", "Jitter" = "jitter"),
             options$method %||% "stack"
           ),
-          spin_input("chart_opt_jitter_width", tr("Jitter width (ggplot2)"),
+          number_input("chart_opt_jitter_width", tr("Jitter width (ggplot2)"),
                      options$jitter_width %||% 0.2, min = 0, step = 0.05),
-          spin_input("chart_opt_jitter_height", tr("Jitter height (ggplot2)"),
+          number_input("chart_opt_jitter_height", tr("Jitter height (ggplot2)"),
                      options$jitter_height %||% 0.1, min = 0, step = 0.05),
-          spin_input("chart_opt_shape", tr("Point shape (ggplot2)"),
+          number_input("chart_opt_shape", tr("Point shape (ggplot2)"),
                      options$shape %||% 19, min = 0, max = 25, step = 1)
         )
       },
@@ -561,9 +561,9 @@ chart_types_core <- function() {
                          isTRUE(options$legend %||% TRUE)),
           checkbox_input("chart_opt_connect", tr("Connect the means"),
                          isTRUE(options$connect %||% TRUE)),
-          spin_input("chart_opt_error_width", tr("Error bar width"),
+          number_input("chart_opt_error_width", tr("Error bar width"),
                      options$error_width %||% 0.2, min = 0, step = 0.05),
-          spin_input("chart_opt_point_size", tr("Point size"),
+          number_input("chart_opt_point_size", tr("Point size"),
                      options$point_size %||% 3, min = 0.5, step = 0.5)
         )
       },
@@ -655,7 +655,7 @@ chart_types_core <- function() {
             ),
             selected = options$scale %||% "area"
           ),
-          spin_input("chart_opt_adjust", tr("Bandwidth adjust"),
+          number_input("chart_opt_adjust", tr("Bandwidth adjust"),
                      options$adjust %||% 0, min = 0, step = 0.1),
           checkbox_input("chart_opt_show_box", tr("Overlay a boxplot"),
                          isTRUE(options$show_box %||% TRUE))
@@ -704,9 +704,9 @@ chart_types_core <- function() {
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
-          spin_input("chart_opt_bins", tr("Contour bins (0 = auto)"),
+          number_input("chart_opt_bins", tr("Contour bins (0 = auto)"),
                      options$bins %||% 0, min = 0, step = 1),
-          spin_input("chart_opt_bandwidth", tr("Bandwidth (0 = auto)"),
+          number_input("chart_opt_bandwidth", tr("Bandwidth (0 = auto)"),
                      options$bandwidth %||% 0, min = 0, step = 0.1),
           checkbox_input("chart_opt_points", tr("Show points"),
                          isTRUE(options$points %||% TRUE))

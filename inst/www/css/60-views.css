@@ -193,3 +193,26 @@
       padding: var(--rcmdr-space-2);
       border-radius: var(--rcmdr-radius);
     }
+
+    /* Chart Studio: the builder on the left, the preview on the right, one
+       column below the extra-large breakpoint. */
+    .rcmdr-chart-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--rcmdr-space-3);
+      align-items: start;
+    }
+    @media (max-width: 1199.98px) {
+      .rcmdr-chart-layout { grid-template-columns: minmax(0, 1fr); }
+    }
+    .rcmdr-chart-builder,
+    .rcmdr-chart-preview-column { min-width: 0; }
+    .rcmdr-section-subhead { margin-top: var(--rcmdr-space-3); }
+    .rcmdr-chart-detail-title h5 { margin: 0; }
+    .rcmdr-pre {
+      font-size: var(--rcmdr-text-sm); white-space: pre-wrap;
+      margin: 0 0 var(--rcmdr-space-2);
+    }
+    .rcmdr-alert-compact {
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+    }
