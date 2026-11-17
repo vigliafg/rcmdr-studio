@@ -1,9 +1,9 @@
 # Diario di handoff — Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** parziale — U0–U3 completate; U4 in corso (shell, Data Studio e Report Studio fatti)  
+**Stato:** parziale — U0–U3 completate; U4 completate tranne i modali secondari  
 **Ondata precedente:** `wave-14-dependencies.md` (Onda 14, 2.7.0)  
-**Ondata successiva:** Onda 15 — continuazione (U4.1 Home, U4.3, U4.5, U5)  
+**Ondata successiva:** Onda 15 — continuazione (modali secondari, U5)  
 **Documento di settore:** [`15-ui-refresh.md`](../15-ui-refresh.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
 **Checklist:** [`CHECKLIST.md`](../CHECKLIST.md)
@@ -154,16 +154,42 @@ controlli, dialoghi e viste con una sola grammatica visiva.
   `card_head()`; le azioni usano `action_row()`; la modalità di anteprima
   (Markdown/HTML/Source) passa a `segmented_input()`. La riga di stato non
   usa più le pipe: è una fila di `rcmdr-status-item`, come la statusbar.
+- **U4.1 — Home.** La hero tiene il gradiente e le cinque azioni; le schede
+  aprono tutte con `card_head()` (Continue, Project, First steps, Health,
+  Keyboard), le righe secondarie sono `note()`, la checklist usa
+  `.rcmdr-checklist-action` al posto di `ms-auto`, la tabella della salute
+  mappa gli stati su `badge()` e `.rcmdr-table`. La griglia dei workflow usa
+  gli stessi componenti; lo step attivo è una testata con la sua pillola di
+  stato. `.rcmdr-home-*` e `.rcmdr-workflow-*` passano da `40-dialogs.css` a
+  `60-views.css`, con spaziature e corpi a token.
+- **U4.3 — Chart Studio.** Build/Models/Gallery sono tre etichette corte e
+  passano a `segmented_input()`; le toolbar di galleria e modelli usano
+  `.rcmdr-toolbar-fields` e `.rcmdr-toolbar-field(-wide)` con le azioni nello
+  slot di destra. Le colonne 5/7 diventano `.rcmdr-chart-layout`, impilate
+  sotto 1200 px. Schede della galleria, schede dei modelli e dettaglio usano
+  `note()`, `action_row(tight = TRUE)` e `card_head()`; l'export usa
+  `field_grid()` e `number_input()`. In `chart-types.R` le 17 chiamate a
+  `spin_input()` diventano `number_input()`, e i controlli ggstatsplot
+  perdono `d-flex flex-column` per `.rcmdr-check-stack`. Ogni opzione numerica
+  resta un `type=number` con gli stessi `min`/`max`/`step`: il server legge
+  gli stessi valori.
+- **U4.5 — Workbench e Help.** La striscia dei documenti è il primo
+  consumatore reale di `tabs_strip()`, che ora accetta un payload `{id,
+  action}`, una chiusura per linguetta, etichette ricche e un'azione finale
+  (il "+"). `script_studio_ui()` ha due toolbar componente (documento e
+  esecuzione) e la griglia `.rcmdr-script-workspace`; le schede di output e i
+  diagnostici usano `card_head()`/`note()`. La Help passa a
+  `.rcmdr-help-layout` (categorie e risultati, una colonna sotto 992 px) e il
+  pannello di aiuto dentro i dialoghi usa `card_head()`.
 
-**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.5, shell U4.1,
-Data Studio U4.2, Report Studio U4.4.
+**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.5 e tutte le
+viste U4 (shell, Home, Data Studio, Chart Studio, Report Studio, Workbench,
+Help). `tabs_strip()` ha il suo consumatore.
 
-**Cosa non è pronto:** Home (la seconda metà di U4.1), Chart Studio (U4.3),
-Workbench e Help (U4.5); nessuna verifica visiva registrata (vedi § 7);
-`tabs_strip()` aspetta ancora il primo consumatore; i modali secondari
-(palette, scorciatoie, tour) non usano ancora il chrome comune; Chart Studio
-(`chart-types.R`) usa ancora `spin_input()`, che è un alias identico di
-`number_input()`.
+**Cosa non è pronto:** i modali secondari (palette, scorciatoie, tour,
+recupero progetto) usano ancora `modalDialog(title=)`; nessuna verifica
+visiva registrata (vedi § 7); la matrice 8 temi × 2 densità, gli e2e con
+`RCMDRSHINY_E2E=1` e `NEWS.md` sono U5.
 
 ---
 
@@ -188,6 +214,9 @@ Workbench e Help (U4.5); nessuna verifica visiva registrata (vedi § 7);
 | `783e6de` | `refactor(ui): write the shell grid in tokens, not Bootstrap utilities` | U4.1, shell: griglia, topbar, sidebar, valore attivo misurato |
 | `fef1dfd` | `feat(ui): rebuild the Data Studio view on the shared components` | U4.2, componenti e griglia della vista |
 | `2217dff` | `feat(ui): rebuild the Report Studio view on the shared components` | U4.4, griglia a tre tracce, testata di cella, stato senza pipe |
+| `fc4804a` | `feat(ui): rebuild the Home pane on the shared components` | U4.1 Home, schede, workflow, stili spostati nelle viste |
+| `9c2f461` | `feat(ui): bring the Chart Studio onto the shared vocabulary` | U4.3, segmented, griglia 5/7, `number_input()` ovunque |
+| `c372ded` | `feat(ui): rebuild the Script and Help views on the shared components` | U4.5, primo consumatore di `tabs_strip()`, griglie e testate |
 
 ---
 
@@ -254,10 +283,13 @@ Workbench e Help (U4.5); nessuna verifica visiva registrata (vedi § 7);
 verdi: `test-shell.R` legge ogni classe di `app_ui()` e la griglia shell,
 `test-ui-components.R` copre `action_row()`, `note()` e `card_head()`,
 `test-data-studio-grid.R` e `test-report-studio.R` leggono il markup delle
-due viste e falliscono se torna una utility. `test-dialog-contract.R` impiega
+due viste e falliscono se torna una utility; `test-home.R`, `test-health.R`,
+`test-workflows.R`, `test-chart-studio.R`, `test-script-registry.R` e
+`test-help-ui.R` fanno lo stesso per le viste di questo batch. `test-dialog-contract.R` impiega
 circa due minuti perché rende il chrome di tutti i dialoghi.
 
-**Artefatti:** `/tmp/opencode/tests-u43.log` (batch corrente),
+**Artefatti:** `/tmp/opencode/tests-u45.log` (batch corrente),
+`/tmp/opencode/tests-u43.log`,
 `/tmp/opencode/tests-u3b.log`, `/tmp/opencode/tests-u3a.log`,
 `/tmp/opencode/tests-u2d.log`, `/tmp/opencode/tests-u2.log`,
 `/tmp/opencode/tests-u1.log`.
@@ -371,6 +403,8 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 | U2.1 | `number_input()` con stepper JS | nessuno stepper | il `<input type=number>` nativo ha già i suoi controlli; un secondo stepper sarebbe decorazione |
 | U2.2 | cinque componenti nuovi | `toolbar()` è il nome canonico di `studio_toolbar()`, che delega | due nomi per la stessa cosa non devono diventare due implementazioni |
 | U2.2 | cinque componenti nuovi | primo consumatore reale solo per `badge()` e `toolbar()` | `modal_header()`/`modal_footer()` servono a U3.1 e `tabs_strip()` a U4: si aggiungono ora perché i test li fissano prima dell'uso |
+| U4.5 | `tabs_strip()` con valore semplice | esteso con `payload`, `closable`, `labels`, `trailing`, `class` | la striscia dei documenti ha bisogno di `{id, action}`, di una chiusura per linguetta e di un "+"; i consumatori semplici mantengono il valore |
+| U4.5 | “etichetta della striscia” | `tr("Script")` | nessuna chiave nuova: il gruppo vive dentro la scheda Script e la chiave è già tradotta in tutte le lingue |
 | U2.4 | 15 `checkboxInput` → `switch_input()` | 3 switch, 12 checkbox | gli altri sono parametri di comando, opzioni di salvataggio o filtri: un interruttore mentirebbe sull'effetto |
 | U2.3 | “la shell non contiene più classi Bootstrap scritte a mano” | chiusa in U4.1 | la shell ora usa solo classi `rcmdr-*`; un test legge ogni attributo `class` di `app_ui()` e fallisce se torna una utility |
 | U3.3–U3.5 | un commit per lotto | un commit per tre lotti | il vocabolario è lo stesso e la suite completa copre tutti e tre; separarli avrebbe prodotto tre commit verdi identici |
@@ -389,9 +423,9 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 |---|---|---|---|
 | Evidenziazione del tour in `#f59e0b` | colore intenzionale, non un token di tema | lasciato | U5.2 |
 | `filter: brightness()` sui bottoni pieni | non è un token: è una trasformazione | accettato: scala testo e sfondo insieme e non aggiunge palette; se un tema lo rende sporco si passa a una coppia `-hover` per tema | U5.2 |
-| `tabs_strip()` senza consumatore | codice coperto dai test ma non ancora usato | la striscia dei documenti ha bisogno di una chiusura per linguetta e di un payload `{id, azione}`: il componente attuale manda un solo valore. Il primo uso arriva quando la striscia viene rifatta, con l'API estesa o con un componente dedicato | U4.5 |
-| I modali secondari hanno il chrome vecchio | palette, scorciatoie e tour usano `modalDialog(title=)` | non sono dialoghi del catalogo e hanno footer propri; si allineano in U4/U5 | U4 |
-| Home, Chart Studio e Workbench non ridisegnate | l'accettazione di U4 chiede tutte le viste | shell, Data e Report sono fatte; le altre tre restano nel prossimo passo | U4.1, U4.3, U4.5 |
+| ~~`tabs_strip()` senza consumatore~~ | risolto in U4.5 | la striscia dei documenti lo usa con `payload = TRUE`, `closable = TRUE` e un'etichetta ricca; il contratto semplice resta il default | — |
+| I modali secondari hanno il chrome vecchio | palette, scorciatoie, tour e recupero progetto usano `modalDialog(title=)` | non sono dialoghi del catalogo e hanno footer propri; si allineano nel prossimo passo | U4.5 |
+| ~~Home, Chart Studio e Workbench non ridisegnate~~ | risolto: tutte le viste U4 sono fatte | restano i modali secondari e la QA | U4.5, U5 |
 | Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; gli e2e restano la verifica di struttura | U5.1 |
 | 26 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli nella QA, prima di chiudere l'ondata | U5.1 |
 
@@ -418,26 +452,25 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. **U4.1 — Home.** Rifare le schede della Home con `card_head()`,
-   `action_row()` e `note()`; la hero usa già `--rcmdr-hero-*`. Spostare i
-   fogli `.rcmdr-home-*` e `.rcmdr-workflow-*` da `40-dialogs.css` a
-   `60-views.css`, dove vivono le viste.
-2. **U4.3 — Chart Studio.** Le opzioni dei grafici usano ancora
-   `spin_input()`/`checkboxInput` diretti: passare a `number_input()` e al
-   vocabolario condiviso, senza toccare gli ID delle opzioni.
-3. **U4.5 + U5 — Workbench, Help e QA.** Striscia dei documenti con
-   `tabs_strip()` (o il componente che la sostituisce), modali secondari,
-   matrice 8 temi × 2 densità, e2e con `RCMDRSHINY_E2E=1`, `NEWS.md`.
+1. **U4.5 — modali secondari.** Palette dei comandi, scorciatoie, tour e
+   recupero progetto passano dal `modalDialog(title=)` al chrome comune
+   (`modal_header()`/`modal_footer()`), senza cambiare `easyClose`, tasti o
+   ID. È l'ultimo pezzo di U4.
+2. **U5.1 — QA visiva.** Matrice 8 temi × 2 densità sulle viste appena
+   rifatte; e2e con `RCMDRSHINY_E2E=1`; screenshot prima/dopo.
+3. **U5.2 — chiusura.** `NEWS.md`, topic di aiuto aggiornati, checklist e
+   diario finali.
 
 ### Task dell'ondata
 
 | ID | Task | Priorità | Note |
 |---|---|---|---|
-| U4.1 | Shell | alta | fatto in `783e6de`; la Home dello stesso passo resta |
-| U4.2 | Data Studio | alta | fatto in `fef1dfd` |
-| U4.4 | Report Studio | media | fatto in `2217dff` |
-| U4.3, U4.5 | Chart, Workbench, Help, Home | media | prossimo batch |
-| U5 | Matrice temi, QA, NEWS | media | e2e inclusi |
+| U4.1 | Shell e Home | alta | `783e6de` e `fc4804a` |
+| U4.2 | Data Studio | alta | `fef1dfd` |
+| U4.3 | Chart Studio | alta | `9c2f461` |
+| U4.4 | Report Studio | media | `2217dff` |
+| U4.5 | Workbench, Help, striscia | media | questo batch; modali secondari ancora aperti |
+| U5 | Matrice temi, QA, NEWS | media | prossimo batch |
 
 ---
 
@@ -478,7 +511,7 @@ RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 
 ## 12. Aggiornamenti alla checklist
 
-- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3, shell, Data e Report).
+- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3, U4).
 - [x] `15-ui-refresh.md` e `README.md` segnano l'onda in corso.
 - [x] `UI-TOKENS.md` scritto e coerente con il codice.
 - [x] Diario scritto.
