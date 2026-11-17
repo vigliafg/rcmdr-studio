@@ -417,6 +417,51 @@ Rilascio: 2.6.0.
 
 ---
 
+## Onda 15 — Rifacimento visivo dell'interfaccia
+
+Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
+Stato: pianificata.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| U0.1 | CSS in `inst/www/css/`, `app_css()` compositore | [ ] | nessun cambio visivo |
+| U0.2 | JS in `inst/www/js/`, `app_js()` compositore | [ ] | tema, densità, drag, palette |
+| U0.3 | `rcmdr_icon()` con SVG inline | [ ] | nessun nuovo `Imports` |
+| U0.4 | `docs/upgrades/UI-TOKENS.md` | [ ] | scala, colori, stati |
+| U1.1 | Scala tipografica, spaziature, raggi, ombre | [ ] | token, non valori hard-coded |
+| U1.2 | Controlli a altezza uniforme e focus unico | [ ] | 8 temi |
+| U1.3 | Bottoni: primario, secondario, ghost, pericolo | [ ] | + `sm` coerente |
+| U1.4 | Test di contrasto WCAG sui token | [ ] | ≥ 4.5:1 |
+| U2.1 | `field()`, `field_grid()`, `switch_input()`, `segmented_input()`, `number_input()` | [ ] | stessi ID e valori |
+| U2.2 | `toolbar()`, `modal_header()`, `modal_footer()`, `tabs_strip()`, `badge()` | [ ] | |
+| U2.3 | Restyle topbar, tab strip, statusbar, sidebar | [ ] | |
+| U2.4 | Sostituire i 17 `checkboxInput` diretti | [ ] | via `switch_input()` |
+| U3.1 | Chrome comune + dialogo *Options* | [ ] | vetrina |
+| U3.2 | Lotto dati e import | [ ] | test aggiornati |
+| U3.3 | Lotto statistiche | [ ] | |
+| U3.4 | Lotto grafici | [ ] | |
+| U3.5 | Lotto modelli, report, progetto, script | [ ] | |
+| U4.1 | Home e shell | [ ] | 991/1280/1600 px |
+| U4.2 | Data Studio | [ ] | |
+| U4.3 | Chart Studio | [ ] | |
+| U4.4 | Report Studio | [ ] | |
+| U4.5 | Workbench e Help | [ ] | |
+| U5.1 | Matrice 8 temi × 2 densità | [ ] | contrasto + visuale |
+| U5.2 | Tastiera, focus trap, `Esc`, reduced motion, zoom 200% | [ ] | |
+| U5.3 | Screenshot prima/dopo, help topic, NEWS | [ ] | |
+| U5.4 | Diario dell'onda | [ ] | `diary/wave-15-ui-refresh.md` |
+
+### Chiusura Onda 15
+
+- [ ] CSS e JS fuori da `R/app.R` (≤ 30 righe residue).
+- [ ] `R/widgets.R` unico punto di creazione dei controlli di form.
+- [ ] Nessun dialogo usa input nativi direttamente.
+- [ ] 8 temi × 2 densità verificati; contrasto ≥ 4.5:1.
+- [ ] Test unit, contract, dialoghi e 15 e2e verdi.
+- [ ] Screenshot, help topic, NEWS e diario aggiornati.
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).

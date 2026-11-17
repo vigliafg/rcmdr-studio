@@ -101,6 +101,7 @@ Le decisioni sono registrate in forma di ADR in
 | **11** | [`11-remaining-types.md`](11-remaining-types.md) | Opzioni complete per densità, linee, barre, dot, strip, QQ, medie, xyplot | 0–10 |
 | **12** | [`12-ggplot-only-types.md`](12-ggplot-only-types.md) | Violino, ECDF, densità 2D e heatmap solo ggplot2 | 0–11 |
 | **13** | [`13-interactive-builder.md`](13-interactive-builder.md) | Anteprima plotly nel builder, selezione e subset | 0–12 |
+| **15** | [`15-ui-refresh.md`](15-ui-refresh.md) | Rifacimento visivo: asset, token, componenti, dialoghi, viste, QA | 0, 5 |
 
 Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il
@@ -120,6 +121,10 @@ Report Studio riusa la galleria grafici.
 
 **Onda 4 completata il 14 novembre 2026.** Il diario di handoff è
 [`diary/wave-04-workbench.md`](diary/wave-04-workbench.md).
+
+**Onda 15 pianificata il 17 novembre 2026.** Il piano è in
+[`15-ui-refresh.md`](15-ui-refresh.md): nessun cambio di comandi o ID, solo
+pelle, componenti e chrome dei dialoghi.
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.
