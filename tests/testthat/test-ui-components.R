@@ -116,6 +116,7 @@ test_that("tabs_strip() is a labelled group of toggle buttons", {
   expect_match(html, 'class="rcmdr-tabs"', fixed = TRUE)
   expect_match(html, 'role="group"', fixed = TRUE)
   expect_match(html, 'aria-label="Documents"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-tabs-item active"', fixed = TRUE)
   expect_match(html, 'aria-pressed="true"', fixed = TRUE)
   expect_match(html, 'aria-pressed="false"', fixed = TRUE)
   expect_match(html, 'data-value="two"', fixed = TRUE)
@@ -186,4 +187,27 @@ test_that("card_head() keeps the title and one end slot on a line", {
   # Without an end slot the heading is still one block.
   solo <- as.character(card_head(htmltools::tags$h6("Title")))
   expect_match(solo, 'class="rcmdr-card-head"', fixed = TRUE)
+})
+
+test_that("tabs_strip() can close a tab and send an action payload", {
+  html <- as.character(tabs_strip(
+    "doc_tab", c("One" = "one", "Two" = "two"), selected = "one",
+    label = "Documents", payload = TRUE, closable = TRUE,
+    close_label = "Close"
+  ))
+  # The payload carries the value and the action, not a bare value.
+  expect_match(html, "{id: &#39;one&#39;, action: &#39;activate&#39;}",
+               fixed = TRUE)
+  expect_match(html, "{id: &#39;two&#39;, action: &#39;close&#39;}", fixed = TRUE)
+  # The close button is named after its tab, not just "Close".
+  expect_match(html, 'aria-label="Close Two"', fixed = TRUE)
+  expect_match(html, "rcmdr-doc-close", fixed = TRUE)
+
+  # A rich label keeps the plain name for the close button.
+  rich <- as.character(tabs_strip(
+    "doc_tab", c("One" = "one"), labels = list(htmltools::tags$span("Rich")),
+    payload = TRUE, closable = TRUE
+  ))
+  expect_match(rich, "<span>Rich</span>", fixed = TRUE)
+  expect_match(rich, 'aria-label="Close One"', fixed = TRUE)
 })

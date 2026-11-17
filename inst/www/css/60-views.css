@@ -216,3 +216,30 @@
     .rcmdr-alert-compact {
       padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
     }
+
+    /* Script Studio: the editor on the left, the outline and diagnostics on
+       the right, stacked below the extra-large breakpoint. */
+    .rcmdr-script-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(16rem, 1fr);
+      gap: var(--rcmdr-space-2);
+      align-items: start;
+    }
+    .rcmdr-script-main,
+    .rcmdr-script-side { min-width: 0; }
+    @media (max-width: 1199.98px) {
+      .rcmdr-script-workspace { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    /* Help: the category sidebar and the results column. */
+    .rcmdr-help-layout {
+      display: grid;
+      grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+      gap: var(--rcmdr-space-3);
+      align-items: start;
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-help-layout { grid-template-columns: minmax(0, 1fr); }
+    }
+    .rcmdr-help-aside,
+    .rcmdr-help-content { min-width: 0; }

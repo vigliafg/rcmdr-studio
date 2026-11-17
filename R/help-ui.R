@@ -43,9 +43,9 @@ help_center_ui <- function(filter_choices = NULL) {
       )
     ),
     htmltools::div(
-      class = "row g-3",
+      class = "rcmdr-help-layout",
       htmltools::div(
-        class = "col-lg-3",
+        class = "rcmdr-help-aside",
         htmltools::div(
           class = "rcmdr-help-sidebar", role = "navigation",
           `aria-label` = tr("Help categories"),
@@ -55,7 +55,7 @@ help_center_ui <- function(filter_choices = NULL) {
         )
       ),
       htmltools::div(
-        class = "col-lg-9",
+        class = "rcmdr-help-content",
         htmltools::div(
           `aria-live` = "polite", class = "rcmdr-help-results",
           uiOutput("help_results")
@@ -329,8 +329,7 @@ help_topic_panel_ui <- function(topic, state = NULL) {
 help_dialog_panel_ui <- function(topic) {
   htmltools::div(
     class = "rcmdr-help-inline",
-    htmltools::div(
-      class = "d-flex justify-content-between align-items-center mb-2",
+    card_head(
       htmltools::tags$h5(topic$title),
       shiny::actionButton(
         "dialog_help_close", tr("Close help"),

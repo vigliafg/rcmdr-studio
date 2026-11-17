@@ -79,3 +79,13 @@ test_that("the dialog modal offers Help when a topic exists", {
   )
   expect_false(grepl("id=\"dialog_help\"", as.character(dialog_modal(plain))))
 })
+
+test_that("the Help layout uses the shared grid and card head", {
+  html <- htmltools::renderTags(help_center_ui())$html
+  expect_match(html, "rcmdr-help-layout", fixed = TRUE)
+  expect_match(html, "rcmdr-help-aside", fixed = TRUE)
+  expect_match(html, "rcmdr-help-content", fixed = TRUE)
+  expect_false(grepl("row g-3", html, fixed = TRUE))
+  expect_false(grepl("col-lg-3", html, fixed = TRUE))
+  expect_false(grepl("col-lg-9", html, fixed = TRUE))
+})

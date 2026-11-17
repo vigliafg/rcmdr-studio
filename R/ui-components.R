@@ -218,18 +218,32 @@ modal_footer <- function(..., primary = NULL) {
 
 #' Tab strip
 #'
-#' A row of small tabs for hand-built views: each tab sets `id` to its value,
-#' the same contract the script document tabs already use.  The items are
-#' toggle buttons (`aria-pressed`), not ARIA tabs, because the component does
-#' not implement the arrow-key navigation the tab pattern promises.
+#' A row of small tabs for hand-built views.  Each tab is a toggle button
+#' (`aria-pressed`), not an ARIA tab, because the component does not implement
+#' the arrow-key navigation the tab pattern promises.  With `payload = TRUE`
+#' the input receives `{id, action}`, which is what a strip with close buttons
+#' needs; otherwise it receives the value alone, the contract the simpler
+#' consumers already use.
 #'
 #' @param id Shiny input to update.
-#' @param tabs Named character vector: label = value.
+#' @param tabs Named character vector: label = value.  The names are also the
+#'   accessible names of the close buttons when `closable = TRUE`.
 #' @param selected Value of the active tab.  Defaults to the first.
 #' @param label Accessible name for the strip.
+#' @param labels Optional list of tags, one per tab, when the label needs
+#'   markup (a mode chip, a title, ...).  The names of `tabs` still provide
+#'   the plain text.
+#' @param payload When `TRUE`, send `{id, action}` instead of the bare value.
+#' @param closable Add a close button to each tab.
+#' @param close_label Accessible prefix for the close buttons.
+#' @param trailing Optional tag after the last tab (a "new" button).
+#' @param class Extra classes for the strip, for a component that builds on it.
 #' @return A `<div>` tag, or `NULL` when `tabs` is empty.
 #' @keywords internal
-tabs_strip <- function(id, tabs, selected = NULL, label = NULL) {
+tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
+                       labels = NULL, payload = FALSE, closable = FALSE,
+                       close_label = tr("Close"), trailing = NULL,
+                       class = NULL) {
   if (length(tabs) == 0L) return(NULL)
   if (is.null(names(tabs)) || any(!nzchar(names(tabs)))) {
     stop("tabs_strip() needs a named character vector: label = value.",
@@ -241,23 +255,48 @@ tabs_strip <- function(id, tabs, selected = NULL, label = NULL) {
     stop("tabs_strip() ids and values must be simple identifiers.",
          call. = FALSE)
   }
+  if (!is.null(labels) && length(labels) != length(values)) {
+    stop("tabs_strip() needs one label per tab.", call. = FALSE)
+  }
   selected <- selected %||% values[[1L]]
+  callback <- function(value, action) {
+    if (isTRUE(payload)) {
+      sprintf(
+        "Shiny.setInputValue('%s', {id: '%s', action: '%s'}, {priority: 'event'});",
+        id, value, action
+      )
+    } else {
+      sprintf("Shiny.setInputValue('%s', '%s', {priority: 'event'});",
+              id, value)
+    }
+  }
   htmltools::tags$div(
-    class = "rcmdr-tabs", role = "group", `aria-label` = label,
+    class = c("rcmdr-tabs", class), role = "group", `aria-label` = label,
     lapply(seq_along(values), function(i) {
       active <- identical(values[[i]], selected)
-      htmltools::tags$button(
-        type = "button",
-        class = paste0("rcmdr-tabs-item", if (active) " active" else ""),
-        `aria-pressed` = if (active) "true" else "false",
+      content <- if (is.null(labels)) names(tabs)[[i]] else labels[[i]]
+      htmltools::tags$span(
+        class = c("rcmdr-tabs-item", if (active) "active"),
         `data-value` = values[[i]],
-        onclick = sprintf(
-          "Shiny.setInputValue('%s', '%s', {priority: 'event'});",
-          id, values[[i]]
+        htmltools::tags$button(
+          type = "button",
+          class = "rcmdr-tabs-button",
+          `aria-pressed` = if (active) "true" else "false",
+          onclick = callback(values[[i]], "activate"),
+          content
         ),
-        names(tabs)[[i]]
+        if (isTRUE(closable)) {
+          htmltools::tags$button(
+            type = "button", class = "rcmdr-doc-close",
+            title = close_label,
+            `aria-label` = sprintf("%s %s", close_label, names(tabs)[[i]]),
+            onclick = callback(values[[i]], "close"),
+            "\u00d7"
+          )
+        }
       )
-    })
+    }),
+    trailing
   )
 }
 

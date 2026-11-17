@@ -26,13 +26,9 @@
     .rcmdr-help-body pre,
     .rcmdr-help-example-code,
     .rcmdr-workflow-draft pre { background: var(--rcmdr-surface-sunken); color: var(--rcmdr-text); }
-    .rcmdr-doc-tab { color: var(--rcmdr-text); }
-    .rcmdr-doc-tab a,
+    .rcmdr-doc-tabs { color: var(--rcmdr-text); }
     .rcmdr-help-category,
     .rcmdr-report-outline a { color: var(--rcmdr-link); }
-    .rcmdr-doc-tab .rcmdr-doc-mode,
-    .rcmdr-doc-tab .rcmdr-doc-close,
-    .rcmdr-doc-tab .rcmdr-doc-new { color: var(--rcmdr-muted); }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {

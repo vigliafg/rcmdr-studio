@@ -412,38 +412,26 @@ script_completion_words <- function(state) {
 script_document_tabs_ui <- function(state) {
   table <- script_registry(state)
   if (nrow(table) == 0L) return(NULL)
-  htmltools::div(
+  active <- table$id[table$active %in% TRUE]
+  active <- if (length(active) > 0L) active[[1L]] else table$id[[1L]]
+  labels <- lapply(seq_len(nrow(table)), function(i) {
+    htmltools::tagList(
+      htmltools::tags$span(class = "rcmdr-doc-mode",
+                           toupper(table$mode[[i]])),
+      htmltools::tags$span(class = "rcmdr-doc-title",
+                           table$label[[i]])
+    )
+  })
+  tabs_strip(
+    "script_tab_action",
+    stats::setNames(table$id, table$label),
+    selected = active,
+    label = tr("Script"),
+    labels = labels,
+    payload = TRUE,
+    closable = TRUE,
     class = "rcmdr-doc-tabs",
-    lapply(seq_len(nrow(table)), function(i) {
-      row <- table[i, , drop = FALSE]
-      htmltools::tags$span(
-        class = paste0(
-          "rcmdr-doc-tab",
-          if (isTRUE(row$active[[1L]])) " active" else ""
-        ),
-        htmltools::tags$a(
-          href = "#",
-          onclick = sprintf(
-            "Shiny.setInputValue('script_tab_action', {id: '%s', action: 'activate'}, {priority: 'event'}); return false;",
-            row$id[[1L]]
-          ),
-          htmltools::tags$span(class = "rcmdr-doc-mode",
-                               toupper(row$mode[[1L]])),
-          htmltools::tags$span(class = "rcmdr-doc-title",
-                               row$label[[1L]])
-        ),
-        htmltools::tags$button(
-          type = "button", class = "rcmdr-doc-close",
-          title = tr("Close"),
-          onclick = sprintf(
-            "Shiny.setInputValue('script_tab_action', {id: '%s', action: 'close'}, {priority: 'event'}); return false;",
-            row$id[[1L]]
-          ),
-          "\u00d7"
-        )
-      )
-    }),
-    htmltools::tags$button(
+    trailing = htmltools::tags$button(
       type = "button", class = "rcmdr-doc-new", title = tr("New script"),
       onclick = "Shiny.setInputValue('script_new', Math.random(), {priority: 'event'});",
       "+"
@@ -456,50 +444,60 @@ script_document_tabs_ui <- function(state) {
 script_studio_ui <- function() {
   htmltools::tagList(
     uiOutput("script_tabs_ui"),
-    htmltools::div(
-      class = "d-flex gap-2 align-items-center mb-2 flex-wrap",
-      selectInput(
-        "document_mode", NULL,
-        choices = stats::setNames(
-          c("r", "rmd", "rnw"),
-          c(tr("R script"), tr("R Markdown"), tr("knitr"))
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
+        htmltools::div(
+          class = "rcmdr-toolbar-field",
+          selectInput(
+            "document_mode", NULL,
+            choices = stats::setNames(
+              c("r", "rmd", "rnw"),
+              c(tr("R script"), tr("R Markdown"), tr("knitr"))
+            ),
+            selected = "r", width = "140px"
+          )
         ),
-        selected = "r", width = "140px"
-      ),
-      actionButton("document_open", tr("Open"), class = "btn-sm btn-outline-secondary"),
-      actionButton("document_save", tr("Save"), class = "btn-sm btn-outline-secondary"),
-      actionButton("document_save_as", tr("Save as"), class = "btn-sm btn-outline-secondary"),
-      actionButton("document_section", tr("Section"), class = "btn-sm btn-outline-secondary"),
-      actionButton("document_chunk", tr("Chunk"), class = "btn-sm btn-outline-secondary"),
-      actionButton("document_remove_block", tr("Remove block"),
-                   class = "btn-sm btn-outline-secondary"),
-      actionButton("document_remove_section", tr("Remove section"),
-                   class = "btn-sm btn-outline-secondary"),
-      actionButton("document_knit", tr("Knit"), class = "btn-sm btn-primary")
-    ),
-    htmltools::div(
-      class = "d-flex gap-2 align-items-center mb-2 flex-wrap",
-      actionButton("run_selection", tr("Run selection"), class = "btn-sm btn-primary"),
-      actionButton("run_all", tr("Run all"), class = "btn-sm btn-outline-primary"),
-      actionButton("run_cell", tr("Run cell"), class = "btn-sm btn-outline-primary",
-                   onclick = "rcmdrScriptRunAt('run_cell_request');"),
-      actionButton("run_above", tr("Run above"), class = "btn-sm btn-outline-secondary",
-                   onclick = "rcmdrScriptRunAt('run_above_request');"),
-      actionButton("run_below", tr("Run below"), class = "btn-sm btn-outline-secondary",
-                   onclick = "rcmdrScriptRunAt('run_below_request');"),
-      actionButton("run_chunk", tr("Run chunk at cursor"),
-                   class = "btn-sm btn-outline-secondary",
-                   onclick = "rcmdrRunChunk();"),
-      actionButton("script_format", tr("Format"), class = "btn-sm btn-outline-secondary"),
-      actionButton("clear_script", tr("Clear"), class = "btn-sm btn-outline-secondary"),
-      downloadButton("download_script", tr("Download"),
+        actionButton("document_open", tr("Open"), class = "btn-sm btn-outline-secondary"),
+        actionButton("document_save", tr("Save"), class = "btn-sm btn-outline-secondary"),
+        actionButton("document_save_as", tr("Save as"), class = "btn-sm btn-outline-secondary"),
+        actionButton("document_section", tr("Section"), class = "btn-sm btn-outline-secondary"),
+        actionButton("document_chunk", tr("Chunk"), class = "btn-sm btn-outline-secondary"),
+        actionButton("document_remove_block", tr("Remove block"),
                      class = "btn-sm btn-outline-secondary"),
-      switch_input("auto_append", tr("Append generated commands"), value = TRUE)
+        actionButton("document_remove_section", tr("Remove section"),
+                     class = "btn-sm btn-outline-secondary"),
+        actionButton("document_knit", tr("Knit"), class = "btn-sm btn-primary")
+      ),
+      label = tr("Script")
+    ),
+    toolbar(
+      left = htmltools::div(
+        class = "rcmdr-toolbar-fields",
+        actionButton("run_selection", tr("Run selection"), class = "btn-sm btn-primary"),
+        actionButton("run_all", tr("Run all"), class = "btn-sm btn-outline-primary"),
+        actionButton("run_cell", tr("Run cell"), class = "btn-sm btn-outline-primary",
+                     onclick = "rcmdrScriptRunAt('run_cell_request');"),
+        actionButton("run_above", tr("Run above"), class = "btn-sm btn-outline-secondary",
+                     onclick = "rcmdrScriptRunAt('run_above_request');"),
+        actionButton("run_below", tr("Run below"), class = "btn-sm btn-outline-secondary",
+                     onclick = "rcmdrScriptRunAt('run_below_request');"),
+        actionButton("run_chunk", tr("Run chunk at cursor"),
+                     class = "btn-sm btn-outline-secondary",
+                     onclick = "rcmdrRunChunk();"),
+        actionButton("script_format", tr("Format"), class = "btn-sm btn-outline-secondary"),
+        actionButton("clear_script", tr("Clear"), class = "btn-sm btn-outline-secondary"),
+        downloadButton("download_script", tr("Download"),
+                       class = "btn-sm btn-outline-secondary")
+      ),
+      right = switch_input("auto_append", tr("Append generated commands"),
+                           value = TRUE),
+      label = tr("Run")
     ),
     htmltools::div(
-      class = "rcmdr-script-workspace row g-2",
+      class = "rcmdr-script-workspace",
       htmltools::div(
-        class = "col-xl-9",
+        class = "rcmdr-script-main",
         htmltools::div(
           class = "rcmdr-script-findbar",
           textInput("script_find", NULL, placeholder = tr("Find..."), width = "170px"),
@@ -517,7 +515,7 @@ script_studio_ui <- function() {
         uiOutput("script_cell_output")
       ),
       htmltools::div(
-        class = "col-xl-3",
+        class = "rcmdr-script-side",
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Outline")),
@@ -545,21 +543,23 @@ script_output_card <- function(entry) {
   lines <- c(entry$output %||% character(), entry$messages %||% character())
   htmltools::div(
     class = "rcmdr-cell-card",
-    htmltools::div(
-      class = "d-flex justify-content-between align-items-center gap-2",
-      htmltools::tags$span(class = "small", entry$id %||% ""),
-      htmltools::div(class = "d-flex gap-1 align-items-center", state_badge,
-                     htmltools::tags$span(
-                       class = "rcmdr-history-time",
-                       format(entry$time %||% Sys.time(), "%H:%M:%S")
-                     ))
+    card_head(
+      note(entry$id %||% "", inline = TRUE),
+      action_row(
+        tight = TRUE,
+        state_badge,
+        htmltools::tags$span(
+          class = "rcmdr-history-time",
+          format(entry$time %||% Sys.time(), "%H:%M:%S")
+        )
+      )
     ),
     if (length(lines) > 0L) {
       htmltools::tags$pre(class = "rcmdr-script-output",
                           paste(lines, collapse = "\n"))
     },
     if (!is.null(entry$error)) {
-      htmltools::tags$p(class = "text-danger small mb-0", entry$error)
+      htmltools::tags$p(class = "rcmdr-note rcmdr-note-error", entry$error)
     }
   )
 }
@@ -663,7 +663,8 @@ script_studio_server <- function(input, output, session, state, refresh,
     diagnostics <- script_diagnostics(text_debounced())
     if (nrow(diagnostics) == 0L) {
       return(htmltools::tags$p(
-        class = "text-success small mb-0", tr("The script parses correctly.")
+        class = "rcmdr-note text-success",
+        tr("The script parses correctly.")
       ))
     }
     htmltools::div(
@@ -671,7 +672,7 @@ script_studio_server <- function(input, output, session, state, refresh,
       lapply(seq_len(nrow(diagnostics)), function(i) {
         row <- diagnostics[i, , drop = FALSE]
         htmltools::tags$div(
-          class = "small text-danger",
+          class = "rcmdr-note rcmdr-note-error",
           sprintf(tr("Line %d, column %d"), row$line, row$column),
           htmltools::tags$span(" "),
           row$message

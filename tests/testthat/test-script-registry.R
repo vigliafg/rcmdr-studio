@@ -81,3 +81,16 @@ test_that("the Script Studio UI keeps the historical editor ids", {
   expect_match(html, "script_outline")
   expect_match(html, "script_diagnostics")
 })
+
+test_that("the document strip is the shared tab strip", {
+  state <- workbench_test_state()
+  document_registry_ensure(state)
+  document_set_text(state, "x <- 1")
+  html <- htmltools::renderTags(script_document_tabs_ui(state))$html
+  expect_match(html, "rcmdr-tabs", fixed = TRUE)
+  expect_match(html, "rcmdr-tabs-button", fixed = TRUE)
+  expect_match(html, "rcmdr-doc-close", fixed = TRUE)
+  expect_match(html, "action: &#39;close&#39;", fixed = TRUE)
+  expect_match(html, "action: &#39;activate&#39;", fixed = TRUE)
+  expect_false(grepl("rcmdr-doc-tab ", html, fixed = TRUE))
+})
