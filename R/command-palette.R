@@ -272,11 +272,15 @@ palette_search <- function(query, index, limit = 20L, type = "all",
 #' Palette modal
 #' @keywords internal
 palette_modal <- function() {
-  modalDialog(
-    title = NULL,
-    htmltools::tags$div(
+  modal_shell(
+    tr("Command palette"),
+    category = tr("Studio"),
+    icon = "search",
+    size = "l",
+    easyClose = TRUE,
+    close = TRUE,
+    htmltools::div(
       class = "rcmdr-palette",
-      studio_breadcrumb(c(tr("Studio"), tr("Command palette"))),
       htmltools::tags$label(
         class = "visually-hidden", `for` = "palette_query",
         tr("Search commands, help, data and history")
@@ -287,9 +291,9 @@ palette_modal <- function() {
         width = "100%"
       ),
       htmltools::tags$div(
-        class = "rcmdr-palette-filters d-flex gap-2 align-items-end flex-wrap",
+        class = "rcmdr-palette-filters",
         htmltools::tags$div(
-          style = "min-width: 150px;",
+          class = "rcmdr-palette-filter-field",
           selectInput("palette_type", NULL, choices = palette_type_choices(),
                       width = "150px")
         ),
@@ -298,10 +302,7 @@ palette_modal <- function() {
       htmltools::tags$div(class = "rcmdr-palette-hint",
                           tr("Ctrl+K to open, arrows to move, Enter to run, Esc to close")),
       uiOutput("palette_results")
-    ),
-    footer = NULL,
-    size = "l",
-    easyClose = TRUE
+    )
   )
 }
 

@@ -71,22 +71,21 @@ tour_step <- function(index = 1L) {
 #' @export
 tour_modal <- function(step, index, total) {
   last <- index >= total
-  shiny::modalDialog(
-    title = sprintf(tr("Tour: %s"), step$title),
+  modal_shell(
+    sprintf(tr("Tour: %s"), step$title),
+    category = sprintf(tr("Step %d of %d"), index, total),
+    icon = "help",
+    size = "m",
+    easyClose = FALSE,
     htmltools::tagList(
-      htmltools::tags$p(class = "text-muted small mb-2",
-                        sprintf(tr("Step %d of %d"), index, total)),
       htmltools::tags$p(step$body),
       htmltools::tags$p(
-        class = "small",
         htmltools::tags$a(
           href = "#", `data-help-topic` = step$help_topic,
           tr("Open the related help topic")
         )
       )
     ),
-    size = "m",
-    easyClose = FALSE,
     footer = htmltools::tagList(
       shiny::actionButton("tour_dismiss", tr("Don't show again"),
                           class = "btn-sm btn-outline-secondary"),
@@ -95,9 +94,10 @@ tour_modal <- function(step, index, total) {
       if (index > 1L) {
         shiny::actionButton("tour_back", tr("Back"),
                             class = "btn-sm btn-outline-secondary")
-      },
-      shiny::actionButton("tour_next", if (last) tr("Done") else tr("Next"),
-                          class = "btn-primary")
+      }
+    ),
+    primary = shiny::actionButton(
+      "tour_next", if (last) tr("Done") else tr("Next"), class = "btn-primary"
     )
   )
 }

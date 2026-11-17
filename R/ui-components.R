@@ -174,9 +174,9 @@ badge <- function(label, status = c("neutral", "ok", "warning", "error", "info")
 #' Dialog header
 #'
 #' The full `.modal-header` of a dialog: icon chip, title, category and the
-#' close button.  It belongs to a modal skeleton built with
-#' `.modal-dialog`/`.modal-content`; [shiny::modalDialog()] keeps its own
-#' header, so this component is for the dialogs that build their chrome.
+#' close button.  It is injected into Shiny's own modal shell by
+#' [modal_shell()], which is how the dialogs that are not in the catalogue get
+#' the shared chrome; [shiny::modalDialog()] keeps its plain header otherwise.
 #' @keywords internal
 modal_header <- function(title, category = NULL, icon = NULL, close = TRUE,
                          close_label = tr("Close"), id = NULL) {
@@ -214,6 +214,69 @@ modal_footer <- function(..., primary = NULL) {
       htmltools::tags$div(class = "rcmdr-modal-primary", primary)
     }
   )
+}
+
+#' A dismiss button for a modal footer
+#'
+#' [shiny::modalButton()] writes the Bootstrap dismiss attributes but not a
+#' size class, so a footer that mixes it with `btn-sm` actions has two heights.
+#' This button carries both dismiss attributes (Bootstrap 4 and 5, as Shiny
+#' does) and takes the same classes as its neighbours.
+#' @keywords internal
+modal_dismiss_button <- function(label = tr("Close"),
+                                 class = "btn-sm btn-outline-secondary") {
+  htmltools::tags$button(
+    type = "button", class = c("btn", class),
+    `data-dismiss` = "modal", `data-bs-dismiss` = "modal", label
+  )
+}
+
+#' A Shiny modal with the shared chrome
+#'
+#' [shiny::modalDialog()] owns the shell — the id, the backdrop, the fade, the
+#' size and the initialisation script — and writes its own plain header and
+#' footer.  This helper keeps that shell and swaps the chrome: the header is
+#' [modal_header()] and the footer is [modal_footer()].  The dialogs that are
+#' not in the catalogue (palette, shortcuts, tour, project recovery) use it so
+#' they read like every other dialog without giving up what Shiny's shell does.
+#'
+#' @param title Dialog title.
+#' @param ... Body content.
+#' @param category Small line under the title (the tour step, a family name).
+#' @param icon Icon name from [rcmdr_icon_paths()].
+#' @param footer Footer actions, in DOM order.
+#' @param primary Actions grouped at the end of the footer.
+#' @param size One of `"s"`, `"m"`, `"l"`, `"xl"`.
+#' @param easyClose Let Esc and the backdrop close the dialog.
+#' @param close Show the header close button.  Leave it off when the dialog
+#'   wants an explicit decision, as the catalogue dialogs do.
+#' @param close_label Accessible name of the close button.
+#' @param id Id of the title element, used by `aria-labelledby`.
+#' @return A modal dialog, ready for [shiny::showModal()].
+#' @keywords internal
+modal_shell <- function(title, ..., category = NULL, icon = NULL,
+                        footer = NULL, primary = NULL,
+                        size = c("m", "s", "l", "xl"), easyClose = FALSE,
+                        close = FALSE, close_label = tr("Close"),
+                        id = "rcmdr-modal-title") {
+  size <- match.arg(size)
+  body <- htmltools::tagList(...)
+  header <- modal_header(title, category = category, icon = icon,
+                         close = close, close_label = close_label, id = id)
+  foot <- if (is.null(footer) && is.null(primary)) {
+    NULL
+  } else {
+    modal_footer(footer, primary = primary)
+  }
+  # Shiny owns the shell; the header replaces the bare title, the footer
+  # replaces the plain row, and the body keeps its scroll area.
+  shell <- shiny::modalDialog(
+    title = NULL, footer = NULL, size = size, easyClose = easyClose, body
+  )
+  shell <- htmltools::tagAppendAttributes(shell, `aria-labelledby` = id)
+  query <- htmltools::tagQuery(shell)$find(".modal-content")$prepend(header)
+  if (!is.null(foot)) query <- query$append(foot)
+  query$allTags()
 }
 
 #' Tab strip

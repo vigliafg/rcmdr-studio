@@ -337,15 +337,17 @@ session_checkpoint_dialog <- function() {
 # -- Home card ---------------------------------------------------------------
 
 project_recovery_modal <- function(info, title = NULL) {
-  shiny::modalDialog(
-    title = title %||% tr("Recover unsaved project"),
+  modal_shell(
+    title %||% tr("Recover unsaved project"),
+    icon = "refresh",
+    easyClose = FALSE,
     htmltools::tagList(
       htmltools::tags$p(sprintf(
         tr("An autosave newer than the project was found: %s."),
         info$path
       )),
       htmltools::tags$ul(
-        class = "small",
+        class = "rcmdr-recovery-list",
         htmltools::tags$li(sprintf(
           tr("Autosave: %s (%s bytes)"),
           format(info$autosave_time, "%Y-%m-%d %H:%M:%S"),
@@ -362,15 +364,16 @@ project_recovery_modal <- function(info, title = NULL) {
       )
     ),
     footer = htmltools::tagList(
-      actionButton("project_recovery_recover", tr("Recover"),
-                   class = "btn-sm btn-primary"),
       actionButton("project_recovery_ignore", tr("Ignore"),
                    class = "btn-sm btn-outline-secondary"),
       actionButton("project_recovery_delete", tr("Delete autosave"),
-                   class = "btn-sm btn-outline-danger"),
-      modalButton(tr("Close"))
+                   class = "btn-sm btn-outline-danger")
     ),
-    easyClose = FALSE
+    primary = htmltools::tagList(
+      modal_dismiss_button(),
+      actionButton("project_recovery_recover", tr("Recover"),
+                   class = "btn-sm btn-primary")
+    )
   )
 }
 

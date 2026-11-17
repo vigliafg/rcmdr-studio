@@ -17,3 +17,20 @@ test_that("the shortcut table and modal render", {
   expect_match(modal, "Keyboard shortcuts")
   expect_match(modal, "modal-dialog")
 })
+
+test_that("the shortcut modal carries the shared chrome", {
+  modal <- as.character(shortcuts_modal())
+  expect_match(modal, 'class="modal-header rcmdr-modal-header"', fixed = TRUE)
+  expect_match(modal, 'class="modal-footer rcmdr-modal-footer"', fixed = TRUE)
+  expect_match(modal, 'id="rcmdr-modal-title">Keyboard shortcuts</h4>',
+               fixed = TRUE)
+  expect_match(modal, 'class="rcmdr-dialog-category">Help', fixed = TRUE)
+  expect_match(modal, 'aria-labelledby="rcmdr-modal-title"', fixed = TRUE)
+  expect_match(modal, 'class="btn btn-sm btn-outline-secondary"', fixed = TRUE)
+  expect_false(grepl('small text-muted', modal, fixed = TRUE))
+  # One header and one footer, both ours.
+  expect_length(regmatches(modal, gregexpr('class="modal-header', modal))[[1L]],
+                1L)
+  expect_length(regmatches(modal, gregexpr('class="modal-footer', modal))[[1L]],
+                1L)
+})

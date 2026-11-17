@@ -108,6 +108,44 @@ test_that("modal_footer() puts the primary action last and on the right", {
             regexpr(">OK<", html, fixed = TRUE))
 })
 
+test_that("modal_shell() dresses Shiny's shell with the shared chrome", {
+  html <- as.character(modal_shell(
+    "Keyboard shortcuts", category = "Help", icon = "help",
+    htmltools::tags$p("Body"), size = "l",
+    primary = htmltools::tags$button("OK"), easyClose = TRUE, close = TRUE
+  ))
+  # One header and one footer: the shell's own are replaced, not doubled.
+  expect_length(regmatches(html, gregexpr('class="modal-header', html))[[1L]], 1L)
+  expect_length(regmatches(html, gregexpr('class="modal-footer', html))[[1L]], 1L)
+  expect_match(html, 'class="modal-header rcmdr-modal-header"', fixed = TRUE)
+  expect_match(html, 'class="modal-footer rcmdr-modal-footer"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-modal-primary"', fixed = TRUE)
+  # The dialog is labelled by the heading the component wrote.
+  expect_match(html, 'aria-labelledby="rcmdr-modal-title"', fixed = TRUE)
+  expect_match(html, 'id="rcmdr-modal-title">Keyboard shortcuts</h4>',
+               fixed = TRUE)
+  # easyClose keeps Shiny's backdrop and keyboard contract.
+  expect_false(grepl('data-bs-backdrop="static"', html, fixed = TRUE))
+  expect_match(html, "modal-dialog modal-lg", fixed = TRUE)
+
+  # A dialog without a footer gets no empty one.
+  bare <- as.character(modal_shell("Plain", htmltools::tags$p("Body")))
+  expect_false(grepl("modal-footer", bare, fixed = TRUE))
+  expect_false(grepl("btn-close", bare, fixed = TRUE))
+
+  # easyClose = FALSE keeps the static backdrop and the disabled keyboard.
+  static <- as.character(modal_shell("Decide", htmltools::tags$p("Body")))
+  expect_match(static, 'data-bs-backdrop="static"', fixed = TRUE)
+})
+
+test_that("modal_dismiss_button() keeps the size of its neighbours", {
+  html <- as.character(modal_dismiss_button("Chiudi"))
+  expect_match(html, 'class="btn btn-sm btn-outline-secondary"', fixed = TRUE)
+  expect_match(html, 'data-dismiss="modal"', fixed = TRUE)
+  expect_match(html, 'data-bs-dismiss="modal"', fixed = TRUE)
+  expect_match(html, ">Chiudi</button>", fixed = TRUE)
+})
+
 test_that("tabs_strip() is a labelled group of toggle buttons", {
   html <- as.character(tabs_strip(
     "doc_tab", c("One" = "one", "Two" = "two"), selected = "two",

@@ -57,7 +57,11 @@
       display: flex; gap: .25rem; flex-wrap: wrap; justify-content: flex-end;
       align-items: center;
     }
-    .rcmdr-palette-filters { margin-bottom: .35rem; }
+    .rcmdr-palette-filters {
+      display: flex; gap: var(--rcmdr-space-2); align-items: flex-end;
+      flex-wrap: wrap; margin-bottom: var(--rcmdr-space-2);
+    }
+    .rcmdr-palette-filter-field { min-width: 9.5rem; }
     .rcmdr-menu-row { display: flex; align-items: center; gap: .2rem; }
     .rcmdr-menu-row .rcmdr-menu-item { flex: 1 1 auto; min-width: 0; }
     .rcmdr-menu-star {
@@ -79,12 +83,16 @@
     .modal-dialog { max-height: 94vh; }
     .modal-content { border-radius: var(--rcmdr-radius-lg); overflow: hidden; }
     .modal-body { overflow-y: auto; max-height: 72vh; }
-    .modal-footer { flex-wrap: wrap; gap: .35rem; }
+    .modal-footer { flex-wrap: wrap; gap: var(--rcmdr-space-1); }
     /* Dialogs are draggable by their header (see app_js()). */
     .modal-header { cursor: grab; touch-action: none; }
     body.rcmdr-dragging { user-select: none; }
     body.rcmdr-dragging .modal-header { cursor: grabbing; }
     .rcmdr-shortcuts-table td, .rcmdr-shortcuts-table th { vertical-align: middle; }
+    .rcmdr-recovery-list {
+      margin: var(--rcmdr-space-2) 0 0; padding-left: 1.1rem;
+      color: var(--rcmdr-muted); font-size: var(--rcmdr-text-sm);
+    }
     @media (max-width: 991.98px) {
       .modal-dialog { margin: .4rem; }
       .modal-body { max-height: 66vh; }

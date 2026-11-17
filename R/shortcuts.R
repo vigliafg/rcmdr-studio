@@ -59,18 +59,18 @@ shortcuts_table_ui <- function() {
 #' Shortcut modal
 #' @keywords internal
 shortcuts_modal <- function() {
-  modalDialog(
-    title = tr("Keyboard shortcuts"),
-    htmltools::tags$div(
+  modal_shell(
+    tr("Keyboard shortcuts"),
+    category = tr("Help"),
+    icon = "help",
+    size = "m",
+    easyClose = TRUE,
+    close = TRUE,
+    htmltools::div(
       class = "rcmdr-shortcuts",
       shortcuts_table_ui(),
-      htmltools::tags$p(
-        class = "small text-muted mb-0",
-        tr("Shortcuts are also available from the Help tab and the Home card.")
-      )
+      note(tr("Shortcuts are also available from the Help tab and the Home card."))
     ),
-    easyClose = TRUE,
-    footer = modalButton(tr("Close")),
-    size = "m"
+    primary = modal_dismiss_button()
   )
 }

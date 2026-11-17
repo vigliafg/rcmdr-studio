@@ -121,3 +121,29 @@ test_that("the recovery modal offers recover, ignore and delete", {
   expect_match(html, "project_recovery_ignore")
   expect_match(html, "project_recovery_delete")
 })
+
+test_that("the recovery modal wears the shared chrome and keeps its actions", {
+  info <- list(
+    path = "/tmp/example.rcmdrproj",
+    autosave = "/tmp/example.rcmdrproj.autosave",
+    available = TRUE,
+    project_time = Sys.time() - 60,
+    autosave_time = Sys.time(),
+    newer = TRUE,
+    project_size = 100,
+    autosave_size = 120
+  )
+  html <- as.character(project_recovery_modal(info))
+  expect_match(html, 'class="modal-header rcmdr-modal-header"', fixed = TRUE)
+  expect_match(html, 'id="rcmdr-modal-title">Recover unsaved project</h4>',
+               fixed = TRUE)
+  expect_match(html, 'class="modal-footer rcmdr-modal-footer"', fixed = TRUE)
+  expect_match(html, "rcmdr-recovery-list", fixed = TRUE)
+  # The three actions keep their ids; the decision is grouped on the right.
+  primary <- sub(".*rcmdr-modal-primary", "", html)
+  expect_match(primary, "project_recovery_recover", fixed = TRUE)
+  expect_false(grepl("project_recovery_ignore", primary, fixed = TRUE))
+  # No X: the backdrop is static and a button decides.
+  expect_false(grepl("btn-close", html, fixed = TRUE))
+  expect_false(grepl('class="small"', html, fixed = TRUE))
+})

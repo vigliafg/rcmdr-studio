@@ -71,3 +71,19 @@ test_that("the checklist card uses the card head and the note component", {
   expect_false(grepl("ms-auto", html, fixed = TRUE))
   expect_false(grepl("text-bg-", html, fixed = TRUE))
 })
+
+test_that("the tour modal puts the step in the header and the decision last", {
+  html <- as.character(tour_modal(tour_step(2L), 2L, 4L))
+  expect_match(html, 'class="modal-header rcmdr-modal-header"', fixed = TRUE)
+  expect_match(html, "Tour: ", fixed = TRUE)
+  # The counter is the header category, not a muted paragraph in the body.
+  expect_match(html, 'class="rcmdr-dialog-category">Step 2 of 4',
+               fixed = TRUE)
+  expect_match(html, 'class="modal-footer rcmdr-modal-footer"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-modal-primary"', fixed = TRUE)
+  expect_lt(regexpr("tour_back", html, fixed = TRUE),
+            regexpr("tour_next", html, fixed = TRUE))
+  # No X: the tour wants an explicit skip or dismiss.
+  expect_false(grepl("btn-close", html, fixed = TRUE))
+  expect_match(html, 'data-bs-backdrop="static"', fixed = TRUE)
+})

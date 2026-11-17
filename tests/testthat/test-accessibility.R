@@ -39,6 +39,12 @@ test_that("the command palette has a labelled search field", {
   expect_match(html, "for=\"palette_query\"")
   expect_match(html, "visually-hidden")
   expect_match(html, "Command palette")
+  # The dialog itself is named by the header, and the header is the shared one.
+  expect_match(html, 'aria-labelledby="rcmdr-modal-title"', fixed = TRUE)
+  expect_match(html, 'id="rcmdr-modal-title">Command palette</h4>',
+               fixed = TRUE)
+  expect_match(html, 'class="modal-header rcmdr-modal-header"', fixed = TRUE)
+  expect_match(html, "rcmdr-palette-filters", fixed = TRUE)
 })
 
 test_that("the status bar is a live region", {
