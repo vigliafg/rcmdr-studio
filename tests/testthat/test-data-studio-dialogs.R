@@ -128,3 +128,51 @@ test_that("the checkpoints dialog restores the selected snapshot", {
   expect_true(is.null(result$error))
   expect_equal(nrow(state$env$D), 3L)
 })
+
+test_that("data and import dialogs use the segmented control for short choices", {
+  env <- new.env()
+  env$D <- data.frame(a = 1:5, b = 6:10,
+                      f = factor(c("x", "y", "x", "y", "x")))
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+
+  # Import: where the data comes from and what the decimal point is are two
+  # short questions, so they are segmented; the five delimiters stay a list.
+  import_html <- htmltools::renderTags(
+    get_dialog_spec("readDataSet")$ui(state, NULL)
+  )$html
+  expect_match(import_html, "rcmdr-segmented", fixed = TRUE)
+  expect_match(import_html, 'name="readDataSet_location"', fixed = TRUE)
+  expect_match(import_html, 'name="readDataSet_decimal"', fixed = TRUE)
+  expect_match(import_html, 'name="readDataSet_delimiter"', fixed = TRUE)
+  expect_false(grepl(
+    "rcmdr-segmented[^>]*>\\s*<div class=\"form-group shiny-input-container\"[^>]*>\\s*<label[^>]*>Field Separator",
+    import_html
+  ))
+
+  # Data: ids and values are the ones the command builders read.
+  for (spec_id in c("numericToFactor", "binVariable", "exportDataSet",
+                    "mergeDataSets", "Aggregate")) {
+    html <- htmltools::renderTags(get_dialog_spec(spec_id)$ui(state, NULL))$html
+    expect_match(html, spec_id, fixed = TRUE)
+  }
+  factor_html <- htmltools::renderTags(
+    get_dialog_spec("numericToFactor")$ui(state, NULL)
+  )$html
+  expect_match(factor_html, 'name="numericToFactor_levels"', fixed = TRUE)
+  expect_match(factor_html, 'value="names"', fixed = TRUE)
+
+  aggregate_html <- htmltools::renderTags(
+    get_dialog_spec("Aggregate")$ui(state, NULL)
+  )$html
+  expect_match(aggregate_html, 'name="Aggregate_statistic"', fixed = TRUE)
+  expect_match(aggregate_html, 'value="other"', fixed = TRUE)
+
+  # Values still reach the builder: a segmented choice is still a radio value.
+  result <- get_dialog_spec("Aggregate")$on_ok(list(
+    Aggregate_dataset = "Agg", Aggregate_variables = "a", Aggregate_by = "f",
+    Aggregate_statistic = "sum", Aggregate_other = ""
+  ), state)
+  expect_null(result$error)
+  expect_match(result$commands[[1L]], "sum", fixed = TRUE)
+})

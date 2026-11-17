@@ -28,7 +28,7 @@ options_dialog <- function() {
 
       htmltools::tagList(
         htmltools::tags$h6(tr("Interface")),
-        radio_input(
+        segmented_input(
           ns("ui_mode"), tr("Interface mode"),
           c("Studio" = "studio", "Classic" = "classic"),
           m$ui_mode
@@ -39,28 +39,27 @@ options_dialog <- function() {
           selected = m$theme %||% "system",
           width = "100%"
         ),
-        selectInput(
+        segmented_input(
           ns("density"), tr("Density"),
-          choices = ui_density_choices(),
-          selected = m$density %||% ui_density(state),
-          width = "100%"
+          ui_density_choices(),
+          m$density %||% ui_density(state)
         ),
         help_text(tr(
           "Compact keeps more fields on the screen; Comfortable restores the wider spacing. Studio mode adds the Home, Charts and Console workspaces; Classic mode keeps the original tabs."
         )),
         htmltools::tags$hr(),
         htmltools::tags$h6(tr("Output")),
-        spin_input(ns("digits"), tr("Number of significant digits:"),
-                   m$digits, min = 1, max = 22, step = 1),
-        spin_input(ns("width"), tr("Output width (characters):"),
-                   m$width, min = 40, max = 300, step = 1),
+        number_input(ns("digits"), tr("Number of significant digits:"),
+                     m$digits, min = 1, max = 22, step = 1),
+        number_input(ns("width"), tr("Output width (characters):"),
+                     m$width, min = 40, max = 300, step = 1),
         htmltools::tags$hr(),
         htmltools::tags$h6(tr("Data")),
-        spin_input(
+        number_input(
           ns("edit_threshold"), tr("Maximum cells for interactive editing:"),
           m$edit_threshold, min = 0, max = 1e7, step = 1000
         ),
-        checkbox_input(
+        switch_input(
           ns("stringsAsFactors"),
           tr("Convert character variables to factors when importing"),
           m$stringsAsFactors
@@ -70,11 +69,11 @@ options_dialog <- function() {
         ),
         htmltools::tags$hr(),
         htmltools::tags$h6(tr("Documents")),
-        checkbox_input(
+        switch_input(
           ns("use_markdown"), tr("Show the R Markdown document commands"),
           isTRUE(m$use_markdown)
         ),
-        checkbox_input(
+        switch_input(
           ns("use_knitr"), tr("Show the knitr document commands"),
           isTRUE(m$use_knitr)
         ),

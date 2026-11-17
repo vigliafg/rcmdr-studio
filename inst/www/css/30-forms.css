@@ -116,9 +116,12 @@
     /* Segmented control: a radio group the user reads as a single choice from
        a strip.  The radios stay in the DOM and in the tab order; the visible
        state is the label, which is why the focus ring lives on the label. */
+    .rcmdr-segmented { max-width: 100%; }
+    .rcmdr-segmented .form-group { margin-bottom: 0; }
     .rcmdr-segmented .shiny-options-group {
       display: inline-flex;
       flex-wrap: wrap;
+      max-width: 100%;
       gap: 2px;
       padding: 2px;
       background: var(--rcmdr-surface-muted);

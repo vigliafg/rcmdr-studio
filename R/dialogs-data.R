@@ -46,8 +46,10 @@ new_dataset_dialog <- function() {
       m <- utils::modifyList(defaults, memory %||% list())
       htmltools::tagList(
         entry_input(ns("name"), tr("Enter name for data set:"), m$name),
-        spin_input(ns("rows"), tr("Initial rows:"), m$rows, min = 1, max = 10000),
-        spin_input(ns("columns"), tr("Initial columns:"), m$columns, min = 1, max = 100),
+        number_input(ns("rows"), tr("Initial rows:"), m$rows,
+                     min = 1, max = 10000),
+        number_input(ns("columns"), tr("Initial columns:"), m$columns,
+                     min = 1, max = 100),
         help_text(tr("The new data set is editable in the Data tab."))
       )
     },
@@ -488,7 +490,7 @@ numeric_to_factor_dialog <- function() {
         var_input(ns("variables"), tr("Variables (pick one or more)"),
                   numeric_variables(state), selected = m$variables,
                   multiple = TRUE),
-        radio_input(
+        segmented_input(
           ns("levels"), tr("Factor Levels"),
           c("Use numbers" = "numbers", "Supply level names" = "names"),
           m$levels
@@ -593,9 +595,9 @@ bin_variable_dialog <- function() {
                     c("Equal-width bins" = "intervals",
                       "Equal-count bins" = "proportions",
                       "Natural breaks" = "natural"), m$method),
-        radio_input(ns("levels"), tr("Level Names"),
-                    c("Numbers" = "numbers", "Ranges" = "ranges",
-                      "Specify names" = "specify"), m$levels),
+        segmented_input(ns("levels"), tr("Level Names"),
+                        c("Numbers" = "numbers", "Ranges" = "ranges",
+                          "Specify names" = "specify"), m$levels),
         entry_input(ns("labels"), tr("Level names (comma separated):"), m$labels)
       )
     },
@@ -733,10 +735,10 @@ export_dataset_dialog <- function() {
       htmltools::tagList(
         file_input(ns("file"), tr("File:"), m$file,
                    filetypes = c("csv", "txt", "dat", "CSV", "TXT", "DAT")),
-        radio_input(ns("sep"), tr("Field Separator"),
-                    c("Commas [,]" = "commas", "Spaces" = "spaces",
-                      "Tabs" = "tabs", "Semicolons [;]" = "semicolons"),
-                    m$sep),
+        segmented_input(ns("sep"), tr("Field Separator"),
+                        c("Commas [,]" = "commas", "Spaces" = "spaces",
+                          "Tabs" = "tabs", "Semicolons [;]" = "semicolons"),
+                        m$sep),
         checkbox_input(ns("colnames"), tr("Write variable names"), m$colnames),
         checkbox_input(ns("rownames"), tr("Write row names"), m$rownames),
         checkbox_input(ns("quotes"), tr("Quotes around character values"),
@@ -1102,9 +1104,9 @@ merge_datasets_dialog <- function() {
                     stats::setNames(choices, choices), selected = m$first),
         combo_input(ns("second"), tr("Second Data Set (pick one)"),
                     stats::setNames(choices, choices), selected = m$second),
-        radio_input(ns("direction"), tr("Direction of Merge"),
-                    c("Merge rows" = "rows", "Merge columns" = "columns"),
-                    m$direction),
+        segmented_input(ns("direction"), tr("Direction of Merge"),
+                        c("Merge rows" = "rows", "Merge columns" = "columns"),
+                        m$direction),
         checkbox_input(ns("common"), tr("Merge only common rows or columns"),
                        m$common)
       )
@@ -1151,9 +1153,9 @@ aggregate_dialog <- function() {
                   variables(state), selected = m$variables, multiple = TRUE),
         var_input(ns("by"), tr("Aggregate by (pick one or more)"),
                   factor_variables(state), selected = m$by, multiple = TRUE),
-        radio_input(ns("statistic"), tr("Statistic"),
-                    c("Mean" = "mean", "Sum" = "sum", "Other" = "other"),
-                    m$statistic),
+        segmented_input(ns("statistic"), tr("Statistic"),
+                        c("Mean" = "mean", "Sum" = "sum", "Other" = "other"),
+                        m$statistic),
         entry_input(ns("other"), tr("Other statistic:"), m$other)
       )
     },

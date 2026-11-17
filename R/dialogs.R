@@ -9,7 +9,7 @@
 dialog_spec <- function(id, title, ui, on_ok, on_open = NULL,
                         observers = NULL, size = "l",
                         help = NULL, help_package = NULL,
-                        help_topic = NULL, category = NULL,
+                        help_topic = NULL, category = NULL, icon = NULL,
                         keywords = character(), preview = TRUE,
                         presets = TRUE, validate = NULL) {
   structure(
@@ -25,6 +25,7 @@ dialog_spec <- function(id, title, ui, on_ok, on_open = NULL,
       help_package = help_package,
       help_topic = help_topic,
       category = category,
+      icon = icon,
       keywords = keywords,
       preview = isTRUE(preview),
       presets = isTRUE(presets),
@@ -526,21 +527,45 @@ command_enabled <- function(state, command) {
   identical(command_availability(state, command)$status, "enabled")
 }
 
+#' Icon for a dialog header
+#'
+#' The menu branch a dialog belongs to picks the icon: a data set is a table, a
+#' graph is an output pane, a utility is a slider.  The icon is decorative, so
+#' a dialog that cannot be placed in the menu still gets a neutral one.
+#' @keywords internal
+dialog_icon_name <- function(spec) {
+  if (!is.null(spec$icon)) return(as.character(spec$icon)[[1L]])
+  branch <- ""
+  leaves <- menu_leaves(menu_tree())
+  index <- match(spec$id, leaves$command)
+  if (!is.na(index)) {
+    key <- leaves$item_id[[index]] %||% ""
+    branch <- if (startsWith(key, "item.core.menu_")) {
+      sub("^item\\.core\\.menu_([a-z]+)[._].*$", "\\1", key)
+    } else if (nzchar(key)) {
+      sub("^([a-z]+)\\..*$", "\\1", key)
+    } else {
+      ""
+    }
+  }
+  switch(branch,
+    data = "table",
+    edit = "code",
+    file = "doc",
+    graphs = "chart",
+    analyze = "output",
+    utilities = "sliders",
+    help = "help",
+    "sliders"
+  )
+}
+
 #' Modal for a dialog specification
 #' @keywords internal
 dialog_modal <- function(spec) {
   has_help <- !is.null(spec$help) ||
     !is.null(help_topic_for_dialog(spec))
-  title <- if (is.null(spec$category) || !nzchar(spec$category)) {
-    spec$title
-  } else {
-    htmltools::tagList(
-      spec$title,
-      htmltools::tags$div(class = "rcmdr-dialog-category", spec$category)
-    )
-  }
-  modalDialog(
-    title = title,
+  body <- htmltools::tagList(
     studio_breadcrumb(dialog_breadcrumb_parts(spec$id)),
     uiOutput("dialog_presets_ui"),
     uiOutput("dialog_body"),
@@ -552,21 +577,48 @@ dialog_modal <- function(spec) {
         uiOutput("dialog_preview_panel")
       )
     },
-    uiOutput("dialog_help_panel"),
-    footer = htmltools::tagList(
-      if (has_help) {
-        actionButton("dialog_help", tr("Help"), class = "btn-outline-secondary")
-      },
-      actionButton("dialog_insert_script", tr("To script"),
+    uiOutput("dialog_help_panel")
+  )
+
+  # The six actions keep their order and their ids: Help and the scripting
+  # shortcuts on the left, the decision on the right, where the eye ends.
+  footer <- modal_footer(
+    if (has_help) {
+      actionButton("dialog_help", tr("Help"), class = "btn-outline-secondary")
+    },
+    actionButton("dialog_insert_script", tr("To script"),
+                 class = "btn-outline-secondary"),
+    actionButton("dialog_reset", tr("Reset"), class = "btn-outline-secondary"),
+    primary = htmltools::tagList(
+      actionButton("dialog_cancel", tr("Cancel"),
                    class = "btn-outline-secondary"),
-      actionButton("dialog_reset", tr("Reset"), class = "btn-outline-secondary"),
-      actionButton("dialog_cancel", tr("Cancel"), class = "btn-outline-secondary"),
       actionButton("dialog_apply", tr("Apply"), class = "btn-outline-primary"),
       actionButton("dialog_ok", tr("OK"), class = "btn-primary")
-    ),
-    size = spec$size,
-    easyClose = FALSE
+    )
   )
+
+  # No close button: Esc and the backdrop are disabled, so an X would dismiss
+  # the modal without running the Cancel handler that clears the dialog state.
+  header <- modal_header(
+    spec$title, category = spec$category, icon = dialog_icon_name(spec),
+    close = FALSE, id = "rcmdr-dialog-title"
+  )
+
+  # Shiny owns the shell (id, backdrop, size, bootstrap initialisation).  We
+  # dress it: the header replaces the bare title, the footer replaces the plain
+  # row, and the body keeps its scroll area.
+  shell <- shiny::modalDialog(
+    title = NULL, footer = NULL, size = spec$size, easyClose = FALSE,
+    body
+  )
+  shell <- htmltools::tagAppendAttributes(
+    shell, `aria-labelledby` = "rcmdr-dialog-title"
+  )
+  htmltools::tagQuery(shell)$
+    find(".modal-content")$
+    prepend(header)$
+    append(footer)$
+    allTags()
 }
 
 #' Run the commands returned by a dialog

@@ -241,15 +241,23 @@
       background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
       font-weight: var(--rcmdr-weight-strong);
     }
-    .rcmdr-modal-header { gap: var(--rcmdr-space-2); align-items: flex-start; }
+    .rcmdr-modal-header { gap: var(--rcmdr-space-2); align-items: center; }
     .rcmdr-dialog-icon {
       display: inline-flex; align-items: center; justify-content: center;
-      flex: none; width: 2rem; height: 2rem; margin-top: -.1rem;
+      flex: none; width: 2rem; height: 2rem;
       border-radius: var(--rcmdr-radius-sm);
       background: var(--rcmdr-surface-muted); color: var(--rcmdr-accent);
     }
     .rcmdr-modal-heading { min-width: 0; flex: 1 1 auto; }
-    .rcmdr-modal-heading .modal-title { margin-bottom: 0; }
+    /* Bootstrap gives .modal-title the h4 size; a dialog title is a label, not
+       a page heading, so it takes the display step of the type scale. */
+    .rcmdr-modal-heading .modal-title {
+      margin-bottom: 0;
+      font-size: var(--rcmdr-text-lg);
+      font-weight: var(--rcmdr-weight-strong);
+      line-height: var(--rcmdr-leading-tight);
+      color: var(--rcmdr-heading);
+    }
     .rcmdr-modal-footer { align-items: center; }
     .rcmdr-modal-primary {
       display: flex; gap: var(--rcmdr-space-2); flex-wrap: wrap;

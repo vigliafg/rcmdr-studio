@@ -182,3 +182,25 @@ test_that("rgl commands populate the 3D widget", {
   expect_equal(result$status, "ok")
   expect_false(is.null(state$rgl_widget))
 })
+
+test_that("the Options dialog dresses its controls without changing their values", {
+  spec <- get_dialog_spec("Options")
+  html <- htmltools::renderTags(spec$ui(AppState(env = new.env()), NULL))$html
+
+  # Interface mode and density are two-choice questions: segmented controls.
+  expect_equal(lengths(regmatches(html, gregexpr("rcmdr-segmented", html))), 2L)
+  expect_match(html, 'name="Options_ui_mode"', fixed = TRUE)
+  expect_match(html, 'name="Options_density"', fixed = TRUE)
+  expect_match(html, 'value="classic"', fixed = TRUE)
+  expect_match(html, 'value="comfortable"', fixed = TRUE)
+
+  # The three preferences are switches; the numbers are number fields.
+  expect_equal(lengths(regmatches(html, gregexpr("rcmdr-switch", html))), 3L)
+  for (id in c("Options_stringsAsFactors", "Options_use_markdown",
+               "Options_use_knitr")) {
+    expect_match(html, paste0('id="', id, '"'), fixed = TRUE)
+  }
+  expect_match(html, 'id="Options_digits"', fixed = TRUE)
+  expect_match(html, 'type="number"', fixed = TRUE)
+  expect_false(grepl("rcmdr-switch\"[^>]*id=\"Options_digits", html))
+})

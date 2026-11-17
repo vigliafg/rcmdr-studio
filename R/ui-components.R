@@ -261,6 +261,10 @@ rcmdr_icon_paths <- function() {
       '<rect x="3" y="4" width="18" height="16" rx="2.5"/>',
       '<path d="M7 9h5M7 13h10M7 17h4"/>'
     ),
+    chart = paste0(
+      '<path d="M4 20h16"/>',
+      '<path d="M7 20v-6M12 20V6M17 20v-9"/>'
+    ),
     table = paste0(
       '<rect x="3" y="4" width="18" height="16" rx="2.5"/>',
       '<path d="M3 10h18M9.5 10v10"/>'

@@ -26,7 +26,7 @@ import_text_dialog <- function() {
 
       htmltools::tagList(
         entry_input(ns("dsname"), tr("Enter name for data set:"), m$dsname),
-        radio_input(
+        segmented_input(
           ns("location"), tr("Location of Data File"),
           c(
             "Local file system" = "local",
@@ -68,7 +68,7 @@ import_text_dialog <- function() {
           sprintf("input['%s'] == 'other'", ns("delimiter")),
           entry_input(ns("other"), tr("Specify:"), m$other)
         ),
-        radio_input(
+        segmented_input(
           ns("decimal"), tr("Decimal-Point Character"),
           c("Period [.]" = "period", "Comma [,]" = "comma"),
           m$decimal

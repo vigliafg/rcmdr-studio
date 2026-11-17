@@ -184,3 +184,33 @@ test_that("strict memory mode warns about unknown keys", {
   ))
   expect_silent(set_dialog_memory(state, "Histogram", list(variable = "y")))
 })
+
+test_that("every dialog renders the shared header and footer", {
+  state <- contract_state()
+  problems <- character()
+  for (id in dialog_ids()) {
+    spec <- get_dialog_spec(id)
+    if (is.null(spec)) next
+    html <- tryCatch(as.character(dialog_modal(spec)), error = function(e) e)
+    if (inherits(html, "error")) {
+      problems <- c(problems, sprintf("%s: %s", id, conditionMessage(html)))
+      next
+    }
+    needed <- c(
+      'class="modal-header rcmdr-modal-header"',
+      'class="rcmdr-dialog-icon"',
+      'id="rcmdr-dialog-title"',
+      'aria-labelledby="rcmdr-dialog-title"',
+      'class="modal-footer rcmdr-modal-footer"',
+      'id="dialog_ok"',
+      'id="dialog_cancel"'
+    )
+    missing <- needed[!vapply(needed, grepl, logical(1), x = html,
+                              fixed = TRUE)]
+    if (length(missing) > 0L) {
+      problems <- c(problems, sprintf("%s: %s", id,
+                                      paste(missing, collapse = ", ")))
+    }
+  }
+  expect_equal(problems, character())
+})
