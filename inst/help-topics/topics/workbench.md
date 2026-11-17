@@ -115,7 +115,7 @@ Name, class, type, size and actions:
 | Action | Reproducible? |
 |---|---|
 | Preview | No; `str()`/`summary()` outside the engine |
-| View | No; activates the data set and opens the Data tab |
+| View | No; activates the data set and opens the Data Studio |
 | Summary | Yes; `summary(name)` |
 | str | Yes; `str(name)` |
 | Plot | Yes; `plot(name)` |

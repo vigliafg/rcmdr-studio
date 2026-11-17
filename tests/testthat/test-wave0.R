@@ -155,7 +155,7 @@ test_that("the app server exposes Studio tabs and history output", {
     session$setInputs(menu_search = "")
     tabs <- htmltools::renderTags(output$main_tabs_ui)$html
     expect_match(tabs, "Home")
-    expect_match(tabs, "Charts")
+    expect_match(tabs, "Chart Studio")
     expect_match(tabs, "Console")
 
     toggle <- htmltools::renderTags(output$ui_mode_toggle_ui)$html

@@ -10,11 +10,7 @@ wave0_ready <- function() {
 }
 
 wave0_switch_tab <- function(app, label) {
-  app$run_js(sprintf(
-    "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
-    label
-  ))
-  app$wait_for_idle(timeout = 30000)
+  switch_main_tab(app, label)
 }
 
 test_that("the Studio foundation flow works in a browser", {
@@ -124,7 +120,7 @@ test_that("the Studio foundation flow works in a browser", {
   app$click("ui_mode_toggle")
   app$wait_for_idle()
   app$wait_for_js(
-    "Array.from(document.querySelectorAll('.nav-link')).some(function(a){return a.textContent.trim() === 'Plots';})",
+    "document.querySelector('#main_tabs .nav-link[data-value=\"charts\"]') !== null",
     timeout = 30000
   )
   app$click("ui_mode_toggle")

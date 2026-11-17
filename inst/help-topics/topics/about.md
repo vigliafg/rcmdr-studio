@@ -25,8 +25,9 @@ script log, the output and the report.
 
 ## Studio and Classic
 
-- **Studio mode** is the default interface: Home, Data, Charts, Report, Script,
-  Console, Environment and Help.
+- **Studio mode** is the default interface: Home, Workflows, Data Studio,
+  Chart Studio, Report Studio, Script, Output (Console), Environment and
+  Help centre.
 - **Classic mode** preserves the 1.13 layout with separate Script, Output,
   Messages, Plots, Report, Data, Environment and Help tabs.
 - Switch mode from the top bar or from **Options**.

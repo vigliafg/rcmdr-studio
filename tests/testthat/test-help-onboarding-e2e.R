@@ -118,6 +118,6 @@ test_that("search, examples and the tour work in a browser", {
   # Language switch re-renders the tabs without a restart.
   app$set_inputs(language = "it", wait_ = FALSE)
   app$wait_for_idle(timeout = 30000)
-  expect_match(app$get_text("#main_tabs"), "Aiuto")
-  expect_match(app$get_text("#main_tabs"), "Dati")
+  expect_match(app$get_text("#main_tabs"), "Centro assistenza")
+  expect_match(app$get_text("#main_tabs"), "Studio dati")
 })

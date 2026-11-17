@@ -532,177 +532,113 @@ chart_builder_ui <- function() {
       htmltools::div(
         class = "rcmdr-section-card",
         htmltools::tags$h6(tr("Options")),
-        uiOutput("chart_options_ui")
+        htmltools::div(
+          class = "rcmdr-field-grid",
+          uiOutput("chart_options_ui")
+        )
       ),
       htmltools::div(
         class = "rcmdr-section-card",
         htmltools::tags$h6(tr("Theme and labels")),
         htmltools::div(
-          class = "row g-2",
-          htmltools::div(
-            class = "col-sm-6",
-            selectInput("chart_palette", tr("Palette"),
-                        choices = chart_palette_choices(),
-                        selected = "default")
+          class = "rcmdr-field-grid",
+          selectInput("chart_palette", tr("Palette"),
+                      choices = chart_palette_choices(),
+                      selected = "default"),
+          numericInput("chart_base_size", tr("Base size"), 12,
+                       min = 6, max = 32, step = 1),
+          selectInput(
+            "chart_legend", tr("Legend"),
+            choices = stats::setNames(
+              c("right", "left", "top", "bottom", "none"),
+              c(tr("Right"), tr("Left"), tr("Top"), tr("Bottom"),
+                tr("None"))
+            ),
+            selected = "right"
           ),
-          htmltools::div(
-            class = "col-sm-6",
-            numericInput("chart_base_size", tr("Base size"), 12,
-                         min = 6, max = 32, step = 1)
-          ),
-          htmltools::div(
-            class = "col-sm-6",
-            selectInput(
-              "chart_legend", tr("Legend"),
-              choices = stats::setNames(
-                c("right", "left", "top", "bottom", "none"),
-                c(tr("Right"), tr("Left"), tr("Top"), tr("Bottom"),
-                  tr("None"))
-              ),
-              selected = "right"
-            )
-          ),
-          htmltools::div(
-            class = "col-sm-6",
-            textInput("chart_background", tr("Background"),
-                      value = "white")
-          ),
-          htmltools::div(
-            class = "col-sm-6 d-flex align-items-end",
-            checkboxInput("chart_grid", tr("Grid"), value = TRUE)
-          )
+          textInput("chart_background", tr("Background"),
+                    value = "white"),
+          checkboxInput("chart_grid", tr("Grid"), value = TRUE)
         ),
         htmltools::tags$hr(),
         htmltools::tags$h6(tr("ggplot2 options")),
         htmltools::div(
-          class = "row g-2",
-          htmltools::div(
-            class = "col-sm-6",
-            selectInput(
-              "chart_gg_theme", tr("ggplot2 theme"),
-              choices = chart_gg_theme_choices(),
-              selected = "minimal"
-            )
+          class = "rcmdr-field-grid",
+          selectInput(
+            "chart_gg_theme", tr("ggplot2 theme"),
+            choices = chart_gg_theme_choices(),
+            selected = "minimal"
           ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_position", tr("Position"),
-                choices = stats::setNames(
-                  c("identity", "dodge", "stack", "fill"),
-                  c("Identity", "Dodge", "Stack", "Fill")
-                ),
-                selected = "identity"
-              )
+          selectInput(
+            "chart_gg_position", tr("Position"),
+            choices = stats::setNames(
+              c("identity", "dodge", "stack", "fill"),
+              c("Identity", "Dodge", "Stack", "Fill")
             ),
-            htmltools::div(
-              class = "col-sm-6",
-              numericInput("chart_gg_alpha", tr("Alpha"), 0.7,
-                           min = 0, max = 1, step = 0.05)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              numericInput("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
-                           min = 0, step = 0.1)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_smooth", tr("Smooth"),
-                choices = stats::setNames(
-                  c("lm", "loess", "gam"),
-                  c("Linear", "LOESS", "GAM")
-                ),
-                selected = "lm"
-              )
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              numericInput("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
-                           min = 0, step = 0.05)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              numericInput("chart_gg_shape", tr("Point shape"), 19,
-                           min = 0, max = 25, step = 1)
-            ),
-            htmltools::div(
-              class = "col-sm-6 d-flex align-items-end",
-              checkboxInput("chart_gg_se", tr("Confidence band"), FALSE)
-            ),
-            htmltools::div(
-              class = "col-sm-6 d-flex align-items-end",
-              checkboxInput("chart_gg_flip", tr("Flip coordinates"), FALSE)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_facet_scales", tr("Facet scales"),
-                choices = stats::setNames(
-                  c("fixed", "free", "free_x", "free_y"),
-                  c("Fixed", "Free", "Free X", "Free Y")
-                ),
-                selected = "fixed"
-              )
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              numericInput("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
-                           0, min = 0, step = 1)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              textInput("chart_gg_subtitle", tr("Subtitle"), "")
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              textInput("chart_gg_tag", tr("Tag"), "")
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_x_format", tr("X axis format"),
-                choices = chart_axis_format_choices(), selected = "auto"
-              )
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_y_format", tr("Y axis format"),
-                choices = chart_axis_format_choices(), selected = "auto"
-              )
-            ),
-            htmltools::div(
-              class = "col-sm-6 d-flex align-items-end",
-              checkboxInput("chart_gg_polar", tr("Polar coordinates"), FALSE)
-            ),
-            htmltools::div(
-              class = "col-sm-6",
-              selectInput(
-                "chart_gg_polar_theta", tr("Polar angle"),
-                choices = stats::setNames(c("x", "y"), c("X", "Y")),
-                selected = "x"
-              )
-            )
+            selected = "identity"
           ),
-        htmltools::tags$hr(),
-        textInput("chart_title", tr("Title"), ""),
-        htmltools::div(
-          class = "row g-2",
-          htmltools::div(class = "col-sm-6",
-                         textInput("chart_xlab", tr("X label"), "")),
-          htmltools::div(class = "col-sm-6",
-                         textInput("chart_ylab", tr("Y label"), ""))
+          numericInput("chart_gg_alpha", tr("Alpha"), 0.7,
+                       min = 0, max = 1, step = 0.05),
+          numericInput("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
+                       min = 0, step = 0.1),
+          selectInput(
+            "chart_gg_smooth", tr("Smooth"),
+            choices = stats::setNames(
+              c("lm", "loess", "gam"),
+              c("Linear", "LOESS", "GAM")
+            ),
+            selected = "lm"
+          ),
+          numericInput("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
+                       min = 0, step = 0.05),
+          numericInput("chart_gg_shape", tr("Point shape"), 19,
+                       min = 0, max = 25, step = 1),
+          checkboxInput("chart_gg_se", tr("Confidence band"), FALSE),
+          checkboxInput("chart_gg_flip", tr("Flip coordinates"), FALSE),
+          selectInput(
+            "chart_gg_facet_scales", tr("Facet scales"),
+            choices = stats::setNames(
+              c("fixed", "free", "free_x", "free_y"),
+              c("Fixed", "Free", "Free X", "Free Y")
+            ),
+            selected = "fixed"
+          ),
+          numericInput("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
+                       0, min = 0, step = 1),
+          textInput("chart_gg_subtitle", tr("Subtitle"), ""),
+          textInput("chart_gg_tag", tr("Tag"), ""),
+          selectInput(
+            "chart_gg_x_format", tr("X axis format"),
+            choices = chart_axis_format_choices(), selected = "auto"
+          ),
+          selectInput(
+            "chart_gg_y_format", tr("Y axis format"),
+            choices = chart_axis_format_choices(), selected = "auto"
+          ),
+          checkboxInput("chart_gg_polar", tr("Polar coordinates"), FALSE),
+          selectInput(
+            "chart_gg_polar_theta", tr("Polar angle"),
+            choices = stats::setNames(c("x", "y"), c("X", "Y")),
+            selected = "x"
+          )
         ),
-        textInput("chart_caption", tr("Caption"), ""),
+        htmltools::tags$hr(),
         htmltools::div(
-          class = "row g-2",
-          htmltools::div(class = "col-sm-6",
-                         numericInput("chart_width", tr("Width (px)"), 800,
-                                      min = 200, max = 4000, step = 50)),
-          htmltools::div(class = "col-sm-6",
-                         numericInput("chart_height", tr("Height (px)"), 600,
-                                      min = 150, max = 4000, step = 50))
+          class = "rcmdr-field-grid",
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_title", tr("Title"), "")
+          ),
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_caption", tr("Caption"), "")
+          ),
+          textInput("chart_xlab", tr("X label"), ""),
+          textInput("chart_ylab", tr("Y label"), ""),
+          numericInput("chart_width", tr("Width (px)"), 800,
+                       min = 200, max = 4000, step = 50),
+          numericInput("chart_height", tr("Height (px)"), 600,
+                       min = 150, max = 4000, step = 50)
         ),
         if (!requireNamespace("ggplot2", quietly = TRUE)) {
           help_text(tr(

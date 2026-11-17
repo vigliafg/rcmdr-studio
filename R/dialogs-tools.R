@@ -14,7 +14,8 @@ options_dialog <- function() {
     use_markdown = FALSE,
     use_knitr = FALSE,
     ui_mode = "studio",
-    theme = "system"
+    theme = "system",
+    density = "compact"
   )
 
   dialog_spec(
@@ -38,8 +39,14 @@ options_dialog <- function() {
           selected = m$theme %||% "system",
           width = "100%"
         ),
+        selectInput(
+          ns("density"), tr("Density"),
+          choices = ui_density_choices(),
+          selected = m$density %||% ui_density(state),
+          width = "100%"
+        ),
         help_text(tr(
-          "Studio mode adds the Home, Charts and Console workspaces. Classic mode keeps the original tabs."
+          "Compact keeps more fields on the screen; Comfortable restores the wider spacing. Studio mode adds the Home, Charts and Console workspaces; Classic mode keeps the original tabs."
         )),
         htmltools::tags$hr(),
         htmltools::tags$h6(tr("Output")),
@@ -102,13 +109,19 @@ options_dialog <- function() {
       state$options$use_knitr <- isTRUE(input[[ns("use_knitr")]])
       state$options$ui_mode <- input[[ns("ui_mode")]] %||% "studio"
       state$options$theme <- input[[ns("theme")]] %||% "system"
+      state$options$density <- set_ui_density(
+        state, input[[ns("density")]] %||% ui_density(state)
+      )
       base::options(digits = digits, width = width)
       state_touch(state)
 
       if (!is.null(state$session)) {
-        state$session$sendCustomMessage("rcmdr-theme",
-                                        state$options$theme)
+        state$session$sendCustomMessage("rcmdr-theme", list(
+          theme = state$options$theme,
+          density = ui_density(state)
+        ))
       }
+      if (is.function(state$persist_preferences)) state$persist_preferences()
 
       list(
         memory = list(
@@ -116,7 +129,8 @@ options_dialog <- function() {
           stringsAsFactors = stringsAsFactors,
           edit_threshold = threshold,
           ui_mode = state$options$ui_mode,
-          theme = state$options$theme
+          theme = state$options$theme,
+          density = ui_density(state)
         )
       )
     }

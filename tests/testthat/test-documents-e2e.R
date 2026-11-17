@@ -21,10 +21,7 @@ documents_click_menu <- function(app, label) {
 }
 
 documents_switch_tab <- function(app, label) {
-  app$run_js(sprintf(
-    "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
-    label
-  ))
+  switch_main_tab(app, label)
   app$wait_for_idle(timeout = 30000)
 }
 

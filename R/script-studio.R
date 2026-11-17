@@ -619,7 +619,7 @@ script_studio_server <- function(input, output, session, state, refresh,
   # The Report Studio can change the shared buffer while the Script tab is
   # hidden; refresh the editor when the tab becomes visible again.
   observeEvent(input$main_tabs, {
-    if (identical(input$main_tabs, "Script")) sync_editor_local()
+    if (identical(input$main_tabs, "script")) sync_editor_local()
   }, ignoreInit = TRUE)
 
   observeEvent(input$script_new, {
@@ -764,7 +764,7 @@ script_studio_server <- function(input, output, session, state, refresh,
   # timer; this one covers the Script tab and is scoped to its visibility.
   autosave_timer <- reactiveTimer(state$options$autosave_interval %||% 30000L)
   observeEvent(autosave_timer(), {
-    if (identical(input$main_tabs, "Script") && document_dirty(state)) {
+    if (identical(input$main_tabs, "script") && document_dirty(state)) {
       document_autosave(state)
       bump()
     }

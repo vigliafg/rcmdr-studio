@@ -1,5 +1,46 @@
 # RcmdrShiny Studio 2.8.0
 
+## Navigation — the tabs are windows, not a second menu
+
+- **Compact interface by default**: dialogs and panels use a denser form
+  layout. Fields sit in an automatic 2–4 column grid instead of one per row,
+  labels and controls are smaller, and the spacing between blocks is a token
+  (`--rcmdr-field-gap`, `--rcmdr-label-size`, `--rcmdr-control-min`, …) rather
+  than a hard-coded number. On the same 1280 px screen the *Read text data*
+  dialog went from 945 px of content to 608 px (−36%) and fits without
+  scrolling; the Chart Studio form gains a second column in its narrow panel.
+- **Density switch**: **Options > Density** offers *Compact* (default) and
+  *Comfortable* (the previous spacing). It is stored in `preferences.rds` and
+  applied through the `rcmdr-theme` message together with the theme, so it
+  survives a restart.
+
+- **Draggable dialogs**: every modal can be moved by dragging its header, so
+  the data or the plot underneath stays usable while a dialog is open. A double
+  click on the header puts it back where it opened, the offset is clamped so the
+  header never leaves the window, and buttons, inputs and links in the header
+  keep their normal behaviour. Touch and pen work through pointer events; the
+  position is a CSS transform, so Bootstrap keeps its own centring.
+
+- **Stable view ids**: every main tab carries a `value` (`data`, `charts`,
+  `report`, `console`, `environment`, `help`, …). `state$show_tab()` resolves a
+  view id, an English label or a translated label to the tab through
+  `main_view_aliases()`, and the browser handler selects the tab by
+  `data-value`. Renaming a tab or switching language can no longer break
+  navigation silently, and the Console sub-tabs gained ids too.
+- **Window names instead of menu verbs**: in Studio mode the tabs read
+  **Data Studio**, **Chart Studio**, **Report Studio**, **Output (Console)** and
+  **Help centre**, so they are no longer confused with the *Data*, *Graphs*,
+  *Reports* and *Help* menus. Classic mode keeps the R Commander window names
+  unchanged.
+- **The tab strip is a segmented control**, visually distinct from the
+  menubar, so the two horizontal bars are no longer read as a menu and a
+  submenu.
+- **Result hint**: after a dialog command the interface says where the result
+  landed, for example *Analyze › Summaries › Numerical summaries → Result in:
+  Output (Console) ▸ Output*, with **Show result**, an **Open automatically**
+  switch (persisted in the preferences) and a dismiss button. A classic
+  interface opened the result window; this one now offers to.
+
 ## Chart Studio — one engine and four extensions
 
 - The **base R engine is gone from the Chart Studio**: every chart is a ggplot2

@@ -53,7 +53,9 @@ preferences_snapshot <- function(state) {
     presets_version = state$dialog_presets_version %||% 1L,
     plugins = as.character(state$options$plugins %||% character()),
     language = state$options$language %||% current_language(),
-    theme = state$options$theme %||% "system"
+    theme = state$options$theme %||% "system",
+    density = state$options$density %||% "compact",
+    auto_switch_result = isTRUE(state$options$auto_switch_result)
   )
 }
 
@@ -99,6 +101,12 @@ preferences_load <- function(state, path = preferences_file(state)) {
   if (is.character(theme) && length(theme) == 1L && theme %in% ui_themes()) {
     state$options$theme <- theme
   }
+  density <- value$density %||% NULL
+  if (is.character(density) && length(density) == 1L &&
+      density %in% ui_densities()) {
+    state$options$density <- density
+  }
+  state$options$auto_switch_result <- isTRUE(value$auto_switch_result)
   invisible(TRUE)
 }
 

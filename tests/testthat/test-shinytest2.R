@@ -27,11 +27,7 @@ test_that("the full Phase 0 flow works in a real browser", {
   on.exit(app$stop(), add = TRUE)
 
   switch_tab <- function(label) {
-    app$run_js(sprintf(
-      "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
-      label
-    ))
-    app$wait_for_idle()
+    switch_main_tab(app, label)
   }
 
   leaves <- menu_leaves(menu_tree())

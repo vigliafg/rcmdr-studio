@@ -47,3 +47,16 @@ test_that("the status bar is a live region", {
   expect_match(html, "role=\"status\"")
   expect_match(html, "rcmdr-statusbar")
 })
+
+test_that("dialogs can be moved by their header", {
+  js <- as.character(app_js())
+  expect_match(js, "pointerdown", fixed = TRUE)
+  expect_match(js, "data-rcmdr-x", fixed = TRUE)
+  expect_match(js, "rcmdr-dragging", fixed = TRUE)
+  # Dragging is a pointer enhancement: the close button and the inputs inside
+  # the header must keep working.
+  expect_match(js, "button, a, input, select, textarea, label", fixed = TRUE)
+  css <- as.character(app_css())
+  expect_match(css, ".modal-header { cursor: grab", fixed = TRUE)
+  expect_match(css, "body.rcmdr-dragging", fixed = TRUE)
+})

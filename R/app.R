@@ -253,7 +253,57 @@ app_css <- function() {
       border-radius: .3rem; z-index: 2000; }
     :focus-visible { outline: 3px solid var(--rcmdr-accent); outline-offset: 2px; }
 
-    body.rcmdr-density-compact { --rcmdr-space: .45rem; font-size: .94rem; }
+    /* Density -------------------------------------------------------------
+       The interface is dense by default: a statistical workbench is a tool,
+       not a brochure. Every value is a token, so a component can stay compact
+       without repeating numbers, and the comfortable variant restores the
+       Bootstrap spacing in one place. */
+    body {
+      --rcmdr-field-gap: .4rem;
+      --rcmdr-label-size: .8125rem;
+      --rcmdr-label-gap: .1rem;
+      --rcmdr-control-size: .875rem;
+      --rcmdr-control-pad: .22rem .45rem;
+      --rcmdr-control-min: 1.9rem;
+      --rcmdr-section-gap: .4rem;
+      --rcmdr-help-size: .78rem;
+    }
+    body.rcmdr-density-compact { --rcmdr-space: .55rem; }
+    body.rcmdr-density-comfortable {
+      --rcmdr-field-gap: 1rem;
+      --rcmdr-label-size: .9375rem;
+      --rcmdr-label-gap: .5rem;
+      --rcmdr-control-size: .9375rem;
+      --rcmdr-control-pad: .375rem .75rem;
+      --rcmdr-control-min: 2.4rem;
+      --rcmdr-section-gap: 1rem;
+      --rcmdr-help-size: .875rem;
+      --rcmdr-space: .75rem;
+    }
+    body .form-group,
+    body .shiny-input-container { margin-bottom: var(--rcmdr-field-gap); }
+    body .form-group > label,
+    body label.control-label { margin-bottom: var(--rcmdr-label-gap); }
+    body .form-group > label,
+    body label.control-label,
+    body .form-check-label { font-size: var(--rcmdr-label-size); }
+    body .form-check { margin-bottom: 0; }
+    body .form-control,
+    body .form-select {
+      min-height: var(--rcmdr-control-min);
+      padding: var(--rcmdr-control-pad);
+      font-size: var(--rcmdr-control-size);
+    }
+    body .selectize-control .selectize-input {
+      min-height: var(--rcmdr-control-min);
+      padding: var(--rcmdr-control-pad);
+      font-size: var(--rcmdr-control-size);
+    }
+    body hr { margin: var(--rcmdr-section-gap) 0; }
+    body .form-text, body .help-block {
+      font-size: var(--rcmdr-help-size);
+      margin: .15rem 0 0;
+    }
 
     .rcmdr-topbar { background: var(--rcmdr-primary); }
     .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
@@ -326,6 +376,31 @@ app_css <- function() {
     }
     .rcmdr-section-card > summary { cursor: pointer; font-weight: 600; }
     .rcmdr-section-body { padding-top: .5rem; }
+    .rcmdr-field-grid {
+      display: grid; gap: .55rem .9rem; align-items: start;
+      grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    }
+    .rcmdr-field-grid > .form-group,
+    .rcmdr-field-grid > .shiny-input-container,
+    .rcmdr-field-grid > .shiny-bound-input,
+    .rcmdr-field-grid > .form-check { margin-bottom: 0; min-width: 0; }
+    .rcmdr-field-grid > .shiny-html-output { display: contents; }
+    .rcmdr-field-grid .shiny-input-container,
+    .rcmdr-field-grid .form-control,
+    .rcmdr-field-grid .form-select { width: 100%; }
+    .rcmdr-field-grid > .form-text { grid-column: 1 / -1; }
+    .rcmdr-field-grid .rcmdr-field-wide { grid-column: 1 / -1; }
+    .rcmdr-field-grid .rcmdr-field-half { grid-column: span 2; }
+    .rcmdr-field-grid .form-check { min-height: 0; }
+    /* A dialog body is a flat list of fields: lay it out in columns. Only real
+       inputs take a cell; headings, help text, previews and any other block
+       keep the full width, so unusual dialogs cannot be squeezed. */
+    .rcmdr-dialog-grid > * { grid-column: 1 / -1; }
+    .rcmdr-dialog-grid > .form-group,
+    .rcmdr-dialog-grid > .shiny-input-container { grid-column: auto; }
+    .rcmdr-dialog-grid > .shiny-input-radiogroup,
+    .rcmdr-dialog-grid > .shiny-input-checkboxgroup { grid-column: span 2; }
+    .rcmdr-dialog-grid > .rcmdr-field-wide { grid-column: 1 / -1; }
     .rcmdr-breadcrumb { margin-bottom: .5rem; }
     .rcmdr-home-hero {
       background: linear-gradient(135deg, var(--rcmdr-primary) 0%, var(--rcmdr-accent) 100%);
@@ -439,6 +514,10 @@ app_css <- function() {
     .modal-dialog { max-height: 94vh; }
     .modal-body { overflow-y: auto; max-height: 72vh; }
     .modal-footer { flex-wrap: wrap; gap: .35rem; }
+    /* Dialogs are draggable by their header (see app_js()). */
+    .modal-header { cursor: grab; touch-action: none; }
+    body.rcmdr-dragging { user-select: none; }
+    body.rcmdr-dragging .modal-header { cursor: grabbing; }
     .rcmdr-shortcuts-table td, .rcmdr-shortcuts-table th { vertical-align: middle; }
     @media (max-width: 991.98px) {
       .rcmdr-sidebar { max-height: 46vh; overflow-y: auto; }
@@ -794,6 +873,40 @@ app_css <- function() {
       background: var(--rcmdr-surface); color: var(--rcmdr-text);
       border-color: var(--rcmdr-border) var(--rcmdr-border) var(--rcmdr-surface);
     }
+    /* The main views are windows on the workspace, not a second menu: a
+       segmented control keeps them visually distinct from the menubar. */
+    #main_tabs.nav-tabs {
+      display: inline-flex; flex-wrap: wrap; gap: .1rem;
+      padding: .15rem; margin-bottom: var(--rcmdr-space);
+      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      background: var(--rcmdr-surface-muted);
+    }
+    #main_tabs .nav-link {
+      border: 0; border-radius: .3rem; padding: .22rem .55rem;
+      font-size: .86rem; color: var(--rcmdr-muted);
+    }
+    #main_tabs .nav-link:hover {
+      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
+    }
+    #main_tabs .nav-link.active {
+      background: var(--rcmdr-surface); color: var(--rcmdr-heading);
+      font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+    }
+    .rcmdr-result-hint {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .75rem; flex-wrap: wrap;
+      padding: .4rem .75rem; margin-bottom: var(--rcmdr-space);
+      background: var(--rcmdr-surface); color: var(--rcmdr-text);
+      border: 1px solid var(--rcmdr-border);
+      border-left: .3rem solid var(--rcmdr-accent);
+      border-radius: var(--rcmdr-radius);
+    }
+    .rcmdr-result-hint-text { font-size: .9rem; min-width: 0; }
+    .rcmdr-result-hint .form-group,
+    .rcmdr-result-hint .form-check { margin-bottom: 0; }
+    .rcmdr-result-hint .form-check-label {
+      font-size: .85rem; color: var(--rcmdr-muted);
+    }
     .breadcrumb { --bs-breadcrumb-divider-color: var(--rcmdr-muted); }
     .breadcrumb-item { color: var(--rcmdr-muted); }
     .breadcrumb-item.active { color: var(--rcmdr-text); }
@@ -953,16 +1066,169 @@ app_js <- function(lang = current_language()) {
       var el = document.getElementById(id);
       if (el) el.click();
     });
-    Shiny.addCustomMessageHandler('rcmdr-tab', function(label) {
-      var link = Array.from(document.querySelectorAll('.nav-link')).find(function(a) {
-        return a.textContent.trim() === label;
-      });
-      if (link) link.click();
+    Shiny.addCustomMessageHandler('rcmdr-tab', function(message) {
+      // The server sends {tab, sub} with stable view ids; a plain string is
+      // still accepted for older callers.
+      var target = (typeof message === 'string') ? { tab: message } : (message || {});
+      var bar = document.getElementById('main_tabs');
+      if (!bar) return;
+      var link = target.tab
+        ? bar.querySelector('.nav-link[data-value=\"' + target.tab + '\"]')
+        : null;
+      if (!link) {
+        link = Array.from(bar.querySelectorAll('.nav-link')).find(function(a) {
+          return a.textContent.trim() === target.tab;
+        });
+      }
+      if (!link) return;
+      link.click();
+      if (!target.sub) return;
+      var href = link.getAttribute('href');
+      var pane = href ? document.querySelector(href) : null;
+      var sub = pane
+        ? pane.querySelector('.nav-link[data-value=\"' + target.sub + '\"]')
+        : null;
+      if (sub) sub.click();
     });
     Shiny.addCustomMessageHandler('rcmdr-focus', function(id) {
       var el = document.getElementById(id);
       if (el) el.focus();
     });
+    // Modal dialogs can be moved by dragging their header. Bootstrap 5 does not
+    // ship a draggable modal any more, and the statistical dialogs are wide
+    // enough that the data underneath is worth looking at while the dialog is
+    // open. The offset is a transform, so Bootstrap keeps its own centring and
+    // the dialog never leaves the window completely.
+    (function () {
+      var drag = null;
+
+      function offsets(dialog) {
+        var x = parseFloat(dialog.getAttribute('data-rcmdr-x'));
+        var y = parseFloat(dialog.getAttribute('data-rcmdr-y'));
+        return {
+          x: isNaN(x) ? 0 : x,
+          y: isNaN(y) ? 0 : y
+        };
+      }
+
+      function place(dialog, x, y) {
+        dialog.setAttribute('data-rcmdr-x', x);
+        dialog.setAttribute('data-rcmdr-y', y);
+        dialog.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      }
+
+      function reset(dialog) {
+        dialog.style.transform = '';
+        dialog.removeAttribute('data-rcmdr-x');
+        dialog.removeAttribute('data-rcmdr-y');
+      }
+
+      function bounds(dialog, base) {
+        var width = dialog.offsetWidth;
+        return {
+          minX: 40 - base.left - width,
+          maxX: window.innerWidth - base.left - 40,
+          minY: -base.top,
+          maxY: window.innerHeight - base.top - 56
+        };
+      }
+
+      function nearest(value, low, high) {
+        if (low > high) {
+          var swap = low;
+          low = high;
+          high = swap;
+        }
+        return Math.min(Math.max(value, low), high);
+      }
+
+      function baseOf(dialog, current) {
+        var rect = dialog.getBoundingClientRect();
+        return {
+          left: rect.left - current.x,
+          top: rect.top - current.y
+        };
+      }
+
+      function interactive(target) {
+        if (!target || !target.closest) return false;
+        return !!target.closest(
+          'button, a, input, select, textarea, label, [role=button], ' +
+          '[data-bs-dismiss]'
+        );
+      }
+
+      document.addEventListener('pointerdown', function (event) {
+        if (event.button !== 0 || drag) return;
+        var header = event.target.closest && event.target.closest('.modal-header');
+        if (!header || interactive(event.target)) return;
+        var dialog = header.closest('.modal-dialog');
+        if (!dialog) return;
+        var current = offsets(dialog);
+        drag = {
+          dialog: dialog,
+          id: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          from: current,
+          base: baseOf(dialog, current)
+        };
+        if (header.setPointerCapture) {
+          try { header.setPointerCapture(event.pointerId); } catch (e) {}
+        }
+        document.body.classList.add('rcmdr-dragging');
+        event.preventDefault();
+      });
+
+      document.addEventListener('pointermove', function (event) {
+        if (!drag || event.pointerId !== drag.id) return;
+        var limit = bounds(drag.dialog, drag.base);
+        var x = nearest(
+          drag.from.x + (event.clientX - drag.startX), limit.minX, limit.maxX
+        );
+        var y = nearest(
+          drag.from.y + (event.clientY - drag.startY), limit.minY, limit.maxY
+        );
+        place(drag.dialog, Math.round(x), Math.round(y));
+        event.preventDefault();
+      });
+
+      function stop(event) {
+        if (!drag) return;
+        if (event && event.pointerId !== undefined && event.pointerId !== drag.id) {
+          return;
+        }
+        drag = null;
+        document.body.classList.remove('rcmdr-dragging');
+      }
+
+      document.addEventListener('pointerup', stop);
+      document.addEventListener('pointercancel', stop);
+
+      // Double click on the header puts the dialog back where it opened.
+      document.addEventListener('dblclick', function (event) {
+        var header = event.target.closest && event.target.closest('.modal-header');
+        if (!header || interactive(event.target)) return;
+        var dialog = header.closest('.modal-dialog');
+        if (dialog) reset(dialog);
+      });
+
+      // Keep the header reachable when the window is resized.
+      window.addEventListener('resize', function () {
+        Array.prototype.forEach.call(
+          document.querySelectorAll('.modal-dialog[data-rcmdr-x]'),
+          function (dialog) {
+            var current = offsets(dialog);
+            var limit = bounds(dialog, baseOf(dialog, current));
+            place(
+              dialog,
+              Math.round(nearest(current.x, limit.minX, limit.maxX)),
+              Math.round(nearest(current.y, limit.minY, limit.maxY))
+            );
+          }
+        );
+      });
+    })();
     function rcmdrThemeClasses(theme) {
       if (theme === 'system') {
         var prefersDark = window.matchMedia &&
@@ -992,8 +1258,29 @@ app_js <- function(lang = current_language()) {
       body.setAttribute('data-rcmdr-theme', theme);
       try { window.localStorage.setItem('rcmdr-theme', theme); } catch (e) {}
     }
-    Shiny.addCustomMessageHandler('rcmdr-theme', function(theme) {
+    function rcmdrApplyDensity(density) {
+      var body = document.body;
+      if (!body) return;
+      var comfortable = density === 'comfortable';
+      body.classList.toggle('rcmdr-density-comfortable', comfortable);
+      body.classList.toggle('rcmdr-density-compact', !comfortable);
+      body.setAttribute('data-rcmdr-density',
+                        comfortable ? 'comfortable' : 'compact');
+      try {
+        window.localStorage.setItem('rcmdr-density',
+                                    comfortable ? 'comfortable' : 'compact');
+      } catch (e) {}
+    }
+    Shiny.addCustomMessageHandler('rcmdr-theme', function(payload) {
+      // A plain string is the old theme-only message; objects carry both.
+      var theme = payload;
+      var density = null;
+      if (payload && typeof payload === 'object') {
+        theme = payload.theme;
+        density = payload.density;
+      }
       rcmdrApplyTheme(theme);
+      if (density) rcmdrApplyDensity(density);
     });
     (function() {
       function applyStoredTheme() {
@@ -1001,6 +1288,11 @@ app_js <- function(lang = current_language()) {
         try { stored = window.localStorage.getItem('rcmdr-theme') || 'system'; }
         catch (e) { stored = 'system'; }
         rcmdrApplyTheme(stored);
+        var density = 'compact';
+        try {
+          density = window.localStorage.getItem('rcmdr-density') || 'compact';
+        } catch (e) { density = 'compact'; }
+        rcmdrApplyDensity(density);
       }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', applyStoredTheme);
@@ -1657,10 +1949,10 @@ home_pane_ui <- function() {
 console_workspace_ui <- function() {
   tabsetPanel(
     id = "console_tabs",
-    tabPanel(tr("Console"), console_studio_ui()),
-    tabPanel(tr("Output"), output_studio_ui()),
-    tabPanel(tr("Messages"), messages_studio_ui()),
-    tabPanel(tr("History"), history_pane_ui())
+    tabPanel(tr("Console"), console_studio_ui(), value = "console"),
+    tabPanel(tr("Output"), output_studio_ui(), value = "output"),
+    tabPanel(tr("Messages"), messages_studio_ui(), value = "messages"),
+    tabPanel(tr("History"), history_pane_ui(), value = "history")
   )
 }
 
@@ -1668,27 +1960,212 @@ main_tabs_ui <- function(mode = "studio") {
   if (identical(mode, "classic")) {
     return(tabsetPanel(
       id = "main_tabs",
-      tabPanel(tr("Script"), script_pane_ui()),
-      tabPanel(tr("Output"), output_pane_ui()),
-      tabPanel(tr("Messages"), messages_pane_ui()),
-      tabPanel(tr("Plots"), plots_pane_ui("classic")),
-      tabPanel(tr("Report"), report_pane_ui("classic")),
-      tabPanel(tr("Data"), data_pane_ui("classic")),
-      tabPanel(tr("Environment"), uiOutput("environment_pane")),
-      tabPanel(tr("Help"), help_center_ui())
+      tabPanel(tr("Script"), script_pane_ui(), value = "script"),
+      tabPanel(tr("Output"), output_pane_ui(), value = "console"),
+      tabPanel(tr("Messages"), messages_pane_ui(), value = "messages"),
+      tabPanel(tr("Plots"), plots_pane_ui("classic"), value = "charts"),
+      tabPanel(tr("Report"), report_pane_ui("classic"), value = "report"),
+      tabPanel(tr("Data"), data_pane_ui("classic"), value = "data"),
+      tabPanel(tr("Environment"), uiOutput("environment_pane"),
+               value = "environment"),
+      tabPanel(tr("Help"), help_center_ui(), value = "help")
     ))
   }
   tabsetPanel(
     id = "main_tabs",
-    tabPanel(tr("Home"), home_pane_ui()),
-    tabPanel(tr("Workflows"), uiOutput("workflow_panel")),
-    tabPanel(tr("Data"), data_pane_ui("studio")),
-    tabPanel(tr("Charts"), plots_pane_ui("studio")),
-    tabPanel(tr("Report"), report_pane_ui("studio")),
-    tabPanel(tr("Script"), script_studio_ui()),
-    tabPanel(tr("Console"), console_workspace_ui()),
-    tabPanel(tr("Environment"), environment_workspace_ui()),
-    tabPanel(tr("Help"), help_center_ui())
+    tabPanel(tr("Home"), home_pane_ui(), value = "home"),
+    tabPanel(tr("Workflows"), uiOutput("workflow_panel"),
+             value = "workflows"),
+    tabPanel(tr("Data Studio"), data_pane_ui("studio"), value = "data"),
+    tabPanel(tr("Chart Studio"), plots_pane_ui("studio"), value = "charts"),
+    tabPanel(tr("Report Studio"), report_pane_ui("studio"), value = "report"),
+    tabPanel(tr("Script"), script_studio_ui(), value = "script"),
+    tabPanel(tr("Output (Console)"), console_workspace_ui(),
+             value = "console"),
+    tabPanel(tr("Environment"), environment_workspace_ui(),
+             value = "environment"),
+    tabPanel(tr("Help centre"), help_center_ui(), value = "help")
+  )
+}
+
+#' Stable identifiers for the main views
+#'
+#' The tabs are windows onto the same state, their labels are translated and
+#' the Studio and Classic modes show different windows. Navigation therefore
+#' uses a stable view id: renaming a tab or switching language can never break
+#' `state$show_tab()` silently.
+#'
+#' @return A named character vector mapping labels to view ids.
+#' @keywords internal
+main_view_aliases <- function() {
+  c(
+    "Home" = "home",
+    "Workflows" = "workflows",
+    "Data" = "data",
+    "Data Studio" = "data",
+    "Charts" = "charts",
+    "Chart Studio" = "charts",
+    "Plots" = "charts",
+    "Report" = "report",
+    "Report Studio" = "report",
+    "Script" = "script",
+    "Console" = "console",
+    "Output (Console)" = "console",
+    "Output" = "output",
+    "Messages" = "messages",
+    "History" = "history",
+    "Environment" = "environment",
+    "Help" = "help",
+    "Help centre" = "help",
+    "Help center" = "help"
+  )
+}
+
+#' @keywords internal
+main_view_ids <- function() unique(unname(main_view_aliases()))
+
+#' Resolve a view label or id to a view id
+#'
+#' @param x A view id ("data"), an English label ("Data Studio") or a
+#'   translated label ("Studio dati").
+#' @return A single view id, or `NULL` when `x` is not a known view.
+#' @keywords internal
+main_view_id <- function(x) {
+  if (is.null(x) || length(x) == 0L) return(NULL)
+  value <- trimws(as.character(x[[1L]]))
+  if (!nzchar(value)) return(NULL)
+  if (value %in% main_view_ids()) return(value)
+  aliases <- main_view_aliases()
+  if (value %in% names(aliases)) return(unname(aliases[[value]]))
+  for (msgid in names(aliases)) {
+    if (identical(value, tr(msgid))) return(unname(aliases[[msgid]]))
+  }
+  NULL
+}
+
+#' Where a view id lives in the current tab layout
+#'
+#' Output, messages and history are panes of the Console workspace in Studio
+#' mode but real tabs in Classic mode.
+#'
+#' @param x View id or label.
+#' @param mode UI mode, "studio" or "classic".
+#' @return `list(tab = <tab value>, sub = <sub-tab value or NULL>)`, or `NULL`.
+#' @keywords internal
+main_tab_target <- function(x, mode = "studio") {
+  view <- main_view_id(x)
+  if (is.null(view)) return(NULL)
+  if (!identical(mode, "classic")) {
+    if (identical(view, "output")) return(list(tab = "console", sub = "output"))
+    if (identical(view, "messages")) {
+      return(list(tab = "console", sub = "messages"))
+    }
+    if (identical(view, "history")) {
+      return(list(tab = "console", sub = "history"))
+    }
+    return(list(tab = view))
+  }
+  if (view %in% c("output", "history")) return(list(tab = "console"))
+  list(tab = view)
+}
+
+#' Labels of the main views in the current mode and language
+#'
+#' @param mode UI mode, "studio" or "classic".
+#' @return A named character vector of labels, keyed by view id.
+#' @keywords internal
+main_tab_labels <- function(mode = "studio") {
+  if (identical(mode, "classic")) {
+    return(c(
+      home = tr("Home"),
+      workflows = tr("Workflows"),
+      data = tr("Data"),
+      charts = tr("Plots"),
+      report = tr("Report"),
+      script = tr("Script"),
+      console = tr("Output"),
+      messages = tr("Messages"),
+      environment = tr("Environment"),
+      help = tr("Help")
+    ))
+  }
+  c(
+    home = tr("Home"),
+    workflows = tr("Workflows"),
+    data = tr("Data Studio"),
+    charts = tr("Chart Studio"),
+    report = tr("Report Studio"),
+    script = tr("Script"),
+    console = tr("Output (Console)"),
+    messages = tr("Messages"),
+    environment = tr("Environment"),
+    help = tr("Help centre")
+  )
+}
+
+#' @keywords internal
+main_tab_label <- function(view, mode = "studio") {
+  labels <- main_tab_labels(mode)
+  value <- labels[[as.character(view)[[1L]]]]
+  if (is.null(value)) as.character(view)[[1L]] else unname(value)
+}
+
+#' @keywords internal
+main_subtab_labels <- function() {
+  c(console = tr("Console"), output = tr("Output"),
+    messages = tr("Messages"), history = tr("History"))
+}
+
+#' The "where did my result go" bar
+#'
+#' A classic interface opened the result window after a command; this one keeps
+#' the user where they are, so it says where the result landed and offers to
+#' open it.
+#'
+#' @param info A `list(tab = , sub = , command = )` recorded by
+#'   `apply_dialog_result()`, or `NULL`.
+#' @param mode UI mode, "studio" or "classic".
+#' @param auto Whether the auto-switch preference is on.
+#' @return UI, or `NULL` when there is no result to show.
+#' @keywords internal
+result_hint_ui <- function(info, mode = "studio", auto = FALSE) {
+  if (is.null(info)) return(NULL)
+  target_label <- main_tab_label(info$tab, mode)
+  sub_labels <- main_subtab_labels()
+  sub_label <- if (!is.null(info$sub)) {
+    unname(sub_labels[[info$sub]] %||% info$sub)
+  } else {
+    NULL
+  }
+  path <- info$command %||% character()
+  command_label <- if (length(path) > 0L) {
+    paste(vapply(path, menu_label, character(1)), collapse = " \u203a ")
+  } else {
+    NULL
+  }
+  htmltools::div(
+    class = "rcmdr-result-hint",
+    role = "status",
+    `aria-live` = "polite",
+    htmltools::div(
+      class = "rcmdr-result-hint-text",
+      if (!is.null(command_label)) htmltools::tags$strong(command_label),
+      " \u2192 ",
+      tr("Result in:"),
+      " ",
+      htmltools::tags$strong(
+        paste(c(target_label, sub_label), collapse = " \u25b8 ")
+      )
+    ),
+    htmltools::div(
+      class = "d-flex align-items-center gap-2 flex-wrap",
+      actionButton("result_hint_open", tr("Show result"),
+                   class = "btn-sm btn-primary"),
+      checkboxInput("result_hint_auto", tr("Open automatically"),
+                    value = isTRUE(auto)),
+      actionButton("result_hint_close", tr("Dismiss"),
+                   class = "btn-sm btn-outline-secondary")
+    )
   )
 }
 
@@ -1766,6 +2243,7 @@ app_ui <- function() {
         htmltools::div(
           class = "col-lg-9 col-xl-10 py-3",
           id = "main-content", role = "main", tabindex = "-1",
+          uiOutput("result_hint"),
           uiOutput("main_tabs_ui")
         )
       )
@@ -1873,8 +2351,12 @@ app_server <- function(env = globalenv()) {
       document_text(state)
     }
     state$current_document_text <- current_document_text
-    state$show_tab <- function(label) {
-      session$sendCustomMessage("rcmdr-tab", label)
+    state$persist_preferences <- function() persist_preferences()
+    state$show_tab <- function(view) {
+      target <- main_tab_target(view, main_tabs_mode())
+      if (is.null(target)) return(invisible(FALSE))
+      session$sendCustomMessage("rcmdr-tab", target)
+      invisible(TRUE)
     }
 
     output$app_topbar <- renderUI({
@@ -1897,7 +2379,10 @@ app_server <- function(env = globalenv()) {
     state$start_tour <- function() show_tour_step(1L)
 
     session$onFlushed(function() {
-      session$sendCustomMessage("rcmdr-theme", ui_theme(state))
+      session$sendCustomMessage("rcmdr-theme", list(
+        theme = ui_theme(state),
+        density = ui_density(state)
+      ))
     }, once = TRUE)
 
     open_palette <- function() {
@@ -1913,6 +2398,40 @@ app_server <- function(env = globalenv()) {
         class = "text-white small"
       )
     })
+
+    # Result hint ------------------------------------------------------------
+    # A command runs where it always ran, but the user coming from a classic
+    # interface expects the result window to open.  The hint says where the
+    # result landed and offers to open it, like the classic window did.
+    output$result_hint <- renderUI({
+      tick()
+      language_revision()
+      result_hint_ui(
+        state$last_result,
+        mode = main_tabs_mode(),
+        auto = isTRUE(state$options$auto_switch_result)
+      )
+    })
+
+    observeEvent(input$result_hint_open, {
+      info <- isolate(state$last_result)
+      if (is.null(info)) return()
+      state$show_tab(info$sub %||% info$tab)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$result_hint_close, {
+      state$last_result <- NULL
+      tick(tick() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$result_hint_auto, {
+      state$options$auto_switch_result <- isTRUE(input$result_hint_auto)
+      persist_preferences()
+      if (isTRUE(state$options$auto_switch_result)) {
+        info <- isolate(state$last_result)
+        if (!is.null(info)) state$show_tab(info$sub %||% info$tab)
+      }
+    }, ignoreInit = TRUE)
 
     help_server(input, output, session, state)
 
@@ -2183,7 +2702,10 @@ app_server <- function(env = globalenv()) {
       dialog_revision()
       spec <- get_dialog_spec(state$current_dialog %||% "")
       req(spec)
-      spec$ui(state, get_dialog_memory(state, spec$id))
+      htmltools::div(
+        class = "rcmdr-field-grid rcmdr-dialog-grid",
+        spec$ui(state, get_dialog_memory(state, spec$id))
+      )
     })
 
     strip_dialog_prefix <- function(values, id) {
@@ -2668,7 +3190,7 @@ app_server <- function(env = globalenv()) {
     # Nested console tabs are suspended while hidden; force the history output
     # to refresh when the History tab becomes visible.
     observeEvent(input$console_tabs, {
-      if (identical(input$console_tabs, "History")) {
+      if (identical(input$console_tabs, "history")) {
         history_revision(history_revision() + 1L)
       }
     }, ignoreInit = TRUE)
@@ -2935,7 +3457,10 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$theme, {
       set_ui_theme(state, input$theme %||% "system")
       persist_preferences()
-      session$sendCustomMessage("rcmdr-theme", input$theme %||% "system")
+      session$sendCustomMessage("rcmdr-theme", list(
+        theme = input$theme %||% "system",
+        density = ui_density(state)
+      ))
       tick(tick() + 1L)
     }, ignoreInit = TRUE)
 

@@ -13,7 +13,7 @@ test_that("the Workbench server drives Script, Console, Output and Environment",
   shiny::testServer(app_server(env), {
     active_dataset(state, "D")
     session$setInputs(
-      menu_search = "", main_tabs = "Script", document_mode = "r",
+      menu_search = "", main_tabs = "script", document_mode = "r",
       console_tabs = "Console", environment_tabs = "Objects"
     )
     session$flushReact()
@@ -65,7 +65,7 @@ test_that("the Workbench server drives Script, Console, Output and Environment",
     expect_match(htmltools::renderTags(output$messages_cards)$html, "careful")
 
     # Environment.
-    session$setInputs(main_tabs = "Environment", environment_tabs = "Objects")
+    session$setInputs(main_tabs = "environment", environment_tabs = "Objects")
     session$flushReact()
     expect_match(htmltools::renderTags(output$environment_objects)$html, "fit")
     session$setInputs(environment_action = list(name = "D", action = "preview"))

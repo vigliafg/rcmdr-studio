@@ -52,7 +52,7 @@ fastest keyboard path for a known command.
 | Save the current document | `Ctrl` + `S` |
 | Save the document as | `Ctrl` + `Shift` + `S` |
 | Switch to the nth Studio tab | `Alt` + `1` ... `Alt` + `9` |
-| Open the Help tab | `F1` |
+| Open the Help centre tab | `F1` |
 | Show the shortcut list | `Ctrl` + `/` |
 | Close the palette or a modal | `Esc` |
 | Move through palette results | `ArrowUp` / `ArrowDown`, then `Enter` |
@@ -85,7 +85,7 @@ query. **Clear filters** resets them without clearing the topic pane.
 
 | Action | Where |
 |---|---|
-| Open the help centre | Help tab, or **Help > Help centre** |
+| Open the help centre | Help centre tab, or **Help > Help centre** |
 | Search the help | **Help > Search help...** |
 | Open the guided tour again | **Help > Guided tour** |
 | Open the glossary | **Help > Glossary** |

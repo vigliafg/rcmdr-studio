@@ -10,11 +10,7 @@ workbench_ready <- function() {
 }
 
 workbench_switch_tab <- function(app, label) {
-  app$run_js(sprintf(
-    "Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}).click();",
-    label
-  ))
-  app$wait_for_idle(timeout = 30000)
+  switch_main_tab(app, label)
 }
 
 test_that("the Workbench flow works in a browser", {

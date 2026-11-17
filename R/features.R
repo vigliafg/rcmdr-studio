@@ -132,3 +132,40 @@ set_ui_theme <- function(state, theme = "system") {
   state_touch(state)
   invisible(theme)
 }
+
+#' Supported interface densities
+#' @return `c("compact", "comfortable")`.
+#' @keywords internal
+ui_densities <- function() c("compact", "comfortable")
+
+#' Density selector choices
+#' @keywords internal
+ui_density_choices <- function() {
+  stats::setNames(
+    c("compact", "comfortable"),
+    c(tr("Compact"), tr("Comfortable"))
+  )
+}
+
+#' Current interface density
+#' @return One of [ui_densities()]; "compact" when unset or unknown.
+#' @keywords internal
+ui_density <- function(state) {
+  density <- state$options$density %||% "compact"
+  if (is.character(density) && length(density) == 1L &&
+      density %in% ui_densities()) {
+    density
+  } else {
+    "compact"
+  }
+}
+
+#' Set interface density
+#' @keywords internal
+set_ui_density <- function(state, density = "compact") {
+  density <- as.character(density %||% "compact")[[1L]]
+  if (!density %in% ui_densities()) density <- "compact"
+  state$options$density <- density
+  state_touch(state)
+  invisible(density)
+}

@@ -18,16 +18,17 @@ chart_ext_ready <- function() {
 chart_ext_switch_tab <- function(app, label) {
   # Activating the tab through its Shiny value is reliable; the DOM click is a
   # fallback for a tabset that has not bound its input yet.
-  try(app$set_inputs(main_tabs = label, wait_ = FALSE), silent = TRUE)
+  try(app$set_inputs(main_tabs = tab_value(label), wait_ = FALSE),
+      silent = TRUE)
   Sys.sleep(1)
   if (isTRUE(app$get_js(sprintf(
     "(function(){var p=document.querySelector('.tab-pane.active'); return p !== null && p.innerText.indexOf('%s') >= 0;})()",
     label
   )))) return(invisible(NULL))
-  app$run_js(sprintf(
-    "(function(){document.querySelectorAll('.modal-backdrop').forEach(function(m){m.remove();}); document.body.classList.remove('modal-open'); var link = Array.from(document.querySelectorAll('.nav-link')).find(function(a){return a.textContent.trim() === '%s';}); if (link) link.click();})()",
-    label
-  ))
+  app$run_js(
+    "(function(){document.querySelectorAll('.modal-backdrop').forEach(function(m){m.remove();}); document.body.classList.remove('modal-open');})()"
+  )
+  switch_main_tab(app, label)
   Sys.sleep(1)
 }
 

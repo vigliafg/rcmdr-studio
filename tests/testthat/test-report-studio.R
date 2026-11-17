@@ -68,7 +68,7 @@ test_that("the Report Studio server drives templates, cells and preview", {
 
   shiny::testServer(app_server(env), {
     active_dataset(state, "D")
-    session$setInputs(menu_search = "", main_tabs = "Report",
+    session$setInputs(menu_search = "", main_tabs = "report",
                       report_preview_mode = "markdown")
     session$flushReact()
 
@@ -108,7 +108,7 @@ test_that("the Report Studio knits and exposes the HTML preview", {
 
   shiny::testServer(app_server(env), {
     active_dataset(state, "D")
-    session$setInputs(menu_search = "", main_tabs = "Report",
+    session$setInputs(menu_search = "", main_tabs = "report",
                       report_preview_mode = "markdown")
     session$flushReact()
     session$setInputs(report_template_action = "analysis")

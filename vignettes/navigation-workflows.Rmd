@@ -41,6 +41,30 @@ The sidebar shows the same favourites and recents, a live menu search with
 highlighting, and expand/collapse controls. The expanded groups are persisted
 with the other preferences.
 
+## Commands and windows
+
+The menubar holds the commands; the tabs are windows on the workspace. Their
+ids are stable, so navigation never depends on a translated label:
+
+```{r views, eval=FALSE}
+main_view_id("Data Studio")          # "data"
+main_tab_target("Output", "studio")  # list(tab = "console", sub = "output")
+state$show_tab("charts")             # the handler selects data-value="charts"
+```
+
+After a dialog command `apply_dialog_result()` records where the result landed
+in `state$last_result`, and `result_hint_ui()` renders the bar that says so:
+
+```{r hint, eval=FALSE}
+result_hint_ui(
+  list(tab = "console", sub = "output", command = c("Analyze", "Summaries"))
+)
+```
+
+The bar offers **Show result** and the persisted **Open automatically**
+preference (`state$options$auto_switch_result`), which is the closest
+equivalent of a classic interface opening the result window by itself.
+
 ## Presets and validation
 
 A preset stores dialog inputs under a name:

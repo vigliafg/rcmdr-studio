@@ -149,6 +149,9 @@ AppState <- function(env = globalenv()) {
   state$set_script <- NULL
   state$plot_dir <- NULL
   state$plot_prefix <- NULL
+  # Where the last dialog command put its result, so the interface can point at
+  # the right window instead of leaving the result to be found.
+  state$last_result <- NULL
   state$options <- list(
     digits = 7L,
     width = 80L,
@@ -175,11 +178,13 @@ AppState <- function(env = globalenv()) {
     use_knitr = FALSE,
     language = current_language(),
     theme = "system",
+    density = "compact",
     ui_mode = "studio",
     history_length = 200L,
     menu_recent_length = 8L,
     persist_preferences = TRUE,
     preferences_file = NULL,
+    auto_switch_result = FALSE,
     project_recent_length = 8L,
     project_history = FALSE,
     project_autosave = TRUE,

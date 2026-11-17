@@ -588,6 +588,8 @@ apply_dialog_result <- function(state, result, dialog_id = state$current_dialog,
   }
   source <- if (is.null(dialog_id)) "script" else "dialog"
 
+  plots_before <- length(state$plots)
+
   for (command in result$commands %||% character()) {
     outcome <- run_command(
       state, command,
@@ -638,6 +640,27 @@ apply_dialog_result <- function(state, result, dialog_id = state$current_dialog,
   }
   if (!is.null(result$tab) && is.function(state$show_tab)) {
     state$show_tab(tr(result$tab))
+  }
+  # Record where the result landed and point at it: a classic interface opens
+  # the result window, this one used to leave the user on the same tab.
+  if (is.null(result$tab) && isTRUE(ok) &&
+      length(result$commands %||% character()) > 0L) {
+    produced_plot <- length(state$plots) > plots_before
+    state$last_result <- list(
+      tab = if (produced_plot) "charts" else "console",
+      sub = if (produced_plot) NULL else "output",
+      command = if (is.null(dialog_id)) {
+        character()
+      } else {
+        dialog_breadcrumb_parts(dialog_id)
+      }
+    )
+    if (isTRUE(state$options$auto_switch_result) &&
+        is.function(state$show_tab)) {
+      state$show_tab(if (produced_plot) "charts" else "output")
+    }
+  } else if (!is.null(result$tab)) {
+    state$last_result <- NULL
   }
   if (!is.null(result$message)) {
     showNotification(result$message,

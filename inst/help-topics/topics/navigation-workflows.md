@@ -52,6 +52,34 @@ top of the sidebar, and the last commands appear under **Recent**. The sidebar
 search box filters the whole menu, including translated labels, and
 highlights the matching text.
 
+## Commands and windows
+
+The two bars answer two different questions.
+
+- The **menubar** holds the commands: the Rcmdr catalogue of statistical
+  procedures, file operations and utilities. It is the only bar that runs
+  something.
+- The **tabs** are windows on the workspace: Home, Workflows, Data Studio,
+  Chart Studio, Report Studio, Script, Output (Console), Environment and
+  Help centre. They never run a command, they show what a command produced.
+  Classic mode uses the R Commander window names instead (Script, Output,
+  Messages, Plots, Report, Data, Environment, Help).
+
+The names differ on purpose: **Data** in the menubar is a command group, while
+**Data Studio** is the window where the data set is shown. The same holds for
+**Graphs**/**Chart Studio**, **Reports**/**Report Studio** and
+**Help**/**Help centre**.
+
+A command runs where it always ran; the interface then says where the result
+landed. After a dialog command a bar appears above the tabs:
+
+> Analyze › Summaries › Numerical summaries → Result in: Output (Console) ▸ Output
+
+**Show result** opens that window, **Open automatically** makes the switch
+happen without asking (the choice is stored with the other preferences) and
+**Dismiss** hides the bar. Plots point at Chart Studio; text output points at
+the Output pane of the Console workspace.
+
 Favourites, recents, expanded groups, dialog presets, language and theme are
 stored in a small `preferences.rds` file under the user configuration
 directory. Set `options(RcmdrShiny.preferences = "path/to/preferences.rds")` to
