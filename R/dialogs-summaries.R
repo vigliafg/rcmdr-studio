@@ -78,10 +78,10 @@ numerical_summaries_dialog <- function() {
             selected = names(Filter(isTRUE, m[c("skewness", "kurtosis")])),
             ncol = 2L
           ),
-          radio_input(
+          segmented_input(
             ns("type"), tr("Type"),
             c("Type 1" = "1", "Type 2" = "2", "Type 3" = "3"),
-            m$type, inline = TRUE
+            m$type
           ),
           htmltools::tags$hr(),
           checkbox_input(ns("quantiles"), tr("Quantiles:"), m$quantiles),

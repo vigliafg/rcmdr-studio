@@ -286,3 +286,99 @@ test_that("Statistics dialogs reject invalid selections", {
     "same"
   )
 })
+
+# Form vocabulary -----------------------------------------------------------
+
+test_that("statistics dialogs use segmented controls for short choices", {
+  state <- stats_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, NULL))$html
+  }
+
+  # Shared helper: the alternative hypothesis is Three short labels.
+  default_test <- render("independentSamplesTTest")
+  expect_match(default_test, "rcmdr-segmented", fixed = TRUE)
+  expect_match(default_test,
+               'name="independentSamplesTTest_alternative"', fixed = TRUE)
+  expect_match(default_test, 'value="greater"', fixed = TRUE)
+
+  # Univariate / multivariate is a two-choice question.
+  repeated <- render("oneWayRepeatedMeasures")
+  expect_match(repeated, "rcmdr-segmented", fixed = TRUE)
+  expect_match(repeated, 'name="oneWayRepeatedMeasures_test"', fixed = TRUE)
+  expect_match(repeated, 'value="multivariate"', fixed = TRUE)
+
+  # The two-variance test has its own alternatives; Levene's test swaps
+  # median and mean.
+  variance <- render("twoVariancesFTest")
+  expect_match(variance, 'name="twoVariancesFTest_alternative"', fixed = TRUE)
+  expect_match(variance, 'value="less"', fixed = TRUE)
+  levene <- render("LeveneTest")
+  expect_match(levene, 'name="LeveneTest_center"', fixed = TRUE)
+  expect_match(levene, 'value="mean"', fixed = TRUE)
+
+  # Factor analysis: rotation and scores are three short names each.
+  factor_html <- render("factorAnalysis")
+  expect_match(factor_html, 'name="factorAnalysis_rotation"', fixed = TRUE)
+  expect_match(factor_html, 'name="factorAnalysis_scores"', fixed = TRUE)
+
+  # The mixed model family keeps the three short family names.
+  mixed <- render("generalizedLinearMixedModel")
+  expect_match(mixed, 'name="generalizedLinearMixedModel_family"', fixed = TRUE)
+
+  # The summaries type is a three-way choice.
+  summaries <- render("numericalSummaries")
+  expect_match(summaries, 'name="numericalSummaries_type"', fixed = TRUE)
+})
+
+test_that("statistics dialogs use number fields where the value is a number", {
+  state <- stats_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, NULL))$html
+  }
+
+  # Every id below used to render as a spinner; each is a command parameter.
+  cases <- list(
+    independentSamplesTTest = "conf",
+    singleSampleTTest = "mu",
+    sigmaTestMenu = "sigma",
+    singleProportionTest = "p",
+    factorAnalysis = "factors",
+    kmeansClustering = "centers",
+    hclustSummary = "clusters"
+  )
+  for (id in names(cases)) {
+    html <- render(id)
+    field <- paste0(id, "_", cases[[id]])
+    expect_match(html, paste0('id="', field, '"'), fixed = TRUE)
+    expect_match(html, 'type="number"', fixed = TRUE)
+    expect_false(grepl(
+      paste0('id="', field, '"[^>]*type="text"'), html
+    ))
+  }
+
+  # k-means has three numbers in a row: clusters, iterations and starts.
+  kmeans <- render("kmeansClustering")
+  expect_equal(
+    lengths(regmatches(kmeans, gregexpr('type="number"', kmeans))), 3L
+  )
+})
+
+test_that("long option labels stay radio lists, not pills", {
+  state <- stats_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, NULL))$html
+  }
+
+  # Six test names with long labels, five percentage layouts, seven clustering
+  # methods: a strip would wrap into a wall.
+  for (id in c("NormalityTest", "twoWayTable", "hierarchicalCluster")) {
+    html <- render(id)
+    expect_match(html, "shiny-input-radiogroup")
+    expect_false(grepl("rcmdr-segmented", html, fixed = TRUE))
+  }
+
+  # Checkboxes in these dialogs are command parameters, not preferences: they
+  # keep the checkbox, never the switch.
+  expect_false(grepl("rcmdr-switch", render("kmeansClustering"), fixed = TRUE))
+})

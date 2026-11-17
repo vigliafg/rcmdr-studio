@@ -10,12 +10,12 @@ stats_alternative_input <- function(id, value = "two.sided",
                                     labels = c("Two-sided" = "two.sided",
                                                "Less" = "less",
                                                "Greater" = "greater")) {
-  radio_input(id, tr("Alternative Hypothesis"), labels, value, inline = TRUE)
+  segmented_input(id, tr("Alternative Hypothesis"), labels, value)
 }
 
 stats_confidence_input <- function(id, value = 0.95) {
-  spin_input(id, tr("Confidence level:"), value, min = 0.01, max = 0.999,
-             step = 0.01)
+  number_input(id, tr("Confidence level:"), value, min = 0.01, max = 0.999,
+               step = 0.01)
 }
 
 stats_test_input <- function(id, choices, value) {
@@ -702,7 +702,7 @@ single_t_dialog <- function() {
             "Population mean < mu0" = "less",
             "Population mean > mu0" = "greater")
         ),
-        spin_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu),
+        number_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu),
         stats_confidence_input(ns("conf"), m$conf)
       )
     },
@@ -831,9 +831,9 @@ one_way_rm_dialog <- function() {
         var_input(ns("between"), tr("Between-subject factors (optional)"),
                   factor_variables(state), selected = m$between,
                   multiple = TRUE),
-        radio_input(ns("test"), tr("Test"),
-                    c("Univariate" = "univariate",
-                      "Multivariate" = "multivariate"), m$test)
+        segmented_input(ns("test"), tr("Test"),
+                        c("Univariate" = "univariate",
+                          "Multivariate" = "multivariate"), m$test)
       )
     },
     on_ok = function(input, state) {
@@ -891,9 +891,9 @@ two_way_rm_dialog <- function() {
         entry_input(ns("collevels"), tr("Column levels (comma separated):"), m$collevels),
         var_input(ns("between"), tr("Between-subject factors (optional)"),
                   factor_variables(state), selected = m$between, multiple = TRUE),
-        radio_input(ns("test"), tr("Test"),
-                    c("Univariate" = "univariate",
-                      "Multivariate" = "multivariate"), m$test)
+        segmented_input(ns("test"), tr("Test"),
+                        c("Univariate" = "univariate",
+                          "Multivariate" = "multivariate"), m$test)
       )
     },
     on_ok = function(input, state) {
@@ -945,9 +945,9 @@ two_variances_dialog <- function() {
                   two_level_factors(state), selected = m$group),
         var_input(ns("response"), tr("Response Variable (pick one)"),
                   numeric_variables(state), selected = m$response),
-        radio_input(ns("alternative"), tr("Alternative Hypothesis"),
-                    c("Two-sided" = "two.sided", "Ratio < 1" = "less",
-                      "Ratio > 1" = "greater"), m$alternative),
+        segmented_input(ns("alternative"), tr("Alternative Hypothesis"),
+                        c("Two-sided" = "two.sided", "Ratio < 1" = "less",
+                          "Ratio > 1" = "greater"), m$alternative),
         stats_confidence_input(ns("conf"), m$conf)
       )
     },
@@ -987,8 +987,8 @@ variance_test_dialog <- function(id, title, help, builder) {
                   multiple = identical(id, "BartlettTest") ||
                     identical(id, "LeveneTest")),
         if (identical(id, "LeveneTest")) {
-          radio_input(ns("center"), tr("Center"),
-                      c("Median" = "median", "Mean" = "mean"), m$center)
+          segmented_input(ns("center"), tr("Center"),
+                          c("Median" = "median", "Mean" = "mean"), m$center)
         }
       )
     },
@@ -1026,8 +1026,8 @@ sigma_test_dialog <- function() {
         var_input(ns("x"), tr("Variable (pick one)"),
                   numeric_variables(state), selected = m$x),
         stats_alternative_input(ns("alternative"), m$alternative),
-        spin_input(ns("sigma"), tr("Null hypothesis: sigma0^2 ="), m$sigma,
-                   min = 0, step = 0.1),
+        number_input(ns("sigma"), tr("Null hypothesis: sigma0^2 ="), m$sigma,
+                     min = 0, step = 0.1),
         stats_confidence_input(ns("conf"), m$conf)
       )
     },
@@ -1068,8 +1068,8 @@ single_proportion_dialog <- function() {
                       "Normal approximation (continuity correction)" = "corrected",
                       "Exact binomial" = "binomial"), m$test),
         stats_alternative_input(ns("alternative"), m$alternative),
-        spin_input(ns("p"), tr("Null hypothesis: p ="), m$p, min = 0, max = 1,
-                   step = 0.01),
+        number_input(ns("p"), tr("Null hypothesis: p ="), m$p, min = 0, max = 1,
+                     step = 0.01),
         stats_confidence_input(ns("conf"), m$conf)
       )
     },
@@ -1294,7 +1294,7 @@ one_sample_wilcoxon_dialog <- function() {
                     c("Default" = "default", "Exact" = "exact",
                       "Normal approximation" = "correct"), m$test),
         stats_alternative_input(ns("alternative"), m$alternative),
-        spin_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu)
+        number_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu)
       )
     },
     on_ok = function(input, state) {
@@ -1396,14 +1396,14 @@ factor_analysis_dialog <- function() {
         var_input(ns("variables"), tr("Variables (pick three or more)"),
                   numeric_variables(state), selected = m$variables,
                   multiple = TRUE),
-        spin_input(ns("factors"), tr("Number of factors:"), m$factors,
-                   min = 1, max = 20, step = 1),
-        radio_input(ns("rotation"), tr("Rotation"),
-                    c("Varimax" = "varimax", "Promax" = "promax",
-                      "None" = "none"), m$rotation),
-        radio_input(ns("scores"), tr("Scores"),
-                    c("None" = "none", "Regression" = "regression",
-                      "Bartlett" = "Bartlett"), m$scores),
+        number_input(ns("factors"), tr("Number of factors:"), m$factors,
+                     min = 1, max = 20, step = 1),
+        segmented_input(ns("rotation"), tr("Rotation"),
+                        c("Varimax" = "varimax", "Promax" = "promax",
+                          "None" = "none"), m$rotation),
+        segmented_input(ns("scores"), tr("Scores"),
+                        c("None" = "none", "Regression" = "regression",
+                          "Bartlett" = "Bartlett"), m$scores),
         subset_input(ns("subset"), tr("Subset expression:"), m$subset)
       )
     },
@@ -1479,12 +1479,12 @@ kmeans_dialog <- function() {
         var_input(ns("variables"), tr("Variables (pick one or more)"),
                   numeric_variables(state), selected = m$variables,
                   multiple = TRUE),
-        spin_input(ns("centers"), tr("Number of clusters:"), m$centers,
-                   min = 2, max = 20, step = 1),
-        spin_input(ns("iter"), tr("Maximum iterations:"), m$iter,
-                   min = 1, max = 100, step = 1),
-        spin_input(ns("seeds"), tr("Number of random starts:"), m$seeds,
-                   min = 1, max = 100, step = 1),
+        number_input(ns("centers"), tr("Number of clusters:"), m$centers,
+                     min = 2, max = 20, step = 1),
+        number_input(ns("iter"), tr("Maximum iterations:"), m$iter,
+                     min = 1, max = 100, step = 1),
+        number_input(ns("seeds"), tr("Number of random starts:"), m$seeds,
+                     min = 1, max = 100, step = 1),
         checkbox_input(ns("summary"), tr("Print cluster summary"), m$summary),
         checkbox_input(ns("plot"), tr("Bi-plot of clusters"), m$plot),
         entry_input(ns("assign"), tr("Assigned cluster variable (optional):"),
@@ -1607,8 +1607,8 @@ hclust_summary_dialog <- function() {
         combo_input(ns("solution"), tr("Clustering solution"),
                     stats::setNames(solutions, solutions),
                     selected = m$solution),
-        spin_input(ns("clusters"), tr("Number of clusters:"), m$clusters,
-                   min = 2, max = 20, step = 1),
+        number_input(ns("clusters"), tr("Number of clusters:"), m$clusters,
+                     min = 2, max = 20, step = 1),
         checkbox_input(ns("summary"), tr("Print cluster summary"), m$summary),
         checkbox_input(ns("plot"), tr("Plot dendrogram"), m$plot)
       )
@@ -1648,8 +1648,8 @@ append_hclust_dialog <- function() {
         combo_input(ns("solution"), tr("Clustering solution"),
                     stats::setNames(solutions, solutions),
                     selected = m$solution),
-        spin_input(ns("clusters"), tr("Number of clusters:"), m$clusters,
-                   min = 2, max = 20, step = 1),
+        number_input(ns("clusters"), tr("Number of clusters:"), m$clusters,
+                     min = 2, max = 20, step = 1),
         entry_input(ns("label"), tr("Assigned cluster label:"), m$label)
       )
     },
@@ -1882,9 +1882,9 @@ glmer_dialog <- function() {
     },
     extra_ui = function(m, ns) {
       htmltools::tagList(
-        radio_input(ns("family"), tr("Family"),
-                    c("binomial" = "binomial", "poisson" = "poisson",
-                      "gaussian" = "gaussian"), m$family %||% "binomial"),
+        segmented_input(ns("family"), tr("Family"),
+                        c("binomial" = "binomial", "poisson" = "poisson",
+                          "gaussian" = "gaussian"), m$family %||% "binomial"),
         entry_input(ns("link"), tr("Link function:"), m$link %||% "logit")
       )
     }

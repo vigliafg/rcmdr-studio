@@ -167,10 +167,10 @@ insert_section_dialog <- function() {
       htmltools::tagList(
         entry_input(ns("title"), tr("Section title:"),
                     memory$title %||% "Results"),
-        radio_input(
+        segmented_input(
           ns("level"), tr("Level"),
           c("Section" = "1", "Subsection" = "2", "Subsubsection" = "3"),
-          memory$level %||% "2", inline = TRUE
+          memory$level %||% "2"
         )
       )
     },
@@ -262,10 +262,10 @@ insert_chunk_dialog <- function() {
                        isTRUE(memory$warning %||% TRUE)),
         checkbox_input(ns("message"), tr("Show messages"),
                        isTRUE(memory$message %||% TRUE)),
-        spin_input(ns("fig_width"), tr("Figure width (inches):"),
-                   memory$fig_width %||% 6, min = 1, max = 20),
-        spin_input(ns("fig_height"), tr("Figure height (inches):"),
-                   memory$fig_height %||% 4, min = 1, max = 20)
+        number_input(ns("fig_width"), tr("Figure width (inches):"),
+                     memory$fig_width %||% 6, min = 1, max = 20),
+        number_input(ns("fig_height"), tr("Figure height (inches):"),
+                     memory$fig_height %||% 4, min = 1, max = 20)
       )
     },
     on_ok = function(input, state) {

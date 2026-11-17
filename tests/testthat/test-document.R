@@ -250,3 +250,15 @@ test_that("the bibliography dialog requires an existing file", {
   result <- spec$on_ok(list(setBibliography_path = tempfile()), state)
   expect_match(result$error, "not found")
 })
+
+test_that("the insert-chunk dialog takes number fields for its sizes", {
+  state <- document_test_state()
+  html <- htmltools::renderTags(get_dialog("insertChunk")$ui(state, list()))$html
+  expect_match(html, 'id="insertChunk_fig_width"', fixed = TRUE)
+  expect_match(html, 'id="insertChunk_fig_height"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(html, gregexpr('type="number"', html))), 2L
+  )
+  # The chunk options are command parameters, so they stay checkboxes.
+  expect_false(grepl("rcmdr-switch", html, fixed = TRUE))
+})

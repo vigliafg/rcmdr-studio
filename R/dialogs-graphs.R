@@ -26,9 +26,9 @@ index_plot_dialog <- function() {
       htmltools::tagList(
         var_input(ns("variables"), tr("Variables (pick one or more)"),
                   graph_vars(state), selected = m$variables, multiple = TRUE),
-        radio_input(ns("type"), tr("Plot type"),
-                    c("Points" = "p", "Lines" = "l", "Histogram" = "h"),
-                    m$type)
+        segmented_input(ns("type"), tr("Plot type"),
+                        c("Points" = "p", "Lines" = "l", "Histogram" = "h"),
+                        m$type)
       )
     },
     on_ok = function(input, state) {
@@ -58,9 +58,9 @@ histogram_dialog <- function() {
                   graph_vars(state), selected = m$variable,
                   descriptions = variable_descriptions(state)),
         graph_group_input(ns("group"), state, m$group),
-        radio_input(ns("scale"), tr("Scale"),
-                    c("Frequency" = "frequency", "Density" = "density",
-                      "Percent" = "percent"), m$scale),
+        segmented_input(ns("scale"), tr("Scale"),
+                        c("Frequency" = "frequency", "Density" = "density",
+                          "Percent" = "percent"), m$scale),
         entry_input(ns("breaks"), tr("Breaks:"), m$breaks)
       )
     },
@@ -198,8 +198,9 @@ scatterplot_dialog <- function() {
         graph_group_input(ns("group"), state, m$group),
         checkbox_input(ns("smooth"), tr("Least-squares line"), m$smooth),
         checkbox_input(ns("boxplots"), tr("Marginal boxplots"), m$boxplots),
-        radio_input(ns("log"), tr("Log axes"),
-                    c("None" = "", "x" = "x", "y" = "y", "xy" = "xy"), m$log)
+        segmented_input(ns("log"), tr("Log axes"),
+                        c("None" = "", "x" = "x", "y" = "y", "xy" = "xy"),
+                        m$log)
       )
     },
     on_ok = function(input, state) {
@@ -463,8 +464,8 @@ xyplot_dialog <- function() {
         var_input(ns("y"), tr("Y variable (pick one)"),
                   graph_vars(state), selected = m$y),
         graph_group_input(ns("group"), state, m$group),
-        radio_input(ns("type"), tr("Plot type"),
-                    c("Points" = "p", "Lines" = "l", "Both" = "b"), m$type),
+        segmented_input(ns("type"), tr("Plot type"),
+                        c("Points" = "p", "Lines" = "l", "Both" = "b"), m$type),
         entry_input(ns("layout"), tr("Layout (e.g. 2,2):"), m$layout)
       )
     },
@@ -499,8 +500,8 @@ stripchart_dialog <- function() {
         var_input(ns("response"), tr("Response Variable (pick one)"),
                   graph_vars(state), selected = m$response),
         graph_group_input(ns("group"), state, m$group),
-        radio_input(ns("method"), tr("Method"),
-                    c("Stack" = "stack", "Jitter" = "jitter"), m$method)
+        segmented_input(ns("method"), tr("Method"),
+                        c("Stack" = "stack", "Jitter" = "jitter"), m$method)
       )
     },
     on_ok = function(input, state) {
@@ -628,9 +629,9 @@ distribution_param_entries <- function(id, info, values, ns) {
 }
 
 distribution_tail_input <- function(id, value = "lower") {
-  radio_input(id, tr("Tail"),
-              c("Lower tail" = "TRUE", "Upper tail" = "FALSE"),
-              if (isTRUE(value)) "TRUE" else "FALSE", inline = TRUE)
+  segmented_input(id, tr("Tail"),
+                  c("Lower tail" = "TRUE", "Upper tail" = "FALSE"),
+                  if (isTRUE(value)) "TRUE" else "FALSE")
 }
 
 distribution_dialog <- function(distribution, kind) {
@@ -708,9 +709,9 @@ distribution_dialog <- function(distribution, kind) {
       }
       htmltools::tagList(
         entry_input(ns("dataset"), tr("Name for data set:"), m$dataset),
-        spin_input(ns("n"), tr("Sample size:"), m$n, min = 1, max = 100000),
-        spin_input(ns("samples"), tr("Number of samples:"), m$samples,
-                   min = 1, max = 10000),
+        number_input(ns("n"), tr("Sample size:"), m$n, min = 1, max = 100000),
+        number_input(ns("samples"), tr("Number of samples:"), m$samples,
+                     min = 1, max = 10000),
         entries,
         checkbox_input(ns("summary_mean"), tr("Add sample means"),
                        isTRUE(m$summary_mean)),
@@ -833,8 +834,9 @@ phase4_dialogs <- function() {
     list(setRandomSeed = dialog_spec(
       id = "setRandomSeed", title = tr("Set Random Seed"), help = "set.seed",
       ui = function(state, memory) {
-        spin_input("setRandomSeed_seed", tr("Seed:"),
-                   memory$seed %||% 12345, min = 1, max = .Machine$integer.max)
+        number_input("setRandomSeed_seed", tr("Seed:"),
+                     memory$seed %||% 12345, min = 1,
+                     max = .Machine$integer.max)
       },
       on_ok = function(input, state) {
         seed <- as.integer(input[["setRandomSeed_seed"]] %||% 12345)

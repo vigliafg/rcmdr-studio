@@ -114,3 +114,64 @@ test_that("random seed and palette dialogs work", {
   )
   expect_equal(palette$commands, 'palette(c("black", "red"))')
 })
+
+# Form vocabulary -----------------------------------------------------------
+
+test_that("graph dialogs use segmented controls for short choices", {
+  state <- graph_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, NULL))$html
+  }
+
+  index <- render("indexPlot")
+  expect_match(index, "rcmdr-segmented", fixed = TRUE)
+  expect_match(index, 'name="indexPlot_type"', fixed = TRUE)
+  expect_match(index, 'value="h"', fixed = TRUE)
+
+  histogram <- render("Histogram")
+  expect_match(histogram, 'name="Histogram_scale"', fixed = TRUE)
+  expect_match(histogram, 'value="density"', fixed = TRUE)
+
+  # Four very short axis names fit a strip; nothing else in the scatterplot
+  # changes.
+  scatter <- render("scatterPlot")
+  expect_match(scatter, 'name="scatterPlot_log"', fixed = TRUE)
+  expect_match(scatter, 'value="xy"', fixed = TRUE)
+  expect_match(scatter, 'id="scatterPlot_smooth"', fixed = TRUE)
+
+  strip <- render("stripChart")
+  expect_match(strip, 'name="stripChart_method"', fixed = TRUE)
+
+  xy <- render("Xyplot")
+  expect_match(xy, 'name="Xyplot_type"', fixed = TRUE)
+
+  # The distribution tail is the same two-way question in every distribution.
+  tail <- render("normalQuantiles")
+  expect_match(tail, "rcmdr-segmented", fixed = TRUE)
+  expect_match(tail, 'name="normalQuantiles_tail"', fixed = TRUE)
+})
+
+test_that("graph dialogs use number fields for counts and sizes", {
+  state <- graph_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, NULL))$html
+  }
+
+  samples <- render("normalDistributionSamples")
+  expect_match(samples, 'id="normalDistributionSamples_n"', fixed = TRUE)
+  expect_match(samples, 'id="normalDistributionSamples_samples"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(samples, gregexpr('type="number"', samples))), 2L
+  )
+
+  seed <- render("setRandomSeed")
+  expect_match(seed, 'id="setRandomSeed_seed"', fixed = TRUE)
+  expect_match(seed, 'type="number"', fixed = TRUE)
+
+  # Long labels stay radio lists: error bars and the plotted function.
+  plot_means <- render("PlotMeans")
+  expect_match(plot_means, "shiny-input-radiogroup")
+  expect_false(grepl("rcmdr-segmented", plot_means, fixed = TRUE))
+  density <- render("normalDistributionPlot")
+  expect_false(grepl("rcmdr-segmented", density, fixed = TRUE))
+})

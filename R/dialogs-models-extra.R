@@ -112,8 +112,8 @@ stepwise_regression_dialog <- function() {
         radio_input(ns("direction"), tr("Direction"),
                     c("Backward/forward" = "backward",
                       "Forward/backward" = "forward"), m$direction),
-        radio_input(ns("criterion"), tr("Criterion"),
-                    c("AIC" = "AIC", "BIC" = "BIC"), m$criterion)
+        segmented_input(ns("criterion"), tr("Criterion"),
+                        c("AIC" = "AIC", "BIC" = "BIC"), m$criterion)
       )
     },
     on_ok = function(input, state) {
@@ -147,8 +147,8 @@ subset_regression_dialog <- function() {
                   numeric_variables(state), selected = m$response),
         var_input(ns("predictors"), tr("Predictors:"),
                   variables(state), selected = m$predictors, multiple = TRUE),
-        spin_input(ns("nbest"), tr("Number of best models:"), m$nbest,
-                   min = 1, max = 50)
+        number_input(ns("nbest"), tr("Number of best models:"), m$nbest,
+                     min = 1, max = 50)
       )
     },
     on_ok = function(input, state) {
@@ -215,14 +215,15 @@ bootstrap_dialog <- function() {
       m <- utils::modifyList(defaults, memory %||% list())
       htmltools::tagList(
         model_combo(ns("model"), state, memory$model),
-        spin_input(ns("samples"), tr("Number of bootstrap samples:"), m$samples,
-                   min = 1, max = 100000),
+        number_input(ns("samples"), tr("Number of bootstrap samples:"),
+                     m$samples, min = 1, max = 100000),
         stats_confidence_input(ns("level"), m$level),
-        radio_input(ns("type"), tr("Interval type"),
-                    c("Percentile" = "perc", "Normal" = "norm",
-                      "Basic" = "basic"), m$type),
-        radio_input(ns("method"), tr("Resampling method"),
-                    c("Cases" = "case", "Residuals" = "residual"), m$method)
+        segmented_input(ns("type"), tr("Interval type"),
+                        c("Percentile" = "perc", "Normal" = "norm",
+                          "Basic" = "basic"), m$type),
+        segmented_input(ns("method"), tr("Resampling method"),
+                        c("Cases" = "case", "Residuals" = "residual"),
+                        m$method)
       )
     },
     on_ok = function(input, state) {
@@ -293,10 +294,10 @@ anova_table_dialog <- function() {
       m <- utils::modifyList(defaults, memory %||% list())
       htmltools::tagList(
         model_combo(ns("model"), state, memory$model),
-        radio_input(ns("type"), tr("Type"),
-                    c("Type II" = "II", "Type III" = "III"), m$type),
-        radio_input(ns("test"), tr("Test"),
-                    c("F" = "F", "Chi-square" = "Chisq"), m$test),
+        segmented_input(ns("type"), tr("Type"),
+                        c("Type II" = "II", "Type III" = "III"), m$type),
+        segmented_input(ns("test"), tr("Test"),
+                        c("F" = "F", "Chi-square" = "Chisq"), m$test),
         checkbox_input(ns("use_car"), tr("Use car::Anova()"), m$use_car)
       )
     },
@@ -331,8 +332,8 @@ compare_models_dialog <- function() {
       htmltools::tagList(
         model_combo(ns("first"), state, m$first, tr("First model")),
         model_combo(ns("second"), state, m$second, tr("Second model")),
-        radio_input(ns("test"), tr("Test"), c("F" = "F", "Chi-square" = "Chisq"),
-                    m$test)
+        segmented_input(ns("test"), tr("Test"),
+                        c("F" = "F", "Chi-square" = "Chisq"), m$test)
       )
     },
     on_ok = function(input, state) {
@@ -509,8 +510,8 @@ identification_dialog <- function(id, title, help, builder) {
         radio_input(ns("method"), tr("Identify Points"),
                     c("Automatically" = "auto", "Do not identify" = "not",
                       "Interactively with mouse" = "mouse"), m$method),
-        spin_input(ns("n"), tr("Number of points to identify:"), m$n,
-                   min = 0, max = 20)
+        number_input(ns("n"), tr("Number of points to identify:"), m$n,
+                     min = 0, max = 20)
       )
     },
     on_ok = function(input, state) {
