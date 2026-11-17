@@ -190,3 +190,4 @@
       border-radius: .3rem; z-index: 2000; }
     :focus-visible { outline: 3px solid var(--rcmdr-accent); outline-offset: 2px; }
 
+    .rcmdr-icon { display: inline-block; vertical-align: -.15em; flex: none; }
