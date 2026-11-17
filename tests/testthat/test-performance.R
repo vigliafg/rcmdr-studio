@@ -97,7 +97,10 @@ test_that("the benchmark suite runs at smoke sizes", {
   skip_on_cran()
   result <- benchmark_suite(quick = TRUE)
   expect_s3_class(result, "data.frame")
-  expect_equal(nrow(result), 7L)
+  # The quick suite adds two plugin rows only when at least one plugin package
+  # is installed, so the count depends on the machine, not on the package.
+  expected_rows <- 7L + if (length(installed_plugin_packages()) > 0L) 2L else 0L
+  expect_equal(nrow(result), expected_rows)
   expect_true(all(c("scenario", "rows", "elapsed_ms") %in% names(result)))
   expect_true(all(result$elapsed_ms >= 0))
   expect_true(all(c("startup shell", "help index rebuild") %in%
