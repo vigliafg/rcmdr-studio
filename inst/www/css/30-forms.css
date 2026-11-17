@@ -1,0 +1,139 @@
+    /* Density -------------------------------------------------------------
+       The interface is dense by default: a statistical workbench is a tool,
+       not a brochure. Every value is a token, so a component can stay compact
+       without repeating numbers, and the comfortable variant restores the
+       Bootstrap spacing in one place. */
+    body {
+      --rcmdr-field-gap: .4rem;
+      --rcmdr-label-size: .8125rem;
+      --rcmdr-label-gap: .1rem;
+      --rcmdr-control-size: .875rem;
+      --rcmdr-control-pad: .22rem .45rem;
+      --rcmdr-control-min: 1.9rem;
+      --rcmdr-section-gap: .4rem;
+      --rcmdr-help-size: .78rem;
+    }
+    body.rcmdr-density-compact { --rcmdr-space: .55rem; }
+    body.rcmdr-density-comfortable {
+      --rcmdr-field-gap: 1rem;
+      --rcmdr-label-size: .9375rem;
+      --rcmdr-label-gap: .5rem;
+      --rcmdr-control-size: .9375rem;
+      --rcmdr-control-pad: .375rem .75rem;
+      --rcmdr-control-min: 2.4rem;
+      --rcmdr-section-gap: 1rem;
+      --rcmdr-help-size: .875rem;
+      --rcmdr-space: .75rem;
+    }
+    body .form-group,
+    body .shiny-input-container { margin-bottom: var(--rcmdr-field-gap); }
+    body .form-group > label,
+    body label.control-label { margin-bottom: var(--rcmdr-label-gap); }
+    body .form-group > label,
+    body label.control-label,
+    body .form-check-label { font-size: var(--rcmdr-label-size); }
+    body .form-check { margin-bottom: 0; }
+    body .form-control,
+    body .form-select {
+      min-height: var(--rcmdr-control-min);
+      padding: var(--rcmdr-control-pad);
+      font-size: var(--rcmdr-control-size);
+    }
+    body .selectize-control .selectize-input {
+      min-height: var(--rcmdr-control-min);
+      padding: var(--rcmdr-control-pad);
+      font-size: var(--rcmdr-control-size);
+    }
+    body hr { margin: var(--rcmdr-section-gap) 0; }
+    body .form-text, body .help-block {
+      font-size: var(--rcmdr-help-size);
+      margin: .15rem 0 0;
+    }
+
+    .rcmdr-topbar { background: var(--rcmdr-primary); }
+    .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
+    .rcmdr-topbar .form-select { max-width: 9rem; }
+    .rcmdr-sidebar {
+      background: var(--rcmdr-surface);
+      border-right: 1px solid var(--rcmdr-border);
+      min-height: calc(100vh - 90px); padding: var(--rcmdr-space);
+      max-height: calc(100vh - 90px); overflow-y: auto;
+    }
+    .rcmdr-statusbar {
+      background: var(--rcmdr-surface-muted);
+      border-top: 1px solid var(--rcmdr-border);
+    }
+    .rcmdr-toolbar {
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      padding: .5rem .65rem; margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-toolbar-field .form-group,
+    .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
+    .rcmdr-dialog-category {
+      font-size: .78rem; font-weight: 400; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--rcmdr-muted);
+    }
+    .rcmdr-dialog-preview {
+      margin-top: .75rem; border-top: 1px solid var(--rcmdr-border);
+      padding-top: .5rem;
+    }
+    .rcmdr-dialog-preview > summary { cursor: pointer; color: var(--rcmdr-muted); }
+    .rcmdr-dialog-presets {
+      border-bottom: 1px solid var(--rcmdr-border);
+      padding-bottom: .5rem; margin-bottom: .75rem;
+    }
+    .rcmdr-code-preview {
+      position: relative; background: var(--rcmdr-surface-sunken);
+      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      padding: .5rem .65rem;
+    }
+    .rcmdr-code-preview pre { margin: 0; white-space: pre-wrap; }
+    .rcmdr-code-preview .rcmdr-copy { position: absolute; top: .35rem; right: .35rem; }
+    .rcmdr-status-pill {
+      display: inline-block; padding: .08rem .45rem; border-radius: 999px;
+      font-size: .75rem; font-weight: 600; line-height: 1.4;
+    }
+    .rcmdr-status-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-success); }
+    .rcmdr-status-warning { background: var(--rcmdr-warn-bg); color: var(--rcmdr-warning); }
+    .rcmdr-status-error { background: var(--rcmdr-err-bg); color: var(--rcmdr-danger); }
+    .rcmdr-status-muted { background: var(--rcmdr-surface-muted); color: var(--rcmdr-muted); }
+    .rcmdr-empty {
+      border: 1px dashed var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      padding: 1.25rem; text-align: center; color: var(--rcmdr-muted);
+      background: var(--rcmdr-surface);
+    }
+    .rcmdr-empty-title { font-weight: 600; color: var(--rcmdr-text); }
+    .rcmdr-empty-text { margin: .35rem 0 0; }
+    .rcmdr-metric {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
+    }
+    .rcmdr-metric-label { font-size: .78rem; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--rcmdr-muted); }
+    .rcmdr-metric-value { font-size: 1.35rem; font-weight: 600; }
+    .rcmdr-metric-help { font-size: .82rem; color: var(--rcmdr-muted); }
+    .rcmdr-section-card {
+      background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius); padding: .65rem .85rem;
+      margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-section-card > summary { cursor: pointer; font-weight: 600; }
+    .rcmdr-section-body { padding-top: .5rem; }
+    .rcmdr-field-grid {
+      display: grid; gap: .55rem .9rem; align-items: start;
+      grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    }
+    .rcmdr-field-grid > .form-group,
+    .rcmdr-field-grid > .shiny-input-container,
+    .rcmdr-field-grid > .shiny-bound-input,
+    .rcmdr-field-grid > .form-check { margin-bottom: 0; min-width: 0; }
+    .rcmdr-field-grid > .shiny-html-output { display: contents; }
+    .rcmdr-field-grid .shiny-input-container,
+    .rcmdr-field-grid .form-control,
+    .rcmdr-field-grid .form-select { width: 100%; }
+    .rcmdr-field-grid > .form-text { grid-column: 1 / -1; }
+    .rcmdr-field-grid .rcmdr-field-wide { grid-column: 1 / -1; }
+    .rcmdr-field-grid .rcmdr-field-half { grid-column: span 2; }
+    .rcmdr-field-grid .form-check { min-height: 0; }

@@ -1,0 +1,256 @@
+    /* Design tokens -------------------------------------------------------
+       Every surface, border and text colour in the Studio resolves to these
+       variables.  Each palette below keeps body text at >= 4.5:1 against its
+       surface and muted text at >= 4.5:1 as well, so no variant is ever
+       dark-on-dark or light-on-light. */
+    :root,
+    body.rcmdr-light {
+      color-scheme: light;
+      --rcmdr-bg: #f4f6fa;
+      --rcmdr-surface: #ffffff;
+      --rcmdr-surface-muted: #eef1f6;
+      --rcmdr-surface-sunken: #f7f9fc;
+      --rcmdr-text: #16202b;
+      --rcmdr-heading: #0f2b45;
+      --rcmdr-link: #17486f;
+      --rcmdr-muted: #47566a;
+      --rcmdr-disabled: #7b8794;
+      --rcmdr-border: #bcc8d6;
+      --rcmdr-primary: #1f3a5f;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #d9e5f2;
+      --rcmdr-accent: #0b5ed7;
+      --rcmdr-hover: #e4edf8;
+      --rcmdr-selection: #d6e6fa;
+      --rcmdr-mark-bg: #ffe9a8;
+      --rcmdr-mark-text: #3a2a00;
+      --rcmdr-hero-from: #1f3a5f;
+      --rcmdr-hero-to: #2f5d8a;
+      --rcmdr-ok-bg: #dcfae6;
+      --rcmdr-ok-fg: #05603a;
+      --rcmdr-warn-bg: #fef0c7;
+      --rcmdr-warn-fg: #8a4b00;
+      --rcmdr-err-bg: #fee4e2;
+      --rcmdr-err-fg: #a1120b;
+      --rcmdr-danger: #b02a37;
+      --rcmdr-warning: #b54708;
+      --rcmdr-success: #067647;
+      --rcmdr-shadow: 0 .6rem 1.4rem rgba(16, 32, 51, .18);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(11, 94, 215, .28);
+    }
+    :root {
+      --rcmdr-radius: .5rem;
+      --rcmdr-space: .75rem;
+      --rcmdr-font-size: 1rem;
+    }
+    body.rcmdr-light-warm {
+      color-scheme: light;
+      --rcmdr-bg: #f7f2e9;
+      --rcmdr-surface: #fffdf7;
+      --rcmdr-surface-muted: #f0e7d7;
+      --rcmdr-surface-sunken: #f9f4ea;
+      --rcmdr-text: #26211a;
+      --rcmdr-heading: #3d2f18;
+      --rcmdr-link: #6a4a12;
+      --rcmdr-muted: #5a4e3c;
+      --rcmdr-disabled: #857a66;
+      --rcmdr-border: #cdb999;
+      --rcmdr-primary: #47391f;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #eedfca;
+      --rcmdr-accent: #8a5a00;
+      --rcmdr-hover: #ece0cb;
+      --rcmdr-selection: #f2e0ba;
+      --rcmdr-mark-bg: #ffe08a;
+      --rcmdr-mark-text: #3a2a00;
+      --rcmdr-hero-from: #4a3a1f;
+      --rcmdr-hero-to: #7a5a28;
+      --rcmdr-ok-bg: #e3f3d9;
+      --rcmdr-ok-fg: #2c5a10;
+      --rcmdr-warn-bg: #fbeac2;
+      --rcmdr-warn-fg: #7a4400;
+      --rcmdr-err-bg: #fbe0d8;
+      --rcmdr-err-fg: #8d1f10;
+      --rcmdr-danger: #a01f14;
+      --rcmdr-warning: #8a4b00;
+      --rcmdr-success: #2c5a10;
+      --rcmdr-shadow: 0 .6rem 1.4rem rgba(61, 47, 24, .2);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(138, 90, 0, .3);
+    }
+    body.rcmdr-light-cool {
+      color-scheme: light;
+      --rcmdr-bg: #e9f0f8;
+      --rcmdr-surface: #fbfdff;
+      --rcmdr-surface-muted: #dfe9f4;
+      --rcmdr-surface-sunken: #f1f6fc;
+      --rcmdr-text: #131e2b;
+      --rcmdr-heading: #0d2c48;
+      --rcmdr-link: #10527f;
+      --rcmdr-muted: #3f5468;
+      --rcmdr-disabled: #77889a;
+      --rcmdr-border: #b0c3d8;
+      --rcmdr-primary: #123a5e;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #d2e3f3;
+      --rcmdr-accent: #0a58ca;
+      --rcmdr-hover: #d8e7f7;
+      --rcmdr-selection: #c9ddf6;
+      --rcmdr-mark-bg: #ffe9a8;
+      --rcmdr-mark-text: #3a2a00;
+      --rcmdr-hero-from: #123a5e;
+      --rcmdr-hero-to: #276c9f;
+      --rcmdr-ok-bg: #d8f2e6;
+      --rcmdr-ok-fg: #05563a;
+      --rcmdr-warn-bg: #fdeec6;
+      --rcmdr-warn-fg: #834700;
+      --rcmdr-err-bg: #fde2e2;
+      --rcmdr-err-fg: #9c1414;
+      --rcmdr-danger: #a01f2b;
+      --rcmdr-warning: #834700;
+      --rcmdr-success: #05563a;
+      --rcmdr-shadow: 0 .6rem 1.4rem rgba(13, 44, 72, .18);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(10, 88, 202, .28);
+    }
+    body.rcmdr-dark {
+      color-scheme: dark;
+      --rcmdr-bg: #0e1621;
+      --rcmdr-surface: #19222f;
+      --rcmdr-surface-muted: #222d3c;
+      --rcmdr-surface-sunken: #121a25;
+      --rcmdr-text: #e9eff7;
+      --rcmdr-heading: #ffffff;
+      --rcmdr-link: #a9cff7;
+      --rcmdr-muted: #b4c2d3;
+      --rcmdr-disabled: #8b99ab;
+      --rcmdr-border: #3a4757;
+      --rcmdr-primary: #234870;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #d9e7f6;
+      --rcmdr-accent: #78b9ff;
+      --rcmdr-hover: #29394a;
+      --rcmdr-selection: #2f4a68;
+      --rcmdr-mark-bg: #f7d774;
+      --rcmdr-mark-text: #241b00;
+      --rcmdr-hero-from: #17293f;
+      --rcmdr-hero-to: #23486f;
+      --rcmdr-ok-bg: #0b3d2c;
+      --rcmdr-ok-fg: #a7f3d0;
+      --rcmdr-warn-bg: #40290a;
+      --rcmdr-warn-fg: #fde68a;
+      --rcmdr-err-bg: #45100d;
+      --rcmdr-err-fg: #fecaca;
+      --rcmdr-danger: #ff9b93;
+      --rcmdr-warning: #f7c76b;
+      --rcmdr-success: #86e6b6;
+      --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .55);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(120, 185, 255, .45);
+    }
+    body.rcmdr-dark-dim {
+      color-scheme: dark;
+      --rcmdr-bg: #191c20;
+      --rcmdr-surface: #23272c;
+      --rcmdr-surface-muted: #2c3137;
+      --rcmdr-surface-sunken: #1e2126;
+      --rcmdr-text: #eef1f5;
+      --rcmdr-heading: #ffffff;
+      --rcmdr-link: #b9d5f2;
+      --rcmdr-muted: #c2c9d2;
+      --rcmdr-disabled: #949ca6;
+      --rcmdr-border: #454b52;
+      --rcmdr-primary: #33475e;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #dbe4ef;
+      --rcmdr-accent: #93c1f5;
+      --rcmdr-hover: #333941;
+      --rcmdr-selection: #3b4a5c;
+      --rcmdr-mark-bg: #f2d17a;
+      --rcmdr-mark-text: #241b00;
+      --rcmdr-hero-from: #262c33;
+      --rcmdr-hero-to: #38424d;
+      --rcmdr-ok-bg: #1d3b2c;
+      --rcmdr-ok-fg: #b3f0d2;
+      --rcmdr-warn-bg: #3d2e12;
+      --rcmdr-warn-fg: #f8dd9a;
+      --rcmdr-err-bg: #401c1c;
+      --rcmdr-err-fg: #f8c9c9;
+      --rcmdr-danger: #ffa8a0;
+      --rcmdr-warning: #f5c881;
+      --rcmdr-success: #9ae9c1;
+      --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .5);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(147, 193, 245, .45);
+    }
+    body.rcmdr-dark-graphite {
+      color-scheme: dark;
+      --rcmdr-bg: #141618;
+      --rcmdr-surface: #1e2124;
+      --rcmdr-surface-muted: #272b2f;
+      --rcmdr-surface-sunken: #191c1e;
+      --rcmdr-text: #eceff2;
+      --rcmdr-heading: #ffffff;
+      --rcmdr-link: #a8deda;
+      --rcmdr-muted: #c1c7cd;
+      --rcmdr-disabled: #8f979e;
+      --rcmdr-border: #3e4348;
+      --rcmdr-primary: #2f3a3d;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #d8e2e3;
+      --rcmdr-accent: #7fd8c9;
+      --rcmdr-hover: #30363a;
+      --rcmdr-selection: #35474a;
+      --rcmdr-mark-bg: #f0d47a;
+      --rcmdr-mark-text: #241b00;
+      --rcmdr-hero-from: #222a2c;
+      --rcmdr-hero-to: #33474a;
+      --rcmdr-ok-bg: #1b3a32;
+      --rcmdr-ok-fg: #b0efdd;
+      --rcmdr-warn-bg: #3a2d12;
+      --rcmdr-warn-fg: #f6dda0;
+      --rcmdr-err-bg: #3d1c1b;
+      --rcmdr-err-fg: #f8c9c4;
+      --rcmdr-danger: #ffaaa2;
+      --rcmdr-warning: #f3ca85;
+      --rcmdr-success: #98e8c8;
+      --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .5);
+      --rcmdr-focus-ring: 0 0 0 2px rgba(127, 216, 201, .45);
+    }
+    body.rcmdr-contrast {
+      color-scheme: light;
+      --rcmdr-bg: #ffffff;
+      --rcmdr-surface: #ffffff;
+      --rcmdr-surface-muted: #f2f2f2;
+      --rcmdr-surface-sunken: #f5f5f5;
+      --rcmdr-text: #000000;
+      --rcmdr-heading: #000000;
+      --rcmdr-link: #0033cc;
+      --rcmdr-muted: #1f1f1f;
+      --rcmdr-disabled: #4a4a4a;
+      --rcmdr-border: #000000;
+      --rcmdr-primary: #000000;
+      --rcmdr-on-primary: #ffffff;
+      --rcmdr-on-primary-muted: #ffffff;
+      --rcmdr-accent: #0047ff;
+      --rcmdr-hover: #e6e6e6;
+      --rcmdr-selection: #cfe0ff;
+      --rcmdr-mark-bg: #ffe066;
+      --rcmdr-mark-text: #000000;
+      --rcmdr-hero-from: #000000;
+      --rcmdr-hero-to: #000000;
+      --rcmdr-ok-bg: #d6f5e3;
+      --rcmdr-ok-fg: #003d23;
+      --rcmdr-warn-bg: #ffeec2;
+      --rcmdr-warn-fg: #5c3100;
+      --rcmdr-err-bg: #ffd9d5;
+      --rcmdr-err-fg: #7a0000;
+      --rcmdr-danger: #b00020;
+      --rcmdr-warning: #6b3b00;
+      --rcmdr-success: #005c33;
+      --rcmdr-shadow: 0 .5rem 1.2rem rgba(0, 0, 0, .35);
+      --rcmdr-focus-ring: 0 0 0 3px rgba(0, 71, 255, .45);
+    }
+    body {
+      background: var(--rcmdr-bg);
+      color: var(--rcmdr-text);
+    }
+    body.rcmdr-dark .rcmdr-topbar,
+    body.rcmdr-dark .rcmdr-home-hero { border-bottom: 1px solid var(--rcmdr-border); }
+

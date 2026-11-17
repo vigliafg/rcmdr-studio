@@ -1,0 +1,135 @@
+    /* The main views are windows on the workspace, not a second menu: a
+       segmented control keeps them visually distinct from the menubar. */
+    #main_tabs.nav-tabs {
+      display: inline-flex; flex-wrap: wrap; gap: .1rem;
+      padding: .15rem; margin-bottom: var(--rcmdr-space);
+      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius);
+      background: var(--rcmdr-surface-muted);
+    }
+    #main_tabs .nav-link {
+      border: 0; border-radius: .3rem; padding: .22rem .55rem;
+      font-size: .86rem; color: var(--rcmdr-muted);
+    }
+    #main_tabs .nav-link:hover {
+      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
+    }
+    #main_tabs .nav-link.active {
+      background: var(--rcmdr-surface); color: var(--rcmdr-heading);
+      font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+    }
+    .rcmdr-result-hint {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: .75rem; flex-wrap: wrap;
+      padding: .4rem .75rem; margin-bottom: var(--rcmdr-space);
+      background: var(--rcmdr-surface); color: var(--rcmdr-text);
+      border: 1px solid var(--rcmdr-border);
+      border-left: .3rem solid var(--rcmdr-accent);
+      border-radius: var(--rcmdr-radius);
+    }
+    .rcmdr-result-hint-text { font-size: .9rem; min-width: 0; }
+    .rcmdr-result-hint .form-group,
+    .rcmdr-result-hint .form-check { margin-bottom: 0; }
+    .rcmdr-result-hint .form-check-label {
+      font-size: .85rem; color: var(--rcmdr-muted);
+    }
+    .breadcrumb { --bs-breadcrumb-divider-color: var(--rcmdr-muted); }
+    .breadcrumb-item { color: var(--rcmdr-muted); }
+    .breadcrumb-item.active { color: var(--rcmdr-text); }
+    .breadcrumb-item a { color: var(--rcmdr-link); }
+    .breadcrumb-item + .breadcrumb-item::before { color: var(--rcmdr-muted); }
+    .table { color: var(--rcmdr-text); }
+    .table > :not(caption) > * > * {
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+      /* Bootstrap paints cells with --bs-table-bg, which stays white in a
+         dark palette and hid the cell text. */
+      background-color: transparent;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) > * {
+      color: var(--rcmdr-text);
+      background-color: var(--rcmdr-surface-muted);
+    }
+    .table-hover > tbody > tr:hover > * {
+      color: var(--rcmdr-heading);
+      background-color: var(--rcmdr-hover);
+    }
+    body.rcmdr-dark .dataTable tbody tr.rcmdr-row-selected td,
+    body.rcmdr-dark .dataTable tbody tr.selected td {
+      background-color: var(--rcmdr-selection) !important;
+      color: var(--rcmdr-text) !important;
+    }
+    body.rcmdr-dark .dataTables_wrapper,
+    body.rcmdr-dark .dataTables_info,
+    body.rcmdr-dark .dataTables_filter label,
+    body.rcmdr-dark .dataTables_length label { color: var(--rcmdr-text); }
+    body.rcmdr-dark .dataTables_paginate .paginate_button { color: var(--rcmdr-text) !important; }
+    body.rcmdr-dark .dataTables_paginate .paginate_button.current {
+      background: var(--rcmdr-selection) !important;
+      border-color: var(--rcmdr-border) !important;
+      color: var(--rcmdr-heading) !important;
+    }
+    body.rcmdr-dark .modal-header .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
+    body.rcmdr-dark .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
+    body.rcmdr-dark .btn-light,
+    body.rcmdr-dark .btn-default,
+    body.rcmdr-dark .btn-outline-secondary,
+    body.rcmdr-dark .btn-outline-dark {
+      background: var(--rcmdr-surface-muted); color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    body.rcmdr-dark .btn-light:hover,
+    body.rcmdr-dark .btn-default:hover,
+    body.rcmdr-dark .btn-outline-secondary:hover,
+    body.rcmdr-dark .btn-outline-dark:hover {
+      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
+    }
+    body.rcmdr-dark .btn-link { color: var(--rcmdr-link); }
+    body.rcmdr-dark a { color: var(--rcmdr-link); }
+    body.rcmdr-dark .dropdown-item.active,
+    body.rcmdr-dark .dropdown-item:active { background: var(--rcmdr-selection); color: var(--rcmdr-heading); }
+    body.rcmdr-dark .text-muted { color: var(--rcmdr-muted) !important; }
+    body.rcmdr-dark .text-dark,
+    body.rcmdr-dark .text-body { color: var(--rcmdr-text) !important; }
+    body.rcmdr-dark .text-success { color: var(--rcmdr-success) !important; }
+    body.rcmdr-dark .text-warning { color: var(--rcmdr-warning) !important; }
+    body.rcmdr-dark .text-danger,
+    body.rcmdr-dark .text-error { color: var(--rcmdr-danger) !important; }
+    body.rcmdr-dark .shiny-output-error,
+    body.rcmdr-dark .shiny-output-error-validation,
+    body.rcmdr-dark .shiny-output-error-error { color: var(--rcmdr-danger) !important; }
+    body.rcmdr-dark .btn-danger {
+      background-color: #b42318; border-color: #d92d20; color: #ffffff;
+    }
+    body.rcmdr-dark .btn-danger:hover { background-color: #d92d20; color: #ffffff; }
+    body.rcmdr-dark .btn-outline-danger { color: var(--rcmdr-danger); border-color: var(--rcmdr-danger); }
+    body.rcmdr-dark .text-secondary { color: var(--rcmdr-muted) !important; }
+    body.rcmdr-dark .bg-white,
+    body.rcmdr-dark .bg-light { background-color: var(--rcmdr-surface) !important; }
+    body.rcmdr-dark .border,
+    body.rcmdr-dark .border-top,
+    body.rcmdr-dark .border-bottom,
+    body.rcmdr-dark .border-start,
+    body.rcmdr-dark .border-end { border-color: var(--rcmdr-border) !important; }
+    body.rcmdr-dark .badge.bg-light,
+    body.rcmdr-dark .badge.bg-white {
+      background: var(--rcmdr-surface-muted) !important;
+      color: var(--rcmdr-text) !important;
+    }
+    body.rcmdr-dark .badge.bg-secondary { background: var(--rcmdr-surface-muted) !important; color: var(--rcmdr-text) !important; }
+    body.rcmdr-dark hr { border-color: var(--rcmdr-border); opacity: .7; }
+    body.rcmdr-dark pre,
+    body.rcmdr-dark code {
+      background-color: var(--rcmdr-surface-sunken);
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    body.rcmdr-dark .shiny-input-container > label,
+    body.rcmdr-dark .control-label,
+    body.rcmdr-dark legend { color: var(--rcmdr-text); }
+    body.rcmdr-dark .rcmdr-topbar .selectize-input,
+    body.rcmdr-dark .rcmdr-topbar .form-select {
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+

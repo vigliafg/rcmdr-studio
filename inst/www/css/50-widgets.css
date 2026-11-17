@@ -1,0 +1,77 @@
+    /* Bootstrap widgets follow the palette ------------------------------- */
+    body .form-control,
+    body .form-select,
+    body .form-check-input,
+    body .input-group-text {
+      background-color: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    .form-text, .help-block { color: var(--rcmdr-muted); }
+    .text-success { color: var(--rcmdr-success); }
+    .text-danger { color: var(--rcmdr-danger); }
+    .rcmdr-topbar .text-success { color: #7ee2a8; }
+    .rcmdr-topbar .text-danger { color: #ffb3ad; }
+    .form-control::placeholder { color: var(--rcmdr-muted); opacity: 1; }
+    body.rcmdr-dark .form-control::placeholder { color: var(--rcmdr-disabled); }
+    /* selectize ships its own white stylesheet, so these need to outrank it. */
+    body .selectize-control .selectize-input,
+    body .selectize-control .selectize-input.focus,
+    body .selectize-control .selectize-input.full,
+    body .selectize-control .selectize-input.input-active,
+    body .selectize-control .selectize-input.active,
+    body .selectize-control .selectize-input.dropdown-active,
+    body .selectize-control .selectize-dropdown {
+      background-color: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    body .selectize-control .selectize-input.focus { box-shadow: var(--rcmdr-focus-ring); }
+    body .selectize-control .selectize-input input,
+    body .selectize-control.single .selectize-input .item,
+    body .selectize-control .selectize-dropdown .option,
+    body .selectize-control .selectize-dropdown .optgroup-header { color: var(--rcmdr-text); }
+    body .selectize-control .selectize-dropdown .optgroup-header {
+      background: var(--rcmdr-surface-muted);
+      color: var(--rcmdr-muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    body .selectize-control .selectize-dropdown .option.active,
+    body .selectize-control .selectize-dropdown .option:hover {
+      background: var(--rcmdr-hover); color: var(--rcmdr-heading);
+    }
+    body .selectize-control.single .selectize-input:after {
+      border-color: var(--rcmdr-text) transparent transparent transparent;
+    }
+    body .selectize-control.multi .selectize-input > div {
+      background: var(--rcmdr-surface-muted); color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    .card,
+    .card-header,
+    .card-footer,
+    .list-group-item,
+    .accordion-item,
+    .modal-content,
+    .modal-header,
+    .modal-footer,
+    .dropdown-menu {
+      background-color: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border);
+    }
+    .card-header, .card-footer, .modal-header, .modal-footer {
+      background-color: var(--rcmdr-surface-muted);
+    }
+    .dropdown-item { color: var(--rcmdr-text); }
+    .dropdown-item:hover,
+    .dropdown-item:focus { background: var(--rcmdr-hover); color: var(--rcmdr-heading); }
+    .nav-tabs { border-color: var(--rcmdr-border); }
+    .nav-tabs .nav-link { color: var(--rcmdr-link); }
+    .nav-tabs .nav-link:hover { border-color: var(--rcmdr-border); background: var(--rcmdr-hover); }
+    .nav-tabs .nav-link.active {
+      background: var(--rcmdr-surface); color: var(--rcmdr-text);
+      border-color: var(--rcmdr-border) var(--rcmdr-border) var(--rcmdr-surface);
+    }

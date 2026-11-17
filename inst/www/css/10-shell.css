@@ -1,0 +1,59 @@
+
+    body { background: var(--rcmdr-bg); }
+    .rcmdr-topbar { background: var(--rcmdr-primary); color: var(--rcmdr-on-primary); }
+    .rcmdr-topbar .badge-box { color: var(--rcmdr-on-primary-muted); font-size: .9rem; }
+    .rcmdr-topbar .form-select { max-width: 8rem; }
+    /* Selectize renders its own dropdown at z-index 1000; the menubar and the
+       toolbar sit at 1040, so the language and theme lists were painted under
+       them.  Keep every select list above those bars. */
+    .selectize-control .selectize-dropdown { z-index: 1050; }
+    .rcmdr-sidebar {
+      background: var(--rcmdr-surface); border-right: 1px solid var(--rcmdr-border);
+      min-height: calc(100vh - 90px); padding: .75rem .65rem;
+      max-height: calc(100vh - 90px); overflow-y: auto;
+    }
+    .rcmdr-menu-group > summary {
+      cursor: pointer; font-weight: 600; padding: .25rem 0;
+      list-style: none; color: var(--rcmdr-heading);
+    }
+    .rcmdr-menu-group > summary::-webkit-details-marker { display: none; }
+    .rcmdr-menubar { display: flex; align-items: stretch; gap: .1rem;
+      flex-wrap: wrap; overflow: visible;
+      background: var(--rcmdr-surface); border-bottom: 1px solid var(--rcmdr-border);
+      padding: .2rem .5rem; position: relative; z-index: 1040; }
+    .rcmdr-menubar-group { position: relative; }
+    .rcmdr-menubar-group > summary { list-style: none; cursor: pointer;
+      padding: .45rem .7rem; border-radius: .3rem; color: var(--rcmdr-heading);
+      font-weight: 500; white-space: nowrap; }
+    .rcmdr-menubar-group > summary::-webkit-details-marker { display: none; }
+    .rcmdr-menubar-group > summary:hover,
+    .rcmdr-menubar-group[open] > summary { background: var(--rcmdr-hover); }
+    .rcmdr-menubar-dropdown { position: absolute; top: calc(100% + .15rem);
+      left: 0; min-width: 270px; max-width: 420px; max-height: 75vh;
+      overflow-y: auto; background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
+      border-radius: .4rem; box-shadow: 0 .6rem 1.4rem rgba(31, 58, 95, .18);
+      padding: .35rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group { margin: .1rem 0; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group > summary {
+      padding: .32rem .45rem; border-radius: .25rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-group > summary:hover {
+      background: var(--rcmdr-hover); }
+    .rcmdr-menubar-dropdown .rcmdr-menu-children { padding-left: .55rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-row { padding-left: .15rem; }
+    .rcmdr-menubar-dropdown .rcmdr-menu-item { white-space: normal; }
+    .rcmdr-menubar-toggle { display: none; }
+    @media (max-width: 991px) {
+      .rcmdr-menubar-group > summary { padding: .4rem .5rem; font-size: .92rem; }
+      .rcmdr-menubar-dropdown { width: calc(100vw - 1rem);
+        min-width: 0; max-width: calc(100vw - 1rem); }
+    }
+    .rcmdr-menu-group > summary:before { content: '\25B8'; display: inline-block;
+      width: 1em; transition: transform .1s; }
+    .rcmdr-menu-group[open] > summary:before { transform: rotate(90deg); }
+    .rcmdr-menu-children { padding-left: .9rem; }
+    .rcmdr-menu-item { display: block; padding: .12rem 0; text-decoration: none;
+      color: var(--rcmdr-link); }
+    .rcmdr-menu-item:hover { color: var(--rcmdr-accent); text-decoration: underline; }
+    .rcmdr-menu-item.disabled { color: var(--rcmdr-disabled); cursor: not-allowed; }
+    .rcmdr-statusbar { background: var(--rcmdr-surface-muted); border-top: 1px solid var(--rcmdr-border);
+      padding: .25rem .75rem; font-size: .85rem; color: var(--rcmdr-muted); }

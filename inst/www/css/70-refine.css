@@ -1,0 +1,47 @@
+    /* Search highlights stay readable on every palette ------------------- */
+    .rcmdr-menu-mark,
+    .rcmdr-help-result-snippet mark {
+      background: var(--rcmdr-mark-bg);
+      color: var(--rcmdr-mark-text);
+      padding: 0 .12rem;
+      border-radius: .15rem;
+    }
+    .rcmdr-menu-item.disabled,
+    .rcmdr-palette-result.disabled { color: var(--rcmdr-disabled); }
+    .rcmdr-status-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-ok-fg); }
+    .rcmdr-status-warning { background: var(--rcmdr-warn-bg); color: var(--rcmdr-warn-fg); }
+    .rcmdr-status-error { background: var(--rcmdr-err-bg); color: var(--rcmdr-err-fg); }
+    .rcmdr-status-muted { background: var(--rcmdr-surface-muted); color: var(--rcmdr-muted); }
+    body.rcmdr-dark .rcmdr-status-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-ok-fg); }
+    body.rcmdr-dark .rcmdr-status-warning { background: var(--rcmdr-warn-bg); color: var(--rcmdr-warn-fg); }
+    body.rcmdr-dark .rcmdr-status-error { background: var(--rcmdr-err-bg); color: var(--rcmdr-err-fg); }
+    body.rcmdr-dark .rcmdr-status-muted { background: var(--rcmdr-surface-muted); color: var(--rcmdr-muted); }
+    .rcmdr-home-hero {
+      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%, var(--rcmdr-hero-to) 100%);
+      color: var(--rcmdr-on-primary);
+    }
+    .rcmdr-home-hero p { color: var(--rcmdr-on-primary-muted); }
+    .rcmdr-code-preview,
+    .rcmdr-report-source { background: var(--rcmdr-surface-sunken); }
+    .rcmdr-cell-output pre,
+    .rcmdr-help-body pre,
+    .rcmdr-help-example-code,
+    .rcmdr-workflow-draft pre { background: var(--rcmdr-surface-sunken); color: var(--rcmdr-text); }
+    .rcmdr-doc-tab { color: var(--rcmdr-text); }
+    .rcmdr-doc-tab a,
+    .rcmdr-help-category,
+    .rcmdr-report-outline a { color: var(--rcmdr-link); }
+    .rcmdr-doc-tab .rcmdr-doc-mode,
+    .rcmdr-doc-tab .rcmdr-doc-close,
+    .rcmdr-doc-tab .rcmdr-doc-new { color: var(--rcmdr-muted); }
+    :focus-visible { outline-color: var(--rcmdr-accent); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    
