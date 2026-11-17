@@ -35,13 +35,16 @@ token con un ruolo**, non scrivere un valore nel selettore.
 | File | Contenuto |
 |---|---|
 | `00-tokens.css` | palette (7 regole colore), scala tipografica, spaziature, raggi, ombre, focus |
+| `10-shell.css` | shell: topbar, barra laterale, barra di stato, striscia delle viste |
+| `20-components.css` | componenti condivisi: badge, toolbar, schede, chrome dei modali, viste |
 | `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-btn-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`) e i componenti `field`, switch, segmented |
 | `40-dialogs.css` | usa i token; nessuna definizione |
 | altri file | solo `var(--rcmdr-…)` |
 
-I nomi dei file sono storici (U0 ha estratto blocchi contigui). La
-riorganizzazione per strati descritta nel piano è rinviata a U2, quando i
-componenti verranno riscritti comunque.
+I nomi dei file sono storici (U0 ha estratto blocchi contigui). U2 ha
+consolidato le regole di shell in `10-shell.css`, togliendole da `30-forms.css`
+e `60-views.css`; una divisione per strati più stretta non serve finché ogni
+regola ha un solo posto dove vivere.
 
 ---
 

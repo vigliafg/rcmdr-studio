@@ -420,7 +420,7 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: in corso (U0, U1 e U2.1 completate).
+Stato: in corso (U0, U1 e U2 completate).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -433,9 +433,9 @@ Stato: in corso (U0, U1 e U2.1 completate).
 | U1.3 | Bottoni: primario, secondario, ghost, pericolo | [x] | `b314130`, sei ruoli, `sm` a 28 px |
 | U1.4 | Test di contrasto WCAG sui token | [x] | `b314130`, `border-strong`, hero corretta |
 | U2.1 | `field()`, `field_grid()`, `switch_input()`, `segmented_input()`, `number_input()` | [x] | `9b6178a`, stessi ID e valori |
-| U2.2 | `toolbar()`, `modal_header()`, `modal_footer()`, `tabs_strip()`, `badge()` | [ ] | |
-| U2.3 | Restyle topbar, tab strip, statusbar, sidebar | [ ] | |
-| U2.4 | Sostituire i 15 `checkboxInput` diretti | [ ] | via `switch_input()` |
+| U2.2 | `toolbar()`, `modal_header()`, `modal_footer()`, `tabs_strip()`, `badge()` | [x] | `d3c13bb`, `badge()` già usato in tre viste |
+| U2.3 | Restyle topbar, tab strip, statusbar, sidebar | [x] | `d3c13bb`, etichette nascoste, striscia a pillola |
+| U2.4 | Sostituire i 15 `checkboxInput` diretti | [x] | `d3c13bb`, 3 preferenze a switch, 12 parametri restano checkbox |
 | U3.1 | Chrome comune + dialogo *Options* | [ ] | vetrina |
 | U3.2 | Lotto dati e import | [ ] | test aggiornati |
 | U3.3 | Lotto statistiche | [ ] | |

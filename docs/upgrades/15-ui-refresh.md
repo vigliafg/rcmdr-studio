@@ -1,7 +1,7 @@
 # Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** in corso — U0, U1 e U2.1 completate il 17 novembre 2026  
+**Stato:** in corso — U0, U1 e U2 completate il 17 novembre 2026  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 0 (token e shell), Onda 5 (piattaforma dialoghi)  
 **Documento padre:** [`README.md`](README.md)
@@ -172,7 +172,8 @@ codice.
   `segmented_input`, `number_input`, `toolbar`, `modal_header`,
   `modal_footer`, `tabs_strip`, `badge`.
 - Restyle di topbar, tab strip, statusbar, sidebar e ricerca menu.
-- Sostituzione dei `checkboxInput` diretti (17) con `switch_input`.
+- Sostituzione dei `checkboxInput` diretti (15): `switch_input()` dove il
+  valore è una preferenza, checkbox dove è un parametro del comando.
 
 **Accettazione:** ogni componente ha un test di rendering e un esempio nella
 documentazione interna; la shell non contiene più div con classi Bootstrap

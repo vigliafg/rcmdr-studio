@@ -1,9 +1,9 @@
 # Diario di handoff — Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** parziale — U0, U1 e U2.1 completate; U2.2–U5 da fare  
+**Stato:** parziale — U0, U1 e U2 completate; U3.1–U5 da fare  
 **Ondata precedente:** `wave-14-dependencies.md` (Onda 14, 2.7.0)  
-**Ondata successiva:** Onda 15 — continuazione (U2.2 → U3.1 → U5)  
+**Ondata successiva:** Onda 15 — continuazione (U3.1 → U4 → U5)  
 **Documento di settore:** [`15-ui-refresh.md`](../15-ui-refresh.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
 **Checklist:** [`CHECKLIST.md`](../CHECKLIST.md)
@@ -16,7 +16,7 @@
 comandi, stessi ID, stessi test di semantica; CSS e JS fuori da `R/app.R`;
 controlli, dialoghi e viste con una sola grammatica visiva.
 
-**Risultato di questo batch:**
+**Risultato dell'ondata fin qui:**
 
 - **U0.4** — `docs/upgrades/UI-TOKENS.md`: ruoli dei 33 colori, scala
   tipografica, spaziature a 4 px, raggi, ombre, altezze, stati, regole di
@@ -54,11 +54,38 @@ controlli, dialoghi e viste con una sola grammatica visiva.
   `number_input()` in `R/widgets.R`. Sono varianti di presentazione: stessi ID,
   stessi valori inviati, markup Shiny intatto; `spin_input()` delega a
   `number_input()` per non avere due implementazioni.
+- **U2.2** — `toolbar()`, `badge()`, `modal_header()`, `modal_footer()`,
+  `tabs_strip()` in `R/ui-components.R`. `toolbar()` è il nome canonico di
+  `studio_toolbar()`, che ora delega: una sola implementazione e i tre
+  chiamanti non cambiano. `badge()` ha cinque stati sulle coppie `ok`/`warn`/
+  `err` già misurate da `test-contrast.R`. `modal_header()` e `modal_footer()`
+  costruiscono il chrome completo (icona, categoria, chiusura; azione primaria
+  a destra) che U3.1 userà. `tabs_strip()` è un gruppo di pulsanti a pressione
+  (`aria-pressed`), non un pattern ARIA tab: non implementa le frecce, quindi
+  non promette ciò che non fa. Primi consumatori reali: i badge di stato di
+  Report Studio, Script Studio e dei modelli del Chart Studio, che prima
+  usavano `bg-success`/`bg-danger` di Bootstrap e nei temi scuri non seguivano
+  la palette.
+- **U2.3** — shell. La topbar ha una marca con icona; lingua e tema hanno
+  un'etichetta nascosta (prima i due select erano senza nome accessibile). La
+  barra di stato è una riga di fatti separati da bordi, non da `" | "` letti
+  dallo screen reader, e la modalità è un badge. La striscia delle viste è una
+  pillola con la coppia `primary`/`on-primary`. Le regole di shell duplicate
+  tra `10-shell.css` e `30-forms.css` sono state consolidate in `10-shell.css`
+  e `#main_tabs` è passato da `60-views.css` a `10-shell.css`. La modalità
+  classica non cambia markup: stesso `tabsetPanel`, stessi `data-value`.
+- **U2.4** — `switch_input()` adottato dove il valore è una preferenza:
+  `auto_append` (Script classico e Studio) e `result_hint_auto`, che finisce
+  nelle opzioni salvate. I 12 checkbox rimasti sono parametri di comando
+  (ggstatsplot, Chart Studio), un'opzione di salvataggio del progetto o filtri
+  di vista (galleria, output, palette): un interruttore prometterebbe un
+  effetto immediato che non hanno. Un test fissa la distinzione.
 
-**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1.
+**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4.
 
-**Cosa non è pronto:** nessuna verifica visiva registrata (vedi § 7), i widget
-nuovi non sono ancora adottati dai dialoghi (U2.2–U3.1), U2.2–U5.
+**Cosa non è pronto:** nessuna verifica visiva registrata (vedi § 7);
+`tabs_strip()` e il chrome dei modali aspettano il primo consumatore (U4 e
+U3.1); `segmented_input()` non è ancora usato da nessun dialogo (U3.1).
 
 ---
 
@@ -77,6 +104,7 @@ nuovi non sono ancora adottati dai dialoghi (U2.2–U3.1), U2.2–U5.
 | `4083590` | `feat(ui): type scale, uniform controls and a single focus ring` | U1.1 e U1.2 condividono il commit: la densità contiene sia gli alias di tipografia sia l'altezza dei controlli |
 | `b314130` | `feat(ui): button roles, accessible boundaries and measured contrast` | U1.3 e U1.4; condividono il commit perché `50-widgets.css` contiene sia i bottoni sia il bordo dei campi |
 | `9b6178a` | `feat(ui): form helpers for fields, switches, segments and numbers` | U2.1, nessun cambio di markup nei dialoghi |
+| `d3c13bb` | `feat(ui): shared components, refreshed shell and preference switches` | U2.2–U2.4 condividono il commit: `app.R` contiene sia la shell sia l'adozione di `switch_input()` |
 
 ---
 
@@ -90,6 +118,7 @@ nuovi non sono ancora adottati dai dialoghi (U2.2–U3.1), U2.2–U5.
 - `tests/testthat/test-contrast.R`
 - `tests/testthat/helper-tokens.R` (parser delle palette e formula WCAG)
 - `tests/testthat/test-widgets.R`
+- `tests/testthat/test-shell.R`
 
 ### Modificati
 
@@ -116,12 +145,13 @@ nuovi non sono ancora adottati dai dialoghi (U2.2–U3.1), U2.2–U5.
 |---|---|---|
 | Suite completa | `testthat::test_local()` | vedere § 4.1 |
 | Token | `test_local(filter="ui-tokens")` | verde |
-| Contrasto | `test_local(filter="contrast")` | verde (215 asserzioni) |
+| Contrasto | `test_local(filter="contrast")` | verde (243 asserzioni) |
 | Bottoni | `test_local(filter="buttons")` | verde (34 asserzioni) |
-| Helper di form | `test_local(filter="widgets")` | verde (34 asserzioni) |
+| Helper di form | `test_local(filter="widgets")` | verde (41 asserzioni) |
 | Densità | `test_local(filter="density")` | verde |
 | Accessibilità | `test_local(filter="accessibility")` | verde |
-| Componenti | `test_local(filter="ui-components")` | verde |
+| Componenti | `test_local(filter="ui-components")` | verde (158 asserzioni) |
+| Shell | `test_local(filter="shell")` | verde (10 asserzioni) |
 | Integrazione | `test_local(filter="app-integration")` | verde (warning rgl senza X11) |
 | Struttura CSS | controllo su graffe e dichiarazioni | 0 problemi |
 
@@ -129,11 +159,12 @@ nuovi non sono ancora adottati dai dialoghi (U2.2–U3.1), U2.2–U5.
 
 `EXIT=0`. Nessun failure, 22 test e2e saltati (richiedono
 `RCMDRSHINY_E2E=1`), 3 warning già noti: rgl senza X11, `rgl.init` in fallback,
-`match_font()` deprecato in systemfonts. I quattro file di test nuovi sono
-verdi.
+`match_font()` deprecato in systemfonts. I quattro file di test nuovi o
+aggiornati sono verdi; `test-shell.R` aggiunge due warning rgl perché avvia il server per
+leggere la barra di stato.
 
-**Artefatti:** `/tmp/opencode/tests-u2.log` (batch corrente),
-`/tmp/opencode/tests-u1.log` (batch precedente).
+**Artefatti:** `/tmp/opencode/tests-u2d.log` (batch corrente),
+`/tmp/opencode/tests-u2.log`, `/tmp/opencode/tests-u1.log`.
 
 ---
 
@@ -191,6 +222,21 @@ verdi.
 - **`spin_input()` delega a `number_input()`.** Due nomi per la stessa cosa non
   sono due implementazioni: `number_input()` è il nome canonico, `spin_input()`
   resta per i dialoghi Rcmdr e chiama il primo.
+- **Un solo `toolbar()`.** `studio_toolbar()` resta come alias delegante: i
+  tre chiamanti non cambiano, ma l'implementazione è una. Il ruolo ARIA
+  `toolbar` compare solo quando c'è un'etichetta, così non si annuncia una
+  barra senza nome.
+- **`tabs_strip()` non è ARIA tabs.** Il pattern `tab` richiede le frecce; il
+  componente usa `aria-pressed` su pulsanti normali, che è vero e resta
+  raggiungibile da tastiera. Il primo consumatore è U4 (striscia documenti),
+  quindi per ora è coperto solo dai test.
+- **La striscia delle viste resta `tabsetPanel`.** Sostituirla con un
+  componente avrebbe voluto dire reimplementare il binding di Shiny e cambiare
+  il markup della modalità classica: si veste con i token e la coppia
+  `primary`/`on-primary`, senza riscriverla.
+- **Un interruttore solo per le preferenze.** `switch_input()` promette un
+  effetto immediato; un parametro che finisce in un comando o un filtro di
+  vista non lo ha. Per questo l'adozione è 3 su 15, non 15 su 15.
 - **`:has()` per il segmented.** Il radio è nascosto ma resta nel DOM e nel
   tab order; l'anello di focus e lo stato scelto si disegnano sull'etichetta
   con `:has(input:checked)` / `:has(input:focus-visible)`. È l'unico modo di
@@ -211,6 +257,10 @@ verdi.
 | U1.4 | test di contrasto | test + helper condiviso | la formula WCAG serve anche a `ui-tokens`; un helper evita due parser |
 | U2.1 | cinque helper nuovi | `number_input()` è il nome canonico e `spin_input()` delega | due nomi per la stessa cosa non devono diventare due implementazioni |
 | U2.1 | `number_input()` con stepper JS | nessuno stepper | il `<input type=number>` nativo ha già i suoi controlli; un secondo stepper sarebbe decorazione |
+| U2.2 | cinque componenti nuovi | `toolbar()` è il nome canonico di `studio_toolbar()`, che delega | due nomi per la stessa cosa non devono diventare due implementazioni |
+| U2.2 | cinque componenti nuovi | primo consumatore reale solo per `badge()` e `toolbar()` | `modal_header()`/`modal_footer()` servono a U3.1 e `tabs_strip()` a U4: si aggiungono ora perché i test li fissano prima dell'uso |
+| U2.4 | 15 `checkboxInput` → `switch_input()` | 3 switch, 12 checkbox | gli altri sono parametri di comando, opzioni di salvataggio o filtri: un interruttore mentirebbe sull'effetto |
+| U2.3 | “la shell non contiene più classi Bootstrap scritte a mano” | la shell usa ancora utility (`d-flex`, `gap-2`) | sono il layout di Bootstrap, non un secondo sistema di colore; la loro sostituzione è U4.1, dove la shell viene rifatta |
 
 ---
 
@@ -220,7 +270,9 @@ verdi.
 |---|---|---|---|
 | Evidenziazione del tour in `#f59e0b` | colore intenzionale, non un token di tema | lasciato | U5.2 |
 | `filter: brightness()` sui bottoni pieni | non è un token: è una trasformazione | accettato: scala testo e sfondo insieme e non aggiunge palette; se un tema lo rende sporco si passa a una coppia `-hover` per tema | U5.2 |
-| Gli helper di U2.1 non sono ancora usati dai dialoghi | CSS e helper esistono ma nessun dialogo li adotta | l'adozione è U2.4 (`switch_input` nei 15 checkbox diretti) e U3.1 (*Options*) | U2.4 |
+| `tabs_strip()`, `modal_header()` e `modal_footer()` senza consumatore | codice coperto dai test ma non ancora usato | il primo uso arriva in U3.1 (chrome) e U4 (striscia documenti); se cambiano forma, si cambiano una volta sola | U3.1 / U4 |
+| `segmented_input()` non usato da nessun dialogo | il controllo esiste, i dialoghi usano ancora i radio | *Options* è il primo posto giusto: interfaccia e densità sono due scelte binarie | U3.1 |
+| Utility Bootstrap nella shell | l'accettazione di U2 chiede una shell senza classi scritte a mano | rimandato: U4.1 rifà la shell, sostituirle ora sarebbe lavoro buttato | U4.1 |
 | Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; gli e2e restano la verifica di struttura | U5.1 |
 | 22 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli prima della chiusura di U3 | U3 |
 
@@ -247,27 +299,31 @@ verdi.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. **U2.2 — componenti condivisi.** `toolbar()`, `modal_header()`,
-   `modal_footer()`, `tabs_strip()`, `badge()` in `R/ui-components.R`, con
-   `rcmdr_icon()`. Nessun cambio di ID; i componenti si aggiungono.
-2. **U2.3 — shell.** Topbar, tab strip, statusbar e sidebar passano ai
-   componenti; la topbar deve usare `btn-outline-light` e i badge giusti.
-3. **U2.4 — adozione degli helper.** I 15 `checkboxInput` diretti passano a
-   `switch_input()` dove il valore è una preferenza; i gruppi radio brevi a
-   `segmented_input()`. Solo presentazione: gli `on_ok()` non cambiano.
+1. **U3.1 — chrome dei dialoghi.** `dialog_modal()` passa a
+   `modal_header()`/`modal_footer()`: icona dal catalogo (senza cambiare gli
+   ID), corpo in `field_grid`, azione primaria a destra. Il footer deve
+   mantenere `dialog_help`, `dialog_insert_script`, `dialog_reset`,
+   `dialog_cancel`, `dialog_apply`, `dialog_ok`: stessi ID, stesso ordine di
+   tabulazione, `Esc` invariato.
+2. **U3.1 — *Options*.** `segmented_input()` per interfaccia e densità (due
+   scelte), `switch_input()` per `stringsAsFactors`, `use_markdown`,
+   `use_knitr`; `number_input()` per digits, width e soglia. Gli `on_ok()` non
+   cambiano: gli ID sono gli stessi.
+3. **U3.2 — lotto dati e import.** Applicare gli helper ai dialoghi dati, con i
+   test dei costruttori di comando come rete.
 
-Poi **U3.1 — chrome dei dialoghi e *Options*** è la prima pillola visibile:
-header con icona, corpo in griglia, footer con l'azione primaria a destra.
+Poi **U4.1** rifà la shell (e chiude l'accettazione “niente utility a mano”),
+**U4.2–U4.5** le viste, **U5** la matrice temi e la QA.
 
 ### Task dell'ondata
 
 | ID | Task | Priorità | Note |
 |---|---|---|---|
-| U2.2 | Componenti condivisi | alta | toolbar, modale, tab, badge |
-| U2.3 | Shell | alta | topbar, tab, statusbar, sidebar |
-| U2.4 | Adozione di switch e segmented | media | 15 checkbox diretti |
 | U3.1 | Chrome + *Options* | alta | prima pillola visibile |
-| U4–U5 | Viste, matrice temi, QA | media | |
+| U3.2–U3.5 | Lotti dei dialoghi | alta | dati, statistiche, grafici, resto |
+| U4.1 | Shell | alta | chiude le utility a mano |
+| U4.2–U4.5 | Viste | media | Data, Chart, Report, Workbench |
+| U5 | Matrice temi, QA, NEWS | media | |
 
 ---
 
@@ -277,14 +333,15 @@ header con icona, corpo in griglia, footer con l'azione primaria a destra.
 cd ~/Documenti/GitHub/rcmdr-studio
 git status
 git log --oneline -6
-Rscript -e 'testthat::test_local(filter="ui-tokens|contrast|buttons|widgets|density")'
+Rscript -e 'testthat::test_local(filter="ui-tokens|contrast|buttons|widgets|shell|density")'
 Rscript -e 'pkgload::load_all("."); cat(as.character(app_css()))' | grep -c -- '--rcmdr-'
 # anteprima locale (l'app è già avviata su 3841 in questa sessione)
 RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 ```
 
 **Baseline attesa:** suite completa verde, 22 skip e2e, 3 warning noti
-(rgl, `match_font`). `app_css()` cresce di circa 2 KB per la scala.
+(rgl, `match_font`). `app_css()` cresce di circa 2 KB per la scala e di circa
+1,5 KB per badge, schede e chrome dei modali.
 
 ---
 
@@ -307,7 +364,7 @@ RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 
 ## 12. Aggiornamenti alla checklist
 
-- [x] `CHECKLIST.md` aggiornata (U0.4, U1.1, U1.2, U1.3, U1.4, U2.1).
+- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2).
 - [x] `15-ui-refresh.md` e `README.md` segnano l'onda in corso.
 - [x] `UI-TOKENS.md` scritto e coerente con il codice.
 - [x] Diario scritto.
