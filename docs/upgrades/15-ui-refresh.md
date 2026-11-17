@@ -1,7 +1,7 @@
 # Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** in corso — U0–U3 completate il 17 novembre 2026; U4–U5 da fare  
+**Stato:** in corso — U0–U3 completate; U4 in corso (shell, Data Studio e Report Studio fatti)  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 0 (token e shell), Onda 5 (piattaforma dialoghi)  
 **Documento padre:** [`README.md`](README.md)

@@ -124,7 +124,7 @@ Report Studio riusa la galleria grafici.
 
 **Onda 15 in corso dal 17 novembre 2026.** Il piano è in
 [`15-ui-refresh.md`](15-ui-refresh.md): nessun cambio di comandi o ID, solo
-pelle, componenti e chrome dei dialoghi. U0–U3 sono completate; il
+pelle, componenti e chrome dei dialoghi. U0–U3 sono completate e U4 è in corso; il
 diario è [`diary/wave-15-ui-refresh.md`](diary/wave-15-ui-refresh.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è

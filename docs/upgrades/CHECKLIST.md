@@ -420,7 +420,7 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: in corso (U0–U3 completate; U4–U5 da fare).
+Stato: in corso (U0–U3 completate; U4 in corso: shell, Data Studio e Report Studio fatti).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -441,10 +441,10 @@ Stato: in corso (U0–U3 completate; U4–U5 da fare).
 | U3.3 | Lotto statistiche | [x] | `95b4808`, segmented per le scelte corte, `number_input()` per gli undici numeri |
 | U3.4 | Lotto grafici | [x] | `95b4808`, tipo, scala, assi, coda |
 | U3.5 | Lotto modelli, report, progetto, script | [x] | `95b4808`, modelli e documenti; report e progetto senza modifiche |
-| U4.1 | Home e shell | [ ] | 991/1280/1600 px |
-| U4.2 | Data Studio | [ ] | |
+| U4.1 | Home e shell | [~] | `783e6de` shell senza utility; Home da rifare |
+| U4.2 | Data Studio | [x] | `fef1dfd`, toolbar componente, griglia 2 tracce |
 | U4.3 | Chart Studio | [ ] | |
-| U4.4 | Report Studio | [ ] | |
+| U4.4 | Report Studio | [x] | `2217dff`, griglia 3 tracce, stato senza pipe |
 | U4.5 | Workbench e Help | [ ] | |
 | U5.1 | Matrice 8 temi × 2 densità | [ ] | contrasto + visuale |
 | U5.2 | Tastiera, focus trap, `Esc`, reduced motion, zoom 200% | [ ] | |
