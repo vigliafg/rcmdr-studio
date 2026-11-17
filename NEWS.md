@@ -1,5 +1,41 @@
 # RcmdrShiny Studio 2.8.0
 
+## Interface refresh — one component vocabulary
+
+- **Shared components in every view**: the shell, Home, Data Studio, Chart
+  Studio, Report Studio, Script, Help and the workflow panel now build their
+  headings, notes, action rows, toolbars, tab strips, badges and dialog chrome
+  from `card_head()`, `note()`, `action_row()`, `toolbar()`, `tabs_strip()`,
+  `badge()`, `modal_header()`, `modal_footer()` and `modal_shell()`. Every
+  dialog keeps its ids, its six footer actions and their order; only the
+  markup around them changed.
+- **Forms read in one vocabulary**: `field()`, `field_grid()`,
+  `segmented_input()`, `switch_input()` and `number_input()` replaced the
+  hand-written Bootstrap columns and rows in the dialogs and studios. Numeric
+  options are still `type=number` inputs with the same `min`, `max` and `step`;
+  the server reads the same values.
+- **Layout without layout utilities**: the Studio shell and the views use
+  named `.rcmdr-*` grids and flex rows instead of `d-flex`, `gap-*`, `col-*`
+  and `row g-*`. The responsive breakpoints live in `10-shell.css`,
+  `20-components.css` and `60-views.css`; Classic mode keeps its own tabset
+  and values untouched.
+- **One type and spacing scale**: four text steps, two display steps, two
+  control heights and a single focus ring are tokens in `00-tokens.css` and
+  documented in `docs/upgrades/UI-TOKENS.md`. Density selects spacing only;
+  the colours never change between Compact and Comfortable.
+- **Eight themes by two densities**: the matrix is walked by
+  `tests/testthat/test-theme-matrix.R`; text, muted text, primary text and
+  control borders clear WCAG AA / 3:1 at every combination, and every theme
+  resolves to a palette block and a body class the client applies.
+- **Accessibility**: one `:focus-visible` outline on every control, a
+  `prefers-reduced-motion` block, a labelled command palette, `Esc` and the
+  static backdrop left to Bootstrap's modal contract, and the
+  `visually-hidden` class kept for screen-reader labels.
+- **Secondary dialogs**: the command palette, keyboard shortcuts, tour and
+  project recovery use the same header and footer as the catalogue dialogs;
+  the tour step is the header category, and the palette is named by its
+  heading.
+
 ## Navigation — the tabs are windows, not a second menu
 
 - **Compact interface by default**: dialogs and panels use a denser form

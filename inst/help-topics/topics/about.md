@@ -3,7 +3,7 @@ id: about-studio
 title: About RcmdrShiny Studio
 type: reference
 category: getting-started
-keywords: [about, studio, identity, version, license, upstream]
+keywords: [about, studio, identity, version, license, upstream, theme, density]
 aliases: [about, version, license]
 dialogs: [helpAboutCommander]
 commands: []
@@ -38,7 +38,10 @@ script log, the output and the report.
 - a structured command history with rerun, dialog reopening and insertion;
 - live R-command preview in dialogs;
 - isolated previews for plots and Markdown;
-- theme tokens and high-contrast support;
+- eight themes — follow system, three light, three dark, high contrast — and
+  two densities, Compact and Comfortable, from **Options**;
+- one shared vocabulary of cards, notes, toolbars and dialogs, so every view
+  and dialog reads the same way.
 - a minimal console with Output, Messages and History.
 
 ## Attribution

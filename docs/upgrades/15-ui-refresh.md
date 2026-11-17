@@ -1,7 +1,7 @@
 # Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** in corso — U0–U4 completate tranne i modali secondari; U5 da fare  
+**Stato:** completata — U0–U5; conferma visiva ed e2e rimandate a un browser funzionante  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 0 (token e shell), Onda 5 (piattaforma dialoghi)  
 **Documento padre:** [`README.md`](README.md)

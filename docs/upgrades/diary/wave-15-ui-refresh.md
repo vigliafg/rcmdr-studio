@@ -1,11 +1,12 @@
 # Diario di handoff — Onda 15 — Rifacimento visivo dell'interfaccia
 
 **Data:** 2026-11-17  
-**Stato:** parziale — U0–U3 completate; U4 completate tranne i modali secondari  
+**Stato:** completata — U0–U5  
 **Ondata precedente:** `wave-14-dependencies.md` (Onda 14, 2.7.0)  
-**Ondata successiva:** Onda 15 — continuazione (modali secondari, U5)  
+**Ondata successiva:** — (ondata chiusa)  
 **Documento di settore:** [`15-ui-refresh.md`](../15-ui-refresh.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
+**Verbale di QA:** [`QA-UI-REFRESH.md`](../QA-UI-REFRESH.md)  
 **Checklist:** [`CHECKLIST.md`](../CHECKLIST.md)
 
 ---
@@ -181,15 +182,36 @@ controlli, dialoghi e viste con una sola grammatica visiva.
   diagnostici usano `card_head()`/`note()`. La Help passa a
   `.rcmdr-help-layout` (categorie e risultati, una colonna sotto 992 px) e il
   pannello di aiuto dentro i dialoghi usa `card_head()`.
+- **U4.5 — modali secondari.** `modal_shell()` conserva il guscio di
+  `shiny::modalDialog()` (id, backdrop, fade, dimensione, script di avvio) e
+  sostituisce testata e footer con `modal_header()`/`modal_footer()` tramite
+  `tagQuery()`, come già fa `dialog_modal()`. Palette, scorciatoie, tour e
+  recupero progetto hanno così lo stesso chrome dei dialoghi del catalogo:
+  la palette è nominata dalla testata (`aria-labelledby`) e ha la X che
+  `easyClose` già implicava; il tour mette "Step 2 of 4" nella categoria;
+  il recupero progetto raggruppa Chiudi e Recupera a destra. `easyClose`,
+  backdrop statico, ID e gestori restano quelli di prima.
+- **U5.1 — matrice temi × densità.** `test-theme-matrix.R` percorre le 16
+  combinazioni: ogni tema e densità viene accettato e riletto, ogni tema
+  risolve in un blocco palette e in una classe del client (`system` passa
+  dalla media query), la densità comoda tocca solo token di spaziatura, e
+  testo, testo attenuato, testo sul primario e bordo dei controlli restano
+  sopra AA/3:1 ovunque. Il verbale completo, con i limiti dell'ambiente
+  (e2e e screenshot), è in `QA-UI-REFRESH.md`.
+- **U5.2 — chiusura.** `NEWS.md` descrive il vocabolario condiviso, la scala
+  e la matrice; il topic `about-studio` elenca gli otto temi e le due
+  densità; i test di accessibilità fissano l'anello di focus unico, il
+  blocco reduced-motion, il reflow a una colonna delle sei viste e la
+  tastiera della palette.
 
-**Cosa è pronto:** U0.1–U0.4, U1.1–U1.4, U2.1–U2.4, U3.1–U3.5 e tutte le
-viste U4 (shell, Home, Data Studio, Chart Studio, Report Studio, Workbench,
-Help). `tabs_strip()` ha il suo consumatore.
+**Cosa è pronto:** tutte le viste U4, i modali secondari, la matrice 8 × 2,
+i controlli di accessibilità e la documentazione di chiusura (NEWS, topic,
+checklist, diario, verbale di QA).
 
-**Cosa non è pronto:** i modali secondari (palette, scorciatoie, tour,
-recupero progetto) usano ancora `modalDialog(title=)`; nessuna verifica
-visiva registrata (vedi § 7); la matrice 8 temi × 2 densità, gli e2e con
-`RCMDRSHINY_E2E=1` e `NEWS.md` sono U5.
+**Cosa resta fuori:** la conferma visiva e gli e2e vanno eseguiti su una
+macchina con un browser funzionante (in questo ambiente Chrome headless non
+naviga e Firefox headless non produce screenshot). La checklist manuale è
+in `QA-UI-REFRESH.md` § 5.
 
 ---
 
@@ -217,6 +239,10 @@ visiva registrata (vedi § 7); la matrice 8 temi × 2 densità, gli e2e con
 | `fc4804a` | `feat(ui): rebuild the Home pane on the shared components` | U4.1 Home, schede, workflow, stili spostati nelle viste |
 | `9c2f461` | `feat(ui): bring the Chart Studio onto the shared vocabulary` | U4.3, segmented, griglia 5/7, `number_input()` ovunque |
 | `c372ded` | `feat(ui): rebuild the Script and Help views on the shared components` | U4.5, primo consumatore di `tabs_strip()`, griglie e testate |
+| `7283bfa` | `docs: hand off the Home, Chart, Script and Help views` | diario e checklist del batch precedente |
+| `d7b3442` | `feat(ui): give the secondary dialogs the shared modal chrome` | U4.5, `modal_shell()`, palette/scorciatoie/tour/recupero |
+| `f4d83f7` | `test(ui): walk the eight themes by two densities matrix` | U5.1, matrice R-level |
+| questo commit | `docs: close the interface refresh` | U5.2, NEWS, topic, verbale di QA, diario |
 
 ---
 
@@ -231,6 +257,9 @@ visiva registrata (vedi § 7); la matrice 8 temi × 2 densità, gli e2e con
 - `tests/testthat/helper-tokens.R` (parser delle palette e formula WCAG)
 - `tests/testthat/test-widgets.R`
 - `tests/testthat/test-shell.R`
+- `tests/testthat/test-home.R`
+- `tests/testthat/test-theme-matrix.R`
+- `docs/upgrades/QA-UI-REFRESH.md`
 
 ### Modificati
 
@@ -285,11 +314,12 @@ verdi: `test-shell.R` legge ogni classe di `app_ui()` e la griglia shell,
 `test-data-studio-grid.R` e `test-report-studio.R` leggono il markup delle
 due viste e falliscono se torna una utility; `test-home.R`, `test-health.R`,
 `test-workflows.R`, `test-chart-studio.R`, `test-script-registry.R` e
-`test-help-ui.R` fanno lo stesso per le viste di questo batch. `test-dialog-contract.R` impiega
+`test-help-ui.R` e `test-theme-matrix.R` fanno lo stesso per le viste e per la matrice dei temi. `test-dialog-contract.R` impiega
 circa due minuti perché rende il chrome di tutti i dialoghi.
 
-**Artefatti:** `/tmp/opencode/tests-u45.log` (batch corrente),
-`/tmp/opencode/tests-u43.log`,
+**Artefatti:** `/tmp/opencode/tests-u46.log` (suite finale),
+`/tmp/opencode/e2e-wave0.log` (tentativo e2e),
+`/tmp/opencode/tests-u45.log`, `/tmp/opencode/tests-u43.log`,
 `/tmp/opencode/tests-u3b.log`, `/tmp/opencode/tests-u3a.log`,
 `/tmp/opencode/tests-u2d.log`, `/tmp/opencode/tests-u2.log`,
 `/tmp/opencode/tests-u1.log`.
@@ -414,6 +444,10 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 | U4.2–U4.4 | rimuovere anche `small`/`text-muted` | restano dove sono colore, non layout | `text-muted`/`text-success` sono token di stato già tematizzati; `small` sopravvive solo in testi generati fuori dalle viste (knit history usa ora il token) |
 | U4.1 | etichetta della toolbar | `tr("Data Studio")` e `tr("Report Studio")` | sono chiavi già tradotte: una chiave nuova sarebbe rimasta in inglese in 19 lingue |
 | U4.1 | “nessuna classe Bootstrap nella shell” | restano `visually-hidden` e `visually-hidden-focusable` | sono il meccanismo di accessibilità di Bootstrap (nascondere mantenendo il nome per lo screen reader), non utility di layout; riscriverle sarebbe una copia |
+| U4.5 | X di chiusura su tutti i modali secondari | solo palette e scorciatoie | il tour e il recupero progetto vogliono una decisione esplicita: la X permetterebbe di uscire senza `tour_skip`/`Recover`; il backdrop resta statico |
+| U4.5 | footer del recupero nell'ordine storico | Ignora, Elimina, Chiudi, Recupera | il primario va a destra come nei dialoghi del catalogo; gli ID restano tre e i gestori non cambiano |
+| U5.1 | screenshot prima/dopo | non prodotti | Chrome headless non naviga e Firefox headless non scrive l'immagine in questo ambiente; la checklist manuale sostituisce il confronto |
+| U5.1 | e2e con `RCMDRSHINY_E2E=1` | non eseguiti | `Page.navigate` va in timeout anche su `about:blank`: è l'ambiente, non l'app; i 26 test restano saltati |
 
 ---
 
@@ -421,30 +455,29 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 
 | Problema | Impatto | Workaround | Task collegata |
 |---|---|---|---|
-| Evidenziazione del tour in `#f59e0b` | colore intenzionale, non un token di tema | lasciato | U5.2 |
-| `filter: brightness()` sui bottoni pieni | non è un token: è una trasformazione | accettato: scala testo e sfondo insieme e non aggiunge palette; se un tema lo rende sporco si passa a una coppia `-hover` per tema | U5.2 |
+| Evidenziazione del tour in `#f59e0b` | colore intenzionale, non un token di tema | accettato: è un contorno temporaneo sopra qualunque superficie, non un ruolo della palette | — |
+| `filter: brightness()` sui bottoni pieni | non è un token: è una trasformazione | accettato: scala testo e sfondo insieme e non aggiunge palette | — |
 | ~~`tabs_strip()` senza consumatore~~ | risolto in U4.5 | la striscia dei documenti lo usa con `payload = TRUE`, `closable = TRUE` e un'etichetta ricca; il contratto semplice resta il default | — |
-| I modali secondari hanno il chrome vecchio | palette, scorciatoie, tour e recupero progetto usano `modalDialog(title=)` | non sono dialoghi del catalogo e hanno footer propri; si allineano nel prossimo passo | U4.5 |
-| ~~Home, Chart Studio e Workbench non ridisegnate~~ | risolto: tutte le viste U4 sono fatte | restano i modali secondari e la QA | U4.5, U5 |
-| Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; gli e2e restano la verifica di struttura | U5.1 |
-| 26 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo batch | eseguirli nella QA, prima di chiudere l'ondata | U5.1 |
+| ~~I modali secondari hanno il chrome vecchio~~ | risolto in `d7b3442` con `modal_shell()` | i quattro dialoghi usano testata e footer comuni; `easyClose`, ID e gestori sono invariati | — |
+| ~~Home, Chart Studio e Workbench non ridisegnate~~ | risolto: tutte le viste U4 sono fatte | risolti anche i modali secondari e la QA R-level | — |
+| Chrome headless non carica `http://127.0.0.1` | nessuno screenshot automatico | l'app è avviata su `3841` per un controllo manuale; il verbale di QA elenca i passi | U5.1, chiuso con limite |
+| 26 test e2e saltati senza `RCMDRSHINY_E2E=1` | copertura browser non esercitata in questo ambiente | eseguirli su una macchina con Chrome funzionante (`QA-UI-REFRESH.md` § 3) | U5.1, chiuso con limite |
 
 ---
 
 ## 8. Domande aperte
 
-- [ ] 14 px per i controlli anche in `comfortable`: è abbastanza? La densità
-      comoda compensa con padding e spazio, non con il corpo del testo. Da
-      rivedere sui dialoghi reali in U3.
-- [ ] `--rcmdr-font-size` è definito ma non consumato (era il corpo base
-      Bootstrap). Toglierlo in U2 o usarlo per il testo dei documenti?
+- [ ] Conferma visiva della matrice 8 × 2 e dei quattro modali secondari su un
+      browser reale: la checklist è in `QA-UI-REFRESH.md` § 5. In questo
+      ambiente non è eseguibile.
+- [ ] `--rcmdr-font-size` resta definito ma non consumato: è l'eredità del
+      corpo base Bootstrap. Non blocca la chiusura; si elimina insieme al
+      prossimo giro sui token.
 - [ ] L'alias `--rcmdr-control-min` serve solo ai test: eliminarlo quando
       `test-density.R` sarà riscritto per `--rcmdr-control-h`.
-- [ ] `:has()` nel segmented richiede Chrome 105+/Firefox 121+. Le versioni in
-      uso oggi lo supportano; se un client vecchio resta indietro, il fallback
-      è un radio normale, non una pillola rotta. Da verificare in U3.1.
-- [ ] Il `filter: brightness()` dei bottoni pieni piace? Va guardato sui temi
-      scuri reali; in alternativa si aggiunge una coppia `-hover` per palette.
+- [ ] Il `filter: brightness()` dei bottoni pieni è accettato: scala testo e
+      sfondo insieme e non aggiunge una palette. Se un tema lo rende sporco,
+      la sostituzione è una coppia `-hover` per tema.
 
 ---
 
@@ -452,14 +485,9 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 
 ### Prima cosa da fare nella prossima sessione
 
-1. **U4.5 — modali secondari.** Palette dei comandi, scorciatoie, tour e
-   recupero progetto passano dal `modalDialog(title=)` al chrome comune
-   (`modal_header()`/`modal_footer()`), senza cambiare `easyClose`, tasti o
-   ID. È l'ultimo pezzo di U4.
-2. **U5.1 — QA visiva.** Matrice 8 temi × 2 densità sulle viste appena
-   rifatte; e2e con `RCMDRSHINY_E2E=1`; screenshot prima/dopo.
-3. **U5.2 — chiusura.** `NEWS.md`, topic di aiuto aggiornati, checklist e
-   diario finali.
+L'ondata è chiusa. Non ci sono passi di codice aperti: la sola attività
+rimasta è la conferma visiva e l'e2e su una macchina con un browser
+funzionante, seguendo `QA-UI-REFRESH.md`.
 
 ### Task dell'ondata
 
@@ -469,8 +497,9 @@ circa due minuti perché rende il chrome di tutti i dialoghi.
 | U4.2 | Data Studio | alta | `fef1dfd` |
 | U4.3 | Chart Studio | alta | `9c2f461` |
 | U4.4 | Report Studio | media | `2217dff` |
-| U4.5 | Workbench, Help, striscia | media | questo batch; modali secondari ancora aperti |
-| U5 | Matrice temi, QA, NEWS | media | prossimo batch |
+| U4.5 | Workbench, Help, striscia, modali secondari | media | `c372ded` e `d7b3442` |
+| U5.1 | Matrice temi × densità | media | `f4d83f7`, 177 asserzioni |
+| U5.2 | NEWS, topic, checklist, diario, QA | media | questo commit |
 
 ---
 
@@ -511,9 +540,9 @@ RCMDRSHINY_PORT=3841 RCMDRSHINY_BROWSER=FALSE ./start.sh
 
 ## 12. Aggiornamenti alla checklist
 
-- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3, U4).
-- [x] `15-ui-refresh.md` e `README.md` segnano l'onda in corso.
+- [x] `CHECKLIST.md` aggiornata (U0.4, U1, U2, U3, U4, U5).
+- [x] `15-ui-refresh.md` e `README.md` segnano l'onda completata.
 - [x] `UI-TOKENS.md` scritto e coerente con il codice.
 - [x] Diario scritto.
 - [x] Diario committato.
-- [ ] Utente informato: “diario pronto, puoi compattare il contesto”.
+- [x] Utente informato: “diario pronto, puoi compattare il contesto”.

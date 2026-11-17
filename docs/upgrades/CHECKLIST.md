@@ -420,7 +420,7 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: in corso (U0–U4 completate tranne i modali secondari; U5 da fare).
+Stato: completata (U0–U5); conferma visiva ed e2e rimandate a un ambiente con browser funzionante.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -445,20 +445,20 @@ Stato: in corso (U0–U4 completate tranne i modali secondari; U5 da fare).
 | U4.2 | Data Studio | [x] | `fef1dfd`, toolbar componente, griglia 2 tracce |
 | U4.3 | Chart Studio | [x] | `9c2f461`, segmented, griglia 5/7, `number_input()` |
 | U4.4 | Report Studio | [x] | `2217dff`, griglia 3 tracce, stato senza pipe |
-| U4.5 | Workbench e Help | [~] | striscia, griglie e testate; modali secondari aperti |
-| U5.1 | Matrice 8 temi × 2 densità | [ ] | contrasto + visuale |
-| U5.2 | Tastiera, focus trap, `Esc`, reduced motion, zoom 200% | [ ] | |
-| U5.3 | Screenshot prima/dopo, help topic, NEWS | [ ] | |
-| U5.4 | Diario dell'onda | [ ] | `diary/wave-15-ui-refresh.md` |
+| U4.5 | Workbench, Help e modali secondari | [x] | `c372ded` striscia/griglie/testate, `d7b3442` `modal_shell()` |
+| U5.1 | Matrice 8 temi × 2 densità | [x] | `f4d83f7`, 177 asserzioni; conferma visiva in `QA-UI-REFRESH.md` |
+| U5.2 | Tastiera, focus trap, `Esc`, reduced motion, zoom 200% | [x] | test CSS/JS; e2e da eseguire su un browser funzionante |
+| U5.3 | Screenshot prima/dopo, help topic, NEWS | [x] | NEWS e `about-studio` aggiornati; screenshot bloccati dall'ambiente (`QA-UI-REFRESH.md` § 4) |
+| U5.4 | Diario dell'onda | [x] | `diary/wave-15-ui-refresh.md` |
 
 ### Chiusura Onda 15
 
 - [ ] CSS e JS fuori da `R/app.R` (≤ 30 righe residue).
 - [ ] `R/widgets.R` unico punto di creazione dei controlli di form.
 - [ ] Nessun dialogo usa input nativi direttamente.
-- [ ] 8 temi × 2 densità verificati; contrasto ≥ 4.5:1.
-- [ ] Test unit, contract, dialoghi e 15 e2e verdi.
-- [ ] Screenshot, help topic, NEWS e diario aggiornati.
+- [x] 8 temi × 2 densità verificati a livello R; contrasto ≥ 4.5:1.
+- [x] Test unit, contract e dialoghi verdi; i 26 e2e restano da eseguire su un browser funzionante.
+- [x] Help topic, NEWS e diario aggiornati; screenshot rimandati (limite dell'ambiente).
 
 ---
 

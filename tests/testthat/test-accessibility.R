@@ -66,3 +66,52 @@ test_that("dialogs can be moved by their header", {
   expect_match(css, ".modal-header { cursor: grab", fixed = TRUE)
   expect_match(css, "body.rcmdr-dragging", fixed = TRUE)
 })
+
+test_that("focus is one token ring and motion can be reduced", {
+  css <- as.character(app_css())
+  expect_match(css, "--rcmdr-focus-width: 2px", fixed = TRUE)
+  focus <- regmatches(css, regexpr(":focus-visible \\{[^}]*\\}", css,
+                                   perl = TRUE))
+  expect_length(focus, 1L)
+  expect_match(focus, "outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus)",
+               fixed = TRUE)
+
+  media <- regmatches(
+    css,
+    regexpr("@media \\(prefers-reduced-motion: reduce\\) \\{[^@]*", css,
+            perl = TRUE)
+  )
+  expect_length(media, 1L)
+  expect_match(media, "animation-duration: .01ms !important", fixed = TRUE)
+  expect_match(media, "transition-duration: .01ms !important", fixed = TRUE)
+  expect_match(media, "scroll-behavior: auto !important", fixed = TRUE)
+})
+
+test_that("every multi-column view collapses to one column", {
+  css <- as.character(app_css())
+  views <- c(
+    "rcmdr-shell-body", "rcmdr-data-layout", "rcmdr-chart-layout",
+    "rcmdr-script-workspace", "rcmdr-help-layout", "rcmdr-report-workspace"
+  )
+  for (view in views) {
+    expect_match(
+      css, sprintf("\\.%s \\{[^}]*display: grid", view),
+      perl = TRUE, label = sprintf("%s is a grid", view)
+    )
+    expect_match(
+      css,
+      sprintf("\\.%s \\{ grid-template-columns: minmax\\(0, 1fr\\); \\}", view),
+      perl = TRUE, label = sprintf("%s collapses to one column", view)
+    )
+  }
+})
+
+test_that("the palette is driven from the keyboard", {
+  js <- as.character(app_js())
+  expect_match(js, "ArrowDown", fixed = TRUE)
+  expect_match(js, "ArrowUp", fixed = TRUE)
+  expect_match(js, "Enter", fixed = TRUE)
+  # Esc is Bootstrap's modal contract, so the dialog must keep it enabled.
+  modal <- as.character(palette_modal())
+  expect_false(grepl('data-bs-keyboard="false"', modal, fixed = TRUE))
+})
