@@ -5,25 +5,26 @@
        Bootstrap spacing in one place. */
     body {
       --rcmdr-field-gap: .4rem;
-      --rcmdr-label-size: .8125rem;
+      --rcmdr-label-size: var(--rcmdr-text-sm);
       --rcmdr-label-gap: .1rem;
-      --rcmdr-control-size: .875rem;
-      --rcmdr-control-pad: .22rem .45rem;
-      --rcmdr-control-min: 1.9rem;
+      --rcmdr-control-size: var(--rcmdr-text-md);
+      --rcmdr-control-pad: .4rem .5rem;
+      --rcmdr-control-h: 2.125rem;
+      --rcmdr-control-min: var(--rcmdr-control-h);
       --rcmdr-section-gap: .4rem;
-      --rcmdr-help-size: .78rem;
+      --rcmdr-help-size: var(--rcmdr-text-xs);
     }
-    body.rcmdr-density-compact { --rcmdr-space: .55rem; }
+    body.rcmdr-density-compact { --rcmdr-space: var(--rcmdr-space-2); }
     body.rcmdr-density-comfortable {
       --rcmdr-field-gap: 1rem;
-      --rcmdr-label-size: .9375rem;
+      --rcmdr-label-size: var(--rcmdr-text-md);
       --rcmdr-label-gap: .5rem;
-      --rcmdr-control-size: .9375rem;
-      --rcmdr-control-pad: .375rem .75rem;
-      --rcmdr-control-min: 2.4rem;
+      --rcmdr-control-size: var(--rcmdr-text-md);
+      --rcmdr-control-pad: .55rem .75rem;
+      --rcmdr-control-h: 2.5rem;
       --rcmdr-section-gap: 1rem;
-      --rcmdr-help-size: .875rem;
-      --rcmdr-space: .75rem;
+      --rcmdr-help-size: var(--rcmdr-text-sm);
+      --rcmdr-space: var(--rcmdr-space-3);
     }
     body .form-group,
     body .shiny-input-container { margin-bottom: var(--rcmdr-field-gap); }
@@ -35,14 +36,19 @@
     body .form-check { margin-bottom: 0; }
     body .form-control,
     body .form-select {
-      min-height: var(--rcmdr-control-min);
+      min-height: var(--rcmdr-control-h);
       padding: var(--rcmdr-control-pad);
       font-size: var(--rcmdr-control-size);
+      line-height: var(--rcmdr-leading-ui);
     }
+    /* The caret sits at the right edge: leave it room instead of letting long
+       option labels run underneath. */
+    body .form-select { padding-right: 1.9rem; }
     body .selectize-control .selectize-input {
-      min-height: var(--rcmdr-control-min);
+      min-height: var(--rcmdr-control-h);
       padding: var(--rcmdr-control-pad);
       font-size: var(--rcmdr-control-size);
+      line-height: var(--rcmdr-leading-ui);
     }
     body hr { margin: var(--rcmdr-section-gap) 0; }
     body .form-text, body .help-block {
@@ -66,13 +72,12 @@
     .rcmdr-toolbar {
       background: var(--rcmdr-surface);
       border: 1px solid var(--rcmdr-border);
-      border-radius: var(--rcmdr-radius);
-      padding: .5rem .65rem; margin-bottom: var(--rcmdr-space);
+      border-radius: var(--rcmdr-radius); padding: .5rem .65rem; margin-bottom: var(--rcmdr-space);
     }
     .rcmdr-toolbar-field .form-group,
     .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }
     .rcmdr-dialog-category {
-      font-size: .78rem; font-weight: 400; text-transform: uppercase;
+      font-size: var(--rcmdr-text-xs); font-weight: 400; text-transform: uppercase;
       letter-spacing: .04em; color: var(--rcmdr-muted);
     }
     .rcmdr-dialog-preview {
@@ -86,22 +91,19 @@
     }
     .rcmdr-code-preview {
       position: relative; background: var(--rcmdr-surface-sunken);
-      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius);
-      padding: .5rem .65rem;
+      border: 1px solid var(--rcmdr-border); border-radius: var(--rcmdr-radius); padding: .5rem .65rem;
     }
     .rcmdr-code-preview pre { margin: 0; white-space: pre-wrap; }
     .rcmdr-code-preview .rcmdr-copy { position: absolute; top: .35rem; right: .35rem; }
     .rcmdr-status-pill {
-      display: inline-block; padding: .08rem .45rem; border-radius: 999px;
-      font-size: .75rem; font-weight: 600; line-height: 1.4;
+      display: inline-block; padding: .08rem .45rem; border-radius: var(--rcmdr-radius-pill); font-size: var(--rcmdr-text-xs); font-weight: 600; line-height: 1.4;
     }
     .rcmdr-status-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-success); }
     .rcmdr-status-warning { background: var(--rcmdr-warn-bg); color: var(--rcmdr-warning); }
     .rcmdr-status-error { background: var(--rcmdr-err-bg); color: var(--rcmdr-danger); }
     .rcmdr-status-muted { background: var(--rcmdr-surface-muted); color: var(--rcmdr-muted); }
     .rcmdr-empty {
-      border: 1px dashed var(--rcmdr-border); border-radius: var(--rcmdr-radius);
-      padding: 1.25rem; text-align: center; color: var(--rcmdr-muted);
+      border: 1px dashed var(--rcmdr-border); border-radius: var(--rcmdr-radius); padding: 1.25rem; text-align: center; color: var(--rcmdr-muted);
       background: var(--rcmdr-surface);
     }
     .rcmdr-empty-title { font-weight: 600; color: var(--rcmdr-text); }
@@ -110,10 +112,10 @@
       background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius); padding: .85rem 1rem;
     }
-    .rcmdr-metric-label { font-size: .78rem; text-transform: uppercase;
+    .rcmdr-metric-label { font-size: var(--rcmdr-text-xs); text-transform: uppercase;
       letter-spacing: .04em; color: var(--rcmdr-muted); }
-    .rcmdr-metric-value { font-size: 1.35rem; font-weight: 600; }
-    .rcmdr-metric-help { font-size: .82rem; color: var(--rcmdr-muted); }
+    .rcmdr-metric-value { font-size: var(--rcmdr-text-xl); font-weight: 600; }
+    .rcmdr-metric-help { font-size: var(--rcmdr-text-sm); color: var(--rcmdr-muted); }
     .rcmdr-section-card {
       background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius); padding: .65rem .85rem;

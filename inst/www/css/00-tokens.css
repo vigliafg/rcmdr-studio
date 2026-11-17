@@ -20,6 +20,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d9e5f2;
       --rcmdr-accent: #0b5ed7;
+      --rcmdr-focus: #0b5ed7;
       --rcmdr-hover: #e4edf8;
       --rcmdr-selection: #d6e6fa;
       --rcmdr-mark-bg: #ffe9a8;
@@ -39,9 +40,41 @@
       --rcmdr-focus-ring: 0 0 0 2px rgba(11, 94, 215, .28);
     }
     :root {
-      --rcmdr-radius: .5rem;
-      --rcmdr-space: .75rem;
-      --rcmdr-font-size: 1rem;
+      --rcmdr-font-size: var(--rcmdr-text-lg);
+
+      /* Type scale: four text steps plus two display steps. */
+      --rcmdr-text-xs: .75rem;
+      --rcmdr-text-sm: .8125rem;
+      --rcmdr-text-md: .875rem;
+      --rcmdr-text-lg: 1rem;
+      --rcmdr-text-xl: 1.35rem;
+      --rcmdr-text-2xl: 1.65rem;
+      --rcmdr-weight-normal: 400;
+      --rcmdr-weight-strong: 600;
+      --rcmdr-leading-tight: 1.25;
+      --rcmdr-leading-normal: 1.5;
+      --rcmdr-leading-ui: 1.4;
+
+      /* Spacing scale: every step is a multiple of 4px. */
+      --rcmdr-space-1: .25rem;
+      --rcmdr-space-2: .5rem;
+      --rcmdr-space-3: .75rem;
+      --rcmdr-space-4: 1rem;
+      --rcmdr-space-5: 1.5rem;
+      --rcmdr-space-6: 2rem;
+      --rcmdr-space: var(--rcmdr-space-3);
+
+      /* Radii.  --rcmdr-radius stays as the alias used by older rules. */
+      --rcmdr-radius-xs: .25rem;
+      --rcmdr-radius-sm: .375rem;
+      --rcmdr-radius-md: .5rem;
+      --rcmdr-radius-lg: .75rem;
+      --rcmdr-radius-pill: 999px;
+      --rcmdr-radius: var(--rcmdr-radius-md);
+
+      /* One focus ring, described once. */
+      --rcmdr-focus-width: 2px;
+      --rcmdr-focus-offset: 2px;
     }
     body.rcmdr-light-warm {
       color-scheme: light;
@@ -59,6 +92,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #eedfca;
       --rcmdr-accent: #8a5a00;
+      --rcmdr-focus: #8a5a00;
       --rcmdr-hover: #ece0cb;
       --rcmdr-selection: #f2e0ba;
       --rcmdr-mark-bg: #ffe08a;
@@ -93,6 +127,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d2e3f3;
       --rcmdr-accent: #0a58ca;
+      --rcmdr-focus: #0a58ca;
       --rcmdr-hover: #d8e7f7;
       --rcmdr-selection: #c9ddf6;
       --rcmdr-mark-bg: #ffe9a8;
@@ -127,6 +162,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d9e7f6;
       --rcmdr-accent: #78b9ff;
+      --rcmdr-focus: #78b9ff;
       --rcmdr-hover: #29394a;
       --rcmdr-selection: #2f4a68;
       --rcmdr-mark-bg: #f7d774;
@@ -161,6 +197,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #dbe4ef;
       --rcmdr-accent: #93c1f5;
+      --rcmdr-focus: #93c1f5;
       --rcmdr-hover: #333941;
       --rcmdr-selection: #3b4a5c;
       --rcmdr-mark-bg: #f2d17a;
@@ -195,6 +232,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #d8e2e3;
       --rcmdr-accent: #7fd8c9;
+      --rcmdr-focus: #7fd8c9;
       --rcmdr-hover: #30363a;
       --rcmdr-selection: #35474a;
       --rcmdr-mark-bg: #f0d47a;
@@ -229,6 +267,7 @@
       --rcmdr-on-primary: #ffffff;
       --rcmdr-on-primary-muted: #ffffff;
       --rcmdr-accent: #0047ff;
+      --rcmdr-focus: #0047ff;
       --rcmdr-hover: #e6e6e6;
       --rcmdr-selection: #cfe0ff;
       --rcmdr-mark-bg: #ffe066;

@@ -122,9 +122,10 @@ Report Studio riusa la galleria grafici.
 **Onda 4 completata il 14 novembre 2026.** Il diario di handoff è
 [`diary/wave-04-workbench.md`](diary/wave-04-workbench.md).
 
-**Onda 15 pianificata il 17 novembre 2026.** Il piano è in
+**Onda 15 in corso dal 17 novembre 2026.** Il piano è in
 [`15-ui-refresh.md`](15-ui-refresh.md): nessun cambio di comandi o ID, solo
-pelle, componenti e chrome dei dialoghi.
+pelle, componenti e chrome dei dialoghi. U0 e U1.1–U1.2 sono completate; il
+diario è [`diary/wave-15-ui-refresh.md`](diary/wave-15-ui-refresh.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.

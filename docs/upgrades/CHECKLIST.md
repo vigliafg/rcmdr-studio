@@ -420,16 +420,16 @@ Rilascio: 2.6.0.
 ## Onda 15 — Rifacimento visivo dell'interfaccia
 
 Documento di settore: [`15-ui-refresh.md`](15-ui-refresh.md).
-Stato: pianificata.
+Stato: in corso (U0, U1.1–U1.2 completate).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
 | U0.1 | CSS in `inst/www/css/`, `app_css()` compositore | [x] | `658abf9`, testo identico |
 | U0.2 | JS in `inst/www/js/`, `app_js()` compositore | [x] | `40990e5`, testo identico |
 | U0.3 | `rcmdr_icon()` con SVG inline | [x] | `093df03`, 17 icone, test dedicati |
-| U0.4 | `docs/upgrades/UI-TOKENS.md` | [ ] | scala, colori, stati |
-| U1.1 | Scala tipografica, spaziature, raggi, ombre | [ ] | token, non valori hard-coded |
-| U1.2 | Controlli a altezza uniforme e focus unico | [ ] | 8 temi |
+| U0.4 | `docs/upgrades/UI-TOKENS.md` | [x] | scala, colori, stati, contrasto misurato |
+| U1.1 | Scala tipografica, spaziature, raggi, ombre | [x] | nessun `font-size` o raggio grezzo |
+| U1.2 | Controlli a altezza uniforme e focus unico | [x] | 34/40 px, un solo outline |
 | U1.3 | Bottoni: primario, secondario, ghost, pericolo | [ ] | + `sm` coerente |
 | U1.4 | Test di contrasto WCAG sui token | [ ] | ≥ 4.5:1 |
 | U2.1 | `field()`, `field_grid()`, `switch_input()`, `segmented_input()`, `number_input()` | [ ] | stessi ID e valori |

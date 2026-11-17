@@ -4,8 +4,7 @@
       background: var(--rcmdr-mark-bg);
       color: var(--rcmdr-mark-text);
       padding: 0 .12rem;
-      border-radius: .15rem;
-    }
+      border-radius: var(--rcmdr-radius-xs); }
     .rcmdr-menu-item.disabled,
     .rcmdr-palette-result.disabled { color: var(--rcmdr-disabled); }
     .rcmdr-status-ok { background: var(--rcmdr-ok-bg); color: var(--rcmdr-ok-fg); }
@@ -34,7 +33,6 @@
     .rcmdr-doc-tab .rcmdr-doc-mode,
     .rcmdr-doc-tab .rcmdr-doc-close,
     .rcmdr-doc-tab .rcmdr-doc-new { color: var(--rcmdr-muted); }
-    :focus-visible { outline-color: var(--rcmdr-accent); }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {

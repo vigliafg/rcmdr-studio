@@ -8,6 +8,15 @@
       border-color: var(--rcmdr-border);
     }
     .form-text, .help-block { color: var(--rcmdr-muted); }
+    /* Bootstrap paints its own blue halo on :focus.  The Studio uses one ring,
+       the :focus-visible outline, on every control. */
+    body .form-control:focus,
+    body .form-select:focus,
+    body .form-check-input:focus {
+      border-color: var(--rcmdr-focus);
+      box-shadow: none;
+    }
+    body .btn:focus { box-shadow: none; }
     .text-success { color: var(--rcmdr-success); }
     .text-danger { color: var(--rcmdr-danger); }
     .rcmdr-topbar .text-success { color: #7ee2a8; }
@@ -26,7 +35,14 @@
       color: var(--rcmdr-text);
       border-color: var(--rcmdr-border);
     }
-    body .selectize-control .selectize-input.focus { box-shadow: var(--rcmdr-focus-ring); }
+    body .selectize-control .selectize-input.focus {
+      box-shadow: var(--rcmdr-focus-ring);
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
+    /* The text cursor lives in a zero-width input inside the styled box: the
+       ring belongs to the box, not to the hidden input. */
+    body .selectize-control .selectize-input input:focus-visible { outline: none; }
     body .selectize-control .selectize-input input,
     body .selectize-control.single .selectize-input .item,
     body .selectize-control .selectize-dropdown .option,
@@ -34,7 +50,7 @@
     body .selectize-control .selectize-dropdown .optgroup-header {
       background: var(--rcmdr-surface-muted);
       color: var(--rcmdr-muted);
-      font-size: .78rem;
+      font-size: var(--rcmdr-text-xs);
       text-transform: uppercase;
       letter-spacing: .04em;
     }
