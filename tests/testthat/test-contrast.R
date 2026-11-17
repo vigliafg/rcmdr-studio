@@ -92,14 +92,29 @@ test_that("the home hero paints its own tokens and stays readable", {
   }
 })
 
-test_that("the topbar badge text is readable on the primary bar", {
+test_that("the topbar value text is readable on the primary bar", {
   css <- token_css()
-  expect_match(css, ".rcmdr-topbar .text-white-50", fixed = TRUE)
-  expect_match(css, "color: var(--rcmdr-on-primary-muted) !important;",
+  expect_match(css, ".rcmdr-topbar-value-empty {", fixed = TRUE)
+  expect_match(css,
+               "color: var(--rcmdr-on-primary-muted); font-weight: var(--rcmdr-weight-normal);",
                fixed = TRUE)
+  expect_match(css, ".rcmdr-topbar-value {", fixed = TRUE)
   # The two hardcoded status colours are gone with the rules that used them.
   expect_false(grepl("#7ee2a8", css, fixed = TRUE))
   expect_false(grepl("#ffb3ad", css, fixed = TRUE))
+
+  # Measure the pair instead of trusting the rule: every palette keeps the
+  # muted value at AA on the primary bar.
+  palettes <- palette_tokens()
+  for (name in names(palettes)) {
+    palette <- palettes[[name]]
+    ratio <- contrast_ratio(palette[["--rcmdr-on-primary-muted"]],
+                            palette[["--rcmdr-primary"]])
+    expect_gte(
+      ratio, aa_text,
+      label = sprintf("%s: on-primary-muted on primary = %.2f", name, ratio)
+    )
+  }
 })
 
 test_that("the measured minimum does not regress below the documented floor", {

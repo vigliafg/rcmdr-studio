@@ -2,13 +2,60 @@
 
 test_that("the topbar brands the application and names its selects", {
   html <- as.character(app_topbar_ui())
+  expect_match(html, 'class="rcmdr-topbar"', fixed = TRUE)
   expect_match(html, "role=\"banner\"", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-brand"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-brand-title"', fixed = TRUE)
   expect_match(html, 'class="rcmdr-brand-mark"', fixed = TRUE)
   expect_match(html, "<svg", fixed = TRUE)
+  # The controls are one flex list, not a row of Bootstrap utilities.
+  expect_match(html, 'class="rcmdr-topbar-controls"', fixed = TRUE)
+  expect_match(html, "rcmdr-topbar-link", fixed = TRUE)
   # The selects show their value, not a label; the accessible name is hidden.
   expect_match(html, 'class="visually-hidden">Language', fixed = TRUE)
   expect_match(html, 'class="visually-hidden">Theme', fixed = TRUE)
   expect_match(html, "btn-sm btn-outline-light", fixed = TRUE)
+})
+
+test_that("the shell carries no hand-written Bootstrap layout classes", {
+  # app_ui() also contains bslib's own container wrapper; only the classes we
+  # write are checked.
+  html <- as.character(app_ui())
+  classes <- unlist(regmatches(
+    html,
+    gregexpr('class="[^"]*"', html)
+  ))
+  classes <- unlist(strsplit(sub('^class="', "", sub('"$', "", classes)), "\\s+"))
+  for (class in c("d-flex", "gap-2", "ms-auto", "px-3", "py-2", "py-3",
+                  "fs-5", "badge-box", "text-white", "text-warning",
+                  "text-white-50", "col-lg-3", "col-lg-9", "col-xl-2",
+                  "col-xl-10")) {
+    expect_false(class %in% classes,
+                 label = sprintf("shell still writes the %s utility", class))
+  }
+  expect_match(html, 'class="rcmdr-shell-body"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-main"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-menu-actions"', fixed = TRUE)
+})
+
+test_that("the shell grid has one column above the sidebar breakpoint", {
+  css <- as.character(app_css())
+  body <- regmatches(css, regexpr("\\.rcmdr-shell-body \\{[^}]*\\}", css))
+  expect_match(body, "display: grid;", fixed = TRUE)
+  expect_match(body,
+               "grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);",
+               fixed = TRUE)
+
+  # Below the large breakpoint the sidebar sits above the view and becomes a
+  # short panel; its max-height only wins if the old min-height is cleared.
+  narrow <- regmatches(
+    css,
+    regexpr("@media \\(max-width: 991\\.98px\\) \\{[^@]*\\.rcmdr-shell-body[^@]*\\}",
+            css, perl = TRUE)
+  )
+  expect_match(narrow, "grid-template-columns: minmax(0, 1fr);",
+               fixed = TRUE)
+  expect_match(narrow, "min-height: 0; max-height: 46vh;", fixed = TRUE)
 })
 
 test_that("the sidebar search field is named", {

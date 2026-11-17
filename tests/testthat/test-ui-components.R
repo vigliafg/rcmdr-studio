@@ -44,12 +44,12 @@ test_that("toolbar() keeps its two ends and is labelled when asked", {
     right = htmltools::tags$span(id = "last"),
     label = "Filters"
   ))
-  expect_match(html, 'class="rcmdr-toolbar', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-toolbar"', fixed = TRUE)
   expect_match(html, 'role="toolbar"', fixed = TRUE)
   expect_match(html, 'aria-label="Filters"', fixed = TRUE)
   # right is the pushed end.
-  expect_match(html, 'class="ms-auto d-flex gap-2 align-items-center"',
-               fixed = TRUE)
+  expect_match(html, 'class="rcmdr-toolbar-end"', fixed = TRUE)
+  expect_false(grepl("d-flex", html, fixed = TRUE))
   expect_lt(regexpr('id="first"', html, fixed = TRUE),
             regexpr('id="middle"', html, fixed = TRUE))
   expect_lt(regexpr('id="middle"', html, fixed = TRUE),

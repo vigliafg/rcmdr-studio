@@ -486,19 +486,19 @@ app_topbar_ui <- function(theme = "system") {
   current <- current_language()
   if (!current %in% languages) languages <- c(current, languages)
   htmltools::div(
-    class = paste("rcmdr-topbar d-flex justify-content-between",
-                  "align-items-center gap-2 px-3 py-2 flex-wrap"),
+    class = "rcmdr-topbar",
     role = "banner",
     htmltools::div(
-      class = "d-flex align-items-center gap-2 rcmdr-brand",
+      class = "rcmdr-brand",
       htmltools::tags$span(class = "rcmdr-brand-mark",
                            rcmdr_icon("sliders", 18)),
-      htmltools::tags$strong(tr("RcmdrShiny Studio"), class = "fs-5"),
+      htmltools::tags$strong(tr("RcmdrShiny Studio"),
+                             class = "rcmdr-brand-title"),
       htmltools::tags$small(tr("Inspired by R Commander"),
                             class = "rcmdr-brand-sub")
     ),
     htmltools::div(
-      class = "d-flex gap-2 badge-box align-items-center flex-wrap",
+      class = "rcmdr-topbar-controls",
       actionButton(
         "palette_open", tr("Search"),
         class = "btn-sm btn-outline-light",
@@ -523,7 +523,7 @@ app_topbar_ui <- function(theme = "system") {
         width = "160px"
       ),
       uiOutput("ui_mode_toggle_ui", inline = TRUE),
-      actionLink("about_open", tr("About"), class = "text-white small")
+      actionLink("about_open", tr("About"), class = "rcmdr-topbar-link")
     )
   )
 }
@@ -542,11 +542,11 @@ app_ui <- function() {
     uiOutput("app_topbar"),
     uiOutput("menubar"),
     htmltools::div(
-      class = "container-fluid",
+      class = "rcmdr-shell",
       htmltools::div(
-        class = "row",
+        class = "rcmdr-shell-body",
         htmltools::div(
-          class = "col-lg-3 col-xl-2 rcmdr-sidebar",
+          class = "rcmdr-sidebar",
           role = "navigation", `aria-label` = tr("Application menus"),
           htmltools::div(
             class = "rcmdr-menu-search",
@@ -557,7 +557,7 @@ app_ui <- function() {
               placeholder = tr("Search menus..."), width = "100%"
             ),
             htmltools::div(
-              class = "d-flex gap-2 align-items-center rcmdr-menu-actions",
+              class = "rcmdr-menu-actions",
               actionLink("menu_expand_all", tr("Expand all")),
               actionLink("menu_collapse_all", tr("Collapse all"))
             )
@@ -565,7 +565,7 @@ app_ui <- function() {
           uiOutput("menus")
         ),
         htmltools::div(
-          class = "col-lg-9 col-xl-10 py-3",
+          class = "rcmdr-main",
           id = "main-content", role = "main", tabindex = "-1",
           uiOutput("result_hint"),
           uiOutput("main_tabs_ui")
@@ -719,7 +719,7 @@ app_server <- function(env = globalenv()) {
       actionLink(
         "ui_mode_toggle",
         if (identical(main_tabs_mode(), "studio")) tr("Classic") else tr("Studio"),
-        class = "text-white small"
+        class = "rcmdr-topbar-link"
       )
     })
 
@@ -2974,7 +2974,11 @@ app_server <- function(env = globalenv()) {
       name <- active_dataset(state)
       htmltools::tags$span(
         if (is.null(name)) tr("No active data set") else name,
-        class = if (is.null(name)) "text-warning" else "text-white"
+        class = if (is.null(name)) {
+          "rcmdr-topbar-value rcmdr-topbar-value-empty"
+        } else {
+          "rcmdr-topbar-value"
+        }
       )
     })
 
@@ -2983,7 +2987,11 @@ app_server <- function(env = globalenv()) {
       name <- active_model(state)
       htmltools::tags$span(
         if (is.null(name)) tr("No active model") else name,
-        class = if (is.null(name)) "text-white-50" else "text-white"
+        class = if (is.null(name)) {
+          "rcmdr-topbar-value rcmdr-topbar-value-empty"
+        } else {
+          "rcmdr-topbar-value"
+        }
       )
     })
 

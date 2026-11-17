@@ -87,13 +87,13 @@ split_view <- function(left, right, proportions = c(2, 3)) {
 #' @keywords internal
 toolbar <- function(..., left = NULL, right = NULL, label = NULL) {
   htmltools::tags$div(
-    class = "rcmdr-toolbar d-flex gap-2 align-items-center flex-wrap",
+    class = "rcmdr-toolbar",
     role = if (is.null(label)) NULL else "toolbar",
     `aria-label` = label,
     left,
     ...,
     if (!is.null(right)) {
-      htmltools::tags$div(class = "ms-auto d-flex gap-2 align-items-center", right)
+      htmltools::tags$div(class = "rcmdr-toolbar-end", right)
     }
   )
 }

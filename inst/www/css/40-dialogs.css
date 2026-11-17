@@ -80,7 +80,6 @@
     .rcmdr-menu-shortcuts { margin-bottom: .5rem; }
     .rcmdr-menu-shortcut-group > summary { font-weight: 600; }
     .rcmdr-menu-mark { padding: 0 .05rem; background: var(--rcmdr-mark-bg); color: inherit; }
-    .rcmdr-menu-actions { margin: .25rem 0 .5rem; }
     .rcmdr-dialog-errors { margin-bottom: .75rem; }
     .rcmdr-dialog-errors ul { padding-left: 1.1rem; }
     .rcmdr-dialog-errors a { color: inherit; text-decoration: underline; }
@@ -121,7 +120,6 @@
     body.rcmdr-dragging .modal-header { cursor: grabbing; }
     .rcmdr-shortcuts-table td, .rcmdr-shortcuts-table th { vertical-align: middle; }
     @media (max-width: 991.98px) {
-      .rcmdr-sidebar { max-height: 46vh; overflow-y: auto; }
       .modal-dialog { margin: .4rem; }
       .modal-body { max-height: 66vh; }
     }
@@ -137,6 +135,4 @@
       border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius); }
     .rcmdr-selection-bar .btn-link { padding: 0; }
-    .rcmdr-menu-search { margin-bottom: .6rem; }
-    .rcmdr-menu-search .form-group { margin-bottom: 0; }
     .rcmdr-menu-flat-path { font-size: var(--rcmdr-text-xs); color: var(--rcmdr-muted); display: block; }

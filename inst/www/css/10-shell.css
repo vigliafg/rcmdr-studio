@@ -1,15 +1,66 @@
 
     body { background: var(--rcmdr-bg); }
-    .rcmdr-topbar { background: var(--rcmdr-primary); color: var(--rcmdr-on-primary); }
-    .rcmdr-topbar .badge-box { color: var(--rcmdr-on-primary-muted); font-size: var(--rcmdr-text-md); }
-    .rcmdr-topbar .rcmdr-brand { min-width: 0; }
+
+    /* Shell layout ---------------------------------------------------------
+       The page is a stack: topbar, menubar, the body grid (sidebar plus the
+       active view) and the status bar.  The grid is written here instead of
+       with Bootstrap rows and columns, so the breakpoint, the gap and the two
+       tracks resolve to tokens.  A 14rem floor keeps the menu labels honest;
+       the 17rem ceiling stops the sidebar from growing on wide screens. */
+    .rcmdr-shell { padding: 0; }
+    .rcmdr-shell-body {
+      display: grid;
+      grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+      align-items: start;
+    }
+    .rcmdr-main {
+      min-width: 0;
+      padding: var(--rcmdr-space-4) var(--rcmdr-space-3);
+    }
+
+    /* Topbar ---------------------------------------------------------------- */
+    .rcmdr-topbar {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: var(--rcmdr-space-2);
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+      background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
+    }
+    .rcmdr-brand {
+      display: flex; align-items: center; gap: var(--rcmdr-space-2);
+      min-width: 0;
+    }
+    .rcmdr-brand-title {
+      font-size: var(--rcmdr-text-xl);
+      line-height: var(--rcmdr-leading-tight);
+      font-weight: var(--rcmdr-weight-strong);
+    }
     .rcmdr-brand-mark {
       display: inline-flex; align-items: center; justify-content: center;
       flex: none; width: 1.9rem; height: 1.9rem;
       border-radius: var(--rcmdr-radius-sm);
       background: var(--rcmdr-on-primary-muted); color: var(--rcmdr-primary);
     }
-    .rcmdr-topbar .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
+    .rcmdr-brand-sub { color: var(--rcmdr-on-primary-muted); }
+    .rcmdr-topbar-controls {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: var(--rcmdr-space-2);
+      color: var(--rcmdr-on-primary-muted);
+      font-size: var(--rcmdr-text-md);
+    }
+    /* The active data set and model are facts, not decoration: the value is
+       read at body weight, the empty state at mute weight.  Both colours are
+       the measured pair for the primary bar. */
+    .rcmdr-topbar-value {
+      color: var(--rcmdr-on-primary); font-weight: var(--rcmdr-weight-strong);
+    }
+    .rcmdr-topbar-value-empty {
+      color: var(--rcmdr-on-primary-muted); font-weight: var(--rcmdr-weight-normal);
+    }
+    .rcmdr-topbar-link {
+      color: var(--rcmdr-on-primary); font-size: var(--rcmdr-text-sm);
+    }
+    .rcmdr-topbar-link:hover,
+    .rcmdr-topbar-link:focus { color: var(--rcmdr-on-primary); }
     /* The bar is dense: the selects carry a visually hidden label, so the
        label element must not take a row. */
     .rcmdr-topbar .form-group,
@@ -20,10 +71,28 @@
        toolbar sit at 1040, so the language and theme lists were painted under
        them.  Keep every select list above those bars. */
     .selectize-control .selectize-dropdown { z-index: 1050; }
+
+    /* Sidebar --------------------------------------------------------------- */
     .rcmdr-sidebar {
       background: var(--rcmdr-surface); border-right: 1px solid var(--rcmdr-border);
-      min-height: calc(100vh - 90px); padding: var(--rcmdr-space);
+      padding: var(--rcmdr-space);
+      /* The two bars above take 90px together; the sidebar scrolls instead of
+         pushing the page.  Below the large breakpoint it becomes a short
+         panel above the view. */
       max-height: calc(100vh - 90px); overflow-y: auto;
+    }
+    .rcmdr-menu-search { margin-bottom: var(--rcmdr-space-2); }
+    .rcmdr-menu-search .form-group { margin-bottom: 0; }
+    .rcmdr-menu-actions {
+      display: flex; align-items: center; gap: var(--rcmdr-space-2);
+      margin: var(--rcmdr-space-1) 0 var(--rcmdr-space-2);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-shell-body { grid-template-columns: minmax(0, 1fr); }
+      .rcmdr-sidebar {
+        min-height: 0; max-height: 46vh;
+        border-right: 0; border-bottom: 1px solid var(--rcmdr-border);
+      }
     }
     .rcmdr-menu-group > summary {
       cursor: pointer; font-weight: 600; padding: .25rem 0;

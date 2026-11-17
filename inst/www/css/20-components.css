@@ -190,9 +190,15 @@
 
     /* Toolbars: one row of filters and actions. */
     .rcmdr-toolbar {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: var(--rcmdr-space-2);
       background: var(--rcmdr-surface); border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius); padding: .5rem .65rem;
       margin-bottom: var(--rcmdr-space);
+    }
+    .rcmdr-toolbar-end {
+      display: flex; align-items: center; gap: var(--rcmdr-space-2);
+      margin-left: auto;
     }
     .rcmdr-toolbar-field .form-group,
     .rcmdr-toolbar-field .shiny-input-container { margin-bottom: 0; }

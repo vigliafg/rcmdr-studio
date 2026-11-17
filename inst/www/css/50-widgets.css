@@ -180,11 +180,6 @@
     body .btn:focus { box-shadow: none; }
     .text-success { color: var(--rcmdr-success); }
     .text-danger { color: var(--rcmdr-danger); }
-    /* Bootstrap paints the muted badge at 50% white, which lands under 4.5:1
-       on the primary bar.  "Muted on the primary" is exactly the token. */
-    .rcmdr-topbar .text-white-50 {
-      color: var(--rcmdr-on-primary-muted) !important;
-    }
     .form-control::placeholder { color: var(--rcmdr-muted); opacity: 1; }
     body.rcmdr-dark .form-control::placeholder { color: var(--rcmdr-disabled); }
     /* selectize ships its own white stylesheet, so these need to outrank it. */
