@@ -216,7 +216,7 @@ Diario, README e verifica del primo lotto.
 - La scelta singola conserva una prima voce con valore vuoto, etichettata
   “nessuna variabile”: resta un valore che `on_ok()` può rifiutare, come
   faceva il vecchio selectize, e un lettore di schermo la annuncia.
-  L'etichetta è arrivata in `71d23a3`, un fix separato perché S10 era già
+  L'etichetta è arrivata in `9fbbce2`, un fix separato perché S10 era già
   committato; lo stesso fix normalizza a `""` una scelta singola vuota nel
   picker, che prima finiva in un array vuoto.
 - Il `<select>` nativo riceve `form-select` sul tag. Shiny emette
@@ -347,7 +347,10 @@ stabili restano inglesi e non compaiono nell'interfaccia.
 | JS | `node --check` verde |
 | Colori nei file nuovi | nessun letterale |
 
-Log: `/tmp/opencode/tests-w16-batch4.log`.
+Log: `/tmp/opencode/tests-w16-batch4b.log`. La prima esecuzione
+(`tests-w16-batch4.log`, `EXIT=1`) aveva caricato il codice prima del fix
+del picker e ha fermato il nuovo test sulla selezione vuota: è servita a
+confermare che il test copre il difetto.
 
 ---
 
@@ -409,7 +412,7 @@ working tree pulito e commit pushati.
 - [x] S7 committato (`62f3fd8`).
 - [x] S8 committato (`e9f0391`).
 - [x] S9 committato (`55e4124`).
-- [x] S10 committato (`e7ef2eb`, voce vuota nominata in `71d23a3`).
+- [x] S10 committato (`e7ef2eb`, voce vuota nominata in `9fbbce2`).
 - [x] S11 committato (`ab0bb90`).
 - [x] S12 committato (`b09c2a7`).
 - [x] Suite completa verde: `EXIT=0`.
@@ -425,7 +428,9 @@ working tree pulito e commit pushati.
 
 ## 13. Artefatti
 
-- `/tmp/opencode/tests-w16-batch4.log` — suite del lotto 4.
+- `/tmp/opencode/tests-w16-batch4b.log` — suite finale del lotto 4.
+- `/tmp/opencode/tests-w16-batch4.log` — prima esecuzione, `EXIT=1` sul
+  fix del picker non ancora caricato.
 - `/tmp/opencode/t-s10a.log`, `t-s10b.log` — test mirati S10.
 - `/tmp/opencode/t-s11a.log`, `t-s11b.log` — test mirati S11.
 - `/tmp/opencode/t-s12a.log`, `t-s12b.log`, `t-s12c.log` — test mirati S12.

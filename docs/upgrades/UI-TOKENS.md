@@ -443,6 +443,7 @@ stile desktop.
 | Errore | il dialogo apre tutti i pannelli, poi sposta il focus sul primo campo |
 | Valori | chiavi stabili e uniche; `open` che non nomina un pannello è un errore |
 | Titoli | il testo è tradotto, il valore no: lo stato aperto non dipende dalla lingua |
+| Dialoghi | pannelli solo quando il dialogo ha più di un compito: *Import* 4, *Frequency* 2, modelli 2–3, test 2–3; un pannello vuoto non si rende |
 
 ---
 

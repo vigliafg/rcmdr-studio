@@ -134,7 +134,7 @@ pelle, componenti e chrome dei dialoghi. U0–U5 fatte; il diario è
 [`16-bslib-widgets.md`](16-bslib-widgets.md): sistema dei widget con specifica
 desktop e galleria, accordion bslib per i parametri, shinyWidgets per picker,
 listbox, slider e colore, Chart Builder e dialoghi densi riorganizzati. 15 step
-in 5 lotti da 3; nessun cambio di ID o comandi. Lotti 1–3 fatti (S1–S9); il
+in 5 lotti da 3; nessun cambio di ID o comandi. Lotti 1–4 fatti (S1–S12); il
 diario è [`diary/wave-16-bslib-widgets.md`](diary/wave-16-bslib-widgets.md).
 
 **Onda 17 pianificata il 18 novembre 2026.** Il piano è in
