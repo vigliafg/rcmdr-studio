@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 17 — completamento desktop
 
 **Data:** 2026-11-18  
-**Stato:** lotto 1 completato (T1–T3); prossimo lotto T4–T6  
+**Stato:** lotto 2 completato (T1–T6); prossimo lotto T7–T9  
 **Ondata precedente:** `wave-16-bslib-widgets.md` (Onda 16, 2.8.0)  
 **Documento di settore:** [`17-desktop-completion.md`](../17-desktop-completion.md)  
 **QA dei widget:** [`QA-WIDGETS.md`](../QA-WIDGETS.md)  
@@ -142,18 +142,18 @@ Nessun blocco di codice: il lotto è chiuso.
 
 ## 7. Prossimo lotto
 
-**Lotto 2 — interazioni desktop (T4–T6):**
+**Lotto 3 — tabelle, plugin, Help (T7–T9):**
 
-1. **T4** — `split_pane()` con separatore `role="separator"`, frecce,
-   `Home`/`End`, doppio clic/doppio Invio, persistenza e collasso a una
-   colonna.
-2. **T5** — `context_menu()` con tasto destro, tasto Menu, `Shift`+`F10`,
-   `Esc` e ritorno del focus; le voci chiamano gli handler esistenti.
-3. **T6** — drag-and-drop per colonne, grafici fissati e file, con “Sposta
-   su/giù” nel menu contestuale e la stessa persistenza.
+1. **T7** — valutare `reactable` per le tabelle di sola lettura; DT resta per
+   i dati editabili. Il gate decide se la dipendenza entra.
+2. **T8** — dialoghi dei plugin: contratto unico per i 15 plugin, senza
+   duplicare la logica dei dialoghi nativi.
+3. **T9** — Help centre e command palette: listbox, ricerca, `aria-live`.
 
-Gate del lotto: le tre interazioni convivono nelle viste, a zoom 200% e con
-`prefers-reduced-motion`.
+Gate del lotto: ogni plugin apre un dialogo coerente; le tabelle di sola
+lettura non perdono selezione né copia; la palette resta usabile da tastiera.
+
+Il dettaglio del lotto 2 chiuso è nel §11.
 
 ---
 
@@ -196,3 +196,119 @@ Gate del lotto: le tre interazioni convivono nelle viste, a zoom 200% e con
 - `/tmp/opencode/app-w17-t1t3.js` — JS composto, verificato con
   `node --check`.
 - `/tmp/opencode/app-w17.log` — avvio dell'app.
+
+---
+
+## 11. Lotto 2 in dettaglio (T4–T6)
+
+### T4 — Pannelli ridimensionabili · `08d63d9`
+
+**File:** `R/ui-components.R`, `R/preferences.R`, `R/state.R`,
+`R/chart-studio.R`, `R/data-studio.R`, `R/report-studio.R`, `R/app.R`,
+`inst/www/css/60-views.css`, `inst/www/js/40-interactions.js`, test.
+
+- `split_pane(id, first, second, orientation, initial, min, min_second)` è un
+  grid a tre tracce: primo pannello, separatore, secondo pannello.
+- Il separatore è `role="separator"`, `tabindex="0"`,
+  `aria-orientation` coerente (verticale per i pannelli affiancati),
+  `aria-valuemin/max/now` e `aria-valuetext`; `aria-controls` punta ai due
+  pannelli.
+- Tastiera: frecce (2%, con `Shift` 8%), `Home`/`End` agli estremi,
+  `Enter`/`Spazio` o doppio clic per il default. I limiti in pixel sono
+  calcolati dal client e riportati in `aria-valuemin/max`.
+- Il trascinamento aggiorna la vista a ogni movimento e invia il rapporto a
+  Shiny solo al rilascio; le frecce inviano al `keyup`, così una freccia
+  tenuta premuta non riscrive il file a ogni ripetizione.
+- `state$options$layouts[[id]] = list(version, first)` è versionato;
+  `preferences_peek()` lo legge già alla costruzione della UI, quindi la
+  misura sopravvive al riavvio. La scrittura passa da `persist_preferences()`
+  e non rende sporco il progetto.
+- Applicazione: Data Studio (griglia/inspector), Chart Builder
+  (parametri/anteprima), Report Studio (outline/editor/anteprima con due
+  split annidati).
+- Sotto i breakpoint esistenti i pannelli tornano a una colonna e il
+  separatore esce dal layout: a zoom 200% non c'è nulla da trascinare.
+
+**Deviazione:** il piano chiede il doppio `Invio` per il default; qui basta
+un `Invio`/`Spazio` (e il doppio clic resta per il mouse). Una sequenza di due
+pressioni è invisibile a chi non la conosce e il pattern ARIA dello splitter
+prevede il tasto singolo.
+
+### T5 — Menu contestuali · `10ee7fe`
+
+**File:** `R/ui-components.R`, `R/data-studio.R`, `R/chart-studio.R`,
+`R/script-studio.R`, `inst/www/css/20-components.css`,
+`inst/www/js/40-interactions.js`, test.
+
+- `context_menu()` produce un pannello `role="menu"` nascosto;
+  `context_menu_item()` è un vero `<button role="menuitem">`;
+  `context_menu_separator()` chiude i gruppi.
+- Un item può cliccare un controllo esistente (`data-rcmdr-menu-click`) o
+  inviare `{payload del target, action}` a un input Shiny già gestito. Non
+  esiste una seconda implementazione delle azioni.
+- `context_menu_target()` rende focusabile la regione, la annuncia con
+  `aria-haspopup="menu"` e trasporta il payload JSON.
+- Apertura: tasto destro, tasto Menu, `Shift`+`F10`. Un solo menu aperto;
+  posizione fissata dentro il viewport; `Esc` chiude e riporta il focus al
+  target; frecce, `Home`/`End` e `Tab` sono gestiti.
+- Applicazione: griglia del Data Studio (azioni di colonna e di riga),
+  schede della galleria grafici (con voce Pin/Unpin coerente), linguette dei
+  documenti (Attiva/Chiudi con lo stesso payload di `script_tab_action`).
+
+**Deviazione:** il menu della griglia agisce sulla colonna selezionata, non
+sulla colonna sotto il puntatore: il data frame di DT non espone in modo
+stabile l'indice della colonna cliccata senza duplicare la selezione. Le voci
+sono le stesse dei bottoni dell'inspector e cliccano quei bottoni.
+
+### T6 — Drag-and-drop con alternativa da tastiera · `7e9230b`
+
+**File:** `R/app.R`, `R/chart-studio.R`, `R/data-studio.R`,
+`R/preferences.R`, `R/project.R`, `R/state.R`, `R/ui-components.R`,
+`inst/www/css/60-views.css`, `inst/www/js/40-interactions.js`, test.
+
+- **Colonne del Data Studio:** l'intestazione di DT diventa trascinabile;
+  il rilascio invia l'ordine completo a `data_column_order`. Il server lo
+  normalizza (colonne ignote scartate, nuove in coda) e lo salva in
+  `state$options$column_order`, versionato e persistito. I bottoni “Move
+  left”/“Move right”, presenti nella scheda Colonne e nel menu contestuale,
+  producono lo stesso ordine da tastiera.
+- L'ordine è di **vista**: `data_view_frame()` riordina il frame solo per DT,
+  `.row_id` resta l'ultimo, i dati e i comandi non cambiano.
+- **Grafici fissati:** le schede fissate sono `draggable`; il rilascio invia
+  `{from, to}` a `chart_order`. Il server riordina solo il blocco fissato e
+  salva `order` in ogni voce; `project_plot_entry()` e il caricamento del
+  progetto conservano il campo. Il menu contestuale offre “Move earlier” e
+  “Move later”, che chiamano lo stesso `plot_move()`.
+- **File drop:** l'area della griglia è una dropzone per file di testo (CSV,
+  TSV, TXT, DAT, PSV) fino a 2 MB. Il client legge il testo, il server lo
+  salva con `store_import_file()` e apre `readDataSet` già compilato (nome,
+  percorso, separatore). Il dialogo è la conferma: nessun comando parte
+  senza OK.
+
+**Deviazione:** l'ordine delle colonne è di sola vista, quindi non consuma un
+checkpoint dati; il piano lo immaginava annullabile con i checkpoint. Il
+checkpoint resta per le modifiche reali, che qui non avvengono. Il drop è
+testo-only: un `.xlsx` trascinato viene rifiutato con un avviso e resta il
+percorso “Import...” esistente.
+
+### Verifica del lotto 2
+
+| Controllo | Esito |
+|---|---|
+| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w17-lotto2.log`) |
+| `node --check` sul JS composto | verde |
+| App | riavviata su `http://127.0.0.1:3841`, HTTP 200 |
+| Split | markup ARIA, frecce, `Home`/`End`, reset, persistenza, collasso |
+| Menu | un solo menu, viewport, focus di ritorno, stessi handler |
+| Drag | ordine colonne persistito, ordine pin nel progetto, drop nel dialogo |
+| Test aggiornato | l'asserzione globale “nessun Escape nel JS” ora è “lo gestiscono tooltip e menu”, perché il vecchio test assumeva un solo consumatore |
+
+### Limiti del lotto 2
+
+| Limite | Impatto | Task |
+|---|---|---|
+| Nessun browser disponibile | drag, drop, menu e separatore non sono stati visti a schermo | T11 |
+| Menu della griglia sulla selezione | un clic destro su un'altra colonna non la seleziona | T5/T11 |
+| Ordine colonne di vista | non è nei checkpoint dati | T6 |
+| Drop solo testo | Excel e file binari passano da “Import...” | T6/T11 |
+| Il separatore non ha un test e2e | la tastiera è coperta dal JS, non da un browser | T11 |
