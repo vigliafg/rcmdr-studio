@@ -1007,6 +1007,57 @@ data_grid_frame <- function(df) {
   grid
 }
 
+#' Saved column widths for a data set
+#' @keywords internal
+data_widths_saved <- function(state, dataset_name = active_dataset(state)) {
+  if (is.null(dataset_name) || !nzchar(dataset_name)) return(NULL)
+  entry <- (geometry_saved(state)$widths %||% list())[[dataset_name]]
+  if (is.null(entry) || length(entry) == 0L) return(NULL)
+  entry
+}
+
+#' Store column widths for a data set
+#' @keywords internal
+data_widths_store <- function(state, dataset_name, columns, widths) {
+  if (is.null(dataset_name) || !nzchar(dataset_name)) return(invisible(NULL))
+  columns <- as.character(columns %||% character())
+  widths <- suppressWarnings(as.numeric(widths %||% numeric()))
+  count <- min(length(columns), length(widths))
+  if (count == 0L) return(invisible(NULL))
+  columns <- columns[seq_len(count)]
+  widths <- pmin(pmax(widths[seq_len(count)], 40), 1200)
+  keep <- nzchar(columns) & is.finite(widths)
+  keep <- keep & columns != ".row_id"
+  if (!any(keep)) return(invisible(NULL))
+  geometry <- geometry_saved(state)
+  geometry$widths[[dataset_name]] <- stats::setNames(
+    round(widths[keep]), columns[keep]
+  )
+  state$options$geometry <- geometry
+  invisible(geometry$widths[[dataset_name]])
+}
+
+#' DT column definitions that apply the saved widths
+#'
+#' The hidden `.row_id` stays the last column and is left out: it has no header
+#' and its width would never be resized.
+#' @keywords internal
+data_width_defs <- function(state, grid, dataset_name = active_dataset(state)) {
+  widths <- data_widths_saved(state, dataset_name)
+  if (is.null(widths) || is.null(grid)) return(list())
+  columns <- names(grid)[names(grid) != ".row_id"]
+  out <- list()
+  for (i in seq_along(columns)) {
+    value <- widths[[columns[[i]]]]
+    if (is.null(value) || !is.finite(value)) next
+    out[[length(out) + 1L]] <- list(
+      targets = i - 1L,
+      width = paste0(round(value), "px")
+    )
+  }
+  out
+}
+
 #' Map selected grid rows back to original row numbers
 #' @keywords internal
 grid_rows_to_data <- function(grid, selected) {
@@ -1117,9 +1168,11 @@ date_range_keep <- function(x, range) {
 #' Cells selects a rectangular range and publishes it as TSV-ready coordinates.
 #' @param mode `"rows"` or `"cells"`.
 #' @keywords internal
-grid_selection_callback <- function(mode = "rows") {
+grid_selection_callback <- function(mode = "rows", dataset = NULL) {
   mode <- if (identical(mode, "cells")) "cells" else "rows"
-  DT::JS(sprintf("window.rcmdrGridSelection(table, '%s');", mode))
+  dataset <- gsub("'", "\\\\'", as.character(dataset %||% ""))
+  DT::JS(sprintf("window.rcmdrGridSelection(table, '%s', '%s');",
+                 mode, dataset))
 }
 
 #' Open a dialog with prefilled memory

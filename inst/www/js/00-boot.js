@@ -40,6 +40,16 @@ window.rcmdrApplyMode = function(mode) {
         }, 50);
       }
     };
+    window.rcmdrApplySidebar = function(collapsed) {
+      var body = document.querySelector('.rcmdr-shell-body');
+      if (!body) return false;
+      body.classList.toggle('rcmdr-sidebar-collapsed', !!collapsed);
+      var button = document.querySelector('[data-rcmdr-sidebar-toggle]');
+      if (button) {
+        button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      }
+      return !!collapsed;
+    };
     window.rcmdrToggleSidebar = function(button) {
       var body = document.querySelector('.rcmdr-shell-body');
       if (!body) return false;
@@ -47,8 +57,12 @@ window.rcmdrApplyMode = function(mode) {
       if (button) {
         button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
       }
+      Shiny.setInputValue('sidebar_collapsed', collapsed, {priority: 'event'});
       return false;
     };
+    Shiny.addCustomMessageHandler('rcmdr-sidebar', function(message) {
+      window.rcmdrApplySidebar(message && message.collapsed);
+    });
     Shiny.addCustomMessageHandler('rcmdr-tab', function(message) {
       // The server sends {tab, sub} with stable view ids; a plain string is
       // still accepted for older callers.

@@ -793,6 +793,9 @@ app_server <- function(env = globalenv()) {
         density = ui_density(state)
       ))
       session$sendCustomMessage("rcmdr-ui-mode", ui_mode(state))
+      session$sendCustomMessage(
+        "rcmdr-sidebar", list(collapsed = !geometry_sidebar(state))
+      )
     }, once = TRUE)
 
     open_palette <- function() {
@@ -1036,8 +1039,10 @@ app_server <- function(env = globalenv()) {
 
     output$main_tabs_ui <- renderUI({
       language_revision()
+      # The saved view seeds the hidden `main_tabs` input, so a restart lands
+      # on the workspace the user left.
       main_tabs_ui(main_tabs_mode(),
-                   view = isolate(input$main_tabs) %||% "home")
+                   view = isolate(input$main_tabs) %||% geometry_last_view(state))
     })
 
     render_workspace_view <- function(view, primary = FALSE) {
@@ -1173,6 +1178,8 @@ app_server <- function(env = globalenv()) {
 
     observeEvent(input$main_tabs, {
       primary <- input$main_tabs %||% "home"
+      geometry_set_last_view(state, primary)
+      persist_preferences()
       if (identical(workspace_secondary(), primary)) {
         workspace_secondary("")
         state$options$workspace_secondary <- NULL
@@ -1250,6 +1257,25 @@ app_server <- function(env = globalenv()) {
       invisible(TRUE)
     }
     state$open_modeless <- open_modeless
+
+    # View > Reset layout: the geometry returns to its default, the data and
+    # the command history are untouched.  The reactives and the inputs are
+    # updated here because the direct command only sees `state`.
+    state$reset_layout <- function() {
+      geometry_reset_layout(state)
+      workspace_secondary("")
+      workspace_focus("split")
+      workspace_revision(workspace_revision() + 1L)
+      data_grid_revision(data_grid_revision() + 1L)
+      data_selection_revision(data_selection_revision() + 1L)
+      updateTextInput(session, "main_tabs", value = geometry_last_view(state))
+      updateSelectInput(session, "workspace_secondary_view", selected = "")
+      session$sendCustomMessage("rcmdr-sidebar", list(collapsed = FALSE))
+      menu_revision(menu_revision() + 1L)
+      tick(tick() + 1L)
+      persist_preferences()
+      invisible(TRUE)
+    }
 
     output$modeless_panel <- renderUI({
       language_revision()
@@ -2736,6 +2762,25 @@ app_server <- function(env = globalenv()) {
       move_data_column(1L)
     }, ignoreInit = TRUE)
 
+    # DT header drag: the client sends the final widths of the visible
+    # columns.  They are a view preference, so no grid redraw is requested.
+    observeEvent(input$data_column_widths, {
+      payload <- input$data_column_widths
+      if (!is.list(payload)) return()
+      dataset_name <- payload$dataset %||% active_dataset(state)
+      if (!identical(dataset_name, active_dataset(state))) return()
+      df <- dataset(state)
+      if (is.null(df)) return()
+      data_widths_store(state, dataset_name, payload$columns, payload$widths)
+      persist_preferences()
+    }, ignoreInit = TRUE)
+
+    # The sidebar toggle lives in the client; the state keeps the last value.
+    observeEvent(input$sidebar_collapsed, {
+      geometry_set_sidebar(state, !isTRUE(input$sidebar_collapsed))
+      persist_preferences()
+    }, ignoreInit = TRUE)
+
     output$data_grid <- renderUI({
       tick()
       data_grid_revision()
@@ -2787,15 +2832,18 @@ app_server <- function(env = globalenv()) {
       selection_mode <- input$data_selection_mode %||% "rows"
       grid <- data_view_frame()
       req(grid)
+      widths <- data_width_defs(state, grid)
       DT::datatable(
         grid,
         selection = "none",
-        callback = grid_selection_callback(selection_mode),
+        callback = grid_selection_callback(selection_mode,
+                                           active_dataset(state)),
         options = list(
           pageLength = 25L, scrollX = TRUE, searchHighlight = TRUE,
-          autoWidth = TRUE,
-          columnDefs = list(
-            list(visible = FALSE, targets = ncol(grid) - 1L)
+          autoWidth = length(widths) == 0L,
+          columnDefs = c(
+            list(list(visible = FALSE, targets = ncol(grid) - 1L)),
+            widths
           )
         ),
         rownames = FALSE
@@ -2808,15 +2856,19 @@ app_server <- function(env = globalenv()) {
       selection_mode <- input$data_selection_mode %||% "rows"
       grid <- data_view_frame()
       req(grid)
+      widths <- data_width_defs(state, grid)
       DT::datatable(
         grid,
         selection = "none",
-        callback = grid_selection_callback(selection_mode),
+        callback = grid_selection_callback(selection_mode,
+                                           active_dataset(state)),
         options = list(
-          pageLength = 25L, scrollX = TRUE, autoWidth = TRUE,
+          pageLength = 25L, scrollX = TRUE,
+          autoWidth = length(widths) == 0L,
           dom = "ftip",
-          columnDefs = list(
-            list(visible = FALSE, targets = ncol(grid) - 1L)
+          columnDefs = c(
+            list(list(visible = FALSE, targets = ncol(grid) - 1L)),
+            widths
           )
         ),
         rownames = FALSE

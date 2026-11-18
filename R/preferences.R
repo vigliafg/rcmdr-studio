@@ -81,6 +81,145 @@ layout_clear <- function(state) {
   invisible(NULL)
 }
 
+# Workspace geometry ---------------------------------------------------------
+#
+# One versioned object holds the parts of the workspace that are a view state
+# rather than statistical state: the last view, the sidebar, the DT column
+# widths per data set and the dialog sizes.  Split ratios and column order keep
+# their existing top-level entries so an older file still loads; the version
+# gate is what makes a corrupt or future entry fall back to the default.
+
+geometry_version <- 1L
+
+#' Default geometry for a fresh session
+#' @keywords internal
+geometry_default <- function() {
+  list(
+    version = geometry_version,
+    dialogs = list(),
+    widths = list(),
+    last_view = "home",
+    sidebar = TRUE
+  )
+}
+
+geometry_dialogs <- function(value) {
+  out <- list()
+  if (!is.list(value)) return(out)
+  for (id in names(value)) {
+    entry <- value[[id]]
+    if (!is.list(entry) || !nzchar(id)) next
+    width <- suppressWarnings(as.numeric(entry$width %||% NA_real_))
+    height <- suppressWarnings(as.numeric(entry$height %||% NA_real_))
+    if (is.na(width) && is.na(height)) next
+    out[[id]] <- list(
+      width = if (is.na(width)) NULL else width,
+      height = if (is.na(height)) NULL else height
+    )
+  }
+  out
+}
+
+geometry_widths <- function(value) {
+  out <- list()
+  if (!is.list(value)) return(out)
+  for (dataset in names(value)) {
+    entry <- value[[dataset]]
+    if (is.list(entry)) entry <- unlist(entry, use.names = TRUE)
+    if ((!is.numeric(entry) && !is.character(entry)) ||
+        is.null(names(entry)) || !nzchar(dataset)) next
+    numbers <- suppressWarnings(as.numeric(entry))
+    names(numbers) <- names(entry)
+    keep <- is.finite(numbers) & nzchar(names(numbers)) &
+      names(numbers) != ".row_id"
+    if (!any(keep)) next
+    numbers <- pmin(pmax(numbers[keep], 40), 1200)
+    out[[dataset]] <- stats::setNames(round(numbers), names(numbers))
+  }
+  out
+}
+
+#' Validate a geometry entry
+#' @keywords internal
+geometry_normalize <- function(value) {
+  default <- geometry_default()
+  if (!is.list(value)) return(default)
+  version <- suppressWarnings(as.integer(value$version %||% 0L))
+  if (length(version) != 1L || is.na(version) ||
+      version != geometry_version) {
+    return(default)
+  }
+  last_view <- as.character(value$last_view %||% "home")
+  last_view <- if (length(last_view) == 1L) {
+    main_view_id(last_view) %||% "home"
+  } else {
+    "home"
+  }
+  list(
+    version = geometry_version,
+    dialogs = geometry_dialogs(value$dialogs),
+    widths = geometry_widths(value$widths),
+    last_view = last_view,
+    sidebar = isTRUE(value$sidebar)
+  )
+}
+
+#' Geometry from the persisted file, before the server exists
+#' @keywords internal
+geometry_peek <- function(value = NULL) {
+  if (is.null(value)) {
+    value <- tryCatch(preferences_peek(), error = function(e) list())
+  }
+  geometry_normalize(value$geometry)
+}
+
+geometry_saved <- function(state) {
+  geometry_normalize(state$options$geometry)
+}
+
+#' Last Studio view
+#' @keywords internal
+geometry_last_view <- function(state) {
+  geometry_saved(state)$last_view
+}
+
+geometry_set_last_view <- function(state, view) {
+  view <- main_view_id(view) %||% "home"
+  geometry <- geometry_saved(state)
+  geometry$last_view <- view
+  state$options$geometry <- geometry
+  invisible(view)
+}
+
+#' Whether the sidebar is expanded
+#' @keywords internal
+geometry_sidebar <- function(state) {
+  isTRUE(geometry_saved(state)$sidebar)
+}
+
+geometry_set_sidebar <- function(state, open) {
+  geometry <- geometry_saved(state)
+  geometry$sidebar <- isTRUE(open)
+  state$options$geometry <- geometry
+  invisible(geometry$sidebar)
+}
+
+#' Restore the default layout without touching the data
+#'
+#' The geometry, the split ratios, the column order and the workspace panels
+#' return to their defaults.  The data frames, the gallery, the history and the
+#' undo stack are not part of the layout and stay exactly as they are.
+#' @keywords internal
+geometry_reset_layout <- function(state) {
+  state$options$geometry <- geometry_default()
+  state$options$layouts <- list()
+  state$options$column_order <- list()
+  state$options$workspace_panels <- list()
+  state$options$workspace_secondary <- NULL
+  state$options$workspace_focus <- "split"
+  invisible(TRUE)
+}
+
 # Column order ---------------------------------------------------------------
 #
 # The Data Studio column order is a view preference: it changes how the grid
@@ -286,21 +425,8 @@ preferences_load <- function(state, path = preferences_file(state)) {
       focus %in% c("split", "primary", "secondary")) {
     state$options$workspace_focus <- focus
   }
-  geometry <- value$geometry
-  if (is.list(geometry) && is.list(geometry$dialogs)) {
-    cleaned <- list()
-    for (id in names(geometry$dialogs)) {
-      entry <- geometry$dialogs[[id]]
-      if (!is.list(entry) || !nzchar(id)) next
-      width <- suppressWarnings(as.numeric(entry$width %||% NA_real_))
-      height <- suppressWarnings(as.numeric(entry$height %||% NA_real_))
-      if (is.na(width) && is.na(height)) next
-      cleaned[[id]] <- list(
-        width = if (is.na(width)) NULL else width,
-        height = if (is.na(height)) NULL else height
-      )
-    }
-    state$options$geometry <- list(version = 1L, dialogs = cleaned)
+  if (!is.null(value$geometry)) {
+    state$options$geometry <- geometry_normalize(value$geometry)
   }
   columns <- value$column_order
   if (is.list(columns) && length(columns) > 0L) {

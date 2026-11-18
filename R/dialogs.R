@@ -192,6 +192,11 @@ base_direct_commands <- function() {
       }
       invisible(NULL)
     },
+    resetLayout = function(state) {
+      if (is.function(state$reset_layout)) return(state$reset_layout())
+      geometry_reset_layout(state)
+      invisible(TRUE)
+    },
     openHelpPanel = function(state) {
       if (is.function(state$open_modeless)) {
         return(state$open_modeless("help"))

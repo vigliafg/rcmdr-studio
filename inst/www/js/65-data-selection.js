@@ -7,6 +7,7 @@
       var gridState = {
         table: null,
         mode: 'rows',
+        dataset: '',
         anchor: null,
         end: null,
         dragging: false,
@@ -123,9 +124,81 @@
         Shiny.setInputValue('data_cell_selection', null, {priority: 'event'});
       }
 
-      window.rcmdrGridSelection = function(table, mode) {
+      function visibleColumns(table) {
+        var columns = [];
+        var widths = [];
+        $(table.table().header()).find('th').each(function() {
+          if (!$(this).is(':visible')) return;
+          var name = $(this).text().trim();
+          if (!name) return;
+          columns.push(name);
+          widths.push(Math.round(this.getBoundingClientRect().width));
+        });
+        return {columns: columns, widths: widths};
+      }
+
+      function publishWidths(table, dataset) {
+        if (!table || !dataset) return;
+        var sizes = visibleColumns(table);
+        if (!sizes.columns.length) return;
+        Shiny.setInputValue('data_column_widths', {
+          dataset: dataset,
+          columns: sizes.columns,
+          widths: sizes.widths
+        }, {priority: 'event'});
+      }
+
+      function setupColumnResize(table, dataset) {
+        var header = table.table().header();
+        if (!header) return;
+        $(header).find('.rcmdr-col-resizer').remove();
+        $(header).find('th').each(function() {
+          if (!$(this).is(':visible')) return;
+          var handle = document.createElement('span');
+          handle.className = 'rcmdr-col-resizer';
+          handle.setAttribute('aria-hidden', 'true');
+          this.appendChild(handle);
+        });
+        $(header).off('.rcmdrResize');
+        $(header).on('click.rcmdrResize', '.rcmdr-col-resizer', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+        $(header).on('pointerdown.rcmdrResize', '.rcmdr-col-resizer',
+          function(event) {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            var th = this.parentNode;
+            var startX = event.clientX;
+            var startWidth = th.getBoundingClientRect().width;
+            var pointerId = event.pointerId;
+            var node = table.table().node();
+            node.style.tableLayout = 'fixed';
+            document.body.classList.add('rcmdr-col-resizing');
+            $(document).off('pointermove.rcmdrResize pointerup.rcmdrResize ' +
+                            'pointercancel.rcmdrResize');
+            $(document).on('pointermove.rcmdrResize', function(move) {
+              if (move.pointerId !== pointerId) return;
+              var width = Math.max(40,
+                Math.min(1200, startWidth + move.clientX - startX));
+              th.style.width = width + 'px';
+              th.style.minWidth = width + 'px';
+            });
+            $(document).on('pointerup.rcmdrResize pointercancel.rcmdrResize',
+              function() {
+                $(document).off('.rcmdrResize');
+                document.body.classList.remove('rcmdr-col-resizing');
+                publishWidths(table, dataset);
+              });
+          });
+      }
+
+      window.rcmdrGridSelection = function(table, mode, dataset) {
         gridState.table = table;
         gridState.mode = mode === 'cells' ? 'cells' : 'rows';
+        gridState.dataset = dataset || '';
+        setupColumnResize(table, gridState.dataset);
         gridState.anchor = null;
         gridState.end = null;
         gridState.dragging = false;

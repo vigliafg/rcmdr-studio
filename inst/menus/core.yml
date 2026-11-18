@@ -409,9 +409,19 @@ items:
   module: core
   legacy_ids:
   - preferencesOpen
+- id: item.core.menu_view.reset_layout
+  parent: menu.view
+  label: Reset layout
+  command: resetLayout
+  activation: ''
+  install: ''
+  order: 6
+  module: core
+  legacy_ids:
+  - resetLayout
 - kind: separator
   parent: menu.view
-  order: 6
+  order: 7
   module: core
 - id: item.core.menu_view.help_panel
   parent: menu.view

@@ -10,8 +10,8 @@ selection_test_frame <- function() {
 test_that("Rows and Cells choose different grid callbacks", {
   rows <- as.character(grid_selection_callback("rows"))
   cells <- as.character(grid_selection_callback("cells"))
-  expect_match(rows, "rcmdrGridSelection(table, 'rows')", fixed = TRUE)
-  expect_match(cells, "rcmdrGridSelection(table, 'cells')", fixed = TRUE)
+  expect_match(rows, "rcmdrGridSelection(table, 'rows',", fixed = TRUE)
+  expect_match(cells, "rcmdrGridSelection(table, 'cells',", fixed = TRUE)
 })
 
 test_that("a cell range becomes TSV in view order", {

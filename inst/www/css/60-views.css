@@ -88,6 +88,20 @@
       background: var(--rcmdr-surface);
       color: var(--rcmdr-text);
     }
+    /* A header drag resizes a column; the width is remembered per data set
+       in the versioned geometry.  The handle is decoration, so it is hidden
+       from assistive technology and never takes a tab stop. */
+    table.dataTable thead th { position: sticky; }
+    table.dataTable thead th .rcmdr-col-resizer {
+      position: absolute; top: 0; right: -3px; bottom: 0; width: 7px;
+      cursor: col-resize; touch-action: none; z-index: 2;
+    }
+    table.dataTable thead th .rcmdr-col-resizer:hover::after,
+    body.rcmdr-col-resizing table.dataTable thead th .rcmdr-col-resizer::after {
+      content: ""; position: absolute; top: 0; bottom: 0; left: 3px;
+      width: 1px; background: var(--rcmdr-accent);
+    }
+    body.rcmdr-col-resizing { user-select: none; cursor: col-resize; }
     .dataTables_wrapper .dataTables_filter input {
       margin-left: var(--rcmdr-space-2);
     }

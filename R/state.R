@@ -195,7 +195,7 @@ AppState <- function(env = globalenv()) {
     history_length = 200L,
     menu_recent_length = 8L,
     persist_preferences = TRUE,
-    geometry = list(version = 1L, dialogs = list()),
+    geometry = geometry_default(),
     preferences_file = NULL,
     auto_switch_result = FALSE,
     project_recent_length = 8L,

@@ -434,6 +434,7 @@
     item    topMenu         cascade         "Tools"                                         toolsMenu                   ""          ""
     menu    viewMenu        topMenu         ""                                              ""                          ""          ""
     item    viewMenu        command         "Preferences..."                                preferencesOpen             ""          ""
+    item    viewMenu        command         "Reset layout"                                  resetLayout                 ""          ""
     item    viewMenu        separator       ""                                              ""                          ""          ""
     item    viewMenu        command         "Help panel"                                    openHelpPanel               ""          ""
     item    viewMenu        command         "Console panel"                                 openConsolePanel            ""          ""
