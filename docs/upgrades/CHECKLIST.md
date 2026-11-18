@@ -539,16 +539,16 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 ## Onda 18 — Spazio di lavoro desktop
 
 Documento di settore: [`18-desktop-workspace.md`](18-desktop-workspace.md).
-Stato: in corso — lotto 1 fatto (S1–S3), prossimo S4–S6; ADR-018.
+Stato: in corso — lotti 1–2 fatti (S1–S6), prossimo S7–S9; ADR-018.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
 | S1 | Shell menu-first | [x] | `03f908b`; menubar, Alt/F10, workspace a vista singola |
 | S2 | Workspace a due slot | [x] | `44496bd`; layout salvati, viste uniche |
 | S3 | Pannelli nascondibili e split tra viste | [x] | `26d11db`; Inspector/Preview, focus |
-| S4 | Undo/redo applicativo | [ ] | dati e galleria, menu Edit |
-| S5 | Selezione a intervallo e appunti | [ ] | Rows/Cells, TSV |
-| S6 | Dialoghi ridimensionabili e pannelli modeless | [ ] | geometria, Help/Console |
+| S4 | Undo/redo applicativo | [x] | `074f9e9`; dati e galleria, menu Edit |
+| S5 | Selezione a intervallo e appunti | [x] | `5b17dd9`; Rows/Cells, TSV, status bar |
+| S6 | Dialoghi ridimensionabili e pannelli modeless | [x] | `29364ba`; geometria, Help/Console/Output |
 | S7 | Densità e chrome desktop | [ ] | Studio-only, 8 × 2 |
 | S8 | Geometria persistente | [ ] | ultima vista, larghezze, dialoghi |
 | S9 | Status bar e navigazione da tastiera | [ ] | F6, contesto, annunci |

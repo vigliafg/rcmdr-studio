@@ -150,8 +150,8 @@ Help/palette e rendering pigro. 12 step in 4 lotti; il diario è
 [`18-desktop-workspace.md`](18-desktop-workspace.md): menu-first, workspace a
 due slot con layout salvati, undo/redo applicativo, selezione a intervallo,
 dialoghi e pannelli modeless, densità desktop, geometria persistente, status
-bar e scala dei dati grandi. 12 step in 4 lotti; lotto 1 (S1–S3) fatto; l'ADR
-è la 018 e il diario è
+bar e scala dei dati grandi. 12 step in 4 lotti; lotti 1–2 (S1–S6) fatti;
+l'ADR è la 018 e il diario è
 [`diary/wave-18-desktop-workspace.md`](diary/wave-18-desktop-workspace.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è

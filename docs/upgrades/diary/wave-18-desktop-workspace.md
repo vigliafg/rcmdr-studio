@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 18 — spazio di lavoro desktop
 
 **Data:** 2026-11-18  
-**Stato:** lotto 1 completato (S1–S3); prossimo lotto S4–S6  
+**Stato:** lotto 2 completato (S1–S6); prossimo lotto S7–S9  
 **Baseline:** RcmdrShiny Studio 2.9.0 + T13  
 **Documento di settore:** [`18-desktop-workspace.md`](../18-desktop-workspace.md)  
 **ADR:** [`DECISIONS.md`](../DECISIONS.md) — ADR-018  
@@ -9,93 +9,95 @@
 
 ---
 
-## 1. Obiettivo del lotto 1
+## 1. Lotto 1 — shell e workspace · `03f908b`, `44496bd`, `26d11db`
 
-Aprire il workspace desktop:
+Il lotto 1 ha aperto il workspace desktop e resta invariato:
 
-- una sola navigazione principale, senza il `tabsetPanel` con tutte le viste;
-- due slot con viste uniche e layout salvati;
-- pannelli nascondibili e modalità focus;
-- `input$main_tabs` come contratto stabile per la logica esistente.
+- Studio non renderizza più un `tabsetPanel` con tutte le viste: una sola
+  vista primaria, un secondo slot facoltativo, nessuna vista duplicata.
+- `input$main_tabs` resta il contratto stabile; il view switcher lo aggiorna e
+  `state$show_tab()` continua a funzionare.
+- Menubar `role="menubar"` con F10, `Alt`+lettera, frecce, `Down`, `Esc`.
+- Data Studio ha il pannello **Inspector**, Chart Studio il pannello
+  **Preview**; entrambi sono nascondibili e persistiti.
+- Modalità **Split / Primary / Secondary** e **Swap sides** per il secondario.
+- Classic conserva `tabsetPanel` e i suoi `data-value`.
 
-Il lotto non tocca i comandi, gli ID dei dialoghi, i valori o le stringhe i18n
-esistenti.
-
----
-
-## 2. S1 — Shell menu-first · `03f908b`
-
-**File:** `R/workspace.R`, `R/app.R`, `R/menus.R`, `R/ui-components.R`,
-`inst/www/js/00-boot.js`, `inst/www/js/50-menubar.js`,
-`inst/www/css/10-shell.css`, test.
-
-- In Studio non c'è più un `tabsetPanel` con tutte le viste: il primario è un
-  `workspace_slot_ui` che rende **una sola vista**. Gli output delle altre viste
-  non esistono nel DOM.
-- `input$main_tabs` resta il contratto: un `textInput` nascosto lo inizializza,
-  il view switcher lo aggiorna con `Shiny.setInputValue`, `state$show_tab()`
-  continua a funzionare.
-- Il view switcher è una `role="tablist"` di pulsanti `role="tab"`, con
-  `aria-selected` e `data-value`.
-- La menubar ha `role="menubar"`; i gruppi sono `menuitem` con
-  `aria-haspopup`/`aria-expanded`. F10 e `Alt`+lettera aprono un gruppo, le
-  frecce si muovono, `Down` entra nel menu, `Esc` chiude e torna al summary.
-- La sidebar ha un pulsante nella topbar; il toggle aggiunge
-  `rcmdr-sidebar-collapsed` al corpo. Non è ancora persistito: S8.
-- `workspace_layout` è l'output che renderà lo split nel lotto S2.
-
-**Deviazione:** tema, lingua e densità restano nella topbar in questo step;
-la loro migrazione a View/Options è prevista in S7. La sidebar resta aperta di
-default per non perdere la scopribilità; il default chiuso arriverà con la
-densità desktop.
-
-**Test:** `main_tabs_ui("studio")` ora è lo shell del workspace; i test che
-cercavano le vecchie tab Studio sono stati aggiornati. Classic conserva il
-`tabsetPanel` e i suoi `data-value`.
+Dettagli e deviazioni del lotto 1 sono nella storia Git; il presente diario
+copre il lotto 2.
 
 ---
 
-## 3. S2 — Workspace a due slot · `44496bd`
+## 2. S4 — Undo/redo applicativo · `074f9e9`
 
-**File:** `R/workspace.R`, `R/app.R`, `R/state.R`, `R/preferences.R`,
-`inst/www/css/10-shell.css`, `tests/testthat/test-workspace.R`.
+**File:** `R/undo.R` (nuovo), `R/state.R`, `R/commands.R`, `R/data-studio.R`,
+`R/chart-studio.R`, `R/dialogs.R`, `R/project.R`, `R/activation.R`, menu,
+`inst/www/js/70-keyboard.js`, test.
 
-- Nuovo schema `state$options$workspace_secondary` versionato di fatto dal
-  file preferenze; il secondo slot si sceglie da un select “Second view”.
-- Primario e secondario sono due render distinti: nessuna vista è duplicata
-  nel DOM. Se il secondario coincide con il primario, si chiude.
-- `workspace_view_ui()` rende la vista scelta; `workspace_layout` costruisce
-  `split_pane("workspace_split", ...)` con dimensione persistita.
-- `view_ready()` consulta **entrambi** gli slot: una vista nel secondario
-  costruisce i suoi output pesanti come se fosse primaria.
-- La selezione del secondario è persistita e ripristinata al riavvio.
-- Lo scambio avviene da “Swap sides”: `updateTextInput` sul contratto
-  `main_tabs` e aggiornamento del select.
+- Nuovo stack limitato `list(kind, label, before, after, bytes, time)` per
+  **dati** e **galleria**; 20 voci e 50 MB, con scarto della voce più vecchia.
+- I comandi console sono tracciati solo se nominano il dataset attivo in
+  un'assegnazione (`<-`); `summary(D)` non paga uno snapshot.
+- I comandi di Data Studio sono sospesi dal tracciamento automatico e
+  registrano **una sola** voce per l'intera azione (`Adding a row`,
+  `Cell editing`).
+- Galleria: aggiunta, pin/unpin, rinomina, eliminazione e riordino.
+- Il ripristino rimette lo snapshot e non esegue alcun comando; history, log e
+  script non crescono durante undo/redo.
+- Menu **Edit**: `Undo: <azione>` / `Redo: <azione>`, disabilitati quando lo
+  stack è vuoto; `Ctrl+Z` / `Ctrl+Shift+Z` solo fuori da input, textarea e Ace.
+- La status bar annuncia `Undone: …` / `Redone: …` nella regione `aria-live`.
+- Il caricamento di un progetto svuota undo e redo.
 
-**Test:** layout con due slot, render separati, persistenza, `view_ready` con
-secondario.
+**Limite noto:** l'undo di un'eliminazione ripristina i metadati della
+galleria, non il file PNG già cancellato.
 
 ---
 
-## 4. S3 — Pannelli e focus · `26d11db`
+## 3. S5 — Selezione a intervallo e appunti · `5b17dd9`
 
-**File:** `R/workspace.R`, `R/app.R`, `R/data-studio.R`, `R/chart-studio.R`,
-`R/ui-components.R`, `R/state.R`, `R/preferences.R`, CSS, test.
+**File:** `R/data-studio.R`, `R/app.R`, `R/activation.R`, `R/dialogs.R`,
+`R/state.R`, menu, `inst/www/js/65-data-selection.js`, CSS, test.
 
-- `split_pane(second = NULL)` restituisce un blocco singolo: niente binario
-  vuoto quando un pannello è nascosto.
-- Data Studio: checkbox **Inspector**; Chart Studio: checkbox **Preview**.
-  Lo stato va in `state$options$workspace_panels[[view]]` ed è persistito.
-- `workspace_view_ui(show_inspector=, show_preview=)` decide al momento del
-  render, quindi il pannello nascosto non costruisce il proprio output.
-- Modalità **Split / Primary / Secondary** e pulsante **Swap sides** quando il
-  secondario è attivo. La modalità è persistita.
-- Il focus selector non compare se non c'è un secondario.
+- Nuovo selettore **Rows / Cells** nella toolbar del Data Studio. Rows resta
+  il default e conserva il comportamento Wave 17.
+- In Cells: clic singolo, `Shift`+clic, trascinamento e `Shift`+frecce
+  selezionano un rettangolo; `Esc` pulisce. La selezione si azzera a ogni
+  ridisegno, cambio dataset o filtro.
+- La selezione vive in `state$data_selection$cells` con l'intervallo
+  `R1C1:R4C3`; righe e colonne restano valorizzate per le azioni esistenti.
+- `Ctrl+C`, **Edit > Copy selection** e il pulsante nella barra copiano il
+  blocco come TSV nell'ordine visibile, senza `.row_id`; i valori con tab o
+  newline vengono appiattiti. Fallback con `<textarea>` se
+  `navigator.clipboard` non è disponibile.
+- La status bar mostra intervallo, righe, colonne e celle non vuote.
+- L'editor a celle conserva il copia/incolla nativo di `rhandsontable`.
 
-**Deviazione:** Report e Script non hanno ancora i toggle dei pannelli interni;
-sono previsti in S8. Il drag della vista verso l'altro slot non è stato
-implementato: l'assegnazione avviene dal select “Second view”, che è anche
-l'alternativa da tastiera. Il drag potrà arrivare in S3bis o S8.
+**Limite noto:** il trascinamento è dentro la pagina corrente di DT; non
+attraversa le pagine.
+
+---
+
+## 4. S6 — Dialoghi ridimensionabili e pannelli modeless · `29364ba`
+
+**File:** `R/dialogs.R`, `R/preferences.R`, `R/state.R`, `R/app.R`, menu,
+`inst/www/js/10-dialogs.js`, `inst/www/js/66-modeless.js`, CSS, test.
+
+- Ogni dialogo ha un grip `.rcmdr-dialog-resize` con `role="separator"`,
+  `tabindex="0"` e frecce per larghezza/altezza (`Shift` = passo grande).
+- La geometria è per `dialog_id` in `state$options$geometry$dialogs`, con
+  limiti 360–4000 px in larghezza e 240–3000 px in altezza; viene scritta
+  anche nelle preferenze, quindi il dialogo riapre alla stessa dimensione.
+- Il grip non è una finestra flottante: il dialogo resta modale e Bootstrap
+  conserva backdrop, Esc e focus.
+- Nuovo menu **View** con **Help panel**, **Console panel**, **Output panel**.
+- I pannelli modeless sono un dock laterale (`role="complementary"`), non una
+  finestra libera. Non rubano il focus all'apertura; il pulsante Close
+  restituisce il focus al trigger.
+- Un pannello non può duplicare una vista già visibile nel primario o nel
+  secondario: Console/Output/Messages/History sono trattati come lo stesso
+  gruppo. `view_ready()` conosce anche `input$modeless_view`.
+- Classic non cambia.
 
 ---
 
@@ -103,13 +105,14 @@ l'alternativa da tastiera. Il drag potrà arrivare in S3bis o S8.
 
 | Controllo | Esito |
 |---|---|
-| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`tests-w18-lotto1.log`) |
-| `node --check` | verde su `app_js()` composto |
+| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w18-lotto2.log`) |
+| Undo | dati, pin, delete, reorder; redo svuotato da una nuova azione; progetto carica pulito |
+| Selezione | TSV, intervallo, status bar, menu Edit, Ctrl+C |
+| Dialoghi | geometria ricordata e persistita, grip da tastiera |
+| Modeless | Help/Console/Output senza modale, focus al trigger alla chiusura |
+| `node --check` | verde su `10-dialogs.js`, `65-data-selection.js`, `66-modeless.js`, `70-keyboard.js` |
 | App | riavviata su `http://127.0.0.1:3841`, HTTP 200 |
 | Classic | `tabsetPanel` e `data-value` invariati |
-| Workspace | due slot, vista unica, persistenza, focus |
-| Pannelli | Data inspector e Chart preview nascondibili |
-| Menu | `role="menubar"`, `menuitem`, F10/Alt/frecce/Esc |
 
 ---
 
@@ -117,37 +120,42 @@ l'alternativa da tastiera. Il drag potrà arrivare in S3bis o S8.
 
 | Problema | Impatto | Task |
 |---|---|---|
-| Nessun browser | menu, split e pannelli non visti a schermo | S11 |
+| Nessun browser | grip, dock e selezione non visti a schermo | S11 |
+| Undo di delete non ripristina il PNG | metadati sì, file no | S8/S11 |
+| Selezione Cells limitata alla pagina DT | nessun range tra pagine | S5bis |
+| Geometria workspace non ancora versionata | solo i dialoghi per ora | S8 |
 | Tema/lingua/densità ancora in topbar | topbar non ancora desktop | S7 |
 | Sidebar non persistita | si riapre al riavvio | S8 |
 | Report/Script senza toggle pannelli | copertura parziale | S8 |
 | Drag della vista non implementato | si usa il select | S3bis/S8 |
-| Preferenze reali possono avere `workspace_focus` vecchio | test isolati con input esplicito | S8 |
 
 ---
 
 ## 7. Prossimo lotto
 
-**S4–S6 — Azioni reversibili:**
+**S7–S9 — Superficie desktop:**
 
-1. **S4** — undo/redo applicativo per dati e galleria, menu Edit, limiti.
-2. **S5** — selezione a intervallo, copia TSV, status bar.
-3. **S6** — dialoghi ridimensionabili e Help/Console modeless.
+1. **S7** — densità e chrome desktop: topbar/menubar/toolbar più bassi, raggi,
+   card piatte, Home come start page, matrice 8 temi × 2 densità.
+2. **S8** — geometria persistente versionata: ultima vista, pannelli, larghezze
+   DT, dimensioni dialoghi, sidebar, reset in View.
+3. **S9** — status bar completa e navigazione da tastiera (`F6`/`Shift+F6`),
+   annunci di selezione e undo.
 
-Gate: nessun comando rieseguito dall'undo; la selezione riga resta il default;
-Classic non cambia.
+Gate: nessuna regressione nei comandi, Classic invariata, nessuna nuova
+stringa non tradotta.
 
 ---
 
 ## 8. Checklist di handoff
 
-- [x] S1 committato (`03f908b`).
-- [x] S2 committato (`44496bd`).
-- [x] S3 committato (`26d11db`).
+- [x] S4 committato (`074f9e9`).
+- [x] S5 committato (`5b17dd9`).
+- [x] S6 committato (`29364ba`).
 - [x] Suite completa verde.
-- [x] `node --check` verde.
+- [x] JS controllato con `node --check`.
 - [x] App riavviata (HTTP 200).
 - [x] `it.tsv` aggiornato per le stringhe nuove.
 - [x] Nessun comando o ID esistente cambiato.
-- [x] Diario creato.
-- [x] Utente informato: “lotto 1 pronto, puoi compattare”.
+- [x] Diario aggiornato.
+- [x] Utente informato: “lotto 2 pronto, puoi compattare”.
