@@ -242,3 +242,50 @@
         }
       } catch (e) {}
     });
+    // Busy state -----------------------------------------------------------
+    // The status bar badge is visual; this live region is what a screen
+    // reader hears while a command runs.  `aria-busy` keeps the rest quiet.
+    Shiny.addCustomMessageHandler('rcmdr-busy', function(message) {
+      var live = document.getElementById('rcmdr-live-status');
+      var main = document.getElementById('main-content') || document.body;
+      var busy = !!(message && message.busy);
+      if (live) live.textContent = busy ? (message.message || '') : '';
+      if (!main) return;
+      if (busy) main.setAttribute('aria-busy', 'true');
+      else main.removeAttribute('aria-busy');
+    });
+
+    // Notifications --------------------------------------------------------
+    // Shiny stacks every notification it is given.  Keep the newest three and
+    // give the panel the live semantics it lacks; the DOM is Shiny's own.
+    function rcmdrLimitNotifications(panel) {
+      var notes = panel.querySelectorAll('.shiny-notification');
+      for (var i = 0; i < notes.length - 3; i += 1) {
+        var close = notes[i].querySelector('.shiny-notification-close');
+        if (close) close.click(); else notes[i].remove();
+      }
+    }
+    function rcmdrWatchNotifications() {
+      var panel = document.getElementById('shiny-notification-panel');
+      if (!panel || panel.getAttribute('data-rcmdr-watched') === '1') return;
+      panel.setAttribute('data-rcmdr-watched', '1');
+      panel.setAttribute('role', 'status');
+      panel.setAttribute('aria-live', 'polite');
+      panel.setAttribute('aria-atomic', 'false');
+      var observer = new MutationObserver(function() {
+        rcmdrLimitNotifications(panel);
+      });
+      observer.observe(panel, {childList: true});
+      rcmdrLimitNotifications(panel);
+    }
+    document.addEventListener('shiny:connected', function() {
+      // The panel is created with the first notification, not at startup.
+      var bodyObserver = new MutationObserver(function() {
+        if (document.getElementById('shiny-notification-panel')) {
+          bodyObserver.disconnect();
+          rcmdrWatchNotifications();
+        }
+      });
+      bodyObserver.observe(document.body, {childList: true});
+      rcmdrWatchNotifications();
+    });

@@ -210,3 +210,28 @@ test_that("a parameter tip opens on focus and closes with Esc", {
   expect_match(css, "--bs-tooltip-color: var(--rcmdr-text);", fixed = TRUE)
 })
 
+test_that("busy states are announced and notifications are capped", {
+  html <- as.character(app_ui())
+  expect_match(html, 'id="rcmdr-live-status"', fixed = TRUE)
+  expect_match(html, 'aria-live="polite"', fixed = TRUE)
+  expect_match(html, 'aria-atomic="true"', fixed = TRUE)
+
+  js <- as.character(app_js())
+  expect_match(js, "rcmdr-busy", fixed = TRUE)
+  expect_match(js, "setAttribute('aria-busy', 'true')", fixed = TRUE)
+  expect_match(js, "rcmdrLimitNotifications", fixed = TRUE)
+  expect_match(js, "notes.length - 3", fixed = TRUE)
+  expect_match(js, "shiny-notification-panel", fixed = TRUE)
+
+  app <- readLines(test_path("..", "..", "R", "app.R"))
+  expect_true(any(grepl("set_busy(TRUE, tr(\"Applying the command...\"))",
+                        app, fixed = TRUE)))
+  expect_true(any(grepl("set_busy(TRUE, tr(\"Running the command...\"))",
+                        app, fixed = TRUE)))
+  expect_true(any(grepl("set_busy(TRUE, tr(\"Running the script...\"))",
+                        app, fixed = TRUE)))
+
+  css <- as.character(app_css())
+  expect_match(css, ".shiny-notification {", fixed = TRUE)
+  expect_match(css, ".shiny-notification-error {", fixed = TRUE)
+})

@@ -539,6 +539,13 @@ app_ui <- function() {
       class = "visually-hidden-focusable rcmdr-skip-link",
       href = "#main-content", tr("Skip to main content")
     ),
+    # Busy and outcome announcements: the status bar is visual, this region
+    # is what a screen reader hears while a command runs.
+    htmltools::tags$div(
+      id = "rcmdr-live-status",
+      class = "visually-hidden",
+      role = "status", `aria-live` = "polite", `aria-atomic` = "true"
+    ),
     uiOutput("app_topbar"),
     uiOutput("menubar"),
     htmltools::div(
@@ -625,6 +632,16 @@ app_server <- function(env = globalenv()) {
     # The Ace editor is rebuilt only when the palette changes, not on every
     # tick: a theme swap must not discard the undo history mid-sentence.
     ace_theme <- reactiveVal(ui_ace_theme(ui_theme(state)))
+    # Long commands set aria-busy and announce themselves in a polite live
+    # region; the status bar badge is only the visual half of the state.
+    set_busy <- function(value, message = NULL) {
+      state$busy <- isTRUE(value)
+      session$sendCustomMessage("rcmdr-busy", list(
+        busy = isTRUE(value),
+        message = message %||% ""
+      ))
+      invisible(NULL)
+    }
     state$notify <- function() tick(tick() + 1L)
     state$script_consumed <- 0L
     state$set_script <- function(value) {
@@ -1276,7 +1293,7 @@ app_server <- function(env = globalenv()) {
 
       before_history <- vapply(state$history %||% list(),
                                function(entry) entry$id %||% "", character(1))
-      state$busy <- TRUE
+      set_busy(TRUE, tr("Applying the command..."))
       ok <- tryCatch(
         apply_dialog_result(state, result),
         error = function(e) {
@@ -1285,7 +1302,7 @@ app_server <- function(env = globalenv()) {
           FALSE
         }
       )
-      state$busy <- FALSE
+      set_busy(FALSE)
 
       if (isTRUE(ok) && !is.null(state$workflow)) {
         after_history <- vapply(state$history %||% list(),
@@ -1582,9 +1599,9 @@ app_server <- function(env = globalenv()) {
         )
         return()
       }
-      state$busy <- TRUE
+      set_busy(TRUE, tr("Running the command..."))
       console_execute(state, code)
-      state$busy <- FALSE
+      set_busy(FALSE)
       updateTextInput(session, "console_input", value = "")
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
@@ -3108,9 +3125,9 @@ app_server <- function(env = globalenv()) {
 
     run_script <- function(code) {
       if (is.null(code) || !nzchar(trimws(code))) return(invisible(NULL))
-      state$busy <- TRUE
+      set_busy(TRUE, tr("Running the script..."))
       result <- script_execute(state, code, source = "script")
-      state$busy <- FALSE
+      set_busy(FALSE)
       tick(tick() + 1L)
       menu_revision(menu_revision() + 1L)
       history_revision(history_revision() + 1L)

@@ -414,3 +414,37 @@
     .progress-bar.bg-warning { background-color: var(--rcmdr-warning) !important; }
     .progress-bar.bg-success { background-color: var(--rcmdr-success) !important; }
     .progress-bar.bg-danger { background-color: var(--rcmdr-danger) !important; }
+
+    /* Notifications --------------------------------------------------------
+       Shiny's notification panel is body-level: it needs its own surface,
+       border and elevation, and a type stripe that is not a second colour
+       language.  The panel is also the live region (see 40-interactions.js). */
+    .shiny-notification-panel { z-index: 1080; }
+    .shiny-notification {
+      min-width: 18rem;
+      max-width: 26rem;
+      margin-bottom: var(--rcmdr-space-2);
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-left: .3rem solid var(--rcmdr-accent);
+      border-radius: var(--rcmdr-radius-md);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      box-shadow: var(--rcmdr-shadow);
+      font-size: var(--rcmdr-text-md);
+    }
+    .shiny-notification-message { border-left-color: var(--rcmdr-accent); }
+    .shiny-notification-warning { border-left-color: var(--rcmdr-warning); }
+    .shiny-notification-error { border-left-color: var(--rcmdr-danger); }
+    .shiny-notification-close {
+      color: var(--rcmdr-muted);
+      border-radius: var(--rcmdr-radius-sm);
+    }
+    .shiny-notification-close:hover {
+      color: var(--rcmdr-heading);
+      background: var(--rcmdr-hover);
+    }
+    .shiny-notification-close:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
