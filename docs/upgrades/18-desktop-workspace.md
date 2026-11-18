@@ -1,7 +1,7 @@
 # Onda 18 — Spazio di lavoro desktop
 
 **Data:** 2026-11-18  
-**Stato:** in corso — S1–S6 fatti (lotti 1–2), prossimo S7–S9  
+**Stato:** in corso — S1–S9 fatti (lotti 1–3), prossimo S10–S12  
 **Baseline:** RcmdrShiny Studio 2.9.0 + T13 (hardening editor)  
 **Dipende da:** Onda 17 (split pane, menu contestuali, drag-and-drop, viste
 pigre) e T13 (editor legato a dataset/vista)  

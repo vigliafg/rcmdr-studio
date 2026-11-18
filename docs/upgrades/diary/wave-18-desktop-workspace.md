@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 18 — spazio di lavoro desktop
 
 **Data:** 2026-11-18  
-**Stato:** lotto 2 completato (S1–S6); prossimo lotto S7–S9  
+**Stato:** lotto 3 completato (S1–S9); prossimo lotto S10–S12  
 **Baseline:** RcmdrShiny Studio 2.9.0 + T13  
 **Documento di settore:** [`18-desktop-workspace.md`](../18-desktop-workspace.md)  
 **ADR:** [`DECISIONS.md`](../DECISIONS.md) — ADR-018  
@@ -9,95 +9,89 @@
 
 ---
 
-## 1. Lotto 1 — shell e workspace · `03f908b`, `44496bd`, `26d11db`
+## 1. Lotti 1–2 — shell, workspace, undo, selezione, dialoghi
 
-Il lotto 1 ha aperto il workspace desktop e resta invariato:
+Restano invariati:
 
 - Studio non renderizza più un `tabsetPanel` con tutte le viste: una sola
   vista primaria, un secondo slot facoltativo, nessuna vista duplicata.
 - `input$main_tabs` resta il contratto stabile; il view switcher lo aggiorna e
   `state$show_tab()` continua a funzionare.
 - Menubar `role="menubar"` con F10, `Alt`+lettera, frecce, `Down`, `Esc`.
-- Data Studio ha il pannello **Inspector**, Chart Studio il pannello
-  **Preview**; entrambi sono nascondibili e persistiti.
-- Modalità **Split / Primary / Secondary** e **Swap sides** per il secondario.
-- Classic conserva `tabsetPanel` e i suoi `data-value`.
+- Data Studio ha l'**Inspector**, Chart Studio il **Preview**; entrambi sono
+  nascondibili e persistiti.
+- Undo/redo applicativo per dati e galleria (`R/undo.R`), con limiti 20 voci e
+  50 MB, menu Edit e `Ctrl+Z` fuori dai campi.
+- Selezione **Rows / Cells** con TSV, `Ctrl+C` e status bar.
+- Dialoghi ridimensionabili con geometria per `dialog_id` e pannelli modeless
+  Help/Console/Output.
 
-Dettagli e deviazioni del lotto 1 sono nella storia Git; il presente diario
-copre il lotto 2.
-
----
-
-## 2. S4 — Undo/redo applicativo · `074f9e9`
-
-**File:** `R/undo.R` (nuovo), `R/state.R`, `R/commands.R`, `R/data-studio.R`,
-`R/chart-studio.R`, `R/dialogs.R`, `R/project.R`, `R/activation.R`, menu,
-`inst/www/js/70-keyboard.js`, test.
-
-- Nuovo stack limitato `list(kind, label, before, after, bytes, time)` per
-  **dati** e **galleria**; 20 voci e 50 MB, con scarto della voce più vecchia.
-- I comandi console sono tracciati solo se nominano il dataset attivo in
-  un'assegnazione (`<-`); `summary(D)` non paga uno snapshot.
-- I comandi di Data Studio sono sospesi dal tracciamento automatico e
-  registrano **una sola** voce per l'intera azione (`Adding a row`,
-  `Cell editing`).
-- Galleria: aggiunta, pin/unpin, rinomina, eliminazione e riordino.
-- Il ripristino rimette lo snapshot e non esegue alcun comando; history, log e
-  script non crescono durante undo/redo.
-- Menu **Edit**: `Undo: <azione>` / `Redo: <azione>`, disabilitati quando lo
-  stack è vuoto; `Ctrl+Z` / `Ctrl+Shift+Z` solo fuori da input, textarea e Ace.
-- La status bar annuncia `Undone: …` / `Redone: …` nella regione `aria-live`.
-- Il caricamento di un progetto svuota undo e redo.
-
-**Limite noto:** l'undo di un'eliminazione ripristina i metadati della
-galleria, non il file PNG già cancellato.
+Dettagli e deviazioni dei lotti 1–2 sono nella storia Git; questo diario
+copre il lotto 3.
 
 ---
 
-## 3. S5 — Selezione a intervallo e appunti · `5b17dd9`
+## 2. S7 — Densità e chrome desktop · `6da52af`
 
-**File:** `R/data-studio.R`, `R/app.R`, `R/activation.R`, `R/dialogs.R`,
-`R/state.R`, menu, `inst/www/js/65-data-selection.js`, CSS, test.
+**File:** `inst/www/css/00-tokens.css`, `10-shell.css`, `60-views.css`,
+`70-refine.css`, `inst/www/js/00-boot.js`, `R/app.R`, `R/dialogs-tools.R`,
+menu, i18n, test.
 
-- Nuovo selettore **Rows / Cells** nella toolbar del Data Studio. Rows resta
-  il default e conserva il comportamento Wave 17.
-- In Cells: clic singolo, `Shift`+clic, trascinamento e `Shift`+frecce
-  selezionano un rettangolo; `Esc` pulisce. La selezione si azzera a ogni
-  ridisegno, cambio dataset o filtro.
-- La selezione vive in `state$data_selection$cells` con l'intervallo
-  `R1C1:R4C3`; righe e colonne restano valorizzate per le azioni esistenti.
-- `Ctrl+C`, **Edit > Copy selection** e il pulsante nella barra copiano il
-  blocco come TSV nell'ordine visibile, senza `.row_id`; i valori con tab o
-  newline vengono appiattiti. Fallback con `<textarea>` se
-  `navigator.clipboard` non è disponibile.
-- La status bar mostra intervallo, righe, colonne e celle non vuote.
-- L'editor a celle conserva il copia/incolla nativo di `rhandsontable`.
-
-**Limite noto:** il trascinamento è dentro la pagina corrente di DT; non
-attraversa le pagine.
+- Il body riceve `rcmdr-mode-studio` / `rcmdr-mode-classic`
+  (`rcmdr-ui-mode`): tutte le regole desktop sono confinate alla modalità
+  Studio, quindi Classica mantiene spaziatura e `tabsetPanel`.
+- Token di chrome: topbar 40 px, menubar 28 px, toolbar/view bar 40 px.
+- Raggi 4/6/8 px (`--rcmdr-radius-lg` scende da 12 a 8 px).
+- Card piatte: bordo 1 px, nessuna ombra; ombre solo su menu, dialoghi e
+  drop-down. Rimossi i gradienti: la hero di Home non esiste più.
+- Home è una **start page a due colonne**: azioni + tastiera a sinistra,
+  Continue/Recent/Projects a destra, checklist e salute sotto.
+- Tema, lingua e densità escono dalla topbar: **View > Preferences...** apre
+  il dialogo Options, che ora contiene anche la lingua. La topbar tiene brand,
+  dataset/modello, palette, Help, Classic/Studio e About.
+- La matrice 8 temi × 2 densità resta invariata; nessun colore nuovo.
 
 ---
 
-## 4. S6 — Dialoghi ridimensionabili e pannelli modeless · `29364ba`
+## 3. S8 — Geometria persistente · `d566b85`
 
-**File:** `R/dialogs.R`, `R/preferences.R`, `R/state.R`, `R/app.R`, menu,
-`inst/www/js/10-dialogs.js`, `inst/www/js/66-modeless.js`, CSS, test.
+**File:** `R/preferences.R`, `R/state.R`, `R/data-studio.R`, `R/app.R`,
+`R/dialogs.R`, menu, `inst/www/js/00-boot.js`, `65-data-selection.js`, CSS,
+test.
 
-- Ogni dialogo ha un grip `.rcmdr-dialog-resize` con `role="separator"`,
-  `tabindex="0"` e frecce per larghezza/altezza (`Shift` = passo grande).
-- La geometria è per `dialog_id` in `state$options$geometry$dialogs`, con
-  limiti 360–4000 px in larghezza e 240–3000 px in altezza; viene scritta
-  anche nelle preferenze, quindi il dialogo riapre alla stessa dimensione.
-- Il grip non è una finestra flottante: il dialogo resta modale e Bootstrap
-  conserva backdrop, Esc e focus.
-- Nuovo menu **View** con **Help panel**, **Console panel**, **Output panel**.
-- I pannelli modeless sono un dock laterale (`role="complementary"`), non una
-  finestra libera. Non rubano il focus all'apertura; il pulsante Close
-  restituisce il focus al trigger.
-- Un pannello non può duplicare una vista già visibile nel primario o nel
-  secondario: Console/Output/Messages/History sono trattati come lo stesso
-  gruppo. `view_ready()` conosce anche `input$modeless_view`.
-- Classic non cambia.
+- `state$options$geometry` versionato:
+  `list(version, dialogs, widths, last_view, sidebar)`.
+- `geometry_normalize()` valida tutto; un file vecchio, corrotto o con
+  versione futura ricade sui default senza errori.
+- Ultima vista: la vista salvata inizializza il `main_tabs` nascosto, quindi il
+  riavvio riapre il workspace lasciato.
+- Sidebar: il toggle invia `sidebar_collapsed`; al riavvio `rcmdr-sidebar`
+  riapplica lo stato senza toccare il resto.
+- Larghezze DT per dataset: grip da 7 px sull'intestazione, trascinamento,
+  `data_column_widths`, clamp 40–1200 px; applicate al render successivo.
+- Dimensioni dialoghi già in `geometry$dialogs` (S6).
+- **View > Reset layout**: geometry, split, ordine colonne, pannelli, vista
+  secondaria e sidebar tornano ai default; dati, history, log e undo restano.
+- Le preferenze `layouts` e `column_order` restano ai nomi storici per
+  compatibilità; la geometria nuova copre solo ciò che S8 aggiunge.
+
+---
+
+## 4. S9 — Status bar e navigazione da tastiera · `47bbe56`
+
+**File:** `R/app.R`, `R/data-studio.R`, `R/chart-studio.R`,
+`inst/www/js/40-interactions.js`, `70-keyboard.js`, CSS, test.
+
+- Status bar: versione, modalità, dimensioni, **Data: …**, comandi, history,
+  **Model: …**, grafici, selezione, ultima azione/undo, busy, ultimo errore.
+- `aria-live="polite"` e `aria-atomic="false"` sulla barra; selezione e
+  undo/redo passano anche da `rcmdr-announce` verso `#rcmdr-live-status`.
+- `F6` / `Shift+F6` ciclano il focus tra primario, secondario, pannello
+  interno (Inspector/Preview), pannello modeless e status bar. Le regioni
+  hanno `role="region"`, nome e lo stesso token di focus dei controlli.
+- Il pannello modeless ha titolo (`modeless-title`) e pulsante **Back to
+  workspace**; il focus torna al trigger alla chiusura.
+- Menu: F10/Alt/frecce/Esc restano quelli di S1, nessuna regressione.
 
 ---
 
@@ -105,12 +99,12 @@ attraversa le pagine.
 
 | Controllo | Esito |
 |---|---|
-| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w18-lotto2.log`) |
-| Undo | dati, pin, delete, reorder; redo svuotato da una nuova azione; progetto carica pulito |
-| Selezione | TSV, intervallo, status bar, menu Edit, Ctrl+C |
-| Dialoghi | geometria ricordata e persistita, grip da tastiera |
-| Modeless | Help/Console/Output senza modale, focus al trigger alla chiusura |
-| `node --check` | verde su `10-dialogs.js`, `65-data-selection.js`, `66-modeless.js`, `70-keyboard.js` |
+| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w18-lotto3.log`) |
+| Chrome | token 40/28/40, raggi 4/6/8, regole solo `body.rcmdr-mode-studio` |
+| Home | due colonne, nessuna hero, nessun gradiente |
+| Geometria | ultima vista, sidebar, larghezze DT, dialoghi, reset senza dati |
+| Status/tastiera | dataset, modello, ultima azione, F6, annunci, modeless |
+| `node --check` | verde sul JS composto (`/tmp/opencode/app-s9.js`) |
 | App | riavviata su `http://127.0.0.1:3841`, HTTP 200 |
 | Classic | `tabsetPanel` e `data-value` invariati |
 
@@ -120,27 +114,26 @@ attraversa le pagine.
 
 | Problema | Impatto | Task |
 |---|---|---|
-| Nessun browser | grip, dock e selezione non visti a schermo | S11 |
-| Undo di delete non ripristina il PNG | metadati sì, file no | S8/S11 |
+| Nessun browser | chrome, F6, resize e start page non visti a schermo | S11 |
+| Resize DT custom | niente estensione ColResize; larghezze solo colonne visibili | S10/S11 |
+| Larghezze al render successivo | il drag è immediato, la persistenza si vede al ridisegno | S10 |
+| Undo di delete non ripristina il PNG | metadati sì, file no | S11 |
 | Selezione Cells limitata alla pagina DT | nessun range tra pagine | S5bis |
-| Geometria workspace non ancora versionata | solo i dialoghi per ora | S8 |
-| Tema/lingua/densità ancora in topbar | topbar non ancora desktop | S7 |
-| Sidebar non persistita | si riapre al riavvio | S8 |
-| Report/Script senza toggle pannelli | copertura parziale | S8 |
-| Drag della vista non implementato | si usa il select | S3bis/S8 |
+| `layouts`/`column_order` fuori da `geometry` | compatibilità con file vecchi | S12 |
+| Sidebar ripristinata dopo il flush | breve flash al primo paint | S11 |
+| Reset layout non chiude il pannello modeless | resta aperto | S12 |
 
 ---
 
 ## 7. Prossimo lotto
 
-**S7–S9 — Superficie desktop:**
+**S10–S12 — chiusura dell'onda:**
 
-1. **S7** — densità e chrome desktop: topbar/menubar/toolbar più bassi, raggi,
-   card piatte, Home come start page, matrice 8 temi × 2 densità.
-2. **S8** — geometria persistente versionata: ultima vista, pannelli, larghezze
-   DT, dimensioni dialoghi, sidebar, reset in View.
-3. **S9** — status bar completa e navigazione da tastiera (`F6`/`Shift+F6`),
-   annunci di selezione e undo.
+1. **S10** — dati grandi: misure a 10.000/50.000/100.000 righe, soglia DT
+   server-side misurata, nessun motore nuovo.
+2. **S11** — accessibilità desktop ed e2e: tastiera, zoom 200%, screenshot,
+   contrasto sulle nuove superfici.
+3. **S12** — chiusura: NEWS 3.0.0, topic, diario, push.
 
 Gate: nessuna regressione nei comandi, Classic invariata, nessuna nuova
 stringa non tradotta.
@@ -149,13 +142,13 @@ stringa non tradotta.
 
 ## 8. Checklist di handoff
 
-- [x] S4 committato (`074f9e9`).
-- [x] S5 committato (`5b17dd9`).
-- [x] S6 committato (`29364ba`).
+- [x] S7 committato (`6da52af`).
+- [x] S8 committato (`d566b85`).
+- [x] S9 committato (`47bbe56`).
 - [x] Suite completa verde.
 - [x] JS controllato con `node --check`.
 - [x] App riavviata (HTTP 200).
 - [x] `it.tsv` aggiornato per le stringhe nuove.
 - [x] Nessun comando o ID esistente cambiato.
 - [x] Diario aggiornato.
-- [x] Utente informato: “lotto 2 pronto, puoi compattare”.
+- [x] Utente informato: “lotto 3 pronto, puoi compattare”.

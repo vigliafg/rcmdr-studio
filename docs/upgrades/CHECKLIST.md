@@ -539,7 +539,7 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 ## Onda 18 — Spazio di lavoro desktop
 
 Documento di settore: [`18-desktop-workspace.md`](18-desktop-workspace.md).
-Stato: in corso — lotti 1–2 fatti (S1–S6), prossimo S7–S9; ADR-018.
+Stato: in corso — lotti 1–3 fatti (S1–S9), prossimo S10–S12; ADR-018.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -549,9 +549,9 @@ Stato: in corso — lotti 1–2 fatti (S1–S6), prossimo S7–S9; ADR-018.
 | S4 | Undo/redo applicativo | [x] | `074f9e9`; dati e galleria, menu Edit |
 | S5 | Selezione a intervallo e appunti | [x] | `5b17dd9`; Rows/Cells, TSV, status bar |
 | S6 | Dialoghi ridimensionabili e pannelli modeless | [x] | `29364ba`; geometria, Help/Console/Output |
-| S7 | Densità e chrome desktop | [ ] | Studio-only, 8 × 2 |
-| S8 | Geometria persistente | [ ] | ultima vista, larghezze, dialoghi |
-| S9 | Status bar e navigazione da tastiera | [ ] | F6, contesto, annunci |
+| S7 | Densità e chrome desktop | [x] | `6da52af`; Studio-only, start page, 8 × 2 |
+| S8 | Geometria persistente | [x] | `d566b85`; ultima vista, larghezze, dialoghi, reset |
+| S9 | Status bar e navigazione da tastiera | [x] | `47bbe56`; F6, contesto, annunci |
 | S10 | Dati grandi | [ ] | misure e soglie, nessun motore nuovo |
 | S11 | Accessibilità desktop ed e2e | [ ] | tastiera, zoom, screenshot |
 | S12 | Chiusura | [ ] | NEWS 3.0.0, topic, diario, push |
