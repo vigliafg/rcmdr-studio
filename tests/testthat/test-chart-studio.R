@@ -297,3 +297,62 @@ test_that("each semantic panel owns its fields and nothing else", {
     paste0('id="', c("chart_width", "chart_height"), '"')
   )
 })
+
+test_that("the per-type options keep the panels that survive a type change", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$Dataset <- data.frame(y = 1:6, x = 2 * (1:6),
+                            g = factor(rep(c("a", "b"), 3)))
+
+  suppressWarnings(shiny::testServer(app_server(env), {
+    active_dataset(state, "Dataset")
+    session$setInputs(
+      menu_search = "", chart_mode = "build", chart_type = "boxplot",
+      chart_dataset = "Dataset", chart_map_x = "y", chart_map_group = "",
+      chart_type_options = c("Box", "Layout")
+    )
+    session$flushReact()
+
+    html <- htmltools::renderTags(output$chart_options_ui)$html
+    expect_match(html, 'id="chart_type_options"', fixed = TRUE)
+    expect_match(html, "rcmdr-accordion-nested", fixed = TRUE)
+    # One level below the builder accordion, and still a heading.
+    expect_equal(
+      lengths(regmatches(html, gregexpr('aria-level="4"', html))), 2L
+    )
+    expect_equal(
+      lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 2L
+    )
+    # Both groups were open and both are still available on a boxplot.
+    expect_equal(
+      lengths(regmatches(html, gregexpr("collapse show", html))), 2L
+    )
+
+    # A dot plot shares only Layout: Box is gone, Layout stays open, and the
+    # first group of the new type is not forced open on top of it.
+    session$setInputs(chart_type_options = c("Box", "Layout"),
+                      chart_type = "dot")
+    session$flushReact()
+    html <- htmltools::renderTags(output$chart_options_ui)$html
+    expect_false(grepl('data-value="Box"', html, fixed = TRUE))
+    expect_match(html, 'data-value="Layout"', fixed = TRUE)
+    expect_equal(
+      lengths(regmatches(html, gregexpr("collapse show", html))), 1L
+    )
+    for (id in c("chart_opt_bin", "chart_opt_binaxis", "chart_opt_stackdir",
+                 "chart_opt_dotsize", "chart_opt_binwidth")) {
+      expect_match(html, sprintf('id="%s"', id), fixed = TRUE)
+    }
+  }))
+})
+
+test_that("a type without metadata still renders one options panel", {
+  info <- chart_type("histogram")
+  html <- as.character(
+    chart_options_accordion(info, chart_spec("histogram", "D", list()))
+  )
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 1L
+  )
+  expect_match(html, 'data-value="Options"', fixed = TRUE)
+})

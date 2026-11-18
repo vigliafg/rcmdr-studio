@@ -222,6 +222,7 @@
     .rcmdr-field-grid .shiny-input-container,
     .rcmdr-field-grid .form-control,
     .rcmdr-field-grid .form-select { width: 100%; }
+    .rcmdr-field-grid > .accordion { grid-column: 1 / -1; min-width: 0; }
     .rcmdr-field-grid > .form-text { grid-column: 1 / -1; }
     .rcmdr-field-grid .rcmdr-field-wide { grid-column: 1 / -1; }
     .rcmdr-field-grid .rcmdr-field-half { grid-column: span 2; }

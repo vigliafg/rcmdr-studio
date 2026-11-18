@@ -44,6 +44,64 @@ chart_type <- function(type) {
   chart_types()[[type]]
 }
 
+#' Option groups of a chart type
+#'
+#' A descriptor names its groups in `option_groups`, a named list whose names
+#' are stable keys (also the English title) and whose values are option names
+#' from `defaults`.  A type without the field keeps one group, so the common
+#' case needs no metadata.  Names that are not options are dropped and options
+#' left out of every group join the first one: a control can never disappear
+#' because of a typo in the metadata.
+#'
+#' @param info A chart type descriptor.
+#' @return A named list of character vectors, one per group.
+#' @keywords internal
+chart_option_groups <- function(info) {
+  defaults <- names(info$defaults %||% list())
+  groups <- lapply(info$option_groups %||% list(), function(values) {
+    intersect(as.character(values), defaults)
+  })
+  groups <- groups[lengths(groups) > 0L]
+  if (length(groups) == 0L) {
+    return(stats::setNames(list(defaults), "Options"))
+  }
+  missing <- setdiff(defaults, unlist(groups, use.names = FALSE))
+  if (length(missing) > 0L) groups[[1L]] <- c(groups[[1L]], missing)
+  groups
+}
+
+#' Controls of a chart type, split by option group
+#'
+#' The descriptors keep one `controls(spec)` function: partitioning its tags
+#' by the `chart_opt_*` id they carry means a type never repeats its control
+#' definitions in order to gain a panel.
+#'
+#' @param info A chart type descriptor.
+#' @param spec A chart specification.
+#' @return A named list of tag lists, one per group.
+#' @keywords internal
+chart_option_controls <- function(info, spec) {
+  controls <- Filter(Negate(is.null), as.list(info$controls(spec)))
+  groups <- chart_option_groups(info)
+  option_of <- function(tag) {
+    html <- as.character(tag)
+    hit <- regmatches(html, regexpr('id="chart_opt_[A-Za-z0-9_]+"', html))
+    if (length(hit) == 0L) return("")
+    sub('^id="chart_opt_', "", sub('"$', "", hit))
+  }
+  names_options <- vapply(controls, option_of, character(1))
+  panel_of <- vapply(names_options, function(name) {
+    if (!nzchar(name)) return(1L)
+    hit <- which(vapply(groups, function(values) name %in% values, logical(1)))
+    if (length(hit) == 0L) 1L else hit[[1L]]
+  }, integer(1))
+
+  out <- lapply(seq_along(groups), function(i) {
+    do.call(htmltools::tagList, controls[panel_of == i])
+  })
+  stats::setNames(out, names(groups))
+}
+
 #' Registry of chart types
 #'
 #' The registry is rebuilt on demand so translated labels follow the current
@@ -130,6 +188,12 @@ chart_types_core <- function() {
       ),
       defaults = list(bw = "", kernel = "", adjust = 0, rug = FALSE,
                       grid = FALSE),
+      # The panels are the tasks, not the field order: shape of the estimate
+      # first, the overlays that decorate it second.
+      option_groups = list(
+        Shape = c("bw", "kernel", "adjust"),
+        Overlay = c("rug", "grid")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -183,6 +247,10 @@ chart_types_core <- function() {
       ),
       defaults = list(notch = FALSE, notchwidth = 0.5, varwidth = FALSE,
                       horizontal = FALSE, outline = TRUE, width = 0),
+      option_groups = list(
+        Box = c("notch", "notchwidth", "varwidth"),
+        Layout = c("horizontal", "outline", "width")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -250,6 +318,11 @@ chart_types_core <- function() {
       defaults = list(smooth = FALSE, boxplots = FALSE, log = "",
                       regression = FALSE, ellipse = FALSE, grid = FALSE,
                       jitter = 0),
+      option_groups = list(
+        Fit = c("smooth", "regression", "ellipse"),
+        Points = c("jitter"),
+        Frame = c("boxplots", "grid", "log")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -411,6 +484,10 @@ chart_types_core <- function() {
       ),
       defaults = list(bin = FALSE, binaxis = "x", stackdir = "center",
                       dotsize = 1, binwidth = 0),
+      option_groups = list(
+        Bins = c("bin", "binaxis", "binwidth"),
+        Layout = c("stackdir", "dotsize")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -460,6 +537,11 @@ chart_types_core <- function() {
       ),
       defaults = list(method = "stack", jitter_width = 0.2,
                       jitter_height = 0.1, shape = 19),
+      option_groups = list(
+        Method = c("method"),
+        Jitter = c("jitter_width", "jitter_height"),
+        Points = c("shape")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -502,6 +584,11 @@ chart_types_core <- function() {
       ),
       defaults = list(distribution = "norm", line = TRUE, envelope = FALSE,
                       grid = FALSE),
+      option_groups = list(
+        Distribution = c("distribution"),
+        Reference = c("line"),
+        Frame = c("envelope", "grid")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -548,6 +635,11 @@ chart_types_core <- function() {
       ),
       defaults = list(error_bars = "se", legend = TRUE, connect = TRUE,
                       error_width = 0.2, point_size = 3),
+      option_groups = list(
+        `Error bars` = c("error_bars", "error_width"),
+        `Lines and points` = c("connect", "point_size"),
+        Legend = c("legend")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(
@@ -642,6 +734,10 @@ chart_types_core <- function() {
       ),
       defaults = list(trim = TRUE, scale = "area", adjust = 0,
                       show_box = TRUE),
+      option_groups = list(
+        Shape = c("trim", "adjust", "show_box"),
+        Scale = c("scale")
+      ),
       controls = function(spec) {
         options <- spec$options %||% list()
         htmltools::tagList(

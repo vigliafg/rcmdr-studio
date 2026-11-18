@@ -139,3 +139,48 @@ test_that("dialog memory matches the existing dialogs", {
   expect_equal(memory$response, "y")
   expect_equal(memory$group, "g")
 })
+
+test_that("every type declares its option groups without losing a field", {
+  for (name in names(chart_types_core())) {
+    info <- chart_type(name)
+    defaults <- names(info$defaults %||% list())
+    groups <- chart_option_groups(info)
+    expect_gt(length(groups), 0L)
+    values <- unlist(groups, use.names = FALSE)
+    # Every option belongs to exactly one group: a typo in the metadata must
+    # not hide a control, and no control may appear in two panels.
+    expect_setequal(values, defaults)
+    expect_equal(length(values), length(defaults), info = name)
+    expect_true(all(vapply(groups, length, integer(1)) > 0L), info = name)
+  }
+
+  # A type without metadata still gets one group.
+  plain <- list(defaults = list(one = 1, two = 2), controls = function(spec) NULL)
+  expect_equal(chart_option_groups(plain), list(Options = c("one", "two")))
+  # Unknown names are dropped and orphans join the first group.
+  odd <- list(defaults = list(a = 1, b = 2, c = 3),
+              option_groups = list(Pair = c("a", "typo")))
+  expect_equal(chart_option_groups(odd),
+               list(Pair = c("a", "b", "c")))
+})
+
+test_that("splitting the controls keeps every per-type field once", {
+  ids_of <- function(tags) {
+    html <- paste(unlist(lapply(as.list(tags), as.character)), collapse = "")
+    regmatches(html, gregexpr('id="chart_opt_[A-Za-z0-9_]+"', html))[[1]]
+  }
+  for (name in chart_type_ids()) {
+    info <- chart_type(name)
+    if (is.null(info)) next
+    spec <- chart_spec(name, "Dataset", list())
+    flat <- ids_of(Filter(Negate(is.null), as.list(info$controls(spec))))
+    grouped <- chart_option_controls(info, spec)
+
+    expect_equal(names(grouped), names(chart_option_groups(info)))
+    together <- do.call(c, lapply(grouped, as.list))
+    grouped_ids <- ids_of(together)
+    expect_setequal(grouped_ids, flat)
+    expect_equal(length(grouped_ids), length(flat), info = name)
+    expect_equal(anyDuplicated(grouped_ids), 0L, info = name)
+  }
+})

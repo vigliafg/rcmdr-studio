@@ -503,6 +503,34 @@ chart_studio_ui <- function() {
   )
 }
 
+#' Accordion of the per-type options
+#'
+#' The dynamic options (two to seven per type) get the same hierarchy as the
+#' static ones.  The id is stable, so the server reads which groups are open
+#' and keeps them open across a type change: a group that survives the change
+#' stays open, a group that disappears is simply absent.
+#'
+#' @param info Chart type descriptor.
+#' @param spec Chart specification.
+#' @param open Group values the client had open.
+#' @return A `div` tag.
+#' @keywords internal
+chart_options_accordion <- function(info, spec, open = NULL) {
+  groups <- chart_option_controls(info, spec)
+  available <- names(groups)
+  open <- intersect(as.character(open %||% character(0)), available)
+  if (length(open) == 0L) open <- available[[1L]]
+  panels <- lapply(available, function(value) {
+    settings_panel(tr(value), groups[[value]], value = value)
+  })
+  do.call(settings_accordion, c(panels, list(
+    id = "chart_type_options",
+    open = open,
+    level = 4L,
+    class = "rcmdr-accordion-nested"
+  )))
+}
+
 #' Builder panel
 #' @keywords internal
 chart_builder_ui <- function() {
@@ -1348,7 +1376,11 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       )
     }
     info <- chart_type(spec$type)
-    info$controls(spec)
+    # Read the open groups with isolate(): the render depends on the type, not
+    # on the accordion state, so opening a panel cannot re-render the panel.
+    chart_options_accordion(
+      info, spec, open = isolate(input$chart_type_options)
+    )
   })
 
   output$chart_command_text <- renderText({

@@ -411,6 +411,13 @@
     }
     .rcmdr-accordion .accordion-title .rcmdr-badge { margin-left: auto; }
     .rcmdr-accordion .accordion-body { gap: var(--rcmdr-space-2); }
+    /* The per-type options live inside the Options panel: the one nested
+       accordion in the app.  Flatten it, so the two levels read as a
+       hierarchy rather than as two boxes. */
+    .rcmdr-accordion .rcmdr-accordion { margin-bottom: 0; }
+    .rcmdr-accordion .rcmdr-accordion .accordion-button {
+      font-size: var(--rcmdr-text-sm);
+    }
     .rcmdr-settings-group + .rcmdr-settings-group {
       margin-top: var(--rcmdr-space-2);
     }
