@@ -1,44 +1,115 @@
     /* shinyWidgets bridge --------------------------------------------------
        The package ships its own CSS as a Shiny dependency; these rules make
-       the widgets we adopt read the Studio tokens.  Only the three families
-       chosen for wave 16 are styled here: searchable picker/listbox, bounded
-       slider and colour picker.  Every value resolves through --rcmdr-*. */
-    .virtual-select,
-    .bootstrap-select,
-    .sw-no-ui-slider,
-    .noUi-target,
-    .sw-spectrum,
-    .sp-replacer {
-      font-size: var(--rcmdr-control-size);
-      color: var(--rcmdr-text);
+       the widgets we adopt read the Studio tokens.  Wave 16 adopts the
+       virtual select (searchable list), the noUi slider and the spectrum
+       colour picker.  Every value resolves through --rcmdr-*. */
+    .virtual-select {
+      width: 100%;
+      --vs-font-size: var(--rcmdr-control-size);
+      --vs-line-height: var(--rcmdr-leading-ui);
+      --vs-controls-color: var(--rcmdr-muted);
+      --vs-border-color: var(--rcmdr-border-strong);
+      --vs-border-width: 1px;
+      --vs-border-radius: var(--rcmdr-radius-sm);
+      --vs-dropdown-bg: var(--rcmdr-surface);
+      --vs-dropdown-color: var(--rcmdr-text);
+      --vs-dropdown-z-index: 1050;
+      --vs-dropdown-box-shadow: var(--rcmdr-shadow-sm);
+      --vs-dropdown-option-padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      --vs-dropdown-option--active-bg: var(--rcmdr-hover);
+      --vs-dropdown-option--active-color: var(--rcmdr-heading);
+      --vs-dropdown-option--selected-bg: var(--rcmdr-selection);
+      --vs-dropdown-option--selected-color: var(--rcmdr-heading);
+      --vs-search-input-bg: var(--rcmdr-surface);
+      --vs-search-input-color: var(--rcmdr-text);
+      --vs-search-input-placeholder-color: var(--rcmdr-muted);
+      --vs-selected-bg: var(--rcmdr-selection);
+      --vs-selected-color: var(--rcmdr-text);
+      --vs-selected-border-color: var(--rcmdr-border-strong);
+      --vs-selected-border-width: 1px;
+      --vs-selected-border-radius: var(--rcmdr-radius-pill);
     }
-    .virtual-select .vs__dropdown-toggle,
-    .bootstrap-select > .dropdown-toggle {
+    .virtual-select .vs__dropdown-toggle {
       min-height: var(--rcmdr-control-h);
+      padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
       border: 1px solid var(--rcmdr-border-strong);
       border-radius: var(--rcmdr-radius-sm);
       background: var(--rcmdr-surface);
       color: var(--rcmdr-text);
     }
-    .virtual-select .vs__dropdown-toggle:focus-within,
-    .bootstrap-select > .dropdown-toggle:focus-visible {
+    .virtual-select .vs__dropdown-toggle:hover {
+      border-color: var(--rcmdr-heading);
+    }
+    .virtual-select .vs__dropdown-toggle:focus-within {
       border-color: var(--rcmdr-focus);
       outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
       outline-offset: var(--rcmdr-focus-offset);
     }
-    .virtual-select .vs__dropdown-menu,
-    .bootstrap-select .dropdown-menu {
+    .virtual-select .vs__selected {
+      margin: .1rem .2rem .1rem 0;
+      padding: 0 var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius-pill);
+      background: var(--rcmdr-selection);
+      color: var(--rcmdr-text);
+    }
+    .virtual-select .vs__selected button {
+      color: var(--rcmdr-muted);
+    }
+    .virtual-select .vs__search {
+      color: var(--rcmdr-text);
+    }
+    .virtual-select .vs__dropdown-menu {
+      max-height: 20rem;
+      overflow-y: auto;
       border: 1px solid var(--rcmdr-border);
       border-radius: var(--rcmdr-radius-sm);
       background: var(--rcmdr-surface);
       color: var(--rcmdr-text);
       box-shadow: var(--rcmdr-shadow-sm);
     }
-    .virtual-select .vs__dropdown-option--highlight,
-    .bootstrap-select .dropdown-menu .active > a {
+    .virtual-select .vs__dropdown-option {
+      padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius-xs);
+    }
+    .virtual-select .vs__dropdown-option--highlight {
       background: var(--rcmdr-hover);
       color: var(--rcmdr-heading);
     }
+    .virtual-select .vs__dropdown-option--selected {
+      background: var(--rcmdr-selection);
+      color: var(--rcmdr-heading);
+    }
+    .virtual-select .vs__no-options,
+    .virtual-select .vs__clear {
+      color: var(--rcmdr-muted);
+    }
+
+    /* The dropdown may be portalled outside the widget: keep the same tokens
+       for the global classes as well. */
+    .vs__dropdown-menu {
+      max-height: 20rem;
+      overflow-y: auto;
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      box-shadow: var(--rcmdr-shadow-sm);
+    }
+    .vs__dropdown-option {
+      padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius-xs);
+      color: var(--rcmdr-text);
+    }
+    .vs__dropdown-option--highlight {
+      background: var(--rcmdr-hover);
+      color: var(--rcmdr-heading);
+    }
+    .vs__dropdown-option--selected {
+      background: var(--rcmdr-selection);
+      color: var(--rcmdr-heading);
+    }
+
+    /* noUiSlider ----------------------------------------------------------- */
     .sw-no-ui-slider,
     .noUi-target {
       background: var(--rcmdr-surface-muted);
@@ -58,6 +129,8 @@
       outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
       outline-offset: var(--rcmdr-focus-offset);
     }
+
+    /* Spectrum colour picker ---------------------------------------------- */
     .sw-spectrum,
     .sp-replacer {
       min-height: var(--rcmdr-control-h);

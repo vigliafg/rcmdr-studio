@@ -10,7 +10,7 @@ test_that("shinyWidgets is an Import with the verified floor", {
 
 test_that("the widget library names only the adopted families", {
   lib <- widget_library()
-  expect_named(lib, c("virtual_select", "picker", "slider", "colour"))
+  expect_named(lib, c("virtual_select", "slider", "colour"))
   expect_true(all(vapply(lib, is.function, logical(1))))
 })
 
@@ -38,6 +38,18 @@ test_that("the bridge writes no literal colour", {
   }
 })
 
+test_that("the virtual select reads the Studio tokens", {
+  css <- app_asset_text("css", "55-shinywidgets.css")
+  expect_match(css, "--vs-border-color: var(--rcmdr-border-strong);",
+               fixed = TRUE)
+  expect_match(css, "--vs-dropdown-box-shadow: var(--rcmdr-shadow-sm);",
+               fixed = TRUE)
+  expect_match(css, "--vs-selected-bg: var(--rcmdr-selection);",
+               fixed = TRUE)
+  expect_match(css, ".vs__dropdown-menu", fixed = TRUE)
+  expect_match(css, "max-height: 20rem;", fixed = TRUE)
+})
+
 test_that("every palette defines the small elevation token", {
   palettes <- palette_tokens()
   for (name in names(palettes)) {
@@ -46,18 +58,12 @@ test_that("every palette defines the small elevation token", {
   }
 })
 
-test_that("the adopted widgets keep their input ids", {
+test_that("the candidate widgets keep their input ids", {
   virtual <- as.character(shinyWidgets::virtualSelectInput(
     "w_virtual", "Virtual", c("a", "b"), multiple = TRUE, search = TRUE
   ))
   expect_match(virtual, 'id="w_virtual"', fixed = TRUE)
   expect_match(virtual, 'class="virtual-select"', fixed = TRUE)
-
-  picker <- as.character(shinyWidgets::pickerInput(
-    "w_picker", "Picker", c("a", "b")
-  ))
-  expect_match(picker, 'id="w_picker"', fixed = TRUE)
-  expect_match(picker, "selectpicker", fixed = TRUE)
 
   slider <- as.character(shinyWidgets::noUiSliderInput(
     "w_slider", "Slider", 0, 1, 0.5
@@ -78,10 +84,9 @@ test_that("the adopted widgets keep their input ids", {
   expect_match(date, "sw-air-picker", fixed = TRUE)
 })
 
-test_that("the adopted widgets are served from the package, not a CDN", {
+test_that("the candidate widgets are served from the package, not a CDN", {
   widgets <- htmltools::tagList(
     shinyWidgets::virtualSelectInput("w_virtual", "Virtual", c("a", "b")),
-    shinyWidgets::pickerInput("w_picker", "Picker", c("a", "b")),
     shinyWidgets::noUiSliderInput("w_slider", "Slider", 0, 1, 0.5),
     shinyWidgets::spectrumInput("w_colour", "Colour", "white"),
     shinyWidgets::airDatepickerInput("w_date", "Date")
@@ -100,8 +105,8 @@ test_that("the widget gallery covers every family and is not shipped", {
   text <- paste(gallery, collapse = "\n")
   for (marker in c("textInput", "selectInput", "checkboxInput",
                    "radioButtons", "switch_input", "segmented_input",
-                   "virtualSelectInput", "pickerInput", "var_input",
-                   "sliderInput", "noUiSliderInput", "spectrumInput",
+                   "virtualSelectInput", "picker_input", "listbox_input",
+                   "var_input", "sliderInput", "noUiSliderInput", "spectrumInput",
                    "airDatepickerInput", "accordion", "datatable")) {
     expect_match(text, marker, fixed = TRUE,
                  label = sprintf("gallery has %s", marker))

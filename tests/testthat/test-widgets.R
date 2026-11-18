@@ -158,3 +158,48 @@ test_that("checkbox and radio are 16 px controls with real states", {
   )
   expect_match(checked, "var(--rcmdr-primary)", fixed = TRUE)
 })
+
+test_that("picker_input() keeps the id and the values of the choice", {
+  html <- as.character(picker_input(
+    "pick", "Pick", c("Alpha" = "a", "Beta" = "b"),
+    selected = "b", multiple = FALSE
+  ))
+  expect_match(html, 'id="pick"', fixed = TRUE)
+  expect_match(html, 'class="virtual-select"', fixed = TRUE)
+  # The configuration is the widget contract: search on, first option not
+  # auto-selected (so an explicit empty choice survives).
+  config <- regmatches(html, regexpr('"config":\\{[^}]*\\}', html, perl = TRUE))
+  expect_match(config, '"search":true', fixed = TRUE)
+  expect_match(config, '"autoSelectFirstOption":false', fixed = TRUE)
+  expect_match(config, '"selectedValue":"b"', fixed = TRUE)
+  expect_match(config, '"multiple":false', fixed = TRUE)
+})
+
+test_that("picker_input() sends a character vector when multiple", {
+  html <- as.character(picker_input(
+    "pick", "Pick", c("a", "b", "c"), selected = c("a", "c"),
+    multiple = TRUE
+  ))
+  config <- regmatches(html, regexpr('"config":\\{[^}]*\\}', html, perl = TRUE))
+  expect_match(config, '"multiple":true', fixed = TRUE)
+  expect_match(config, '"selectedValue":["a","c"]', fixed = TRUE)
+  expect_match(config, '"showValueAsTags":true', fixed = TRUE)
+  expect_match(config, '"disableSelectAll":false', fixed = TRUE)
+})
+
+test_that("listbox_input() is a native multiple select with rows", {
+  html <- as.character(listbox_input(
+    "list", "List", c("mpg", "cyl", "disp"), selected = c("mpg", "disp")
+  ))
+  expect_match(html, 'id="list"', fixed = TRUE)
+  expect_match(html, 'multiple="multiple"', fixed = TRUE)
+  expect_match(html, 'size="8"', fixed = TRUE)
+  expect_false(grepl("selectize", html, fixed = TRUE))
+})
+
+test_that("the list controls explain an empty choice list", {
+  html <- as.character(picker_input("pick", "Pick", character()))
+  expect_match(html, "No variables available", fixed = TRUE)
+  html <- as.character(listbox_input("list", "List", character()))
+  expect_match(html, "No variables available", fixed = TRUE)
+})

@@ -83,12 +83,13 @@ chart_ext_open_app <- function(name) {
   app
 }
 
-# Shiny renders the selects with selectize, which keeps the choices in JS and
-# leaves a single <option> in the hidden element.
+# The chart mapping uses the virtual select: the choices live in the JSON
+# config of the widget, not in <option> elements.  The helper accepts the old
+# selectize shape too, so it keeps working during the migration.
 chart_ext_choices <- function(app, input_id) {
   raw <- app$get_js(sprintf(
-    "(function(){var el=document.getElementById('%s'); if (!el) return ''; var opts = el.selectize ? el.selectize.options : null; var keys = opts ? Object.keys(opts).map(function(k){return opts[k].value;}) : Array.from(el.options).map(function(o){return o.value;}); return keys.join('|');})()",
-    input_id
+    "(function(){var el=document.getElementById('%s'); if (!el) return ''; var s=el.querySelector('script[data-for=\"%s\"]'); if (s) { try { var cfg=JSON.parse(s.textContent); var ch=cfg.options && cfg.options.choices; if (Array.isArray(ch)) return ch.join('|'); if (ch && ch.value) return ch.value.join('|'); } catch(e) {} } var opts=el.selectize ? el.selectize.options : null; var keys=opts ? Object.keys(opts).map(function(k){return opts[k].value;}) : Array.from(el.options||[]).map(function(o){return o.value;}); return keys.join('|');})()",
+    input_id, input_id
   ))
   strsplit(raw, "|", fixed = TRUE)[[1L]]
 }

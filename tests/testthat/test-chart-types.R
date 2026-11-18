@@ -82,6 +82,9 @@ test_that("mapping controls render selectors for every required slot", {
   expect_match(html, "chart_map_x")
   expect_match(html, "chart_map_y")
   expect_match(html, "chart_map_group")
+  # The mapping uses the searchable picker, not a selectize tag field.
+  expect_match(html, "virtual-select", fixed = TRUE)
+  expect_false(grepl("selectize-control", html, fixed = TRUE))
 
   bar <- chart_spec("bar", "D", list(x = "g"))
   html <- htmltools::renderTags(chart_mapping_controls(state, bar))$html

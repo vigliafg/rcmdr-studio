@@ -1508,13 +1508,11 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
         selected <- if (isTRUE(rule$optional)) "" else {
           if (length(choices) > 0L) choices[[1L]] else ""
         }
-        if (isTRUE(rule$multiple)) {
-          updateSelectizeInput(session, paste0("chart_map_", slot),
-                               selected = selected)
-        } else {
-          updateSelectInput(session, paste0("chart_map_", slot),
-                            selected = selected)
-        }
+        shinyWidgets::updateVirtualSelect(
+          paste0("chart_map_", slot),
+          selected = selected,
+          session = session
+        )
       }
       for (name in names(info$defaults %||% list())) {
         value <- info$defaults[[name]]

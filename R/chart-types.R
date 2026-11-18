@@ -804,7 +804,7 @@ chart_mapping_controls <- function(state, spec, pending = NULL) {
         selected <- selected[[1L]]
       }
     }
-    selectizeInput(
+    picker_input(
       paste0("chart_map_", slot), rule$label %||% slot,
       choices = choices,
       selected = selected,

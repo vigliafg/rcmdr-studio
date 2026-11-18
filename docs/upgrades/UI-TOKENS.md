@@ -368,24 +368,30 @@ read-only, con selettore di tema e densità.
 | Componente | Fornitore | Regola |
 |---|---|---|
 | Accordion, card, navset | bslib | solo accordion in questa onda; card e navset restano nostri |
-| Picker, listbox, slider, colore | shinyWidgets | dietro `picker_input()`, `listbox_input()`, `slider_input()`, `color_input()` |
+| Virtual select, slider, colore | shinyWidgets | dietro `picker_input()`, `slider_input()`, `color_input()` |
+| Listbox sempre visibile | select nativa | dietro `listbox_input()` |
 | Campi, checkbox, radio, switch, segmented | nostro CSS | nessun widget esterno equivalente |
 | Icone | nostro set | 18 SVG inline |
 | Tabelle | DT | nessuna sostituzione nei dati editabili |
 
-`shinyWidgets` porta con sé i propri asset (virtual-select, bootstrap-select,
-nouislider, spectrum, air-datepicker) e Font Awesome: sono tutti serviti dal
-pacchetto, nessun CDN. Il peso va misurato a ogni aggiornamento della
-dipendenza.
+`shinyWidgets` porta con sé i propri asset (virtual-select, nouislider,
+spectrum, air-datepicker) e Font Awesome: sono tutti serviti dal pacchetto,
+nessun CDN. Il peso va misurato a ogni aggiornamento della dipendenza.
+
+**Scelta di S3:** per gli elenchi si usa `virtualSelectInput`, non
+`pickerInput`. Il primo è indipendente da Bootstrap e non carica la vecchia
+`bootstrap-select`; il secondo resta fuori anche dal `widget_library()`. La
+listbox sempre visibile è la `<select multiple>` nativa: righe, Ctrl/Shift e
+nessun JavaScript.
 
 ### 12.2 Famiglie e stato
 
 | Famiglia | Implementazione | Stato |
 |---|---|---|
 | Testo, numero, textarea, search | Shiny + `30-forms.css` | tokenizzato e rifinito in S2 |
-| Select singola/multipla | Shiny + `50-widgets.css` | tokenizzata; listbox nativa da rifinire |
+| Select singola/multipla | Shiny + `50-widgets.css` | tokenizzata; listbox a righe in S3 |
 | Variabili (`var_input`) | `selectizeInput` | da migrare alla famiglia scelta (Onda 16, S10) |
-| Picker/listbox ricercabile | shinyWidgets | da introdurre (Onda 16, S3) |
+| Picker/listbox ricercabile | shinyWidgets + nativa | virtual select e listbox in S3 |
 | Checkbox, radio | Bootstrap + `50-widgets.css` | 16 px, segno netto, indeterminato e stati (S2) |
 | Switch | nostro `.rcmdr-switch` | pronto |
 | Segmented | nostro `.rcmdr-segmented` | pronto |

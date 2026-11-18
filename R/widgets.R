@@ -16,7 +16,6 @@
 widget_library <- function() {
   list(
     virtual_select = shinyWidgets::virtualSelectInput,
-    picker = shinyWidgets::pickerInput,
     slider = shinyWidgets::noUiSliderInput,
     colour = shinyWidgets::spectrumInput
   )
@@ -205,6 +204,64 @@ number_input <- function(id, label, value = 0, min = NA, max = NA, step = 1) {
 #' @export
 spin_input <- function(id, label, value = 0, min = NA, max = NA, step = 1) {
   number_input(id, label, value = value, min = min, max = max, step = step)
+}
+
+#' Searchable picker
+#'
+#' A select with a search box, groups and a "select all" action, built on
+#' shinyWidgets' virtual select.  It keeps the input id and the values Shiny
+#' reads: a string for a single choice, a character vector for multiple.
+#' Use it when the list is long enough that typing is faster than scanning;
+#' for a short list the native select is the better control.
+#' @export
+picker_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
+                         search = TRUE, width = "100%") {
+  if (length(choices) == 0L) {
+    return(form_group(
+      label,
+      htmltools::tags$div(class = "text-muted", tr("No variables available"))
+    ))
+  }
+  if (is.null(selected)) selected <- if (isTRUE(multiple)) character() else ""
+  selected <- as.character(selected)
+  shinyWidgets::virtualSelectInput(
+    id, label,
+    choices = choices,
+    selected = selected,
+    multiple = isTRUE(multiple),
+    search = isTRUE(search),
+    hideClearButton = !isTRUE(multiple),
+    autoSelectFirstOption = FALSE,
+    showValueAsTags = isTRUE(multiple),
+    disableSelectAll = !isTRUE(multiple),
+    disableOptionGroupCheckbox = !isTRUE(multiple),
+    width = width
+  )
+}
+
+#' Desktop listbox
+#'
+#' A native multiple select, sized to show several rows at once.  It is the
+#' control for a variable list that must stay visible while the user picks
+#' with Ctrl and Shift; the picker is for a list that opens on demand.
+#' @export
+listbox_input <- function(id, label, choices, selected = NULL, size = 8L,
+                          width = "100%") {
+  if (length(choices) == 0L) {
+    return(form_group(
+      label,
+      htmltools::tags$div(class = "text-muted", tr("No variables available"))
+    ))
+  }
+  selectInput(
+    id, label,
+    choices = choices,
+    selected = selected,
+    multiple = TRUE,
+    selectize = FALSE,
+    size = size,
+    width = width
+  )
 }
 
 #' Slider

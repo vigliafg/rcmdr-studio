@@ -154,11 +154,17 @@ gallery_ui <- function() {
               c("Alpha" = "a", "Beta" = "b", "Gamma" = "g"),
               multiple = TRUE, search = TRUE, showValueAsTags = TRUE
             ),
-            shinyWidgets::pickerInput(
-              "g_picker", "Bootstrap select",
-              c("Alpha" = "a", "Beta" = "b"), options = list(`live-search` = TRUE)
+            picker_input(
+              "g_picker", "Searchable picker",
+              c("Alpha" = "a", "Beta" = "b", "Gamma" = "g"),
+              multiple = FALSE
             ),
-            var_input("g_var", "Variable list",
+            listbox_input(
+              "g_listbox", "Desktop listbox",
+              c("mpg", "cyl", "disp", "hp"),
+              selected = c("mpg", "hp")
+            ),
+            var_input("g_var", "Variable list (current)",
                       c("mpg", "cyl", "disp", "hp"), multiple = TRUE)
           )
         ),
