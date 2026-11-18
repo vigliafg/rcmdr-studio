@@ -778,7 +778,12 @@ chart_builder_ui <- function(show_preview = TRUE) {
       )
     ),
     if (isTRUE(show_preview)) htmltools::div(
-      class = "rcmdr-chart-preview-column",
+      id = "chart-preview-panel",
+      class = "rcmdr-chart-preview-column rcmdr-focus-region",
+      tabindex = "-1",
+      role = "region",
+      `aria-label` = tr("Preview"),
+      `data-rcmdr-focus-region` = "panel",
       htmltools::div(
         class = "rcmdr-section-card rcmdr-chart-preview",
         htmltools::tags$h6(tr("Preview")),

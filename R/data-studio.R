@@ -1281,6 +1281,12 @@ data_studio_ui <- function(show_inspector = TRUE) {
         )
       ),
       if (isTRUE(show_inspector)) htmltools::div(
+        id = "data-inspector-panel",
+        class = "rcmdr-focus-region",
+        tabindex = "-1",
+        role = "region",
+        `aria-label` = tr("Inspector"),
+        `data-rcmdr-focus-region` = "panel",
         uiOutput("data_inspector"),
         # The action buttons live outside the dynamic inspector: re-rendering
         # the profile must not recreate (and re-trigger) the action inputs.

@@ -264,6 +264,14 @@
       else main.removeAttribute('aria-busy');
     });
 
+    // Targeted announcements (selection, undo) share the live region with
+    // the busy message: one polite sentence at a time.
+    Shiny.addCustomMessageHandler('rcmdr-announce', function(message) {
+      var live = document.getElementById('rcmdr-live-status');
+      if (!live) return;
+      live.textContent = (message && message.text) || message || '';
+    });
+
     // Notifications --------------------------------------------------------
     // Shiny stacks every notification it is given.  Keep the newest three and
     // give the panel the live semantics it lacks; the DOM is Shiny's own.

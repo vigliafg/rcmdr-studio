@@ -369,3 +369,12 @@
       min-height: 1.75rem;
       padding: .15rem var(--rcmdr-space-2);
     }
+
+    /* Focus regions ---------------------------------------------------------
+       F6 moves between the workspace containers; the ring is the same token
+       used by every control, drawn inside so the container edge stays put. */
+    .rcmdr-focus-region:focus,
+    .rcmdr-focus-region:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: calc(-1 * var(--rcmdr-focus-width));
+    }

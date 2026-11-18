@@ -45,7 +45,7 @@ test_that("the type, spacing and radius scales are declared once", {
                   "--rcmdr-radius-xs: .25rem",
                   "--rcmdr-radius-sm: .375rem",
                   "--rcmdr-radius-md: .5rem",
-                  "--rcmdr-radius-lg: .75rem",
+                  "--rcmdr-radius-lg: .5rem",
                   "--rcmdr-radius-pill: 999px",
                   "--rcmdr-focus-width: 2px",
                   "--rcmdr-focus-offset: 2px")) {

@@ -1,3 +1,48 @@
+    // F6 / Shift+F6 cycle the focus between the workspace regions.  The
+    // regions carry the same focus token as every other control, so the ring
+    // is visible when a keyboard user lands on a container.
+    (function() {
+      var selectors = [
+        '[data-rcmdr-focus-region="primary"]',
+        '[data-rcmdr-focus-region="secondary"]',
+        '[data-rcmdr-focus-region="panel"]',
+        '[data-rcmdr-focus-region="modeless"]',
+        '[data-rcmdr-focus-region="status"]'
+      ];
+      function regions() {
+        var out = [];
+        selectors.forEach(function(selector) {
+          Array.prototype.forEach.call(
+            document.querySelectorAll(selector),
+            function(node) {
+              if (!node.getClientRects().length) return;
+              if (out.indexOf(node) < 0) out.push(node);
+            }
+          );
+        });
+        return out;
+      }
+      document.addEventListener('keydown', function(event) {
+        if (event.key !== 'F6' || event.ctrlKey || event.metaKey ||
+            event.altKey) return;
+        if (document.querySelector('.modal.show')) return;
+        var list = regions();
+        if (!list.length) return;
+        event.preventDefault();
+        var current = -1;
+        list.forEach(function(node, index) {
+          if (node === document.activeElement ||
+              node.contains(document.activeElement)) current = index;
+        });
+        var step = event.shiftKey ? -1 : 1;
+        var next = current < 0
+          ? (step > 0 ? 0 : list.length - 1)
+          : current + step;
+        if (next < 0) next = list.length - 1;
+        if (next >= list.length) next = 0;
+        list[next].focus();
+      });
+    })();
     document.addEventListener('keydown', function(event) {
       var mod = event.ctrlKey || event.metaKey;
       var key = (event.key || '').toLowerCase();

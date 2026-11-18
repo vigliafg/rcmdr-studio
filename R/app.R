@@ -578,7 +578,10 @@ app_ui <- function() {
       )
     ),
     htmltools::div(
+      id = "rcmdr-statusbar",
       class = "rcmdr-statusbar", role = "status", `aria-live` = "polite",
+      `aria-atomic` = "false", tabindex = "-1",
+      `data-rcmdr-focus-region` = "status",
       uiOutput("statusbar", inline = TRUE)
     ),
     # Report downloads are triggered from the Export report dialog; the
@@ -638,9 +641,26 @@ app_server <- function(env = globalenv()) {
       i18n_set_language(state$options$language)
     }
     persist_preferences <- function() {
+      # A mock session is a test harness: it must not rewrite the developer's
+      # real preferences file.  A test that checks persistence points
+      # `preferences_file` at a temporary file and opts back in.
+      if (inherits(session, "MockShinySession") &&
+          is.null(state$options$preferences_file)) {
+        return(invisible(NULL))
+      }
       try(preferences_save(state), silent = TRUE)
       invisible(NULL)
     }
+    # Targeted announcements: the status bar is visual, this region is what a
+    # screen reader hears for a selection or an undo, without re-reading the
+    # whole bar on every tick.
+    announce <- function(text) {
+      text <- trimws(paste(text, collapse = " "))
+      if (!nzchar(text)) return(invisible(NULL))
+      session$sendCustomMessage("rcmdr-announce", list(text = text))
+      invisible(text)
+    }
+    state$announce <- announce
     # Split sizes are preferences: the divider sends a ratio on release and the
     # server stores it without making the project dirty.
     for (split_id in split_pane_ids()) {
@@ -1045,6 +1065,15 @@ app_server <- function(env = globalenv()) {
                    view = isolate(input$main_tabs) %||% geometry_last_view(state))
     })
 
+    focus_region <- function(id, label, content, kind) {
+      htmltools::div(
+        id = id, class = "rcmdr-focus-region", tabindex = "-1",
+        role = "region", `aria-label` = label,
+        `data-rcmdr-focus-region` = kind,
+        content
+      )
+    }
+
     render_workspace_view <- function(view, primary = FALSE) {
       show_inspector <- if (isTRUE(primary) && identical(view, "data") &&
                             !is.null(input$workspace_show_inspector)) {
@@ -1132,14 +1161,20 @@ app_server <- function(env = globalenv()) {
       primary <- input$main_tabs %||% "home"
       secondary <- input$workspace_secondary_view %||% workspace_secondary()
       if (!nzchar(secondary) || identical(secondary, primary)) {
-        return(render_workspace_view(primary, primary = TRUE))
+        return(focus_region("workspace-primary", tr("Primary view"),
+                            render_workspace_view(primary, primary = TRUE),
+                            "primary"))
       }
       focus <- input$workspace_focus %||% workspace_focus()
       if (identical(focus, "primary")) {
-        return(render_workspace_view(primary, primary = TRUE))
+        return(focus_region("workspace-primary", tr("Primary view"),
+                            render_workspace_view(primary, primary = TRUE),
+                            "primary"))
       }
       if (identical(focus, "secondary")) {
-        return(render_workspace_view(secondary, primary = FALSE))
+        return(focus_region("workspace-secondary", tr("Secondary view"),
+                            render_workspace_view(secondary, primary = FALSE),
+                            "secondary"))
       }
       split_pane(
         "workspace_split",
@@ -1156,7 +1191,10 @@ app_server <- function(env = globalenv()) {
     output$workspace_primary <- renderUI({
       language_revision()
       workspace_revision()
-      render_workspace_view(input$main_tabs %||% "home", primary = TRUE)
+      focus_region("workspace-primary", tr("Primary view"),
+                   render_workspace_view(input$main_tabs %||% "home",
+                                         primary = TRUE),
+                   "primary")
     })
 
     output$workspace_secondary <- renderUI({
@@ -1164,7 +1202,9 @@ app_server <- function(env = globalenv()) {
       workspace_revision()
       view <- input$workspace_secondary_view %||% workspace_secondary()
       req(nzchar(view), !identical(view, input$main_tabs %||% "home"))
-      render_workspace_view(view, primary = FALSE)
+      focus_region("workspace-secondary", tr("Secondary view"),
+                   render_workspace_view(view, primary = FALSE),
+                   "secondary")
     })
 
     observeEvent(input$workspace_secondary_view, {
@@ -1288,11 +1328,13 @@ app_server <- function(env = globalenv()) {
       htmltools::div(
         class = "rcmdr-modeless-panel",
         role = "complementary",
-        `aria-label` = label,
+        `aria-labelledby` = "modeless-title",
+        tabindex = "-1",
+        `data-rcmdr-focus-region` = "modeless",
         htmltools::div(
           class = "rcmdr-modeless-header",
-          htmltools::tags$h3(label),
-          actionButton("modeless_close", tr("Close"),
+          htmltools::tags$h3(id = "modeless-title", label),
+          actionButton("modeless_close", tr("Back to workspace"),
                        class = "btn-sm btn-outline-secondary")
         ),
         htmltools::div(
@@ -1392,6 +1434,9 @@ app_server <- function(env = globalenv()) {
           data_selection_revision(data_selection_revision() + 1L)
           chart_revision(chart_revision() + 1L)
           workspace_revision(workspace_revision() + 1L)
+          if (nzchar(state$undo_message %||% "")) {
+            announce(state$undo_message)
+          }
         }
         tick(tick() + 1L)
         menu_revision(menu_revision() + 1L)
@@ -3023,6 +3068,7 @@ app_server <- function(env = globalenv()) {
       columns <- data_selection(state)$columns
       set_data_selection(state, rows = rows, columns = columns)
       data_selection_revision(data_selection_revision() + 1L)
+      announce(selection_status_text(state, data_view_frame()))
     }, ignoreInit = TRUE)
 
     observeEvent(input$data_cell_selection, {
@@ -3053,6 +3099,7 @@ app_server <- function(env = globalenv()) {
         cells = list(row_ids = row_ids, columns = columns, range = range)
       )
       data_selection_revision(data_selection_revision() + 1L)
+      announce(selection_status_text(state, frame))
     }, ignoreInit = TRUE)
 
     copy_selection <- function() {
@@ -3707,6 +3754,12 @@ app_server <- function(env = globalenv()) {
         sprintf("%d x %d", nrow(df), ncol(df))
       }
       selection_text <- selection_status_text(state, data_view_frame())
+      data_name <- active_dataset(state)
+      model_name <- active_model(state)
+      undo_text <- state$undo_message %||% ""
+      if (!nzchar(undo_text) && nzchar(state$undo_last_label %||% "")) {
+        undo_text <- sprintf(tr("Last action: %s"), state$undo_last_label)
+      }
       # One item per fact: the separators are CSS borders, so a screen reader
       # reads the facts, not a row of pipes.
       htmltools::tagList(
@@ -3720,12 +3773,20 @@ app_server <- function(env = globalenv()) {
         ),
         htmltools::tags$span(class = "rcmdr-status-item", dimensions),
         htmltools::tags$span(
+          class = "rcmdr-status-item rcmdr-status-dataset",
+          sprintf(tr("Data: %s"), data_name %||% tr("none"))
+        ),
+        htmltools::tags$span(
           class = "rcmdr-status-item",
           sprintf(tr("%d command(s)"), length(state$log))
         ),
         htmltools::tags$span(
           class = "rcmdr-status-item",
           sprintf(tr("%d history step(s)"), length(state$history %||% list()))
+        ),
+        htmltools::tags$span(
+          class = "rcmdr-status-item rcmdr-status-model",
+          sprintf(tr("Model: %s"), model_name %||% tr("none"))
         ),
         htmltools::tags$span(
           class = "rcmdr-status-item",
@@ -3737,10 +3798,10 @@ app_server <- function(env = globalenv()) {
             selection_text
           )
         },
-        if (!is.null(state$undo_message) && nzchar(state$undo_message)) {
+        if (nzchar(undo_text)) {
           htmltools::tags$span(
             class = "rcmdr-status-item rcmdr-status-undo",
-            state$undo_message
+            undo_text
           )
         },
         if (isTRUE(state$busy)) {
