@@ -380,3 +380,44 @@
       display: flex; gap: var(--rcmdr-space-2); flex-wrap: wrap;
       margin-left: auto;
     }
+
+    /* Settings accordion ---------------------------------------------------
+       bslib owns the state and the ARIA attributes; these rules give the
+       block the Studio rhythm.  Colours, radii and spacing come from the
+       tokens, so the eight palettes and the two densities follow for free. */
+    .rcmdr-accordion { margin-bottom: var(--rcmdr-space-3); }
+    .rcmdr-accordion .accordion-item {
+      background: var(--rcmdr-surface);
+      border-color: var(--rcmdr-border);
+    }
+    .rcmdr-accordion .accordion-button {
+      gap: var(--rcmdr-space-2);
+      color: var(--rcmdr-heading);
+    }
+    .rcmdr-accordion .accordion-button:hover {
+      background: var(--rcmdr-hover);
+    }
+    .rcmdr-accordion .accordion-icon {
+      display: inline-flex;
+      align-items: center;
+      color: var(--rcmdr-muted);
+    }
+    .rcmdr-accordion .accordion-title {
+      display: flex;
+      align-items: center;
+      gap: var(--rcmdr-space-2);
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .rcmdr-accordion .accordion-title .rcmdr-badge { margin-left: auto; }
+    .rcmdr-accordion .accordion-body { gap: var(--rcmdr-space-2); }
+    .rcmdr-settings-group + .rcmdr-settings-group {
+      margin-top: var(--rcmdr-space-2);
+    }
+    .rcmdr-settings-group-title {
+      margin-bottom: var(--rcmdr-space-1);
+      font-size: var(--rcmdr-text-sm);
+      font-weight: var(--rcmdr-weight-strong);
+      letter-spacing: .02em;
+      color: var(--rcmdr-heading);
+    }

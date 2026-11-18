@@ -45,6 +45,125 @@ section_card <- function(title, body, collapsed = FALSE) {
   )
 }
 
+#' A collapsible group of settings
+#'
+#' Wraps [bslib::accordion()] with the Studio contract: one class, one heading
+#' role per panel header (bslib emits a `div`) and a stable id when the server
+#' needs to read which panels are open.  The heading semantics are what makes
+#' the control navigable: a screen reader announces "Options, heading level 3,
+#' collapsed, button".
+#'
+#' @param id Optional Shiny input id; it receives the open panel values.
+#' @param ... Panels built with [settings_panel()].
+#' @param open Panel values to open initially, or `TRUE` to open all.
+#' @param multiple Allow more than one panel open at a time.
+#' @param level Heading level, 1–6.  Dialogs usually want 3.
+#' @param class Extra classes for the accordion.
+#' @return A `<div>` tag.
+#' @keywords internal
+settings_accordion <- function(..., id = NULL, open = NULL, multiple = TRUE,
+                               level = 3L, class = NULL) {
+  level <- as.integer(level %||% 3L)[[1L]]
+  if (is.na(level) || level < 1L || level > 6L) {
+    stop("settings_accordion() level must be between 1 and 6.", call. = FALSE)
+  }
+  accordion <- bslib::accordion(
+    ..., id = id, open = open, multiple = isTRUE(multiple),
+    class = c("rcmdr-accordion", class)
+  )
+
+  items <- htmltools::tagQuery(accordion)$find(".accordion-item")$selectedTags()
+  values <- vapply(items, function(item) {
+    as.character(item$attribs$`data-value` %||% "")
+  }, character(1))
+  if (anyDuplicated(values)) {
+    stop("settings_accordion() panel values must be unique.", call. = FALSE)
+  }
+  if (is.character(open)) {
+    missing <- setdiff(open, values)
+    if (length(missing) > 0L) {
+      stop("settings_accordion() open values are not panels: ",
+           paste(missing, collapse = ", "), call. = FALSE)
+    }
+  }
+
+  htmltools::tagQuery(accordion)$
+    find(".accordion-header")$
+    each(function(header, i) {
+      htmltools::tagAppendAttributes(
+        header, role = "heading", `aria-level` = as.character(level)
+      )
+    })$
+    allTags()
+}
+
+#' One panel of a settings accordion
+#'
+#' The title is a plain string when possible, so bslib can use it as the panel
+#' value; pass `value` explicitly when the title needs markup.  The body is
+#' wrapped in the shared field grid unless `grid = FALSE`.
+#'
+#' @param title Visible title, plain text or tags.
+#' @param ... Body content.
+#' @param value Unique panel value.  Defaults to `title` when it is a string.
+#' @param icon Optional icon name from [rcmdr_icon_paths()].
+#' @param badge Optional badge label (or a ready badge tag).
+#' @param grid Wrap the body in [field_grid()].
+#' @return A `bslib_accordion_panel`.
+#' @keywords internal
+settings_panel <- function(title, ..., value = NULL, icon = NULL,
+                           badge = NULL, grid = TRUE) {
+  if (is.null(value)) {
+    if (!is.character(title) || length(title) != 1L || !nzchar(title)) {
+      stop("settings_panel() needs a plain `value` when the title is markup.",
+           call. = FALSE)
+    }
+    value <- title
+  }
+  body <- htmltools::tagList(...)
+  if (isTRUE(grid)) body <- field_grid(body)
+
+  heading <- htmltools::tagList(
+    if (!is.null(icon)) {
+      htmltools::tags$span(
+        class = "rcmdr-accordion-icon", rcmdr_icon(icon, 16)
+      )
+    },
+    htmltools::tags$span(class = "rcmdr-accordion-title", title),
+    if (!is.null(badge)) settings_badge(badge)
+  )
+
+  bslib::accordion_panel(title = heading, body, value = value)
+}
+
+#' @keywords internal
+settings_badge <- function(badge) {
+  if (is.character(badge)) badge(badge) else badge
+}
+
+#' A titled group inside a panel
+#'
+#' Not collapsible: it gives a hierarchy to a long panel without nesting one
+#' accordion inside another.  Use it for the semantic groups that share a
+#' panel.
+#'
+#' @param title Group title.
+#' @param ... Fields.
+#' @param help Optional note under the fields.
+#' @return A `<div>` tag.
+#' @keywords internal
+settings_group <- function(title, ..., help = NULL) {
+  htmltools::div(
+    class = "rcmdr-settings-group",
+    htmltools::tags$div(
+      class = "rcmdr-settings-group-title",
+      role = "heading", `aria-level` = "4", title
+    ),
+    field_grid(...),
+    if (!is.null(help)) htmltools::tags$p(class = "form-text", help)
+  )
+}
+
 #' A read-only code preview
 #' @keywords internal
 code_preview <- function(code, language = "r", copy = TRUE) {

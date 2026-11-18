@@ -249,3 +249,87 @@ test_that("tabs_strip() can close a tab and send an action payload", {
   expect_match(rich, "<span>Rich</span>", fixed = TRUE)
   expect_match(rich, 'aria-label="Close One"', fixed = TRUE)
 })
+
+test_that("settings_accordion() marks every header as a heading", {
+  html <- as.character(settings_accordion(
+    id = "demo_settings",
+    open = "Options",
+    settings_panel("Options", htmltools::tags$input(id = "a")),
+    settings_panel("Style", htmltools::tags$input(id = "b"))
+  ))
+
+  expect_match(html, 'rcmdr-accordion', fixed = TRUE)
+  expect_match(html, 'id="demo_settings"', fixed = TRUE)
+  # bslib emits a div: the role and the level are what make it navigable.
+  expect_equal(
+    lengths(regmatches(html, gregexpr('role="heading"', html))), 2L
+  )
+  expect_equal(
+    lengths(regmatches(html, gregexpr('aria-level="3"', html))), 2L
+  )
+  # Bootstrap's button keeps its own state contract.
+  expect_match(html, 'aria-expanded="true"', fixed = TRUE)
+  expect_match(html, 'aria-expanded="false"', fixed = TRUE)
+  expect_match(html, "aria-controls=", fixed = TRUE)
+  # One panel open, the other closed.
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-collapse collapse show"',
+                                      html))), 1L
+  )
+  expect_match(html, 'data-value="Options"', fixed = TRUE)
+  expect_match(html, 'data-value="Style"', fixed = TRUE)
+})
+
+test_that("settings_panel() composes icon, badge, title and body grid", {
+  html <- as.character(settings_accordion(
+    settings_panel(
+      "Theme", htmltools::tags$input(id = "theme"),
+      icon = "sliders", badge = "3"
+    )
+  ))
+  expect_match(html, "rcmdr-accordion-icon", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-accordion-title"', fixed = TRUE)
+  expect_match(html, "rcmdr-badge", fixed = TRUE)
+  expect_match(html, ">3</span>", fixed = TRUE)
+  # The body is wrapped in the shared grid, so the fields keep its columns.
+  expect_match(html, 'class="rcmdr-field-grid"', fixed = TRUE)
+
+  bare <- as.character(settings_accordion(
+    settings_panel("Plain", htmltools::tags$input(id = "plain"), grid = FALSE)
+  ))
+  expect_false(grepl("rcmdr-field-grid", bare, fixed = TRUE))
+})
+
+test_that("settings_accordion() rejects ambiguous contracts", {
+  expect_error(
+    settings_accordion(
+      settings_panel("Same", "a"),
+      settings_panel("Same", "b")
+    ),
+    "unique"
+  )
+  expect_error(
+    settings_accordion(settings_panel("Only", "a"), open = "Missing"),
+    "not panels"
+  )
+  expect_error(
+    settings_accordion(settings_panel("Only", "a"), level = 9L),
+    "between 1 and 6"
+  )
+  expect_error(
+    settings_panel(htmltools::tags$span("Markup"), "a"),
+    "plain `value`"
+  )
+})
+
+test_that("settings_group() is a titled, non-collapsible group", {
+  html <- as.character(settings_group(
+    "Axes", htmltools::tags$input(id = "x"), help = "Both axes"
+  ))
+  expect_match(html, 'class="rcmdr-settings-group"', fixed = TRUE)
+  expect_match(html, 'role="heading"', fixed = TRUE)
+  expect_match(html, 'aria-level="4"', fixed = TRUE)
+  expect_match(html, 'class="rcmdr-field-grid"', fixed = TRUE)
+  expect_match(html, "Both axes", fixed = TRUE)
+  expect_false(grepl("accordion", html, fixed = TRUE))
+})

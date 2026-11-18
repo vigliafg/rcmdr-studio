@@ -182,16 +182,18 @@ gallery_ui <- function() {
         ),
         gallery_card(
           "Accordion (bslib bridge)",
-          bslib::accordion(
+          settings_accordion(
             id = "g_accordion",
             open = "First",
-            bslib::accordion_panel(
+            settings_panel(
               "First",
-              htmltools::tags$p("The first panel is open.")
+              htmltools::tags$p("The first panel is open."),
+              icon = "sliders", badge = "3", grid = FALSE
             ),
-            bslib::accordion_panel(
+            settings_panel(
               "Second",
-              htmltools::tags$p("The second panel is closed.")
+              htmltools::tags$p("The second panel is closed."),
+              grid = FALSE
             )
           )
         ),

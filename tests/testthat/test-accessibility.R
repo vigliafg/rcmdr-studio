@@ -115,3 +115,23 @@ test_that("the palette is driven from the keyboard", {
   modal <- as.character(palette_modal())
   expect_false(grepl('data-bs-keyboard="false"', modal, fixed = TRUE))
 })
+
+test_that("the settings accordion exposes heading and state semantics", {
+  html <- as.character(settings_accordion(
+    id = "a11y_settings", open = "One",
+    settings_panel("One", htmltools::tags$input(id = "one")),
+    settings_panel("Two", htmltools::tags$input(id = "two"))
+  ))
+  # The header is a heading, so the panels appear in the document outline.
+  expect_match(html, 'role="heading"', fixed = TRUE)
+  expect_match(html, 'aria-level="3"', fixed = TRUE)
+  # The button keeps aria-expanded in sync with the panel state.
+  expect_match(html, 'aria-expanded="true"', fixed = TRUE)
+  expect_match(html, 'aria-expanded="false"', fixed = TRUE)
+  expect_match(html, 'aria-controls="bslib-accordion-panel-', fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".accordion .accordion-button:focus-visible",
+               fixed = TRUE)
+  expect_match(css, ".rcmdr-accordion .accordion-button:hover", fixed = TRUE)
+})
