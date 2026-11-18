@@ -382,11 +382,11 @@ dipendenza.
 
 | Famiglia | Implementazione | Stato |
 |---|---|---|
-| Testo, numero, textarea, search | Shiny + `30-forms.css` | tokenizzato; rifinitura in Onda 16 |
+| Testo, numero, textarea, search | Shiny + `30-forms.css` | tokenizzato e rifinito in S2 |
 | Select singola/multipla | Shiny + `50-widgets.css` | tokenizzata; listbox nativa da rifinire |
 | Variabili (`var_input`) | `selectizeInput` | da migrare alla famiglia scelta (Onda 16, S10) |
 | Picker/listbox ricercabile | shinyWidgets | da introdurre (Onda 16, S3) |
-| Checkbox, radio | Bootstrap + `50-widgets.css` | forma Bootstrap; da rifinire (Onda 16, S2) |
+| Checkbox, radio | Bootstrap + `50-widgets.css` | 16 px, segno netto, indeterminato e stati (S2) |
 | Switch | nostro `.rcmdr-switch` | pronto |
 | Segmented | nostro `.rcmdr-segmented` | pronto |
 | Slider, colore | shinyWidgets | da introdurre (Onda 16, S9) |

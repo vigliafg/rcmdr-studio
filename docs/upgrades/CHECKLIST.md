@@ -470,7 +470,7 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 | ID | Task | Stato | Note |
 |---|---|---|---|
 | S1 | Inventario, specifica desktop, dipendenze, galleria | [x] | shinyWidgets 0.9.1, bridge e `tools/widget_gallery.R`; questo commit |
-| S2 | Campi, checkbox, radio, switch | [ ] | niente aspetto browser |
+| S2 | Campi, checkbox, radio, switch | [x] | chrome unico, 16 px, stati; questo commit |
 | S3 | Dropdown, listbox, picker | [ ] | `virtualSelectInput` vs nativo, gate |
 | S4 | `settings_accordion()`, `settings_panel()`, `settings_group()` | [ ] | heading semantics, densità |
 | S5 | *Options* su accordion + apertura su errore | [ ] | prima vetrina del lotto 2 |

@@ -108,3 +108,53 @@ test_that("the switch is used for preferences, not for command parameters", {
   expect_match(controls, 'class="shiny-input-checkbox"', fixed = TRUE)
   expect_false(grepl("rcmdr-switch", controls, fixed = TRUE))
 })
+
+test_that("the field family shares one chrome and one invalid state", {
+  css <- as.character(app_css())
+  expect_match(css, "body .form-control:hover:not(:disabled):not([readonly])",
+               fixed = TRUE)
+  expect_match(css, "body .form-control:disabled,", fixed = TRUE)
+  expect_match(css, "body .form-control[readonly]", fixed = TRUE)
+  expect_match(css, "body .form-control.is-invalid,", fixed = TRUE)
+  expect_match(css, "border-color: var(--rcmdr-danger);", fixed = TRUE)
+
+  # The select arrow is drawn in currentColor, not with Bootstrap's fixed
+  # data URI, so it follows every palette.
+  expect_match(
+    css,
+    "linear-gradient\\(45deg, transparent 50%, currentColor 50%\\)",
+    perl = TRUE
+  )
+  expect_match(
+    css,
+    "linear-gradient\\(135deg, currentColor 50%, transparent 50%\\)",
+    perl = TRUE
+  )
+
+  # A multiple select is a listbox: rows, no arrow, enough height.
+  expect_match(css, "body select\\[multiple\\]\\.form-select", perl = TRUE)
+  expect_match(css, "min-height: calc(var(--rcmdr-control-h) * 6);",
+               fixed = TRUE)
+})
+
+test_that("checkbox and radio are 16 px controls with real states", {
+  css <- as.character(app_css())
+  check_rule <- regmatches(
+    css,
+    regexpr("body \\.form-check-input \\{[^}]*\\}", css, perl = TRUE)
+  )
+  expect_length(check_rule, 1L)
+  expect_match(check_rule, "width: 1rem;", fixed = TRUE)
+  expect_match(check_rule, "height: 1rem;", fixed = TRUE)
+  expect_match(check_rule, "border-radius: var(--rcmdr-radius-xs);", fixed = TRUE)
+  expect_match(css, 'body .form-check-input[type="radio"]', fixed = TRUE)
+  expect_match(css, "border-radius: var(--rcmdr-radius-pill);", fixed = TRUE)
+  expect_match(css, "body .form-check-input:disabled", fixed = TRUE)
+  expect_match(css, "body .form-check-input.is-invalid:checked", fixed = TRUE)
+  # Still the primary pair, never a light accent with a white glyph.
+  checked <- regmatches(
+    css,
+    regexpr("body \\.form-check-input:checked,[^}]*\\}", css, perl = TRUE)
+  )
+  expect_match(checked, "var(--rcmdr-primary)", fixed = TRUE)
+})

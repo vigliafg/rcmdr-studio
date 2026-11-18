@@ -9,13 +9,6 @@
          which the decorative border does not reach. */
       border-color: var(--rcmdr-border-strong);
     }
-    /* The checked glyph is painted white by Bootstrap: the fill must be dark
-       in every palette, so it uses the primary pair, not the accent. */
-    body .form-check-input:checked,
-    body .form-check-input:indeterminate {
-      background-color: var(--rcmdr-primary);
-      border-color: var(--rcmdr-primary);
-    }
     .form-text, .help-block { color: var(--rcmdr-muted); }
     /* Bootstrap paints its own blue halo on :focus.  The Studio uses one ring,
        the :focus-visible outline, on every control. */
@@ -24,6 +17,115 @@
     body .form-check-input:focus {
       border-color: var(--rcmdr-focus);
       box-shadow: none;
+    }
+
+    /* Field family ---------------------------------------------------------
+       One chrome for text, number, textarea, search, select and input groups:
+       a 1px control boundary, a short hover, a readable disabled state and an
+       invalid state that is not colour alone. */
+    body .form-control,
+    body .form-select {
+      border-radius: var(--rcmdr-radius-sm);
+      transition: border-color .12s ease, background-color .12s ease;
+    }
+    body .form-control:hover:not(:disabled):not([readonly]),
+    body .form-select:hover:not(:disabled) {
+      border-color: var(--rcmdr-heading);
+    }
+    body .form-control::placeholder {
+      color: var(--rcmdr-muted);
+      opacity: 1;
+    }
+    body .form-control:disabled,
+    body .form-select:disabled {
+      background-color: var(--rcmdr-surface-muted);
+      color: var(--rcmdr-disabled);
+      opacity: 1;
+      cursor: not-allowed;
+    }
+    body .form-control[readonly] {
+      background-color: var(--rcmdr-surface-sunken);
+    }
+    body .form-control.is-invalid,
+    body .form-select.is-invalid {
+      border-color: var(--rcmdr-danger);
+    }
+    body .form-control.is-invalid:focus,
+    body .form-select.is-invalid:focus {
+      border-color: var(--rcmdr-danger);
+      box-shadow: none;
+    }
+    body .input-group-text {
+      border-radius: var(--rcmdr-radius-sm);
+    }
+    /* The native select keeps its own arrow: Bootstrap's data URI cannot
+       follow the palette, so two gradients draw a chevron in currentColor. */
+    body .form-select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+      background-position:
+        calc(100% - 1.05rem) calc(50% - .1rem),
+        calc(100% - .75rem) calc(50% - .1rem);
+      background-size: .3rem .3rem, .3rem .3rem;
+      background-repeat: no-repeat;
+    }
+    /* A multiple select is a desktop listbox, not a dropdown: rows, no arrow,
+       enough height to show the choices. */
+    body select[multiple].form-select {
+      min-height: calc(var(--rcmdr-control-h) * 6);
+      padding: var(--rcmdr-space-1);
+      background-image: none;
+    }
+    body select[multiple].form-select option {
+      padding: .2rem .35rem;
+      border-radius: var(--rcmdr-radius-xs);
+    }
+    body select[multiple].form-select option:checked {
+      background: var(--rcmdr-primary);
+      color: var(--rcmdr-on-primary);
+    }
+
+    /* Checkbox and radio ---------------------------------------------------
+       Bootstrap already removes the native shape; this pass fixes the size,
+       the radius and the states so a check reads like a desktop control. */
+    body .form-check-input {
+      width: 1rem;
+      height: 1rem;
+      margin-top: .125rem;
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-xs);
+      background-color: var(--rcmdr-surface);
+      transition: background-color .12s ease, border-color .12s ease;
+    }
+    body .form-check-input[type="radio"] {
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    body .form-check-input:hover:not(:disabled) {
+      border-color: var(--rcmdr-heading);
+    }
+    /* The checked glyph is white in Bootstrap: the fill must be dark in every
+       palette, so it uses the primary pair, not the accent. */
+    body .form-check-input:checked,
+    body .form-check-input:indeterminate {
+      background-color: var(--rcmdr-primary);
+      border-color: var(--rcmdr-primary);
+    }
+    body .form-check-input:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+    body .form-check-input:disabled ~ .form-check-label {
+      color: var(--rcmdr-muted);
+      cursor: not-allowed;
+    }
+    body .form-check-input.is-invalid {
+      border-color: var(--rcmdr-danger);
+    }
+    body .form-check-input.is-invalid:checked {
+      background-color: var(--rcmdr-danger);
+      border-color: var(--rcmdr-danger);
     }
     /* Buttons ---------------------------------------------------------------
        Six roles on top of the Bootstrap classes the dialogs already use.
