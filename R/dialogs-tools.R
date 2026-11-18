@@ -141,18 +141,19 @@ options_dialog <- function() {
       language <- i18n_normalize(
         input[[ns("language")]] %||% current_language()
       )
-      if (!identical(language, current_language())) {
-        state$options$language <- language
-        i18n_set_language(language)
-        state$palette_cache <- NULL
-        if (is.function(state$language_revision)) {
-          state$language_revision(state$language_revision() + 1L)
-        }
-      }
       base::options(digits = digits, width = width)
       state_touch(state)
 
       if (!is.null(state$session)) {
+        # The hidden preference inputs drive the existing observers: the Ace
+        # editor follows the palette and the language observer refreshes the
+        # menus and the help without duplicating that logic here.
+        try(shiny::updateSelectInput(state$session, "theme",
+                                     selected = state$options$theme),
+            silent = TRUE)
+        try(shiny::updateSelectInput(state$session, "language",
+                                     selected = language),
+            silent = TRUE)
         state$session$sendCustomMessage("rcmdr-theme", list(
           theme = state$options$theme,
           density = ui_density(state)

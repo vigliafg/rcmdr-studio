@@ -593,6 +593,18 @@ app_ui <- function() {
       actionButton("redo_shortcut", tr("Redo")),
       actionButton("copy_selection_shortcut", tr("Copy selection")),
       shiny::textInput("modeless_view", NULL, value = ""),
+      # The preference selects live in Options now, but the existing observers
+      # (Ace theme, translations) still need the Shiny inputs they react to.
+      # These hidden copies receive `updateSelectInput()` from the dialog.
+      selectInput(
+        "language", NULL,
+        choices = stats::setNames(available_languages(),
+                                  toupper(available_languages())),
+        selected = current_language()
+      ),
+      selectInput(
+        "theme", NULL, choices = theme_choices(), selected = "system"
+      ),
       actionButton("help_shortcut", tr("Help")),
       downloadButton("download_report_rmd", tr("Download report (.Rmd)")),
       downloadButton("download_report_html", tr("Download report (.html)"))

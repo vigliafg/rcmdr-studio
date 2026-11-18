@@ -49,6 +49,9 @@ menu, i18n, test.
 - Tema, lingua e densità escono dalla topbar: **View > Preferences...** apre
   il dialogo Options, che ora contiene anche la lingua. La topbar tiene brand,
   dataset/modello, palette, Help, Classic/Studio e About.
+- Due input nascosti (`theme`, `language`) ricevono `updateSelectInput()` dal
+  dialogo: gli observer esistenti continuano a governare Ace, menù e help
+  senza duplicare la logica.
 - La matrice 8 temi × 2 densità resta invariata; nessun colore nuovo.
 
 ---

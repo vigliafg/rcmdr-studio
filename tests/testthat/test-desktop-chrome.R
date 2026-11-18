@@ -56,3 +56,9 @@ test_that("the Options dialog owns theme, language and density", {
     expect_match(html, sprintf('id="%s"', id), fixed = TRUE)
   }
 })
+
+test_that("the hidden preference inputs keep the existing observers alive", {
+  html <- as.character(app_ui())
+  expect_match(html, 'id="theme"', fixed = TRUE)
+  expect_match(html, 'id="language"', fixed = TRUE)
+})
