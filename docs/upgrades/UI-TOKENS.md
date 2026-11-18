@@ -38,9 +38,12 @@ token con un ruolo**, non scrivere un valore nel selettore.
 | `10-shell.css` | shell: topbar, barra laterale, barra di stato, striscia delle viste |
 | `15-bootstrap.css` | bridge dei componenti bslib/Bootstrap: variabili `--bs-accordion-*`, chevron, focus |
 | `20-components.css` | componenti condivisi: badge, toolbar, schede, chrome dei modali, viste |
-| `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-btn-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`) e i componenti `field`, switch, segmented |
+| `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-btn-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`, `--rcmdr-table-row-h`) e i componenti `field`, switch, segmented |
 | `40-dialogs.css` | usa i token; nessuna definizione |
+| `50-widgets.css` | campi, bottoni, dropdown, tab, alert e progress sui token |
 | `55-shinywidgets.css` | bridge di picker/listbox, slider e color picker; nessun colore letterale |
+| `60-views.css` | viste, tabelle DT, header sticky e chrome della paginazione |
+| `70-refine.css` | ritocchi finali, scrollbar, reduced motion |
 | altri file | solo `var(--rcmdr-…)` |
 
 I nomi dei file sono storici (U0 ha estratto blocchi contigui). U2 ha
@@ -326,6 +329,7 @@ Con `prefers-reduced-motion` non si anima nulla.
 | `--rcmdr-control-size` | `text-md` (14) | `text-md` (14) |
 | `--rcmdr-control-pad` | `.4rem .5rem` | `.55rem .75rem` |
 | `--rcmdr-control-h` | 34 px | 40 px |
+| `--rcmdr-table-row-h` | 32 px | 40 px |
 | `--rcmdr-section-gap` | `.4rem` | `1rem` |
 | `--rcmdr-help-size` | `text-xs` (12) | `text-sm` (13) |
 
@@ -400,12 +404,12 @@ stile desktop.
 |---|---|---|
 | Testo, numero, textarea, search | Shiny + `30-forms.css` | tokenizzato e rifinito in S2 |
 | Select singola/multipla | Shiny + `50-widgets.css` | tokenizzata; listbox a righe in S3 |
-| Variabili (`var_input`) | `selectizeInput` | da migrare alla famiglia scelta (Onda 16, S10) |
+| Variabili (`var_input`) | listbox nativa, select nativa o picker | migrata in S10, soglia 12 |
 | Picker/listbox ricercabile | shinyWidgets + nativa | virtual select e listbox in S3 |
 | Checkbox, radio | Bootstrap + `50-widgets.css` | 16 px, segno netto, indeterminato e stati (S2) |
 | Switch | nostro `.rcmdr-switch` | pronto |
 | Segmented | nostro `.rcmdr-segmented` | pronto |
-| Slider, colore | shinyWidgets | da introdurre (Onda 16, S9) |
+| Slider, colore | shinyWidgets | adottati in S9 |
 | Date | shinyWidgets | rinviato all'Onda 17, T2 |
 
 ### 12.3 Regole desktop
@@ -445,6 +449,24 @@ stile desktop.
 | Titoli | il testo è tradotto, il valore no: lo stato aperto non dipende dalla lingua |
 | Dialoghi | pannelli solo quando il dialogo ha più di un compito: *Import* 4, *Frequency* 2, modelli 2–3, test 2–3; un pannello vuoto non si rende |
 
+### 12.5 Tabelle, editor e feedback
+
+| Elemento | Regola |
+|---|---|
+| Tabelle DT | righe `--rcmdr-table-row-h` (32/40 px), header su `--rcmdr-surface-muted`, bordo inferiore a token |
+| Header | `position: sticky`; con `scrollY` DataTables aggiunge il proprio contenitore scorrevole |
+| Filtro e paginazione | stessa altezza di `--rcmdr-control-h`, hover `--rcmdr-hover`, corrente `--rcmdr-selection` |
+| rhandsontable | usa lo stesso numero da `ui_table_row_height()`: la griglia è disegnata in R |
+| Ace | `ui_ace_theme()`: `textmate` per le palette chiare, `tomorrow_night` per le tre scure; entrambi nel pacchetto |
+| Alert | variabili `--bs-alert-*` mappate su `ok`/`warn`/`err` o su `selection`/`heading` |
+| Progress | traccia `--rcmdr-surface-muted`, riempimento `--rcmdr-primary`; `bg-*` della scheda Data a token |
+| Scrollbar | `scrollbar-color` e thumb WebKit a token; hit area e comportamento restano del sistema |
+| Bridge Bootstrap | `--bs-accordion-*` in `15-bootstrap.css`; nessun `!important`, salvo reduced motion e utility che lo impongono |
+
+I due temi Ace sono scelti dal server. `system` resta sul tema chiaro finché
+l'utente non sceglie una palette scura: il server non vede la preferenza del
+client, ed è un limite dichiarato in `QA-WIDGETS.md`.
+
 ---
 
 ## 13. Verifica
@@ -461,7 +483,14 @@ Rscript -e 'testthat::test_local(filter="contrast")'
 
 # Galleria dei widget (applicazione di sviluppo, non spedita)
 Rscript tools/widget_gallery.R
+
+# Galleria in sola verifica, per la CI locale
+RCMDRSHINY_GALLERY_CHECK=1 Rscript --vanilla tools/widget_gallery.R
+
+# Tabelle, editor e feedback
+Rscript -e 'testthat::test_local(filter="theme-matrix|widget-library")'
 ```
 
 La suite completa resta il criterio di chiusura di ogni lotto:
-`testthat::test_local()` con `EXIT=0`.
+`testthat::test_local()` con `EXIT=0`. Il verbale visivo — metodo, esito,
+limiti e checklist manuale — è [`QA-WIDGETS.md`](QA-WIDGETS.md).

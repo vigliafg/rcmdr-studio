@@ -1,7 +1,8 @@
 # Onda 16 — bslib, shinyWidgets, accordion e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** in corso — S1–S12 fatti, prossimo lotto S13–S15
+**Stato:** completata — S1–S15 fatti, 5 lotti chiusi; verifica visiva ed e2e
+rimandate a un ambiente con browser funzionante  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 15 (token, componenti, viste, matrice 8 × 2)  
 **Documento padre:** [`README.md`](README.md)  
@@ -700,20 +701,20 @@ la sua tappa.
 
 ## 9. Criteri di chiusura
 
-- [ ] 15 step, 5 lotti, ognuno con commit verde e handoff dopo il terzo.
-- [ ] Nessun ID, valore, comando o stringa i18n cambiato.
-- [ ] Ogni famiglia di widget ha specifica, galleria e test.
-- [ ] Nessun controllo con l'aspetto predefinito del browser nella galleria.
-- [ ] Chart Builder con “Chart and data” fisso e 6 pannelli; nessuna opzione
+- [x] 15 step, 5 lotti, ognuno con commit verde e handoff dopo il terzo.
+- [x] Nessun ID, valore, comando o stringa i18n cambiato.
+- [x] Ogni famiglia di widget ha specifica, galleria e test.
+- [x] Nessun controllo con l'aspetto predefinito del browser nella galleria.
+- [x] Chart Builder con “Chart and data” fisso e 6 pannelli; nessuna opzione
       persa.
-- [ ] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
-- [ ] `var_input()` usa la famiglia scelta in tutti i 106 punti.
-- [ ] 8 temi × 2 densità verdi, nuovi componenti inclusi.
-- [ ] Accessibilità: heading, aria, tastiera, focus, reduced motion.
-- [ ] Errore in pannello chiuso → pannello aperto e campo focalizzato.
-- [ ] `NEWS.md`, topic, token, checklist, diario e QA aggiornati.
-- [ ] e2e e screenshot: eseguiti dove il browser funziona; altrimenti limite
-      documentato.
+- [x] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
+- [x] `var_input()` usa la famiglia scelta in tutti i 106 punti.
+- [x] 8 temi × 2 densità verdi, nuovi componenti inclusi.
+- [x] Accessibilità: heading, aria, tastiera, focus, reduced motion.
+- [x] Errore in pannello chiuso → pannello aperto e campo focalizzato.
+- [x] `NEWS.md`, topic, token, checklist, diario e QA aggiornati.
+- [x] e2e e screenshot: eseguiti dove il browser funziona; altrimenti limite
+      documentato ([`QA-WIDGETS.md`](QA-WIDGETS.md) § 7).
 
 ---
 

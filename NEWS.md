@@ -1,5 +1,43 @@
 # RcmdrShiny Studio 2.8.0
 
+## Parameter panels and one widget family
+
+- **Accordions for parameter-dense screens**: `settings_accordion()`,
+  `settings_panel()` and `settings_group()` wrap bslib's accordion and add the
+  Studio's heading semantics, chevron, density and focus ring. The *Options*
+  dialog is five panels; the Chart Builder keeps *Chart and data* always
+  visible and puts its remaining options into *Options*, *Style*, *Axes*,
+  *Text*, *Theme* and *Output*. Import, Frequency Distributions, model and
+  test dialogs group their fields by task. Every input id, default and
+  generated R command is unchanged.
+- **One control per list role**: a short single list stays a native
+  `<select>`, a list that must stay visible is a native `<select multiple>`,
+  and a long list opens the searchable virtual select. `var_input()` routes
+  all 106 call sites by length (threshold 12); the server reads the same
+  string or character vector as before.
+- **Bounded numbers and colours**: `slider_input()` draws alpha, jitter, base
+  size and notch width on a local noUiSlider, and `color_input()` replaces
+  the free-text background field with the packaged Spectrum picker. The
+  values and the commands they produce are unchanged.
+- **Errors reach the field**: validation still returns the historical `error`
+  and now adds `field_errors`. A rejected dialog opens every closed panel,
+  marks the field with `aria-invalid`, focuses the first invalid field that
+  has a box, and leaves hidden conditional fields alone.
+- **Keyboard and names**: accordion headers are headings with `aria-level`;
+  Up/Down, Home and End move between the headers of the same accordion. The
+  virtual select is named by its visible label, noUiSlider handles expose
+  `role="slider"`, and the Spectrum replacer is a button reachable with
+  `Tab`, `Enter` and `Space`. `Esc` remains Bootstrap's modal contract.
+- **Desktop chrome**: DT rows use 32 px in Compact and 40 px in Comfortable
+  with a sticky header, hover and selection on every palette; rhandsontable
+  uses the same height. Alerts, progress bars and scrollbars read the status
+  and surface tokens instead of Bootstrap's stock palette. The code and report
+  editors choose a packaged light or dark Ace theme from the selected palette.
+- **What remains ours**: cards, notes, toolbars, tabs, badges, segmented
+  controls, switches, icons and the dialog chrome are still the Studio's own
+  components. No statistical parameter, dialog id or i18n string changed, and
+  no remote asset was added.
+
 ## Interface refresh — one component vocabulary
 
 - **Shared components in every view**: the shell, Home, Data Studio, Chart

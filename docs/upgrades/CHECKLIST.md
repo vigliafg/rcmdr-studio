@@ -465,7 +465,7 @@ Stato: completata (U0–U5); conferma visiva ed e2e rimandate a un ambiente con 
 ## Onda 16 — bslib, shinyWidgets e sistema dei widget
 
 Documento di settore: [`16-bslib-widgets.md`](16-bslib-widgets.md).
-Stato: pianificata — 15 step in 5 lotti da 3.
+Stato: completata (S1–S15); conferma visiva ed e2e rimandate a un ambiente con browser funzionante.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -481,22 +481,23 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 | S10 | `var_input()` sulla famiglia scelta | [x] | 106 punti, passo reversibile; questo commit |
 | S11 | Dialoghi dati e distribuzioni | [x] | Import, Frequency; conditional nei pannelli |
 | S12 | Dialoghi modelli e test | [x] | contract verde, `field_errors` |
-| S13 | Accessibilità ed errori | [ ] | ARIA, tastiera, focus |
-| S14 | Rifinitura desktop e QA visiva | [ ] | DT, Ace, fogli, menu, galleria |
-| S15 | NEWS, topic, token, diario, QA | [ ] | chiusura e push |
+| S13 | Accessibilità ed errori | [x] | `d320c8f`; header, frecce, nomi accessibili, focus solo su campi visibili |
+| S14 | Rifinitura desktop e QA visiva | [x] | `5d0f042`; DT, Ace, alert, progress, scrollbar; `QA-WIDGETS.md` |
+| S15 | NEWS, topic, token, diario, QA | [x] | questo commit; chiusura e push |
 
 ### Chiusura Onda 16
 
-- [ ] 15 step verdi, 5 handoff (S3, S6, S9, S12, S15).
-- [ ] Nessun ID, valore, comando o stringa i18n cambiato.
-- [ ] Ogni famiglia di widget ha specifica, galleria e test.
-- [ ] Nessun controllo con l'aspetto predefinito del browser.
-- [ ] Chart Builder con “Chart and data” fisso e 6 pannelli.
-- [ ] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
-- [ ] `var_input()` usa la famiglia scelta in tutti i 106 punti.
-- [ ] 8 temi × 2 densità verdi, nuovi componenti inclusi.
-- [ ] Errore in pannello chiuso → apertura e focus.
-- [ ] Documentazione e diario aggiornati; e2e/screenshot dove il browser funziona.
+- [x] 15 step verdi, 5 handoff (S3, S6, S9, S12, S15).
+- [x] Nessun ID, valore, comando o stringa i18n cambiato.
+- [x] Ogni famiglia di widget ha specifica, galleria e test.
+- [x] Nessun controllo con l'aspetto predefinito del browser.
+- [x] Chart Builder con “Chart and data” fisso e 6 pannelli.
+- [x] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
+- [x] `var_input()` usa la famiglia scelta in tutti i 106 punti.
+- [x] 8 temi × 2 densità verdi, nuovi componenti inclusi.
+- [x] Errore in pannello chiuso → apertura e focus.
+- [x] Documentazione e diario aggiornati; e2e/screenshot dove il browser
+      funziona (limite documentato in `QA-WIDGETS.md` § 7).
 
 ---
 

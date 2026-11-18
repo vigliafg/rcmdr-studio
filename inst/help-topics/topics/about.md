@@ -3,7 +3,7 @@ id: about-studio
 title: About RcmdrShiny Studio
 type: reference
 category: getting-started
-keywords: [about, studio, identity, version, license, upstream, theme, density]
+keywords: [about, studio, identity, version, license, upstream, theme, density, accordion, picker, listbox, slider]
 aliases: [about, version, license]
 dialogs: [helpAboutCommander]
 commands: []
@@ -43,6 +43,25 @@ script log, the output and the report.
 - one shared vocabulary of cards, notes, toolbars and dialogs, so every view
   and dialog reads the same way.
 - a minimal console with Output, Messages and History.
+
+## Parameter panels and widgets
+
+Dialogs with many parameters group them into collapsible panels: *Options*,
+*Import text data*, *Frequency Distributions*, the model dialogs and the test
+dialogs. Click a panel header to open or close it; the chart builder keeps
+*Chart and data* visible and puts the rest one click away. The per-type chart
+options are the only nested group.
+
+- **Variable lists** pick their control by length: a native listbox for a
+  short multiple choice, a native drop-down for a short single choice, and a
+  searchable picker above 12 entries. The value the server reads is the same.
+- **Bounded numbers and colours** use the packaged slider and colour picker;
+  the generated R command is the same as with a plain field.
+- **Keyboard**: `Tab` moves through the fields, `Enter` or `Space` opens a
+  panel, `Up` and `Down` move between the headers of one accordion, `Home` and
+  `End` jump to its edges, and `Esc` still closes the dialog.
+- **Validation**: when a dialog is rejected, every panel opens and the first
+  invalid field is focused, so an error cannot stay hidden.
 
 ## Attribution
 

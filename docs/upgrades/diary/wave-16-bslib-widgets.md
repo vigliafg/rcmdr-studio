@@ -1,7 +1,8 @@
 # Diario di handoff — Onda 16 — bslib, shinyWidgets e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** lotti 1–4 completati (S1–S12); prossimo lotto S13–S15  
+**Stato:** completata (S1–S15); lotti 1–5 chiusi; verifica visiva su browser
+rimandata  
 **Ondata precedente:** `wave-15-ui-refresh.md` (Onda 15, 2.8.0)  
 **Documento di settore:** [`16-bslib-widgets.md`](../16-bslib-widgets.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
@@ -9,7 +10,7 @@
 
 ---
 
-## 1. Obiettivo dei primi quattro lotti
+## 1. Obiettivo dell'onda
 
 Il primo lotto ha preparato il terreno: specifica desktop, galleria di ogni
 famiglia di widget, bridge dei temi, campi e selettori binari, elenchi
@@ -40,6 +41,9 @@ Al termine del lotto 4:
   lunghezza, senza cambiare ID o selezione;
 - *Import*, *Frequency*, i modelli e i test principali sono a pannelli, e la
   validazione inline arriva anche a loro;
+- l'accessibilità è chiusa: heading, frecce tra header, nomi accessibili,
+  focus solo su campi visibili, contrasto delle nuove coppie;
+- tabelle, editor, alert, progress e scrollbar seguono la palette;
 - la suite completa è verde.
 
 ---
@@ -335,13 +339,16 @@ stabili restano inglesi e non compaiono nell'interfaccia.
 | Controllo | Esito |
 |---|---|
 | Suite completa del lotto 4 | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
+| Suite completa del lotto 5 | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`tests-w16-batch5b.log`) |
 | Test mirati S7 | Chart Studio, tipi, accessibilità |
 | Test mirati S8 | copertura dei gruppi per ogni tipo, ID piatti = ID raggruppati, stato dei pannelli, livello 4 |
 | Test mirati S9 | markup e decimali, handler JS, instradamento degli ID, picker, reset, bianco equivalente |
 | Test mirati S10 | soglia 12, listbox nativa, voce vuota, `form-select`, contract dei dialoghi |
 | Test mirati S11 | pannelli di Import e Frequency, conditional nel pannello giusto, ID una volta |
 | Test mirati S12 | pannelli dei modelli e dei test, ID una volta, `field_errors` sul campo |
-| Galleria in check mode | `gallery ok` |
+| Test mirati S13 | heading 3/4, frecce, nomi accessibili, focus solo su campi con box |
+| Test mirati S14 | token riga 32/40, chrome DT unico, temi Ace, alert/progress/scrollbar |
+| Galleria in check mode | `gallery ok: 19195 bytes` |
 | Comando di riferimento del Chart Builder | invariato, anche con sfondo `#ffffff` |
 | Tutti gli ID di *Options* e del builder | presenti una volta |
 | JS | `node --check` verde |
@@ -366,6 +373,9 @@ confermare che il test copre il difetto.
 | 26 e2e ancora saltati | copertura browser non esercitata | `RCMDRSHINY_E2E=1` | QA |
 | I pannelli dei dialoghi non sono stati visti in un browser | apertura, focus e altezza non confermati | test strutturali e JS coperti | QA |
 | La soglia di 12 voci è una scelta di progetto | un dataset con 13 variabili passa al picker | la soglia è una funzione sola, cambiarla è un punto | QA |
+| Ace con tema `system` resta chiaro | chi ha il sistema scuro e non sceglie una palette vede un editor chiaro | scegliere una palette scura, o risolvere `system` lato client in Onda 17 | QA |
+| Tabelle, editor e feedback non sono stati visti in un browser | altezza riga, sticky header e modebar non confermati | galleria pronta; token e CSS coperti dai test | QA |
+| Slider e color picker non hanno un e2e | tastiera e ruoli verificati a livello JS/markup | e2e su macchina con browser | QA |
 
 Nessun blocco di codice: il lotto è chiuso.
 
@@ -373,16 +383,19 @@ Nessun blocco di codice: il lotto è chiuso.
 
 ## 10. Prossimo passo
 
-**Lotto 5 — accessibilità, rifinitura desktop e chiusura (S13–S15):**
+**Onda 17 — completamento desktop** ([`17-desktop-completion.md`](../17-desktop-completion.md)):
 
-1. **S13** — accessibilità ed errori: ARIA dei pannelli, tastiera, focus
-   visibile, contrasto, reduced motion, zoom 200%.
-2. **S14** — rifinitura desktop e QA visiva: DT, Ace, fogli, menu, galleria
-   nelle 8 palette × 2 densità.
-3. **S15** — NEWS, topic, token, diario, QA finale e push.
+1. **T1** — tooltip e popover per i parametri;
+2. **T2** — campi data e intervalli, quando esiste il caso d'uso;
+3. **T3** — notifiche, toast e indicatori di attesa omogenei;
+4. **T4–T6** — pannelli ridimensionabili, menu contestuali, drag-and-drop con
+   alternativa da tastiera;
+5. **T7–T10** — tabelle di sola lettura, dialoghi dei plugin, Help/palette,
+   rendering pigro;
+6. **T11–T12** — e2e, screenshot e chiusura.
 
-Gate del lotto: `EXIT=0`, nessun controllo con l'aspetto del browser,
-working tree pulito e commit pushati.
+Prima di aprire T1, eseguire la checklist manuale di `QA-WIDGETS.md` § 6 su una
+macchina con Chrome o Firefox: è l'unico debito dell'Onda 16.
 
 ---
 
@@ -400,6 +413,12 @@ working tree pulito e commit pushati.
 - [ ] Il peso di Font Awesome è accettabile? Oggi sì, perché è locale.
 - [ ] `--rcmdr-shadow-sm` è abbastanza distinto dall'ombra grande nei temi
       scuri?
+- [ ] Le frecce tra gli header sono un'aggiunta utile o basta `Tab`?
+- [ ] La soglia di 32 px per le righe DT regge anche con celle a due righe?
+- [ ] Vale la pena risolvere `system` anche per Ace con un messaggio dal
+      client, o il tema chiaro è accettabile?
+- [ ] Il picker dentro un pannello chiuso mantiene il valore cercato quando si
+      riapre? (Test strutturale sì; conferma visiva no.)
 
 ---
 
@@ -415,19 +434,93 @@ working tree pulito e commit pushati.
 - [x] S10 committato (`e7ef2eb`, voce vuota nominata in `9fbbce2`).
 - [x] S11 committato (`ab0bb90`).
 - [x] S12 committato (`b09c2a7`).
+- [x] S13 committato (`d320c8f`).
+- [x] S14 committato (`5d0f042`).
+- [x] S15 committato (questo commit, `docs: close wave 16`).
 - [x] Suite completa verde: `EXIT=0`.
-- [x] Galleria in check mode verde.
-- [x] `UI-TOKENS.md` con il contratto dell'accordion, dei controlli desktop e
-      della soglia dei selettori.
-- [x] `CHECKLIST.md` aggiornata (S1–S12).
+- [x] Galleria in check mode verde (`gallery ok: 19195 bytes`).
+- [x] `UI-TOKENS.md` con il contratto dell'accordion, dei controlli desktop,
+      della soglia dei selettori e del chrome DT/Ace.
+- [x] `QA-WIDGETS.md` con metodo, esito, limiti e checklist manuale.
+- [x] `CHECKLIST.md` aggiornata (S1–S15 e chiusura).
 - [x] Diario aggiornato.
 - [x] Nessun ID, valore o comando cambiato.
-- [x] Utente informato: “lotto 4 pronto, puoi compattare il contesto”.
+- [x] App riavviata su `http://127.0.0.1:3841` (HTTP 200).
+- [x] Commit locali pushati.
+- [x] Utente informato: “Onda 16 chiusa, puoi compattare il contesto”.
 
 ---
 
-## 13. Artefatti
+## 13. Lotto 5 — accessibilità, rifinitura e chiusura (S13–S15)
 
+### S13 — Accessibilità ed errori · `d320c8f`
+
+- `70-keyboard.js`: `↑`/`↓` tra gli header dello stesso accordion, `Home`/`End`
+  ai bordi. Un accordion annidato vede solo i propri header; `Esc` resta al
+  modale.
+- `40-interactions.js`: `rcmdrFocusFirst()` apre i pannelli, attende la
+  transizione e focalizza il primo campo **con un box**. Un campo in un
+  `conditionalPanel` ancora nascosto viene saltato, non riceve il focus.
+- `picker_input()` passa `ariaLabelledby = <id>-label`: il `role="combobox"`
+  costruito dalla libreria eredita la label visibile.
+- `40-interactions.js` aggiunge `role="slider"` e `aria-orientation` alle
+  maniglie noUiSlider, e `role="button"`/`tabindex="0"` al replacer Spectrum,
+  con `Invio`/`Spazio`.
+- `20-components.css`: le regole dell'icona e del titolo usavano
+  `.accordion-icon`/`.accordion-title`, ma il markup emette
+  `.rcmdr-accordion-icon`/`.rcmdr-accordion-title`: corretto, con
+  `min-width: 0` e `overflow-wrap` per lo zoom 200%.
+- `15-bootstrap.css`: `scroll-margin-block` sui campi dentro un pannello, così
+  l'anello di focus non finisce sotto la chrome.
+- Matrice: aggiunte le coppie `heading`/`text`/`muted` su `selection` e il
+  focus su superficie muta.
+
+**Deviazione:** il commit del piano era `test(ui): ...`; il passo ha anche
+corretto markup e JS, quindi il messaggio è `fix(ui): make the accordions and
+widgets keyboard complete`.
+
+### S14 — Rifinitura desktop e QA · `5d0f042`
+
+- token `--rcmdr-table-row-h`: 32 px compatto, 40 px comodo;
+- DT: header sticky, hover, selezione su tutte le palette, filtro, lunghezza e
+  paginazione all'altezza dei campi; rhandsontable legge lo stesso numero da
+  `ui_table_row_height()`;
+- Ace: `ui_ace_theme()` sceglie `tomorrow_night` per i tre temi scuri e
+  `textmate` per gli altri; entrambi sono nel pacchetto. L'editor si
+  ricostruisce solo al cambio palette, non a ogni `tick()`;
+- alert, progress e scrollbar mappati sui token, senza il giallo/blu di
+  Bootstrap;
+- galleria: terzo pannello con picker, slider e colore; tabella con filtro e
+  paginazione;
+- `QA-WIDGETS.md`: metodo, comandi, esito, limiti e checklist manuale.
+
+**Limite:** `system` resta sul tema Ace chiaro finché l'utente non sceglie una
+palette scura; il server non conosce la preferenza del client. È dichiarato in
+`QA-WIDGETS.md` § 4.2 e § 7.
+
+**Deviazione:** il commit del piano era `test(ui): ...`; il passo contiene
+anche CSS, R e galleria, quindi il messaggio è `feat(ui): finish the desktop
+chrome and the widget QA`.
+
+### S15 — Chiusura
+
+- NEWS: pannelli, famiglie di widget, errori, tastiera, chrome desktop e cosa
+  resta nostro;
+- `about-studio`: nuova sezione “Parameter panels and widgets” e keyword;
+- `UI-TOKENS.md`: `--rcmdr-table-row-h`, bridge `--bs-*`, Ace, alert,
+  progress, scrollbar, § 12.5;
+- checklist, README dell'ondata, piano e diario chiusi; `QA-WIDGETS.md`
+  collegato;
+- suite completa, app riavviata, push.
+
+---
+
+## 14. Artefatti
+
+- `/tmp/opencode/tests-w16-batch5b.log` — suite finale dell'onda (S15).
+- `/tmp/opencode/tests-w16-batch5a.log` — suite dopo S13.
+- `/tmp/opencode/tests-w16-s14-target.log` — test mirati S14.
+- `/tmp/opencode/app-w16-s13.js` — JS composto, verificato con `node --check`.
 - `/tmp/opencode/tests-w16-batch4b.log` — suite finale del lotto 4.
 - `/tmp/opencode/tests-w16-batch4.log` — prima esecuzione, `EXIT=1` sul
   fix del picker non ancora caricato.
