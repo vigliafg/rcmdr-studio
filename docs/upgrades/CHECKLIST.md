@@ -469,7 +469,7 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| S1 | Inventario, specifica desktop, dipendenze, galleria | [ ] | `tools/widget_gallery.R`, `--rcmdr-shadow-sm` |
+| S1 | Inventario, specifica desktop, dipendenze, galleria | [x] | shinyWidgets 0.9.1, bridge e `tools/widget_gallery.R`; questo commit |
 | S2 | Campi, checkbox, radio, switch | [ ] | niente aspetto browser |
 | S3 | Dropdown, listbox, picker | [ ] | `virtualSelectInput` vs nativo, gate |
 | S4 | `settings_accordion()`, `settings_panel()`, `settings_group()` | [ ] | heading semantics, densità |

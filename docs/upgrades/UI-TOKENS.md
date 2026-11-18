@@ -36,9 +36,11 @@ token con un ruolo**, non scrivere un valore nel selettore.
 |---|---|
 | `00-tokens.css` | palette (7 regole colore), scala tipografica, spaziature, raggi, ombre, focus |
 | `10-shell.css` | shell: topbar, barra laterale, barra di stato, striscia delle viste |
+| `15-bootstrap.css` | bridge dei componenti bslib/Bootstrap: variabili `--bs-accordion-*`, chevron, focus |
 | `20-components.css` | componenti condivisi: badge, toolbar, schede, chrome dei modali, viste |
 | `30-forms.css` | token di densità (`--rcmdr-label-*`, `--rcmdr-control-*`, `--rcmdr-btn-*`, `--rcmdr-field-gap`, `--rcmdr-help-size`) e i componenti `field`, switch, segmented |
 | `40-dialogs.css` | usa i token; nessuna definizione |
+| `55-shinywidgets.css` | bridge di picker/listbox, slider e color picker; nessun colore letterale |
 | altri file | solo `var(--rcmdr-…)` |
 
 I nomi dei file sono storici (U0 ha estratto blocchi contigui). U2 ha
@@ -82,7 +84,8 @@ Ogni palette definisce gli stessi 33 token. Le palette sono:
 | `--rcmdr-danger` | testo/icona di pericolo | su superficie |
 | `--rcmdr-warning` | testo/icona di avviso | su superficie |
 | `--rcmdr-success` | testo/icona di successo | su superficie |
-| `--rcmdr-shadow` | ombra di elevazione | colore incluso nel valore |
+| `--rcmdr-shadow` | ombra di elevazione | modali e superfici grandi; colore incluso nel valore |
+| `--rcmdr-shadow-sm` | ombra di menu e dropdown | colore incluso nel valore |
 | `--rcmdr-focus` | anello di focus | = accento, definito per tema |
 | `--rcmdr-focus-ring` | alone tenue per widget e stati “corrente” | rinforzo, non indicatore unico |
 | `--rcmdr-focus-width` / `--rcmdr-focus-offset` | geometria unica del focus | `2px` / `2px` |
@@ -234,12 +237,14 @@ come effetto collaterale di U1. Modali e hero usano già `lg`.
 
 | Token | Ruolo |
 |---|---|
-| `--rcmdr-shadow` | elevazione di menu, dropdown, modali |
+| `--rcmdr-shadow` | elevazione di modali e superfici grandi |
+| `--rcmdr-shadow-sm` | elevazione di menu, dropdown, tooltip e popover |
 
 L'ombra include il colore e cambia per tema: nei temi scuri è più opaca, in
 `contrast` è assente o quasi. Un componente non scrive mai `box-shadow` con
 colori propri. In U1.1 l'unico valore grezzo rimasto (il dropdown del menubar)
-è stato ricondotto a questo token.
+è stato ricondotto a questo token; l'Onda 16 aggiunge la variante piccola per
+le superfici flottanti.
 
 ---
 
@@ -351,7 +356,64 @@ usa viene rimosso.
 
 ---
 
-## 12. Verifica
+## 12. Specifica desktop e widget esterni
+
+La specifica vale per ogni famiglia di input. La verifica visiva vive in
+`tools/widget_gallery.R` (applicazione di sviluppo, esclusa dal pacchetto):
+mostra ogni famiglia negli stati normale, hover, focus, disabled, errore e
+read-only, con selettore di tema e densità.
+
+### 12.1 Proprietà
+
+| Componente | Fornitore | Regola |
+|---|---|---|
+| Accordion, card, navset | bslib | solo accordion in questa onda; card e navset restano nostri |
+| Picker, listbox, slider, colore | shinyWidgets | dietro `picker_input()`, `listbox_input()`, `slider_input()`, `color_input()` |
+| Campi, checkbox, radio, switch, segmented | nostro CSS | nessun widget esterno equivalente |
+| Icone | nostro set | 18 SVG inline |
+| Tabelle | DT | nessuna sostituzione nei dati editabili |
+
+`shinyWidgets` porta con sé i propri asset (virtual-select, bootstrap-select,
+nouislider, spectrum, air-datepicker) e Font Awesome: sono tutti serviti dal
+pacchetto, nessun CDN. Il peso va misurato a ogni aggiornamento della
+dipendenza.
+
+### 12.2 Famiglie e stato
+
+| Famiglia | Implementazione | Stato |
+|---|---|---|
+| Testo, numero, textarea, search | Shiny + `30-forms.css` | tokenizzato; rifinitura in Onda 16 |
+| Select singola/multipla | Shiny + `50-widgets.css` | tokenizzata; listbox nativa da rifinire |
+| Variabili (`var_input`) | `selectizeInput` | da migrare alla famiglia scelta (Onda 16, S10) |
+| Picker/listbox ricercabile | shinyWidgets | da introdurre (Onda 16, S3) |
+| Checkbox, radio | Bootstrap + `50-widgets.css` | forma Bootstrap; da rifinire (Onda 16, S2) |
+| Switch | nostro `.rcmdr-switch` | pronto |
+| Segmented | nostro `.rcmdr-segmented` | pronto |
+| Slider, colore | shinyWidgets | da introdurre (Onda 16, S9) |
+| Date | shinyWidgets | rinviato all'Onda 17, T2 |
+
+### 12.3 Regole desktop
+
+| Elemento | Regola |
+|---|---|
+| Altezza | 34 px compatto / 40 px comodo, anche per i widget esterni |
+| Bordo | 1 px `--rcmdr-border-strong` sui controlli |
+| Raggio | 6 px controlli, 8 px dropdown, 12 px modali |
+| Elevazione | solo su dropdown, tooltip, popover e modali; `--rcmdr-shadow-sm` per i menu |
+| Hover | cambia bordo e superficie, non sposta il contenuto; massimo 150 ms |
+| Focus | un solo anello da 2 px, offset 2 px |
+| Disabled | opacità e cursore coerenti, valore leggibile |
+| Errore | bordo `--rcmdr-danger` più messaggio, mai solo colore |
+| Checkbox/radio | 16 px, quadrato a 2 px o cerchio, segno netto, indeterminato |
+| Dropdown | ricerca sticky, massimo 320 px, ombra piccola |
+| Listbox | 8–10 righe, hover di riga, selezione d'accento |
+| Tabelle | righe da 32 px in compatto, header sticky |
+| Movimento | 120–150 ms; `prefers-reduced-motion` azzera |
+| Cursore | default sui campi, pointer su bottoni, link e righe cliccabili |
+
+---
+
+## 13. Verifica
 
 ```bash
 # I token sono definiti una volta e usati
@@ -362,6 +424,9 @@ Rscript -e 'testthat::test_local(filter="density|buttons|accessibility")'
 
 # Contrasto: ricalcola la tabella del § 4 da tutte le palette
 Rscript -e 'testthat::test_local(filter="contrast")'
+
+# Galleria dei widget (applicazione di sviluppo, non spedita)
+Rscript tools/widget_gallery.R
 ```
 
 La suite completa resta il criterio di chiusura di ogni lotto:

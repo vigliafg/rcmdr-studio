@@ -1,0 +1,73 @@
+    /* shinyWidgets bridge --------------------------------------------------
+       The package ships its own CSS as a Shiny dependency; these rules make
+       the widgets we adopt read the Studio tokens.  Only the three families
+       chosen for wave 16 are styled here: searchable picker/listbox, bounded
+       slider and colour picker.  Every value resolves through --rcmdr-*. */
+    .virtual-select,
+    .bootstrap-select,
+    .sw-no-ui-slider,
+    .noUi-target,
+    .sw-spectrum,
+    .sp-replacer {
+      font-size: var(--rcmdr-control-size);
+      color: var(--rcmdr-text);
+    }
+    .virtual-select .vs__dropdown-toggle,
+    .bootstrap-select > .dropdown-toggle {
+      min-height: var(--rcmdr-control-h);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+    }
+    .virtual-select .vs__dropdown-toggle:focus-within,
+    .bootstrap-select > .dropdown-toggle:focus-visible {
+      border-color: var(--rcmdr-focus);
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
+    .virtual-select .vs__dropdown-menu,
+    .bootstrap-select .dropdown-menu {
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      box-shadow: var(--rcmdr-shadow-sm);
+    }
+    .virtual-select .vs__dropdown-option--highlight,
+    .bootstrap-select .dropdown-menu .active > a {
+      background: var(--rcmdr-hover);
+      color: var(--rcmdr-heading);
+    }
+    .sw-no-ui-slider,
+    .noUi-target {
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    .noUi-connect {
+      background: var(--rcmdr-accent);
+    }
+    .noUi-handle {
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+      background: var(--rcmdr-surface);
+      box-shadow: var(--rcmdr-shadow-sm);
+    }
+    .noUi-handle:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
+    .sw-spectrum,
+    .sp-replacer {
+      min-height: var(--rcmdr-control-h);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+    }
+    .sp-container {
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+      box-shadow: var(--rcmdr-shadow-sm);
+    }

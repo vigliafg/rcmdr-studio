@@ -4,6 +4,24 @@
 # radioButtons, ...), so that a dialog can be ported by substituting widgets
 # without rewriting its validation logic.
 
+#' The external widget families this package adopts
+#'
+#' A single place that names the shinyWidgets functions used by the Studio.
+#' The list is intentionally short: searchable lists, bounded numbers and
+#' colours.  Everything else stays on Shiny or on our own helpers, so there is
+#' no second switch, segmented control or card implementation.
+#'
+#' @return A named list of functions.
+#' @keywords internal
+widget_library <- function() {
+  list(
+    virtual_select = shinyWidgets::virtualSelectInput,
+    picker = shinyWidgets::pickerInput,
+    slider = shinyWidgets::noUiSliderInput,
+    colour = shinyWidgets::spectrumInput
+  )
+}
+
 w_label <- function(text) {
   htmltools::tags$label(text, class = "form-label")
 }

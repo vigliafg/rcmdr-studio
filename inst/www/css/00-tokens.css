@@ -38,6 +38,7 @@
       --rcmdr-warning: #b54708;
       --rcmdr-success: #067647;
       --rcmdr-shadow: 0 .6rem 1.4rem rgba(16, 32, 51, .18);
+      --rcmdr-shadow-sm: 0 .25rem .6rem rgba(16, 32, 51, .12);
       --rcmdr-focus-ring: 0 0 0 2px rgba(11, 94, 215, .28);
     }
     :root {
@@ -111,6 +112,7 @@
       --rcmdr-warning: #8a4b00;
       --rcmdr-success: #2c5a10;
       --rcmdr-shadow: 0 .6rem 1.4rem rgba(61, 47, 24, .2);
+      --rcmdr-shadow-sm: 0 .25rem .6rem rgba(61, 47, 24, .14);
       --rcmdr-focus-ring: 0 0 0 2px rgba(138, 90, 0, .3);
     }
     body.rcmdr-light-cool {
@@ -147,6 +149,7 @@
       --rcmdr-warning: #834700;
       --rcmdr-success: #05563a;
       --rcmdr-shadow: 0 .6rem 1.4rem rgba(13, 44, 72, .18);
+      --rcmdr-shadow-sm: 0 .25rem .6rem rgba(13, 44, 72, .12);
       --rcmdr-focus-ring: 0 0 0 2px rgba(10, 88, 202, .28);
     }
     body.rcmdr-dark {
@@ -183,6 +186,7 @@
       --rcmdr-warning: #f7c76b;
       --rcmdr-success: #86e6b6;
       --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .55);
+      --rcmdr-shadow-sm: 0 .25rem .7rem rgba(0, 0, 0, .45);
       --rcmdr-focus-ring: 0 0 0 2px rgba(120, 185, 255, .45);
     }
     body.rcmdr-dark-dim {
@@ -219,6 +223,7 @@
       --rcmdr-warning: #f5c881;
       --rcmdr-success: #9ae9c1;
       --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .5);
+      --rcmdr-shadow-sm: 0 .25rem .7rem rgba(0, 0, 0, .4);
       --rcmdr-focus-ring: 0 0 0 2px rgba(147, 193, 245, .45);
     }
     body.rcmdr-dark-graphite {
@@ -255,6 +260,7 @@
       --rcmdr-warning: #f3ca85;
       --rcmdr-success: #98e8c8;
       --rcmdr-shadow: 0 .6rem 1.6rem rgba(0, 0, 0, .5);
+      --rcmdr-shadow-sm: 0 .25rem .7rem rgba(0, 0, 0, .4);
       --rcmdr-focus-ring: 0 0 0 2px rgba(127, 216, 201, .45);
     }
     body.rcmdr-contrast {
@@ -291,6 +297,7 @@
       --rcmdr-warning: #6b3b00;
       --rcmdr-success: #005c33;
       --rcmdr-shadow: 0 .5rem 1.2rem rgba(0, 0, 0, .35);
+      --rcmdr-shadow-sm: 0 .2rem .5rem rgba(0, 0, 0, .3);
       --rcmdr-focus-ring: 0 0 0 3px rgba(0, 71, 255, .45);
     }
     body {

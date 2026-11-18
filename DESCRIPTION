@@ -36,6 +36,7 @@ Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports:
     shiny,
+    shinyWidgets (>= 0.9.1),
     bslib,
     htmltools,
     DT,

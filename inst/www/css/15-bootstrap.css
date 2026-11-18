@@ -1,0 +1,64 @@
+    /* Bootstrap component bridge ------------------------------------------
+       bslib supplies Bootstrap 5; these variables make its components read
+       the same tokens as the rest of the Studio.  No colour, radius or size
+       is written here: every value resolves through --rcmdr-*. */
+    .accordion {
+      --bs-accordion-color: var(--rcmdr-text);
+      --bs-accordion-bg: var(--rcmdr-surface);
+      --bs-accordion-transition:
+        color 150ms ease, background-color 150ms ease,
+        border-color 150ms ease;
+      --bs-accordion-border-color: var(--rcmdr-border);
+      --bs-accordion-border-width: 1px;
+      --bs-accordion-border-radius: var(--rcmdr-radius-md);
+      --bs-accordion-inner-border-radius: calc(var(--rcmdr-radius-md) - 1px);
+      --bs-accordion-btn-padding-x: var(--rcmdr-space-3);
+      --bs-accordion-btn-padding-y: var(--rcmdr-space-2);
+      --bs-accordion-btn-color: var(--rcmdr-heading);
+      --bs-accordion-btn-bg: var(--rcmdr-surface);
+      --bs-accordion-btn-icon: none;
+      --bs-accordion-btn-icon-width: 0;
+      --bs-accordion-btn-icon-transform: rotate(-135deg);
+      --bs-accordion-btn-icon-transition: transform 150ms ease;
+      --bs-accordion-btn-active-icon: none;
+      --bs-accordion-btn-focus-border-color: var(--rcmdr-focus);
+      --bs-accordion-btn-focus-box-shadow: none;
+      --bs-accordion-body-padding-x: var(--rcmdr-space-3);
+      --bs-accordion-body-padding-y: var(--rcmdr-space-3);
+      --bs-accordion-active-color: var(--rcmdr-heading);
+      --bs-accordion-active-bg: var(--rcmdr-surface-muted);
+    }
+    /* bslib sizes the header as a display heading; in a card or a dialog it
+       is a label, so it inherits the local hierarchy instead. */
+    .accordion .accordion-header {
+      margin: 0;
+      font-size: var(--rcmdr-text-md);
+      line-height: var(--rcmdr-leading-ui);
+      color: var(--rcmdr-heading);
+    }
+    .accordion .accordion-button {
+      font-size: var(--rcmdr-text-md);
+      font-weight: var(--rcmdr-weight-strong);
+      line-height: var(--rcmdr-leading-ui);
+    }
+    .accordion .accordion-button:focus {
+      box-shadow: none;
+    }
+    .accordion .accordion-button:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: -2px;
+    }
+    /* Bootstrap paints the chevron as a data URI, which cannot follow the
+       palette.  Draw it with two borders in currentColor instead. */
+    .accordion .accordion-button::after {
+      width: .5rem;
+      height: .5rem;
+      background-image: none;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform 150ms ease;
+    }
+    .accordion .accordion-button:not(.collapsed)::after {
+      transform: rotate(-135deg);
+    }

@@ -95,7 +95,7 @@ if (requireNamespace("pkgload", quietly = TRUE)) {
   stop(
     "Neither 'pkgload' nor an installed 'RcmdrShiny' package was found.\n",
     "Install either one, for example:\n",
-    "  Rscript -e 'install.packages(c(\"pkgload\", \"shiny\", \"bslib\", \"DT\", ",
+    "  Rscript -e 'install.packages(c(\"pkgload\", \"shiny\", \"shinyWidgets\", \"bslib\", \"DT\", ",
     "\"shinyAce\", \"shinyFiles\", \"rhandsontable\", \"RcmdrMisc\"))'\n",
     "or install this package:\n",
     "  Rscript -e 'install.packages(\".\", repos = NULL, type = \"source\")'",

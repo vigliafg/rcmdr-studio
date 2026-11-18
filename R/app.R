@@ -29,10 +29,12 @@ app_css_files <- function() {
   c(
     "00-tokens.css",
     "10-shell.css",
+    "15-bootstrap.css",
     "20-components.css",
     "30-forms.css",
     "40-dialogs.css",
     "50-widgets.css",
+    "55-shinywidgets.css",
     "60-views.css",
     "70-refine.css"
   )
