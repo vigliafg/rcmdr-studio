@@ -18,6 +18,26 @@ stats_confidence_input <- function(id, value = 0.95) {
                step = 0.01)
 }
 
+#' The three panels every test dialog shares
+#'
+#' Variables, hypothesis and options are the questions a test asks, in the
+#' order it asks them.  A dialog without options passes `options = NULL` and
+#' gets two panels: an empty panel would only add a click.
+#' @keywords internal
+stats_test_accordion <- function(ns, variables, hypothesis,
+                                 options = NULL, open = "Variables") {
+  panels <- list(
+    settings_panel(tr("Variables"), variables, value = "Variables"),
+    settings_panel(tr("Hypothesis"), hypothesis, value = "Hypothesis")
+  )
+  if (!is.null(options)) {
+    panels <- c(panels, list(settings_panel(
+      tr("Options"), options, value = "Options"
+    )))
+  }
+  do.call(settings_accordion, c(panels, list(id = ns("settings"), open = open)))
+}
+
 stats_test_input <- function(id, choices, value) {
   radio_input(id, tr("Test"), choices, value, inline = TRUE)
 }
@@ -33,24 +53,41 @@ stats_model_dialog <- function(id, title, help, kind = "lm",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
       if (!nzchar(m$model %||% "")) m$model <- stats_default_model(state)
-      htmltools::tagList(
-        entry_input(ns("model"), tr("Enter name for model:"), m$model),
-        model_formula_input(id, variables(state),
-                            lhs = m$lhs %||% "", rhs = m$rhs %||% ""),
-        subset_input(ns("subset"), tr("Subset expression:"), m$subset %||% ""),
-        if (identical(kind, "lm") || identical(kind, "glm") ||
-            identical(kind, "lmer") || identical(kind, "glmer")) {
-          combo_input(
-            ns("weights"), tr("Weights"),
-            c(stats::setNames("", tr("<no variable selected>")),
-              stats::setNames(numeric_variables(state), numeric_variables(state))),
-            selected = m$weights %||% ""
-          )
-        },
-        entry_input(ns("remove"), tr("Indices or names of row(s) to remove"),
-                    m$remove %||% ""),
-        if (!is.null(extra_ui)) extra_ui(m, ns)
+      panels <- list(
+        settings_panel(
+          tr("Model"),
+          entry_input(ns("model"), tr("Enter name for model:"), m$model),
+          model_formula_input(id, variables(state),
+                              lhs = m$lhs %||% "", rhs = m$rhs %||% ""),
+          value = "Model"
+        ),
+        settings_panel(
+          tr("Data"),
+          subset_input(ns("subset"), tr("Subset expression:"),
+                       m$subset %||% ""),
+          if (identical(kind, "lm") || identical(kind, "glm") ||
+              identical(kind, "lmer") || identical(kind, "glmer")) {
+            combo_input(
+              ns("weights"), tr("Weights"),
+              c(stats::setNames("", tr("<no variable selected>")),
+                stats::setNames(numeric_variables(state),
+                                numeric_variables(state))),
+              selected = m$weights %||% ""
+            )
+          },
+          entry_input(ns("remove"), tr("Indices or names of row(s) to remove"),
+                      m$remove %||% ""),
+          value = "Data"
+        )
       )
+      if (!is.null(extra_ui)) {
+        panels <- c(panels, list(settings_panel(
+          tr("Options"), extra_ui(m, ns), value = "Options"
+        )))
+      }
+      do.call(settings_accordion, c(panels, list(
+        id = ns("settings"), open = "Model"
+      )))
     },
     observers = function(input, output, session, state, refresh) {
       model_formula_observers(
@@ -68,17 +105,27 @@ stats_model_dialog <- function(id, title, help, kind = "lm",
         remove = trim_blanks(input[[ns("remove")]] %||% "")
       )
       if (!is_valid_name(m$model)) {
-        return(list(error = sprintf(tr('"%s" is not a valid name.'), m$model)))
+        return(dialog_reject(
+          "model", sprintf(tr('"%s" is not a valid name.'), m$model)
+        ))
       }
-      if (!nzchar(m$lhs)) return(list(error = tr("Left-hand side of model empty.")))
-      if (!nzchar(m$rhs)) return(list(error = tr("Right-hand side of model empty.")))
+      if (!nzchar(m$lhs)) {
+        return(dialog_reject("lhs", tr("Left-hand side of model empty.")))
+      }
+      if (!nzchar(m$rhs)) {
+        return(dialog_reject("rhs", tr("Right-hand side of model empty.")))
+      }
       if (nzchar(m$subset) && nzchar(m$remove)) {
-        return(list(error = tr("You cannot specify both case removal and subset cases")))
+        return(dialog_reject(
+          "subset", tr("You cannot specify both case removal and subset cases")
+        ))
       }
       remove_rows <- ""
       if (nzchar(m$remove)) {
         cases <- cases_subset(active_dataset(state), dataset(state), m$remove)
-        if (!is.null(cases$error)) return(list(error = cases$error))
+        if (!is.null(cases$error)) {
+          return(dialog_reject("remove", cases$error))
+        }
         remove_rows <- cases$value
       }
       if (is.null(on_submit)) {
@@ -626,21 +673,33 @@ independent_t_dialog <- function() {
     id = id, title = tr("Independent Samples t-Test"), help = "t.test",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("group"), tr("Groups (pick one)"),
-                  two_level_factors(state), selected = m$group),
-        var_input(ns("response"), tr("Response Variable (pick one)"),
-                  numeric_variables(state), selected = m$response),
-        stats_alternative_input(ns("alternative"), m$alternative),
-        stats_confidence_input(ns("conf"), m$conf),
-        checkbox_input(ns("var_equal"), tr("Assume equal variances?"), m$var_equal)
+      stats_test_accordion(
+        ns,
+        variables = htmltools::tagList(
+          var_input(ns("group"), tr("Groups (pick one)"),
+                    two_level_factors(state), selected = m$group),
+          var_input(ns("response"), tr("Response Variable (pick one)"),
+                    numeric_variables(state), selected = m$response)
+        ),
+        hypothesis = htmltools::tagList(
+          stats_alternative_input(ns("alternative"), m$alternative),
+          stats_confidence_input(ns("conf"), m$conf)
+        ),
+        options = checkbox_input(ns("var_equal"),
+                                 tr("Assume equal variances?"), m$var_equal)
       )
     },
     on_ok = function(input, state) {
       group <- input[[ns("group")]] %||% ""
       response <- input[[ns("response")]] %||% ""
-      if (!nzchar(group)) return(list(error = tr("You must select a groups variable.")))
-      if (!nzchar(response)) return(list(error = tr("You must select a response variable.")))
+      if (!nzchar(group)) {
+        return(dialog_reject("group",
+                             tr("You must select a groups variable.")))
+      }
+      if (!nzchar(response)) {
+        return(dialog_reject("response",
+                             tr("You must select a response variable.")))
+      }
       list(
         commands = cmd_independent_t(
           active_dataset(state), response, group,
@@ -666,22 +725,30 @@ paired_t_dialog <- function() {
     id = id, title = tr("Paired t-Test"), help = "t.test",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("x"), tr("First variable (pick one)"),
-                  numeric_variables(state), selected = m$x),
-        var_input(ns("y"), tr("Second variable (pick one)"),
-                  numeric_variables(state), selected = m$y),
-        stats_alternative_input(ns("alternative"), m$alternative),
-        stats_confidence_input(ns("conf"), m$conf)
+      stats_test_accordion(
+        ns,
+        variables = htmltools::tagList(
+          var_input(ns("x"), tr("First variable (pick one)"),
+                    numeric_variables(state), selected = m$x),
+          var_input(ns("y"), tr("Second variable (pick one)"),
+                    numeric_variables(state), selected = m$y)
+        ),
+        hypothesis = htmltools::tagList(
+          stats_alternative_input(ns("alternative"), m$alternative),
+          stats_confidence_input(ns("conf"), m$conf)
+        )
       )
     },
     on_ok = function(input, state) {
       x <- input[[ns("x")]] %||% ""
       y <- input[[ns("y")]] %||% ""
       if (!nzchar(x) || !nzchar(y)) {
-        return(list(error = tr("You must select two variables.")))
+        return(dialog_reject(if (!nzchar(x)) "x" else "y",
+                             tr("You must select two variables.")))
       }
-      if (identical(x, y)) return(list(error = tr("Variables must be different.")))
+      if (identical(x, y)) {
+        return(dialog_reject("x", tr("Variables must be different.")))
+      }
       list(
         commands = cmd_paired_t(active_dataset(state), x, y,
                                 input[[ns("alternative")]] %||% "two.sided",
@@ -703,22 +770,27 @@ single_t_dialog <- function() {
     id = id, title = tr("Single-Sample t-Test"), help = "t.test",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("x"), tr("Variable (pick one)"),
-                  numeric_variables(state), selected = m$x),
-        stats_alternative_input(
-          ns("alternative"), m$alternative,
-          c("Population mean != mu0" = "two.sided",
-            "Population mean < mu0" = "less",
-            "Population mean > mu0" = "greater")
-        ),
-        number_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu),
-        stats_confidence_input(ns("conf"), m$conf)
+      stats_test_accordion(
+        ns,
+        variables = var_input(ns("x"), tr("Variable (pick one)"),
+                              numeric_variables(state), selected = m$x),
+        hypothesis = htmltools::tagList(
+          stats_alternative_input(
+            ns("alternative"), m$alternative,
+            c("Population mean != mu0" = "two.sided",
+              "Population mean < mu0" = "less",
+              "Population mean > mu0" = "greater")
+          ),
+          number_input(ns("mu"), tr("Null hypothesis: mu ="), m$mu),
+          stats_confidence_input(ns("conf"), m$conf)
+        )
       )
     },
     on_ok = function(input, state) {
       x <- input[[ns("x")]] %||% ""
-      if (!nzchar(x)) return(list(error = tr("You must select a variable.")))
+      if (!nzchar(x)) {
+        return(dialog_reject("x", tr("You must select a variable.")))
+      }
       list(
         commands = cmd_single_t(active_dataset(state), x,
                                 input[[ns("alternative")]] %||% "two.sided",
@@ -745,27 +817,54 @@ one_way_anova_dialog <- function() {
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
       if (!nzchar(m$model)) m$model <- stats_default_model(state, "AnovaModel")
-      htmltools::tagList(
-        entry_input(ns("model"), tr("Enter name for model:"), m$model),
-        var_input(ns("group"), tr("Groups (pick one)"),
-                  factor_variables(state), selected = m$group),
-        var_input(ns("response"), tr("Response Variable (pick one)"),
-                  numeric_variables(state), selected = m$response),
-        checkbox_input(ns("pairwise"), tr("Pairwise comparisons of means"),
-                       m$pairwise),
-        stats_confidence_input(ns("conf"), m$conf),
-        checkbox_input(ns("welch"),
-                       tr("Welch F-test not assuming equal variances"), m$welch)
+      settings_accordion(
+        id = ns("settings"),
+        open = "Model",
+        settings_panel(
+          tr("Model"),
+          entry_input(ns("model"), tr("Enter name for model:"), m$model),
+          value = "Model"
+        ),
+        settings_panel(
+          tr("Variables"),
+          var_input(ns("group"), tr("Groups (pick one)"),
+                    factor_variables(state), selected = m$group),
+          var_input(ns("response"), tr("Response Variable (pick one)"),
+                    numeric_variables(state), selected = m$response),
+          value = "Variables"
+        ),
+        settings_panel(
+          tr("Hypothesis"),
+          stats_confidence_input(ns("conf"), m$conf),
+          value = "Hypothesis"
+        ),
+        settings_panel(
+          tr("Options"),
+          checkbox_input(ns("pairwise"), tr("Pairwise comparisons of means"),
+                         m$pairwise),
+          checkbox_input(ns("welch"),
+                         tr("Welch F-test not assuming equal variances"),
+                         m$welch),
+          value = "Options"
+        )
       )
     },
     on_ok = function(input, state) {
       group <- input[[ns("group")]] %||% ""
       response <- input[[ns("response")]] %||% ""
       model <- trim_blanks(input[[ns("model")]] %||% "")
-      if (!nzchar(group)) return(list(error = tr("You must select a groups factor.")))
-      if (!nzchar(response)) return(list(error = tr("You must select a response variable.")))
+      if (!nzchar(group)) {
+        return(dialog_reject("group",
+                             tr("You must select a groups factor.")))
+      }
+      if (!nzchar(response)) {
+        return(dialog_reject("response",
+                             tr("You must select a response variable.")))
+      }
       if (!is_valid_name(model)) {
-        return(list(error = sprintf(tr('"%s" is not a valid name.'), model)))
+        return(dialog_reject(
+          "model", sprintf(tr('"%s" is not a valid name.'), model)
+        ))
       }
       list(
         commands = cmd_one_way_anova(
@@ -1070,22 +1169,27 @@ single_proportion_dialog <- function() {
     id = id, title = tr("Single-Sample Proportion Test"), help = "prop.test",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("x"), tr("Variable (pick one)"),
-                  factor_variables(state), selected = m$x),
-        radio_input(ns("test"), tr("Test"),
-                    c("Normal approximation (no continuity correction)" = "normal",
-                      "Normal approximation (continuity correction)" = "corrected",
-                      "Exact binomial" = "binomial"), m$test),
-        stats_alternative_input(ns("alternative"), m$alternative),
-        number_input(ns("p"), tr("Null hypothesis: p ="), m$p, min = 0, max = 1,
-                     step = 0.01),
-        stats_confidence_input(ns("conf"), m$conf)
+      stats_test_accordion(
+        ns,
+        variables = var_input(ns("x"), tr("Variable (pick one)"),
+                              factor_variables(state), selected = m$x),
+        hypothesis = htmltools::tagList(
+          stats_alternative_input(ns("alternative"), m$alternative),
+          number_input(ns("p"), tr("Null hypothesis: p ="), m$p,
+                       min = 0, max = 1, step = 0.01),
+          stats_confidence_input(ns("conf"), m$conf)
+        ),
+        options = radio_input(ns("test"), tr("Test"),
+                              c("Normal approximation (no continuity correction)" = "normal",
+                                "Normal approximation (continuity correction)" = "corrected",
+                                "Exact binomial" = "binomial"), m$test)
       )
     },
     on_ok = function(input, state) {
       x <- input[[ns("x")]] %||% ""
-      if (!nzchar(x)) return(list(error = tr("You must select a variable.")))
+      if (!nzchar(x)) {
+        return(dialog_reject("x", tr("You must select a variable.")))
+      }
       list(
         commands = cmd_single_proportion(
           active_dataset(state), x,
@@ -1113,24 +1217,32 @@ two_proportions_dialog <- function() {
     id = id, title = tr("Two-Sample Proportions Test"), help = "prop.test",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("groups"), tr("Groups (pick one)"),
-                  two_level_factors(state), selected = m$groups),
-        var_input(ns("response"), tr("Response (pick one)"),
-                  two_level_factors(state), selected = m$response),
-        radio_input(ns("test"), tr("Test"),
-                    c("Normal approximation (no continuity correction)" = "normal",
-                      "Normal approximation (continuity correction)" = "corrected"),
-                    m$test),
-        stats_alternative_input(ns("alternative"), m$alternative),
-        stats_confidence_input(ns("conf"), m$conf)
+      stats_test_accordion(
+        ns,
+        variables = htmltools::tagList(
+          var_input(ns("groups"), tr("Groups (pick one)"),
+                    two_level_factors(state), selected = m$groups),
+          var_input(ns("response"), tr("Response (pick one)"),
+                    two_level_factors(state), selected = m$response)
+        ),
+        hypothesis = htmltools::tagList(
+          stats_alternative_input(ns("alternative"), m$alternative),
+          stats_confidence_input(ns("conf"), m$conf)
+        ),
+        options = radio_input(ns("test"), tr("Test"),
+                              c("Normal approximation (no continuity correction)" = "normal",
+                                "Normal approximation (continuity correction)" = "corrected"),
+                              m$test)
       )
     },
     on_ok = function(input, state) {
       groups <- input[[ns("groups")]] %||% ""
       response <- input[[ns("response")]] %||% ""
       if (!nzchar(groups) || !nzchar(response)) {
-        return(list(error = tr("You must select groups and a response variable.")))
+        return(dialog_reject(
+          if (!nzchar(groups)) "groups" else "response",
+          tr("You must select groups and a response variable.")
+        ))
       }
       list(
         commands = cmd_two_proportions(
@@ -1718,19 +1830,31 @@ linear_regression_dialog <- function() {
       response <- input[[ns("response")]] %||% ""
       predictors <- input[[ns("predictors")]]
       if (!is_valid_name(model)) {
-        return(list(error = sprintf(tr('"%s" is not a valid name.'), model)))
+        return(dialog_reject(
+          "model", sprintf(tr('"%s" is not a valid name.'), model)
+        ))
       }
-      if (!nzchar(response)) return(list(error = tr("You must select a response variable.")))
-      if (length(predictors) == 0L) return(list(error = tr("You must select at least one predictor.")))
+      if (!nzchar(response)) {
+        return(dialog_reject("response",
+                             tr("You must select a response variable.")))
+      }
+      if (length(predictors) == 0L) {
+        return(dialog_reject("predictors",
+                             tr("You must select at least one predictor.")))
+      }
       subset <- trim_blanks(input[[ns("subset")]] %||% "")
       remove <- trim_blanks(input[[ns("remove")]] %||% "")
       if (nzchar(subset) && nzchar(remove)) {
-        return(list(error = tr("You cannot specify both case removal and subset cases")))
+        return(dialog_reject(
+          "subset", tr("You cannot specify both case removal and subset cases")
+        ))
       }
       remove_rows <- ""
       if (nzchar(remove)) {
         cases <- cases_subset(active_dataset(state), dataset(state), remove)
-        if (!is.null(cases$error)) return(list(error = cases$error))
+        if (!is.null(cases$error)) {
+          return(dialog_reject("remove", cases$error))
+        }
         remove_rows <- cases$value
       }
       list(
@@ -1793,13 +1917,29 @@ model_formula_only_dialog <- function(id, title, help, default_prefix,
         memory %||% list()
       )
       if (!nzchar(m$model)) m$model <- stats_default_model(state, default_prefix)
-      htmltools::tagList(
-        entry_input(ns("model"), tr("Enter name for model:"), m$model),
-        model_formula_input(id, variables(state), lhs = m$lhs, rhs = m$rhs),
-        subset_input(ns("subset"), tr("Subset expression:"), m$subset),
-        entry_input(ns("remove"), tr("Indices or names of row(s) to remove"), m$remove),
-        if (!is.null(extra_ui)) extra_ui(m, ns)
+      panels <- list(
+        settings_panel(
+          tr("Model"),
+          entry_input(ns("model"), tr("Enter name for model:"), m$model),
+          model_formula_input(id, variables(state), lhs = m$lhs, rhs = m$rhs),
+          value = "Model"
+        ),
+        settings_panel(
+          tr("Data"),
+          subset_input(ns("subset"), tr("Subset expression:"), m$subset),
+          entry_input(ns("remove"), tr("Indices or names of row(s) to remove"),
+                      m$remove),
+          value = "Data"
+        )
       )
+      if (!is.null(extra_ui)) {
+        panels <- c(panels, list(settings_panel(
+          tr("Options"), extra_ui(m, ns), value = "Options"
+        )))
+      }
+      do.call(settings_accordion, c(panels, list(
+        id = ns("settings"), open = "Model"
+      )))
     },
     observers = function(input, output, session, state, refresh) {
       model_formula_observers(
@@ -1814,17 +1954,27 @@ model_formula_only_dialog <- function(id, title, help, default_prefix,
       subset <- trim_blanks(input[[ns("subset")]] %||% "")
       remove <- trim_blanks(input[[ns("remove")]] %||% "")
       if (!is_valid_name(model)) {
-        return(list(error = sprintf(tr('"%s" is not a valid name.'), model)))
+        return(dialog_reject(
+          "model", sprintf(tr('"%s" is not a valid name.'), model)
+        ))
       }
-      if (!nzchar(lhs)) return(list(error = tr("Left-hand side of model empty.")))
-      if (!nzchar(rhs)) return(list(error = tr("Right-hand side of model empty.")))
+      if (!nzchar(lhs)) {
+        return(dialog_reject("lhs", tr("Left-hand side of model empty.")))
+      }
+      if (!nzchar(rhs)) {
+        return(dialog_reject("rhs", tr("Right-hand side of model empty.")))
+      }
       if (nzchar(subset) && nzchar(remove)) {
-        return(list(error = tr("You cannot specify both case removal and subset cases")))
+        return(dialog_reject(
+          "subset", tr("You cannot specify both case removal and subset cases")
+        ))
       }
       remove_rows <- ""
       if (nzchar(remove)) {
         cases <- cases_subset(active_dataset(state), dataset(state), remove)
-        if (!is.null(cases$error)) return(list(error = cases$error))
+        if (!is.null(cases$error)) {
+          return(dialog_reject("remove", cases$error))
+        }
         remove_rows <- cases$value
       }
       list(

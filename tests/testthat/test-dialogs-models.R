@@ -76,3 +76,74 @@ test_that("document dialogs use segmented controls for short levels", {
   expect_match(html, 'value="3"', fixed = TRUE)
   expect_match(html, "<span>Subsubsection</span>", fixed = TRUE)
 })
+
+test_that("model dialogs separate the model, its data and its options", {
+  state <- models_state()
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, list()))$html
+  }
+  panel_values <- function(html) {
+    sub('data-value="([^"]*)"', "\\1",
+        regmatches(html, gregexpr('data-value="[^"]*"', html))[[1L]])
+  }
+  panel <- function(html, value) {
+    start <- regexpr(sprintf('data-value="%s"', value), html, fixed = TRUE)[[1L]]
+    body <- substring(html, start)
+    end <- regexpr('data-value="', substring(body, 20), fixed = TRUE)[[1L]]
+    if (end > 0L) body <- substr(body, 1L, end + 18L)
+    body
+  }
+
+  expect_setequal(panel_values(render("linearModel")),
+                  c("Model", "Data", "Options"))
+  expect_setequal(panel_values(render("generalizedLinearModel")),
+                  c("Model", "Data", "Options"))
+  expect_setequal(panel_values(render("ordinalRegressionModel")),
+                  c("Model", "Data", "Options"))
+  expect_setequal(panel_values(render("linearMixedModel")),
+                  c("Model", "Data", "Options"))
+  expect_setequal(panel_values(render("generalizedLinearMixedModel")),
+                  c("Model", "Data", "Options"))
+  # A type without extra parameters gets two panels, not an empty third.
+  expect_setequal(panel_values(render("multinomialLogitModel")),
+                  c("Model", "Data"))
+
+  for (id in c("linearModel", "generalizedLinearModel", "multinomialLogitModel")) {
+    html <- render(id)
+    expect_match(html, sprintf('id="%s_settings"', id), fixed = TRUE)
+    expect_equal(
+      lengths(regmatches(html, gregexpr("collapse show", html))), 1L
+    )
+    # Every id the dialog reads is still there, once.
+    for (name in c("model", "lhs", "rhs", "insert_var", "insert", "op_plus",
+                   "subset", "remove")) {
+      expect_equal(
+        lengths(regmatches(html, gregexpr(
+          sprintf('id="%s_%s"', id, name), html
+        ))), 1L, info = paste(id, name)
+      )
+    }
+  }
+
+  # Model owns the formula, Data the rows, Options the family.
+  glm <- render("generalizedLinearModel")
+  model_panel <- panel(glm, "Model")
+  data_panel <- panel(glm, "Data")
+  options_panel <- panel(glm, "Options")
+  expect_match(model_panel, 'id="generalizedLinearModel_lhs"', fixed = TRUE)
+  expect_match(model_panel, 'id="generalizedLinearModel_op_plus"', fixed = TRUE)
+  expect_match(data_panel, 'id="generalizedLinearModel_subset"', fixed = TRUE)
+  expect_match(data_panel, 'id="generalizedLinearModel_weights"', fixed = TRUE)
+  expect_match(data_panel, 'id="generalizedLinearModel_remove"', fixed = TRUE)
+  expect_match(options_panel, 'id="generalizedLinearModel_family"',
+               fixed = TRUE)
+  expect_match(options_panel, 'id="generalizedLinearModel_link"', fixed = TRUE)
+  expect_false(grepl('id="generalizedLinearModel_family"', data_panel,
+                     fixed = TRUE))
+
+  # The formula helper and its buttons keep working in the Model panel.
+  lm <- render("linearModel")
+  expect_match(panel(lm, "Model"), 'id="linearModel_insert_var"', fixed = TRUE)
+  expect_match(panel(lm, "Data"), 'id="linearModel_weights"', fixed = TRUE)
+  expect_match(panel(lm, "Options"), "generated on OK", fixed = TRUE)
+})

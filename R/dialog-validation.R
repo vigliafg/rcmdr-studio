@@ -6,6 +6,18 @@
 # and focus the first invalid field.  `error` remains the historical contract
 # for a message-only failure.
 
+#' Reject a dialog on one field
+#'
+#' Keeps the historical `error` message for callers that only look at it and
+#' adds `field_errors`, so the runtime can mark the control and focus it.
+#' @keywords internal
+dialog_reject <- function(field, message) {
+  list(
+    error = message,
+    field_errors = stats::setNames(list(message), field)
+  )
+}
+
 #' Normalise field errors returned by a dialog
 #' @keywords internal
 dialog_field_errors <- function(result) {

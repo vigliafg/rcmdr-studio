@@ -423,3 +423,96 @@ test_that("the frequency dialog separates variables from its tests", {
     )
   }
 })
+
+test_that("test dialogs group variables, hypothesis and options", {
+  env <- new.env()
+  env$D <- data.frame(
+    y = c(1, 2, 3, 4, 5, 6, 7, 8),
+    x = c(2, 4, 6, 8, 10, 12, 14, 16),
+    g = factor(rep(c("a", "b"), 4)),
+    h = factor(rep(c("c", "d"), 4))
+  )
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+
+  render <- function(id) {
+    htmltools::renderTags(get_dialog_spec(id)$ui(state, list()))$html
+  }
+  values <- function(html) {
+    sub('data-value="([^"]*)"', "\\1",
+        regmatches(html, gregexpr('data-value="[^"]*"', html))[[1L]])
+  }
+  panel <- function(html, value) {
+    start <- regexpr(sprintf('data-value="%s"', value), html, fixed = TRUE)[[1L]]
+    body <- substring(html, start)
+    end <- regexpr('data-value="', substring(body, 20), fixed = TRUE)[[1L]]
+    if (end > 0L) body <- substr(body, 1L, end + 18L)
+    body
+  }
+  ids_once <- function(html, id, names) {
+    for (name in names) {
+      expect_equal(
+        lengths(regmatches(html, gregexpr(
+          sprintf('id="%s_%s"', id, name), html
+        ))), 1L, info = paste(id, name)
+      )
+    }
+  }
+
+  expected <- list(
+    independentSamplesTTest = c("Variables", "Hypothesis", "Options"),
+    pairedTTest = c("Variables", "Hypothesis"),
+    singleSampleTTest = c("Variables", "Hypothesis"),
+    singleProportionTest = c("Variables", "Hypothesis", "Options"),
+    twoSampleProportionsTest = c("Variables", "Hypothesis", "Options"),
+    oneWayAnova = c("Model", "Variables", "Hypothesis", "Options")
+  )
+  for (id in names(expected)) {
+    html <- render(id)
+    expect_setequal(values(html), expected[[id]])
+    expect_match(html, sprintf('id="%s_settings"', id), fixed = TRUE)
+    expect_equal(
+      lengths(regmatches(html, gregexpr("collapse show", html))), 1L,
+      info = id
+    )
+  }
+
+  # Every id the command builder reads survives the move.
+  ids_once(render("independentSamplesTTest"), "independentSamplesTTest",
+           c("group", "response", "alternative", "conf", "var_equal"))
+  ids_once(render("pairedTTest"), "pairedTTest",
+           c("x", "y", "alternative", "conf"))
+  ids_once(render("singleSampleTTest"), "singleSampleTTest",
+           c("x", "alternative", "mu", "conf"))
+  ids_once(render("singleProportionTest"), "singleProportionTest",
+           c("x", "test", "alternative", "p", "conf"))
+  ids_once(render("twoSampleProportionsTest"), "twoSampleProportionsTest",
+           c("groups", "response", "test", "alternative", "conf"))
+  ids_once(render("oneWayAnova"), "oneWayAnova",
+           c("model", "group", "response", "pairwise", "conf", "welch"))
+
+  # The hypothesis panel owns the question; the options panel the mechanics.
+  ttest <- render("independentSamplesTTest")
+  variables <- panel(ttest, "Variables")
+  hypothesis <- panel(ttest, "Hypothesis")
+  options <- panel(ttest, "Options")
+  expect_match(variables, 'id="independentSamplesTTest_group"', fixed = TRUE)
+  expect_match(variables, 'id="independentSamplesTTest_response"', fixed = TRUE)
+  expect_match(hypothesis, 'id="independentSamplesTTest_alternative"',
+               fixed = TRUE)
+  expect_match(hypothesis, 'id="independentSamplesTTest_conf"', fixed = TRUE)
+  expect_match(options, 'id="independentSamplesTTest_var_equal"',
+               fixed = TRUE)
+  expect_false(grepl('id="independentSamplesTTest_var_equal"', hypothesis,
+                     fixed = TRUE))
+
+  one_way <- render("oneWayAnova")
+  expect_match(panel(one_way, "Model"), 'id="oneWayAnova_model"',
+               fixed = TRUE)
+  expect_match(panel(one_way, "Variables"), 'id="oneWayAnova_group"',
+               fixed = TRUE)
+  expect_match(panel(one_way, "Hypothesis"), 'id="oneWayAnova_conf"',
+               fixed = TRUE)
+  expect_match(panel(one_way, "Options"), 'id="oneWayAnova_welch"',
+               fixed = TRUE)
+})

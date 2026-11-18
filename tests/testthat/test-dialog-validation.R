@@ -90,3 +90,65 @@ test_that("validation opens the closed panels before focusing", {
   expect_match(css, ".rcmdr-dialog-grid > .accordion { grid-column: 1 / -1; }",
                fixed = TRUE)
 })
+
+test_that("the migrated model and test dialogs focus the invalid field", {
+  env <- new.env()
+  env$D <- data.frame(y = 1:6, x = 2 * (1:6),
+                      g = factor(rep(c("a", "b"), 3)))
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+
+  reject <- function(id, input) {
+    dialog_field_errors(get_dialog_spec(id)$on_ok(input, state))
+  }
+
+  errors <- reject("linearModel", list(
+    linearModel_model = "1bad", linearModel_lhs = "y", linearModel_rhs = "x"
+  ))
+  expect_match(errors$model, "not a valid name")
+
+  errors <- reject("linearModel", list(
+    linearModel_model = "Fit", linearModel_lhs = "", linearModel_rhs = "x"
+  ))
+  expect_match(errors$lhs, "Left-hand side")
+
+  errors <- reject("generalizedLinearModel", list(
+    generalizedLinearModel_model = "Fit",
+    generalizedLinearModel_lhs = "y", generalizedLinearModel_rhs = ""
+  ))
+  expect_match(errors$rhs, "Right-hand side")
+
+  errors <- reject("linearRegressionModel", list(
+    linearRegressionModel_model = "Reg", linearRegressionModel_response = "y",
+    linearRegressionModel_predictors = character()
+  ))
+  expect_match(errors$predictors, "at least one predictor")
+
+  errors <- reject("independentSamplesTTest", list(
+    independentSamplesTTest_group = "",
+    independentSamplesTTest_response = "y"
+  ))
+  expect_match(errors$group, "groups variable")
+
+  errors <- reject("twoSampleProportionsTest", list(
+    twoSampleProportionsTest_groups = "g",
+    twoSampleProportionsTest_response = "g"
+  ))
+  expect_length(errors, 0L) # both variables are selected; no field error
+  errors <- reject("twoSampleProportionsTest", list(
+    twoSampleProportionsTest_groups = "",
+    twoSampleProportionsTest_response = "g"
+  ))
+  expect_match(errors$groups, "groups and a response")
+
+  errors <- reject("oneWayAnova", list(
+    oneWayAnova_model = "Anova", oneWayAnova_group = "",
+    oneWayAnova_response = "y"
+  ))
+  expect_match(errors$group, "groups factor")
+
+  errors <- reject("singleProportionTest", list(
+    singleProportionTest_x = ""
+  ))
+  expect_match(errors$x, "select a variable")
+})

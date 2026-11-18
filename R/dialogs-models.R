@@ -30,24 +30,37 @@ linear_model_dialog <- function() {
         stats::setNames(numeric_variables(state), numeric_variables(state))
       )
 
-      htmltools::tagList(
-        entry_input(ns("model"), tr("Enter name for model:"), m$model_name),
-        htmltools::tags$hr(),
-        model_formula_input(
-          id, variables(state), lhs = m$lhs, rhs = m$rhs,
-          descriptions = variable_descriptions(state)
+      settings_accordion(
+        id = ns("settings"),
+        open = "Model",
+        settings_panel(
+          tr("Model"),
+          entry_input(ns("model"), tr("Enter name for model:"), m$model_name),
+          model_formula_input(
+            id, variables(state), lhs = m$lhs, rhs = m$rhs,
+            descriptions = variable_descriptions(state)
+          ),
+          value = "Model"
         ),
-        htmltools::tags$hr(),
-        entry_input(ns("subset"), tr("Subset (optional R expression):"), m$subset),
-        selectInput(
-          ns("weights"), tr("Weights"),
-          choices = weight_choices, selected = m$weights, width = "100%"
+        settings_panel(
+          tr("Data"),
+          entry_input(ns("subset"), tr("Subset (optional R expression):"),
+                      m$subset),
+          selectInput(
+            ns("weights"), tr("Weights"),
+            choices = weight_choices, selected = m$weights, width = "100%"
+          ),
+          entry_input(
+            ns("remove"), tr("Indices or names of row(s) to remove"),
+            m$remove
+          ),
+          value = "Data"
         ),
-        entry_input(
-          ns("remove"), tr("Indices or names of row(s) to remove"),
-          m$remove
-        ),
-        help_text(tr("The command lm(<response> ~ <predictors>, data=<dataset>) is generated on OK."))
+        settings_panel(
+          tr("Options"),
+          help_text(tr("The command lm(<response> ~ <predictors>, data=<dataset>) is generated on OK.")),
+          value = "Options"
+        )
       )
     },
     observers = function(input, output, session, state, refresh) {
@@ -65,23 +78,26 @@ linear_model_dialog <- function() {
       remove <- trim_blanks(input[[ns("remove")]] %||% "")
 
       if (!is_valid_name(model_name)) {
-        return(list(error = sprintf(tr('"%s" is not a valid name.'), model_name)))
+        return(dialog_reject("model",
+                             sprintf(tr('"%s" is not a valid name.'), model_name)))
       }
       if (!nzchar(lhs)) {
-        return(list(error = tr("Left-hand side of model empty.")))
+        return(dialog_reject("lhs", tr("Left-hand side of model empty.")))
       }
       if (!nzchar(rhs)) {
-        return(list(error = tr("Right-hand side of model empty.")))
+        return(dialog_reject("rhs", tr("Right-hand side of model empty.")))
       }
       if (nzchar(subset) && nzchar(remove)) {
-        return(list(error = tr("You cannot specify both case removal and subset cases")))
+        return(dialog_reject(
+          "subset", tr("You cannot specify both case removal and subset cases")
+        ))
       }
 
       remove_rows <- ""
       if (nzchar(remove)) {
         cases <- cases_subset(active_dataset(state), dataset(state), remove)
         if (!is.null(cases$error)) {
-          return(list(error = cases$error))
+          return(dialog_reject("remove", cases$error))
         }
         remove_rows <- cases$value
       }
