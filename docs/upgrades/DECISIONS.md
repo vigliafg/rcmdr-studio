@@ -657,3 +657,85 @@ di architettura, non un restyling.
   la chrome si corregge una volta per Studio.
 - **`reactable`/`rtabulator` per il workspace**: il problema è la shell, non
   la tabella.
+
+---
+
+## ADR-019 — Orientamento: verità, contesto e grammatica visiva
+
+**Stato:** proposta per l'Onda 19  
+**Data:** 2026-11-18  
+**Dipende da:** ADR-016 (token e widget), ADR-018 (workspace, status bar,
+geometria), Onda 18 (dati grandi)
+
+### Contesto
+
+L'Onda 18 ha chiuso lo spazio desktop, ma non ha chiuso l'orientamento. Il
+caso misurato è netto: con un filtro attivo la griglia mostra 12 righe mentre
+la status bar e `data_info` leggono `dataset(state)` e continuano a dire
+"5.000 × 5". Due numeri veri e incompatibili nella stessa schermata.
+
+Accanto a questo difetto ci sono tre assenze:
+
+1. le viste principali non hanno una riga di contesto (il breadcrumb esiste
+   solo nei dialoghi e nei workflow);
+2. i due slot non sono etichettati: senza anello di focus sembrano due
+   sessioni;
+3. la status bar elenca dodici fatti con lo stesso peso, illeggibili a zoom
+   200%.
+
+Aggiungere una welcome window risolverebbe solo il primo gesto e lascerebbe
+gli altri tre. L'orientamento è un problema di superficie, non di schermata.
+
+### Decisione
+
+- **Modello a quattro domande.** Dove sono, su cosa lavoro, cosa è successo,
+  cosa posso fare. Ogni superficie nuova deve rispondere ad almeno le prime
+  due; nessuna dashboard globale.
+- **La forma mostrata è quella visibile.** `data_view_state()` descrive la
+  vista (righe visibili, totale, filtro); `data_grid_plan()` resta la
+  decisione sulle soglie e legge il dataset intero. Con filtro, il numero
+  visibile è primo e il totale è un'aggiunta ("12 di 5.000 × 5").
+- **Il filtro è vista, non dato.** Non colora le righe, non è un avviso, non
+  entra nel comando; usa una chip neutra con imbuto. Il giallo resta riservato
+  ai limiti (editor disattivato, paging server-side).
+- **Colore ridondante, quattro significati.** `accent` = sei qui; `warning` =
+  un limite vale; `danger` = è fallito; `selection` = selezionato. Ogni
+  significato è colore **+ icona + testo**; nessun colore letterale e nessuna
+  informazione affidata al solo colore. Le coppie passano la matrice 8 × 2.
+- **Status bar a priorità.** Tre gruppi: identità (dataset, forma, filtro),
+  selezione, ultima azione. Versione e conteggi (comandi, history, plot)
+  escono dalla barra e vivono nelle loro viste. A 1280 px restano al massimo
+  sei voci.
+- **Home Avvio, non welcome modale.** Quando non c'è dataset e non c'è
+  progetto recente, la Home mostra quattro porte: importa, crea, apri
+  progetto, continua senza dati. Nessuna modale a ogni avvio; l'eventuale
+  `show_start` (`auto`/`always`/`never`) è una preferenza futura.
+- **Ritorno a un livello.** `Esc` chiude un solo livello (menu → dialogo →
+  pannello → selezione); **Reset layout** chiude anche il modeless, senza
+  toccare dati, undo e history.
+
+### Conseguenze
+
+- Due helper descrittivi nuovi (`data_view_state()`, `data_view_shape()`) e
+  nessun nuovo stato: il filtro resta negli input esistenti.
+- `context_chip()` e otto icone inline entrano nel vocabolario; nessuna
+  dipendenza.
+- I test devono coprire tre casi: filtro attivo, filtro assente, dataset
+  assente.
+- La status bar perde la versione: va in **Help > About**, dove è già il
+  posto naturale.
+- La resa visiva resta non verificabile senza browser; il limite va scritto,
+  non aggirato.
+
+### Alternative scartate
+
+- **Welcome modale a ogni avvio**: l'app è una sessione con più dataset e
+  progetti, non un file per avvio; la modale diventerebbe un ostacolo.
+- **Dashboard di stato**: una schermata in più non risolve l'ambiguità dei
+  numeri; la risolve il numero corretto.
+- **Un colore per dataset o per vista**: rompe 8 temi e daltonismo, e crea
+  semantica falsa ("il rosso è il dataset sbagliato?").
+- **Icone da sole nella navigazione**: peggiori per l'utente classico e per
+  lo screen reader.
+- **Cronologia delle viste**: aggiunge un concetto e un comando; il view
+  switcher copre il caso reale.

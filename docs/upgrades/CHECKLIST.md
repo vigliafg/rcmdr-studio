@@ -558,6 +558,25 @@ Stato: chiusa — 12 step in 4 lotti (S1–S12), versione 3.0.0; ADR-018.
 
 ---
 
+## Onda 19 — Orientamento
+
+Documento di settore: [`19-orientation.md`](19-orientation.md).
+Stato: pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| O1 | Verità sul filtro | [ ] | forma visibile e totale, chip filtro |
+| O2 | Grammatica visiva dello stato | [ ] | colore + icona + testo, 4 significati |
+| O3 | Riga di contesto nelle viste | [ ] | breadcrumb generalizzato |
+| O4 | Status bar a priorità | [ ] | 12 voci → ≤ 6, conteggi nelle viste |
+| O5 | Intestazioni dei due slot | [ ] | primario/secondario riconoscibili |
+| O6 | Ritorno prevedibile | [ ] | `Esc` a un livello, reset chiude il modeless |
+| O7 | Home in stato Avvio | [ ] | quattro porte, "continua senza dati" |
+| O8 | Stati vuoti azionabili | [ ] | sei viste, annunci |
+| O9 | Chiusura | [ ] | NEWS 3.1.0, topic, diario, push |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).

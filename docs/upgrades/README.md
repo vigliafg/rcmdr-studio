@@ -104,6 +104,8 @@ Le decisioni sono registrate in forma di ADR in
 | **15** | [`15-ui-refresh.md`](15-ui-refresh.md) | Rifacimento visivo: asset, token, componenti, dialoghi, viste, QA | 0, 5 |
 | **16** | [`16-bslib-widgets.md`](16-bslib-widgets.md) | bslib, shinyWidgets, accordion e sistema dei widget | 15 |
 | **17** | [`17-desktop-completion.md`](17-desktop-completion.md) | Completamento desktop: aiuto, date, pannelli, menu, drag-and-drop, tabelle, plugin, prestazioni | 16 |
+| **18** | [`18-desktop-workspace.md`](18-desktop-workspace.md) | Spazio di lavoro desktop: menu-first, due slot, undo, selezione, geometria, dati grandi | 17 |
+| **19** | [`19-orientation.md`](19-orientation.md) | Orientamento: verità sul filtro, riga di contesto, grammatica visiva, status bar, Home di avvio | 18 |
 
 Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il
@@ -153,6 +155,14 @@ dialoghi e pannelli modeless, densità desktop, geometria persistente, status
 bar e scala dei dati grandi. 12 step in 4 lotti (S1–S12); l'ADR è la 018, il
 diario è [`diary/wave-18-desktop-workspace.md`](diary/wave-18-desktop-workspace.md)
 e le misure dei dati grandi sono in [`QA-DATA.md`](QA-DATA.md).
+
+**Onda 19 pianificata il 18 novembre 2026 (3.1.0).** Il piano è in
+[`19-orientation.md`](19-orientation.md): quattro domande di orientamento
+(dove sono, su cosa lavoro, cosa è successo, cosa posso fare), verità sul
+filtro, riga di contesto nelle viste, grammatica visiva colore + icona +
+testo, status bar a priorità, intestazioni degli slot, ritorno prevedibile,
+Home in stato Avvio e stati vuoti azionabili. 9 step in 3 lotti (O1–O9); l'ADR
+è la 019 e il diario sarà `docs/upgrades/diary/wave-19-orientation.md`.
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.
