@@ -99,9 +99,12 @@ Diario, README e verifica del primo lotto.
 - `chart_ext_ui(heading = FALSE)` non ripete più il titolo dentro il pannello.
 - Validazione inline: `digits`, `width` ed `edit_threshold` restituiscono
   `field_errors` invece di un errore solo testuale. Il server invia
-  `rcmdr-open-accordions` prima di `rcmdr-field-errors`; il JS apre tutti i
-  pannelli con l'API `Collapse` di Bootstrap e attende la transizione prima di
-  focalizzare e scorrere. Anche i link del riepilogo usano lo stesso percorso.
+  `rcmdr-open-accordions` prima di `rcmdr-field-errors` da
+  `session$onFlushed(once = TRUE)`: senza il flush i messaggi raggiungerebbero
+  il corpo precedente del dialogo e la riapertura andrebbe persa. Il JS apre
+  tutti i pannelli con l'API `Collapse` di Bootstrap e attende la transizione
+  prima di focalizzare e scorrere. Anche i link del riepilogo usano lo stesso
+  percorso.
 - `.rcmdr-dialog-grid > .accordion` occupa tutte le colonne del corpo.
 - Test: cinque pannelli e cinque valori, un solo pannello aperto, tutti gli ID,
   nessun `hr`/`h6`, tre errori inline, handler JS e regola di griglia.
@@ -170,7 +173,7 @@ tradotti e non compaiono nell'interfaccia.
 
 | Controllo | Esito |
 |---|---|
-| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
+| Suite completa (dopo il fix del flush) | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
 | Test mirati S4 | componenti, accessibilità, galleria |
 | Test mirati S5 | validazione, *Options*, densità, contract |
 | Test mirati S6 | Chart Studio, tipi, estensioni, contract |
@@ -249,7 +252,8 @@ pannelli conservato al cambio tipo.
 
 ## 11. Artefatti
 
-- `/tmp/opencode/tests-w16-batch2.log` — suite del lotto 2.
+- `/tmp/opencode/tests-w16-batch2.log` — prima suite del lotto 2.
+- `/tmp/opencode/tests-w16-batch2b.log` — suite dopo il fix del flush.
 - `/tmp/opencode/t-s4.log`, `t-s4b.log`, `t-s4c.log` — test mirati S4.
 - `/tmp/opencode/t-s5.log` — test mirati S5.
 - `/tmp/opencode/t-s6.log` — test mirati S6.
