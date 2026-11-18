@@ -226,3 +226,14 @@ Column %s needs a valid date.	La colonna %s richiede una data valida.
 The editor changed the columns; apply the column actions instead.	L'editor ha cambiato le colonne; usa le azioni sulle colonne.
 The editor changed the number of rows; use the row actions instead.	L'editor ha cambiato il numero di righe; usa le azioni sulle righe.
 Some changes could not be applied.	Alcune modifiche non sono state applicate.
+Workspace	Spazio di lavoro
+Second view	Seconda vista
+Single view	Vista singola
+Resize workspace	Ridimensiona lo spazio di lavoro
+Inspector	Inspector
+Preview	Anteprima
+Swap sides	Scambia i lati
+Split	Affiancati
+Primary	Primario
+Secondary	Secondario
+Menus	Menu

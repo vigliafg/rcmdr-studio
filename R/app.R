@@ -179,11 +179,11 @@ classic_data_pane_ui <- function() {
   )
 }
 
-data_pane_ui <- function(mode = "studio") {
+data_pane_ui <- function(mode = "studio", show_inspector = TRUE) {
   if (identical(mode, "classic")) {
     classic_data_pane_ui()
   } else {
-    data_studio_ui()
+    data_studio_ui(show_inspector = show_inspector)
   }
 }
 
@@ -211,11 +211,11 @@ classic_plots_pane_ui <- function() {
   )
 }
 
-plots_pane_ui <- function(mode = "studio") {
+plots_pane_ui <- function(mode = "studio", show_preview = TRUE) {
   if (identical(mode, "classic")) {
     classic_plots_pane_ui()
   } else {
-    chart_studio_ui()
+    chart_studio_ui(show_preview = show_preview)
   }
 }
 
@@ -651,6 +651,8 @@ app_server <- function(env = globalenv()) {
     last_plot_count <- reactiveVal(0L)
     main_tabs_mode <- reactiveVal(ui_mode(state))
     workspace_secondary <- reactiveVal(state$options$workspace_secondary %||% "")
+    workspace_focus <- reactiveVal(state$options$workspace_focus %||% "split")
+    workspace_revision <- reactiveVal(0L)
     history_revision <- reactiveVal(0L)
     data_grid_revision <- reactiveVal(0L)
     data_selection_revision <- reactiveVal(0L)
@@ -1021,6 +1023,26 @@ app_server <- function(env = globalenv()) {
                    view = isolate(input$main_tabs) %||% "home")
     })
 
+    render_workspace_view <- function(view, primary = FALSE) {
+      show_inspector <- if (isTRUE(primary) && identical(view, "data") &&
+                            !is.null(input$workspace_show_inspector)) {
+        isTRUE(input$workspace_show_inspector)
+      } else {
+        NULL
+      }
+      show_preview <- if (isTRUE(primary) && identical(view, "charts") &&
+                          !is.null(input$workspace_show_preview)) {
+        isTRUE(input$workspace_show_preview)
+      } else {
+        NULL
+      }
+      workspace_view_ui(
+        view, "studio", state,
+        show_inspector = show_inspector,
+        show_preview = show_preview
+      )
+    }
+
     output$workspace_switcher_ui <- renderUI({
       language_revision()
       workspace_view_switcher(input$main_tabs %||% "home")
@@ -1047,12 +1069,55 @@ app_server <- function(env = globalenv()) {
       )
     })
 
+    output$workspace_panel_toggles_ui <- renderUI({
+      language_revision()
+      workspace_revision()
+      view <- input$main_tabs %||% "home"
+      if (identical(view, "data")) {
+        return(checkboxInput(
+          "workspace_show_inspector", tr("Inspector"),
+          value = !workspace_panel_hidden(state, "data", "inspector")
+        ))
+      }
+      if (identical(view, "charts")) {
+        return(checkboxInput(
+          "workspace_show_preview", tr("Preview"),
+          value = !workspace_panel_hidden(state, "charts", "preview")
+        ))
+      }
+      NULL
+    })
+
+    output$workspace_focus_ui <- renderUI({
+      language_revision()
+      secondary <- input$workspace_secondary_view %||% workspace_secondary()
+      if (!nzchar(secondary)) return(NULL)
+      htmltools::div(
+        class = "rcmdr-workspace-focus",
+        segmented_input(
+          "workspace_focus", NULL,
+          c(Split = "split", Primary = "primary", Secondary = "secondary"),
+          selected = input$workspace_focus %||% workspace_focus()
+        ),
+        actionButton("workspace_swap", tr("Swap sides"),
+                     class = "btn-sm btn-outline-secondary")
+      )
+    })
+
     output$workspace_layout <- renderUI({
       language_revision()
+      workspace_revision()
       primary <- input$main_tabs %||% "home"
       secondary <- input$workspace_secondary_view %||% workspace_secondary()
       if (!nzchar(secondary) || identical(secondary, primary)) {
-        return(workspace_view_ui(primary, "studio"))
+        return(render_workspace_view(primary, primary = TRUE))
+      }
+      focus <- input$workspace_focus %||% workspace_focus()
+      if (identical(focus, "primary")) {
+        return(render_workspace_view(primary, primary = TRUE))
+      }
+      if (identical(focus, "secondary")) {
+        return(render_workspace_view(secondary, primary = FALSE))
       }
       split_pane(
         "workspace_split",
@@ -1068,14 +1133,16 @@ app_server <- function(env = globalenv()) {
 
     output$workspace_primary <- renderUI({
       language_revision()
-      workspace_view_ui(input$main_tabs %||% "home", "studio")
+      workspace_revision()
+      render_workspace_view(input$main_tabs %||% "home", primary = TRUE)
     })
 
     output$workspace_secondary <- renderUI({
       language_revision()
+      workspace_revision()
       view <- input$workspace_secondary_view %||% workspace_secondary()
       req(nzchar(view), !identical(view, input$main_tabs %||% "home"))
-      workspace_view_ui(view, "studio")
+      render_workspace_view(view, primary = FALSE)
     })
 
     observeEvent(input$workspace_secondary_view, {
@@ -1092,8 +1159,45 @@ app_server <- function(env = globalenv()) {
       if (identical(workspace_secondary(), primary)) {
         workspace_secondary("")
         state$options$workspace_secondary <- NULL
+        workspace_focus("split")
+        state$options$workspace_focus <- "split"
+        updateSelectInput(session, "workspace_secondary_view", selected = "")
         persist_preferences()
       }
+    }, ignoreInit = TRUE)
+    observeEvent(input$workspace_show_inspector, {
+      workspace_panel_set(state, "data", "inspector",
+                          isTRUE(input$workspace_show_inspector))
+      persist_preferences()
+      workspace_revision(workspace_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$workspace_show_preview, {
+      workspace_panel_set(state, "charts", "preview",
+                          isTRUE(input$workspace_show_preview))
+      persist_preferences()
+      workspace_revision(workspace_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$workspace_focus, {
+      value <- input$workspace_focus %||% "split"
+      if (!value %in% c("split", "primary", "secondary")) value <- "split"
+      workspace_focus(value)
+      state$options$workspace_focus <- value
+      persist_preferences()
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$workspace_swap, {
+      primary <- input$main_tabs %||% "home"
+      secondary <- workspace_secondary()
+      if (!nzchar(secondary) || identical(primary, secondary)) return()
+      updateTextInput(session, "main_tabs", value = secondary)
+      workspace_secondary(primary)
+      state$options$workspace_secondary <- primary
+      updateSelectInput(session, "workspace_secondary_view",
+                        selected = primary)
+      persist_preferences()
+      workspace_focus("split")
     }, ignoreInit = TRUE)
 
     open_dialog <- function(spec) {

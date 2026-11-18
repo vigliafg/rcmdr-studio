@@ -410,3 +410,7 @@
     #data_grid table thead th.rcmdr-drop-target {
       box-shadow: inset 2px 0 0 var(--rcmdr-accent);
     }
+
+    /* A view with its second panel hidden is a normal block, not a grid with
+       an empty track. */
+    .rcmdr-splitter-single { display: block; min-width: 0; }

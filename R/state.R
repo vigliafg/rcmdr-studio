@@ -195,6 +195,8 @@ AppState <- function(env = globalenv()) {
     layouts = list(),
     column_order = list(),
     workspace_secondary = NULL,
+    workspace_panels = list(),
+    workspace_focus = "split",
     features = default_features(),
     capabilities = rcmdr_capabilities()
   )

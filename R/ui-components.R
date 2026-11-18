@@ -227,6 +227,11 @@ split_pane <- function(id, first, second,
                        initial = 0.5, min = 260, min_second = 260,
                        class = NULL, label = tr("Resize panels")) {
   orientation <- match.arg(orientation)
+  if (is.null(second)) {
+    return(htmltools::div(
+      class = c("rcmdr-splitter-single", class), first
+    ))
+  }
   ratio <- layout_initial(id, initial)
   pct <- round(ratio * 100, 2)
   aria_orientation <- if (identical(orientation, "horizontal")) {

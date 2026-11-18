@@ -11,11 +11,13 @@ test_that("the shell has the landmarks and the skip link", {
   expect_match(html, "id=\"main-content\"")
 })
 
-test_that("the menubar has navigation semantics", {
+test_that("the menubar has menu semantics", {
   html <- as.character(menubar_ui(menu_tree()))
-  expect_match(html, "role=\"navigation\"")
+  expect_match(html, "role=\"menubar\"")
   expect_match(html, "aria-label")
-  expect_match(html, "<summary>")
+  expect_match(html, "role=\"menuitem\"")
+  expect_match(html, "aria-haspopup=\"true\"")
+  expect_match(html, "<summary")
 })
 
 test_that("focus is visible and motion respects user preferences", {

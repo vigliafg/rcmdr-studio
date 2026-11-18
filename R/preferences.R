@@ -196,7 +196,9 @@ preferences_snapshot <- function(state) {
     auto_switch_result = isTRUE(state$options$auto_switch_result),
     layouts = state$options$layouts %||% list(),
     column_order = state$options$column_order %||% list(),
-    workspace_secondary = state$options$workspace_secondary %||% NULL
+    workspace_secondary = state$options$workspace_secondary %||% NULL,
+    workspace_panels = state$options$workspace_panels %||% list(),
+    workspace_focus = state$options$workspace_focus %||% "split"
   )
 }
 
@@ -264,6 +266,24 @@ preferences_load <- function(state, path = preferences_file(state)) {
       secondary %in% workspace_view_ids()) {
     state$options$workspace_secondary <- secondary
   }
+  panels <- value$workspace_panels
+  if (is.list(panels)) {
+    cleaned <- list()
+    for (view in names(panels)) {
+      entry <- panels[[view]]
+      if (is.list(entry)) {
+        entry <- entry[!vapply(entry, is.null, logical(1))]
+        entry <- lapply(entry, function(x) isTRUE(x))
+        if (length(entry) > 0L) cleaned[[view]] <- entry
+      }
+    }
+    state$options$workspace_panels <- cleaned
+  }
+  focus <- value$workspace_focus %||% "split"
+  if (is.character(focus) && length(focus) == 1L &&
+      focus %in% c("split", "primary", "secondary")) {
+    state$options$workspace_focus <- focus
+  }
   columns <- value$column_order
   if (is.list(columns) && length(columns) > 0L) {
     cleaned <- list()
@@ -324,6 +344,8 @@ preferences_clear <- function(state, remove = FALSE,
   layout_clear(state)
   state$options$column_order <- list()
   state$options$workspace_secondary <- NULL
+  state$options$workspace_panels <- list()
+  state$options$workspace_focus <- "split"
   if (isTRUE(remove) && !is.null(path) && nzchar(path) && file.exists(path)) {
     unlink(path)
   }

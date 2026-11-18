@@ -207,10 +207,15 @@
       border: 1px solid transparent; border-radius: var(--rcmdr-radius-sm);
       background: transparent; color: var(--rcmdr-on-primary);
     }
-    .rcmdr-topbar-icon:hover,
+    .rcmdr-topbar-icon:hover {
+      background: var(--rcmdr-on-primary-muted);
+      color: var(--rcmdr-primary);
+    }
     .rcmdr-topbar-icon:focus-visible {
       background: var(--rcmdr-on-primary-muted);
       color: var(--rcmdr-primary);
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
     }
     @media (max-width: 991.98px) {
       .rcmdr-shell-body.rcmdr-sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
@@ -223,3 +228,8 @@
     .rcmdr-view-bar .rcmdr-view-switcher { margin-bottom: 0; }
     .rcmdr-view-bar .form-group { margin-bottom: 0; }
     .rcmdr-workspace-split { align-items: start; }
+    .rcmdr-workspace-focus {
+      display: inline-flex; align-items: center; gap: var(--rcmdr-space-2);
+    }
+    .rcmdr-workspace-focus .form-group,
+    .rcmdr-workspace-focus .rcmdr-segmented { margin-bottom: 0; }

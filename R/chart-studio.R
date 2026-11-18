@@ -530,7 +530,7 @@ chart_apply <- function(state, spec, source = "chart") {
 
 #' Chart Studio toolbar and mode switch
 #' @keywords internal
-chart_studio_ui <- function() {
+chart_studio_ui <- function(show_preview = TRUE) {
   htmltools::tagList(
     toolbar(
       segmented_input(
@@ -548,7 +548,7 @@ chart_studio_ui <- function() {
     )),
     conditionalPanel(
       "input.chart_mode === 'build' || input.chart_mode === null",
-      chart_builder_ui()
+      chart_builder_ui(show_preview = show_preview)
     ),
     conditionalPanel(
       "input.chart_mode === 'models'",
@@ -598,7 +598,7 @@ chart_options_accordion <- function(info, spec, open = NULL) {
 
 #' Builder panel
 #' @keywords internal
-chart_builder_ui <- function() {
+chart_builder_ui <- function(show_preview = TRUE) {
   split_pane(
     "chart_layout",
     htmltools::div(
@@ -757,7 +757,7 @@ chart_builder_ui <- function() {
         )
       )
     ),
-    htmltools::div(
+    if (isTRUE(show_preview)) htmltools::div(
       class = "rcmdr-chart-preview-column",
       htmltools::div(
         class = "rcmdr-section-card rcmdr-chart-preview",

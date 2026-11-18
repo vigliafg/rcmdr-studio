@@ -1067,7 +1067,7 @@ open_dialog_memory <- function(state, id, memory = list()) {
 
 #' Data Studio toolbar and grid layout
 #' @keywords internal
-data_studio_ui <- function() {
+data_studio_ui <- function(show_inspector = TRUE) {
   htmltools::tagList(
     toolbar(
       left = htmltools::div(
@@ -1150,7 +1150,7 @@ data_studio_ui <- function() {
           label = tr("Table actions")
         )
       ),
-      htmltools::div(
+      if (isTRUE(show_inspector)) htmltools::div(
         uiOutput("data_inspector"),
         # The action buttons live outside the dynamic inspector: re-rendering
         # the profile must not recreate (and re-trigger) the action inputs.
