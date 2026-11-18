@@ -1,7 +1,7 @@
 # Onda 16 — bslib, shinyWidgets, accordion e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** pianificata — 15 step in 5 lotti da 3  
+**Stato:** in corso — S1–S6 fatti, prossimo lotto S7–S9  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 15 (token, componenti, viste, matrice 8 × 2)  
 **Documento padre:** [`README.md`](README.md)  

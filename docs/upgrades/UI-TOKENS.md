@@ -417,6 +417,21 @@ nessun JavaScript.
 | Movimento | 120–150 ms; `prefers-reduced-motion` azzera |
 | Cursore | default sui campi, pointer su bottoni, link e righe cliccabili |
 
+### 12.4 Accordion
+
+| Elemento | Regola |
+|---|---|
+| Intestazione | titolo a `--rcmdr-text-md`, peso strong, padding `space-2` × `space-3` |
+| Semantica | `role="heading"` e `aria-level` nostri; `aria-expanded` e `aria-controls` restano di Bootstrap |
+| Chevron | due bordi in `currentColor`, 45° chiuso e −135° aperto, 150 ms |
+| Hover | superficie `--rcmdr-hover`, nessuno spostamento |
+| Focus | un solo anello `--rcmdr-focus`, offset interno all'header |
+| Corpo | padding `--rcmdr-space-3`; i campi restano nella griglia condivisa |
+| Gruppi | `settings_group()` non richiudibile, livello 4, nessun accordion annidato |
+| Errore | il dialogo apre tutti i pannelli, poi sposta il focus sul primo campo |
+| Valori | chiavi stabili e uniche; `open` che non nomina un pannello è un errore |
+| Titoli | il testo è tradotto, il valore no: lo stato aperto non dipende dalla lingua |
+
 ---
 
 ## 13. Verifica

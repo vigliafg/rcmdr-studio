@@ -130,12 +130,12 @@ pelle, componenti e chrome dei dialoghi. U0–U5 fatte; il diario è
 [`diary/wave-15-ui-refresh.md`](diary/wave-15-ui-refresh.md) e il verbale di QA
 è [`QA-UI-REFRESH.md`](QA-UI-REFRESH.md).
 
-**Onda 16 pianificata il 18 novembre 2026.** Il piano è in
+**Onda 16 in corso dal 18 novembre 2026.** Il piano è in
 [`16-bslib-widgets.md`](16-bslib-widgets.md): sistema dei widget con specifica
 desktop e galleria, accordion bslib per i parametri, shinyWidgets per picker,
 listbox, slider e colore, Chart Builder e dialoghi densi riorganizzati. 15 step
-in 5 lotti da 3; nessun cambio di ID o comandi. Il diario del primo lotto è
-[`diary/wave-16-bslib-widgets.md`](diary/wave-16-bslib-widgets.md).
+in 5 lotti da 3; nessun cambio di ID o comandi. Lotti 1 e 2 fatti (S1–S6); il
+diario è [`diary/wave-16-bslib-widgets.md`](diary/wave-16-bslib-widgets.md).
 
 **Onda 17 pianificata il 18 novembre 2026.** Il piano è in
 [`17-desktop-completion.md`](17-desktop-completion.md): chiude i rinvii
