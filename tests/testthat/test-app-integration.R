@@ -152,3 +152,25 @@ test_that("the menus disable commands that need a data set", {
     expect_true(grepl("disabled", html, fixed = TRUE))
   })
 })
+
+test_that("an invalid Options value keeps the dialog and names the field", {
+  env <- new.env()
+  leaves <- menu_leaves(menu_tree())
+  key <- function(command) leaves$key[leaves$command == command][[1L]]
+
+  shiny::testServer(app_server(env), {
+    click(session, key("Options"))
+    session$setInputs(
+      Options_digits = 50,
+      Options_width = 80,
+      Options_edit_threshold = 1000
+    )
+    click(session, "dialog_ok")
+
+    expect_equal(state$current_dialog, "Options")
+    expect_match(state$dialog_errors$Options_digits, "between 1 and 22")
+    session$flushReact()
+    html <- htmltools::renderTags(output$dialog_validation_ui)$html
+    expect_match(html, "Please correct the highlighted fields", fixed = TRUE)
+  })
+})

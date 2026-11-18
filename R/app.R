@@ -1250,10 +1250,16 @@ app_server <- function(env = globalenv()) {
         state$dialog_errors <- as.list(prefixed)
         dialog_revision(dialog_revision() + 1L)
         # An invalid field may sit in a closed panel: open them all before
-        # the focus message so the highlight is reachable.
-        session$sendCustomMessage("rcmdr-open-accordions", list())
-        session$sendCustomMessage("rcmdr-field-errors",
-                                  dialog_validation_payload(state$dialog_errors))
+        # the focus message so the highlight is reachable.  The messages wait
+        # for the flush, otherwise they would hit the previous body: the
+        # renderUI of the summary and the field marks arrive with it.
+        session$onFlushed(function() {
+          session$sendCustomMessage("rcmdr-open-accordions", list())
+          session$sendCustomMessage(
+            "rcmdr-field-errors",
+            dialog_validation_payload(state$dialog_errors)
+          )
+        }, once = TRUE)
         return(invisible(FALSE))
       }
 
