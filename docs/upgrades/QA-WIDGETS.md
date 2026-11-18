@@ -230,3 +230,39 @@ token. Nessun file del repository è stato cambiato per il prototipo.
 La decisione è vincolante per l'onda: nessuna tabella editabile passa a
 `reactable`, e il test `test-readonly-tables.R` fallisce se la dipendenza
 rientra da DESCRIPTION o da un `reactable::` nel codice.
+
+---
+
+## 9. Browser ed e2e (Onda 17, T11)
+
+**Stato:** Chrome 157 è installato, ma in questo ambiente non riesce a
+navigare verso `http(s)`: `about:blank` e i `data:` URL funzionano, un server
+HTTP locale va in timeout su `Page.navigate`.
+
+La sonda è versionata e ripetibile:
+
+```bash
+Rscript tools/check_browser.R
+```
+
+Uscita registrata il 2026-11-18:
+
+```text
+chrome: /usr/bin/google-chrome
+about:blank        ok (0.0s)
+data URL           ok (0.0s)
+local http         FAILED (10.0s): Chromote: timed out waiting for response to command Page.navigate
+```
+
+**Conseguenze:**
+
+- i 26 test e2e restano saltati senza `RCMDRSHINY_E2E=1`; forzarli fallisce
+  all'avvio di `AppDriver`, non nel flusso dell'app;
+- `tools/help_screenshots.R` non può rigenerare le immagini;
+- la matrice visiva 8 × 2, gli screenshot dei dialoghi e la regressione
+  visiva restano da eseguire su un desktop o su un container con namespace di
+  rete funzionante.
+
+La suite non finge una copertura che non ha: il limite è nel diario, nella
+checklist e in questa pagina. Le verifiche di markup, CSS, ARIA e contrasto
+restano automatiche e verdi.
