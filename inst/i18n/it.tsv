@@ -202,3 +202,12 @@ Actions	Azioni
 Table actions	Azioni della tabella
 Chart actions	Azioni del grafico
 Tab actions	Azioni della scheda
+Move left	Sposta a sinistra
+Move right	Sposta a destra
+Move earlier	Sposta prima
+Move later	Sposta dopo
+Drag a pinned chart onto another to change their order; right-click a card for actions.	Trascina un grafico fissato su un altro per cambiarne l'ordine; fai clic destro su una scheda per le azioni.
+Drag a column header to change the view order; the data is not changed.	Trascina l'intestazione di una colonna per cambiare l'ordine della vista; i dati non cambiano.
+Drop a text data file (CSV, TSV or TXT) up to 2 MB.	Trascina un file di testo (CSV, TSV o TXT) fino a 2 MB.
+Only text data files (CSV, TSV or TXT) up to 2 MB can be dropped.	Si possono trascinare solo file di testo (CSV, TSV o TXT) fino a 2 MB.
+The dropped file could not be stored.	Non è stato possibile salvare il file trascinato.

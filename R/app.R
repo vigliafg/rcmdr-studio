@@ -2264,31 +2264,38 @@ app_server <- function(env = globalenv()) {
       df <- dataset(state)
       if (is.null(df)) return(NULL)
       grid <- data_grid_frame(df)
+      frame <- grid
       column <- input$data_filter_column %||% ""
-      if (!nzchar(column) || !column %in% names(grid)) return(grid)
-      # A date column has its own control: the text value keeps working for
-      # every other type, and neither path writes to the data set.
-      if (date_column(grid[[column]])) {
-        keep <- date_range_keep(grid[[column]],
-                                input$data_filter_dates %||% NULL)
-        return(grid[keep %in% TRUE, , drop = FALSE])
-      }
-      value <- trim_blanks(data_filter_value_d() %||% "")
-      if (!nzchar(value)) return(grid)
-      x <- grid[[column]]
-      keep <- tryCatch({
-        if (is.numeric(x)) {
-          number <- suppressWarnings(as.numeric(value))
-          if (!is.na(number)) {
-            !is.na(x) & x == number
-          } else {
-            grepl(value, as.character(x), ignore.case = TRUE, fixed = TRUE)
-          }
+      if (nzchar(column) && column %in% names(grid)) {
+        # A date column has its own control: the text value keeps working for
+        # every other type, and neither path writes to the data set.
+        if (date_column(grid[[column]])) {
+          keep <- date_range_keep(grid[[column]],
+                                  input$data_filter_dates %||% NULL)
+          frame <- grid[keep %in% TRUE, , drop = FALSE]
         } else {
-          grepl(value, as.character(x), ignore.case = TRUE, fixed = TRUE)
+          value <- trim_blanks(data_filter_value_d() %||% "")
+          if (nzchar(value)) {
+            x <- grid[[column]]
+            keep <- tryCatch({
+              if (is.numeric(x)) {
+                number <- suppressWarnings(as.numeric(value))
+                if (!is.na(number)) {
+                  !is.na(x) & x == number
+                } else {
+                  grepl(value, as.character(x), ignore.case = TRUE,
+                        fixed = TRUE)
+                }
+              } else {
+                grepl(value, as.character(x), ignore.case = TRUE, fixed = TRUE)
+              }
+            }, error = function(e) rep(TRUE, nrow(grid)))
+            frame <- grid[keep %in% TRUE, , drop = FALSE]
+          }
         }
-      }, error = function(e) rep(TRUE, nrow(grid)))
-      grid[keep %in% TRUE, , drop = FALSE]
+      }
+      # The column order is a view preference: it never writes the data frame.
+      data_order_columns(frame, column_order_current(state, df))
     })
 
     observeEvent(input$data_filter_clear, {
@@ -2297,6 +2304,44 @@ app_server <- function(env = globalenv()) {
       updateTextInput(session, "data_filter_value", value = "")
       updateAirDateInput(session, "data_filter_dates", clear = TRUE)
       data_grid_revision(data_grid_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    # Column order: the header drag sends the names in the new order, the two
+    # buttons move the selected column.  Both land in the same preference.
+    move_data_column <- function(delta) {
+      df <- dataset(state)
+      column <- data_selected_column()
+      if (is.null(df) || is.null(column) || !nzchar(column)) {
+        return(invisible(FALSE))
+      }
+      order <- column_order_current(state, df)
+      moved <- column_order_move(order, column, delta)
+      if (is.null(moved)) return(invisible(FALSE))
+      column_order_store(state, active_dataset(state), moved, names(df))
+      persist_preferences()
+      data_grid_revision(data_grid_revision() + 1L)
+      invisible(TRUE)
+    }
+
+    observeEvent(input$data_column_order, {
+      df <- dataset(state)
+      if (is.null(df)) return()
+      order <- input$data_column_order
+      if (is.list(order)) order <- unlist(order, use.names = FALSE)
+      if (!is.character(order) || length(order) == 0L) return()
+      column_order_store(state, active_dataset(state), order, names(df))
+      persist_preferences()
+      data_grid_revision(data_grid_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_column_left, {
+      if (!action_clicked(input$data_column_left)) return()
+      move_data_column(-1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_column_right, {
+      if (!action_clicked(input$data_column_right)) return()
+      move_data_column(1L)
     }, ignoreInit = TRUE)
 
     output$data_grid <- renderUI({
@@ -2524,6 +2569,60 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$data_import_wizard, {
       if (!action_clicked(input$data_import_wizard)) return()
       state$open_dialog("dataImportWizard")
+    }, ignoreInit = TRUE)
+
+    # A dropped text file is stored and handed to the normal Read Text Data
+    # dialog, prefilled.  The dialog is the confirmation step: no command runs
+    # until the user presses OK.
+    observeEvent(input$data_drop_file, {
+      drop <- input$data_drop_file
+      if (!is.list(drop)) return()
+      name <- paste(as.character(drop$name %||% ""), collapse = "")
+      text <- paste(as.character(drop$text %||% ""), collapse = "\n")
+      if (!nzchar(name)) return()
+      extension <- tolower(tools::file_ext(name))
+      text_file <- extension %in% c("csv", "txt", "tsv", "dat", "psv")
+      if (!text_file || nchar(text, type = "bytes") > 2 * 1024^2) {
+        showNotification(
+          tr("Only text data files (CSV, TSV or TXT) up to 2 MB can be dropped."),
+          type = "warning", duration = 8
+        )
+        return()
+      }
+      path <- tempfile(fileext = paste0(".", extension))
+      ok <- tryCatch({
+        writeLines(text, path, useBytes = TRUE)
+        TRUE
+      }, error = function(e) FALSE)
+      if (!ok) {
+        showNotification(tr("The dropped file could not be stored."),
+                         type = "error", duration = 8)
+        return()
+      }
+      stored <- store_import_file(path, name)
+      unlink(path)
+      if (is.null(stored)) {
+        showNotification(tr("The dropped file could not be stored."),
+                         type = "error", duration = 8)
+        return()
+      }
+      suggestion <- make.names(tools::file_path_sans_ext(basename(name)))
+      if (!nzchar(suggestion) || !is_valid_name(suggestion)) {
+        suggestion <- "Dataset"
+      }
+      open_dialog_memory(state, "readDataSet", list(
+        dsname = suggestion,
+        location = "local",
+        path = stored,
+        header = TRUE,
+        delimiter = switch(
+          extension,
+          csv = "commas",
+          tsv = "tabs",
+          "whitespace"
+        ),
+        stringsAsFactors = TRUE
+      ))
     }, ignoreInit = TRUE)
 
     observeEvent(input$data_col_summary, {

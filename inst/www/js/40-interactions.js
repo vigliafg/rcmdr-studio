@@ -597,3 +597,191 @@
     }, true);
     window.addEventListener('resize', function() { rcmdrMenuClose(false); });
     window.addEventListener('scroll', function() { rcmdrMenuClose(false); }, true);
+
+    // Drag and drop --------------------------------------------------------
+    // Three gestures share one implementation: pinned chart cards reorder the
+    // gallery, a grid header reorders the view columns and a file dropped on
+    // the Data Studio opens the existing import dialog with the stored path.
+    var rcmdrChartDrag = null;
+    function rcmdrClearDragClasses() {
+      Array.prototype.forEach.call(
+        document.querySelectorAll('.rcmdr-dragging, .rcmdr-drop-target'),
+        function(el) {
+          el.classList.remove('rcmdr-dragging');
+          el.classList.remove('rcmdr-drop-target');
+        }
+      );
+    }
+    document.addEventListener('dragstart', function(event) {
+      var card = event.target.closest &&
+        event.target.closest('[data-rcmdr-sortable="chart"][draggable="true"]');
+      if (!card) return;
+      rcmdrChartDrag = card.getAttribute('data-rcmdr-sortable-id');
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        try {
+          event.dataTransfer.setData('text/plain', rcmdrChartDrag);
+        } catch (e) {}
+      }
+      card.classList.add('rcmdr-dragging');
+    });
+    document.addEventListener('dragover', function(event) {
+      if (!rcmdrChartDrag) return;
+      var card = event.target.closest &&
+        event.target.closest(
+          '[data-rcmdr-sortable="chart"][draggable="true"]'
+        );
+      if (!card) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+      card.classList.add('rcmdr-drop-target');
+    });
+    document.addEventListener('dragleave', function(event) {
+      var card = event.target.closest &&
+        event.target.closest('[data-rcmdr-sortable="chart"]');
+      if (card) card.classList.remove('rcmdr-drop-target');
+    });
+    document.addEventListener('drop', function(event) {
+      if (!rcmdrChartDrag) return;
+      var card = event.target.closest &&
+        event.target.closest(
+          '[data-rcmdr-sortable="chart"][draggable="true"]'
+        );
+      if (!card) return;
+      event.preventDefault();
+      var from = parseInt(rcmdrChartDrag, 10);
+      var to = parseInt(card.getAttribute('data-rcmdr-sortable-id'), 10);
+      rcmdrChartDrag = null;
+      rcmdrClearDragClasses();
+      if (!isFinite(from) || !isFinite(to) || from === to) return;
+      if (window.Shiny && window.Shiny.setInputValue) {
+        window.Shiny.setInputValue(
+          'chart_order', {from: from, to: to}, {priority: 'event'}
+        );
+      }
+    });
+    document.addEventListener('dragend', function() {
+      rcmdrChartDrag = null;
+      rcmdrClearDragClasses();
+    });
+
+    // A column header becomes draggable on hover: DataTables rebuilds the
+    // header on every draw, so a one-off binding would be lost.
+    document.addEventListener('mouseover', function(event) {
+      var header = event.target.closest &&
+        event.target.closest('#data_grid table thead th');
+      if (header) header.draggable = true;
+    });
+    var rcmdrColumnDrag = null;
+    document.addEventListener('dragstart', function(event) {
+      var header = event.target.closest &&
+        event.target.closest('#data_grid table thead th');
+      if (!header) return;
+      rcmdrColumnDrag = header;
+      header.classList.add('rcmdr-dragging');
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        try {
+          event.dataTransfer.setData('text/plain', header.textContent.trim());
+        } catch (e) {}
+      }
+    });
+    document.addEventListener('dragover', function(event) {
+      if (!rcmdrColumnDrag) return;
+      var header = event.target.closest &&
+        event.target.closest('#data_grid table thead th');
+      if (!header || header === rcmdrColumnDrag) return;
+      if (header.closest('table') !== rcmdrColumnDrag.closest('table')) return;
+      event.preventDefault();
+      header.classList.add('rcmdr-drop-target');
+    });
+    document.addEventListener('drop', function(event) {
+      if (!rcmdrColumnDrag) return;
+      var header = event.target.closest &&
+        event.target.closest('#data_grid table thead th');
+      if (!header) return;
+      if (header.closest('table') !== rcmdrColumnDrag.closest('table')) return;
+      event.preventDefault();
+      var table = header.closest('table');
+      var source = rcmdrColumnDrag;
+      rcmdrColumnDrag = null;
+      rcmdrClearDragClasses();
+      var headers = Array.prototype.slice.call(
+        table.querySelectorAll('thead th')
+      );
+      var names = headers.map(function(cell) {
+        return cell.textContent.trim();
+      }).filter(function(name) {
+        return name && name.charAt(0) !== '.';
+      });
+      var from = source.textContent.trim();
+      var to = header.textContent.trim();
+      if (from === to || names.indexOf(from) < 0 || names.indexOf(to) < 0) {
+        return;
+      }
+      names.splice(names.indexOf(from), 1);
+      names.splice(names.indexOf(to), 0, from);
+      if (window.Shiny && window.Shiny.setInputValue) {
+        window.Shiny.setInputValue(
+          'data_column_order', names, {priority: 'event'}
+        );
+      }
+    });
+
+    // File drop: read the text client-side, then reopen the normal import
+    // dialog with the stored path.  Nothing runs without the dialog's OK.
+    function rcmdrHasFiles(event) {
+      if (!event.dataTransfer) return false;
+      return Array.prototype.indexOf.call(
+        event.dataTransfer.types || [], 'Files'
+      ) >= 0;
+    }
+    function rcmdrDropZone(node) {
+      return node && node.closest &&
+        node.closest('[data-rcmdr-dropzone="data"]');
+    }
+    function rcmdrAnnounce(text) {
+      var live = document.getElementById('rcmdr-live-status');
+      if (live) live.textContent = text || '';
+    }
+    document.addEventListener('dragover', function(event) {
+      if (!rcmdrHasFiles(event)) return;
+      var zone = rcmdrDropZone(event.target);
+      if (!zone) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+      zone.classList.add('rcmdr-drop-active');
+    });
+    document.addEventListener('dragleave', function(event) {
+      var zone = rcmdrDropZone(event.target);
+      if (zone) zone.classList.remove('rcmdr-drop-active');
+    });
+    document.addEventListener('drop', function(event) {
+      if (!rcmdrHasFiles(event)) return;
+      var zone = rcmdrDropZone(event.target);
+      if (!zone) return;
+      event.preventDefault();
+      zone.classList.remove('rcmdr-drop-active');
+      var rejectMessage = zone.getAttribute('data-rcmdr-drop-reject') || '';
+      var file = event.dataTransfer.files && event.dataTransfer.files[0];
+      if (!file) return;
+      var textFile = /\.(csv|txt|tsv|dat|psv)$/i.test(file.name);
+      if (!textFile || file.size > 2 * 1024 * 1024) {
+        rcmdrAnnounce(rejectMessage);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function() {
+        if (window.Shiny && window.Shiny.setInputValue) {
+          window.Shiny.setInputValue('data_drop_file', {
+            name: file.name,
+            size: file.size,
+            text: String(reader.result || '')
+          }, {priority: 'event'});
+        }
+      };
+      reader.onerror = function() {
+        rcmdrAnnounce(rejectMessage);
+      };
+      reader.readAsText(file);
+    });

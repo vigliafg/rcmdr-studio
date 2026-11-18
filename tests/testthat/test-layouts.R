@@ -42,3 +42,39 @@ test_that("clearing preferences clears the split sizes", {
   preferences_clear(state)
   expect_equal(state$options$layouts, list())
 })
+
+test_that("the column order keeps every column exactly once", {
+  expect_equal(
+    column_order_normalize(c("b", "a"), c("a", "b", "c")),
+    c("b", "a", "c")
+  )
+  # Unknown and repeated names are dropped, the new columns are appended.
+  expect_equal(
+    column_order_normalize(c("b", "b", "gone"), c("a", "b", "c")),
+    c("b", "a", "c")
+  )
+  expect_equal(column_order_move(c("a", "b", "c"), "b", -1), c("b", "a", "c"))
+  expect_equal(column_order_move(c("a", "b", "c"), "b", 1), c("a", "c", "b"))
+  expect_null(column_order_move(c("a", "b", "c"), "a", -1))
+  expect_null(column_order_move(c("a", "b", "c"), "z", 1))
+})
+
+test_that("the view order leaves the hidden row id last", {
+  grid <- data.frame(b = 1:2, a = 3:4, .row_id = 1:2)
+  ordered <- data_order_columns(grid, c("a", "b"))
+  expect_equal(names(ordered), c("a", "b", ".row_id"))
+  expect_equal(ordered$.row_id, 1:2)
+  expect_equal(data_order_columns(grid, NULL), grid)
+})
+
+test_that("the column order survives a preferences round trip", {
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path), add = TRUE)
+  state <- AppState(env = new.env())
+  column_order_store(state, "D", c("c", "a"), c("a", "b", "c"))
+  preferences_save(state, path)
+  restored <- AppState(env = new.env())
+  expect_true(preferences_load(restored, path))
+  expect_equal(column_order_saved(restored, "D"), c("c", "a", "b"))
+  expect_equal(column_order_saved(restored, "other"), NULL)
+})

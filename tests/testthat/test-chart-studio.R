@@ -432,3 +432,30 @@ test_that("gallery cards carry their own context menu", {
   expect_match(html, 'role="menu"', fixed = TRUE)
   expect_match(html, "data-rcmdr-menu-input=\"chart_action\"", fixed = TRUE)
 })
+
+test_that("pinned charts move without touching the data sets", {
+  state <- AppState(env = new.env())
+  for (i in 1:4) {
+    plot_register(state, list(title = letters[[i]], pinned = TRUE,
+                              code = "plot(1)"))
+  }
+  expect_equal(plot_list(state)$title, letters[1:4])
+  expect_true(plot_reorder(state, 1L, 3L))
+  expect_equal(plot_list(state)$title, c("b", "c", "a", "d"))
+  expect_true(plot_move(state, 4L, -1L))
+  expect_equal(plot_list(state)$title, c("b", "c", "d", "a"))
+  # The data frame in the environment is never part of the gesture.
+  expect_equal(ls(state$env), character())
+})
+
+test_that("the gallery order is part of the project payload", {
+  state <- chart_test_state()
+  plot_register(state, list(title = "Pinned", pinned = TRUE, code = "plot(1)"))
+  plot_register(state, list(title = "Pinned 2", pinned = TRUE, code = "plot(2)"))
+  project <- project_build(state, path = tempfile(fileext = ".Rproj"))
+  expect_equal(project$plots[[1]]$order, 1)
+  expect_equal(project$plots[[2]]$order, 2)
+  # The entry keeps the order when a project is read back.
+  entry <- project_plot_entry("plot-0001", order = 7)
+  expect_equal(entry$order, 7)
+})

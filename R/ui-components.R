@@ -713,20 +713,26 @@ context_menu_separator <- function() {
 #' @param label Accessible name of the target.
 #' @param class Extra classes.
 #' @param tag Tag to build, a `<div>` by default.
+#' @param extra Named list of extra attributes.
 #' @return A tag.
 #' @keywords internal
 context_menu_target <- function(..., menu, payload = "{}", label = NULL,
-                                class = NULL, tag = htmltools::tags$div) {
-  tag(
-    class = c("rcmdr-context-target", class),
-    tabindex = "0",
-    `data-rcmdr-context-menu` = menu,
-    `data-rcmdr-menu-payload` = payload,
-    `aria-haspopup` = "menu",
-    `aria-expanded` = "false",
-    `aria-label` = label,
-    ...
-  )
+                                class = NULL,
+                                tag = htmltools::tags$div,
+                                extra = list()) {
+  do.call(tag, c(
+    list(
+      class = c("rcmdr-context-target", class),
+      tabindex = "0",
+      `data-rcmdr-context-menu` = menu,
+      `data-rcmdr-menu-payload` = payload,
+      `aria-haspopup` = "menu",
+      `aria-expanded` = "false",
+      `aria-label` = label
+    ),
+    list(...),
+    extra
+  ))
 }
 
 #' A compact breadcrumb

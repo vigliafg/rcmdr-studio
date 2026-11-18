@@ -193,6 +193,7 @@ AppState <- function(env = globalenv()) {
     plugin_lazy = FALSE,
     workflow_step_limit = 50L,
     layouts = list(),
+    column_order = list(),
     features = default_features(),
     capabilities = rcmdr_capabilities()
   )

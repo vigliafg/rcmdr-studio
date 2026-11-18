@@ -86,11 +86,72 @@ plot_register <- function(state, plot) {
   }
   plot$tags <- plot$tags %||% character()
   plot$pinned <- isTRUE(plot$pinned)
+  existing <- vapply(state$plots %||% list(), function(entry) {
+    suppressWarnings(as.numeric(entry$order %||% 0))
+  }, numeric(1))
+  plot$order <- plot$order %||% (max(c(0, existing), na.rm = TRUE) + 1)
   state$plots <- c(state$plots %||% list(), list(plot))
   index <- length(state$plots)
   state$plots[[index]]$index <- index
   state_touch(state)
   invisible(index)
+}
+
+#' Pinned charts in their saved order
+#' @keywords internal
+plot_pinned_order <- function(state) {
+  plots <- state$plots %||% list()
+  pinned <- which(vapply(plots, function(plot) isTRUE(plot$pinned), logical(1)))
+  if (length(pinned) < 2L) return(pinned)
+  key <- vapply(plots[pinned], function(plot) {
+    suppressWarnings(as.numeric(plot$order %||% plot$index %||% 0))
+  }, numeric(1))
+  pinned[order(key)]
+}
+
+#' Move a pinned chart to another position
+#'
+#' Both arguments are list indices, the values the gallery already puts in
+#' `data-rcmdr-sortable-id`.  Unpinned charts keep their reverse-chronological
+#' place: the drag order only belongs to the pinned block.
+#' @keywords internal
+plot_reorder <- function(state, from, to) {
+  from <- suppressWarnings(as.integer(from))
+  to <- suppressWarnings(as.integer(to))
+  if (length(from) != 1L || length(to) != 1L ||
+      is.na(from) || is.na(to) || from == to) {
+    return(invisible(FALSE))
+  }
+  pinned <- plot_pinned_order(state)
+  start <- match(from, pinned)
+  end <- match(to, pinned)
+  if (is.na(start) || is.na(end)) return(invisible(FALSE))
+  moved <- pinned[start]
+  rest <- pinned[-start]
+  at <- end
+  if (at > length(rest)) at <- length(rest)
+  if (at < 1L) at <- 1L
+  reordered <- append(rest, moved, after = at - 1L)
+  for (position in seq_along(reordered)) {
+    index <- reordered[[position]]
+    state$plots[[index]]$order <- position
+    state$plots[[index]]$index <- index
+  }
+  state_touch(state)
+  invisible(TRUE)
+}
+
+#' Move a pinned chart by one place
+#' @keywords internal
+plot_move <- function(state, key, delta) {
+  index <- plot_locate(state, key)
+  if (is.na(index)) return(invisible(FALSE))
+  pinned <- plot_pinned_order(state)
+  position <- match(index, pinned)
+  if (is.na(position)) return(invisible(FALSE))
+  target <- position + as.integer(delta)
+  if (target < 1L || target > length(pinned)) return(invisible(FALSE))
+  plot_reorder(state, index, pinned[[target]])
 }
 
 #' List the gallery
@@ -152,7 +213,11 @@ plot_list <- function(state, query = NULL, type = NULL, dataset = NULL,
     table <- table[table$pinned, , drop = FALSE]
   }
   if (nrow(table) == 0L) return(table)
-  table[order(!table$pinned, -table$index), , drop = FALSE]
+  orders <- vapply(plots, function(plot) {
+    suppressWarnings(as.numeric(plot$order %||% plot$index %||% 0))
+  }, numeric(1))
+  sort_key <- ifelse(table$pinned, orders[table$index], -table$index)
+  table[order(!table$pinned, sort_key), , drop = FALSE]
 }
 
 #' Update gallery metadata
@@ -770,6 +835,9 @@ chart_gallery_ui <- function() {
       ),
       label = tr("Gallery")
     ),
+    note(tr(
+      "Drag a pinned chart onto another to change their order; right-click a card for actions."
+    )),
     uiOutput("chart_gallery_grid"),
     uiOutput("chart_detail")
   )
@@ -820,6 +888,11 @@ chart_gallery_ui_cards <- function(table) {
           menu = menu_id,
           payload = sprintf('{"index":%d}', as.integer(row$index)),
           label = sprintf("%s: %s", tr("Chart actions"), row$title),
+          extra = list(
+            `data-rcmdr-sortable` = "chart",
+            `data-rcmdr-sortable-id` = as.character(as.integer(row$index)),
+            draggable = if (isTRUE(row$pinned)) "true" else NULL
+          ),
           htmltools::div(
             class = "rcmdr-chart-thumb",
             onclick = sprintf(
@@ -861,6 +934,17 @@ chart_gallery_ui_cards <- function(table) {
           ),
           context_menu_item(tr("Reopen"), input = "chart_action",
                             action = "reopen"),
+          if (isTRUE(row$pinned)) {
+            context_menu_separator()
+          },
+          if (isTRUE(row$pinned)) {
+            context_menu_item(tr("Move earlier"), input = "chart_order",
+                              action = "up")
+          },
+          if (isTRUE(row$pinned)) {
+            context_menu_item(tr("Move later"), input = "chart_order",
+                              action = "down")
+          },
           context_menu_separator(),
           context_menu_item(tr("Rename"), input = "chart_action",
                             action = "rename"),
@@ -1725,6 +1809,21 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       )
     }, once = TRUE, ignoreInit = TRUE)
   }
+
+  observeEvent(input$chart_order, {
+    request <- input$chart_order
+    if (!is.list(request)) return()
+    action <- request$action %||% ""
+    moved <- FALSE
+    if (identical(action, "up") || identical(action, "down")) {
+      index <- suppressWarnings(as.integer(request$index %||% 0L))
+      moved <- plot_move(state, index,
+                         if (identical(action, "up")) -1L else 1L)
+    } else {
+      moved <- plot_reorder(state, request$from %||% NA, request$to %||% NA)
+    }
+    if (isTRUE(moved)) chart_revision(chart_revision() + 1L)
+  }, ignoreInit = TRUE)
 
   observeEvent(input$chart_action, {
     action <- input$chart_action$action %||% ""

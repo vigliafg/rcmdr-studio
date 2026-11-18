@@ -929,6 +929,33 @@ grid_rows_to_data <- function(grid, selected) {
   as.integer(ids[!is.na(ids)])
 }
 
+#' Column order in use for a data set
+#'
+#' A saved order is validated against the current columns: a column added
+#' later is appended instead of disappearing, and a dropped column is ignored.
+#' @keywords internal
+column_order_current <- function(state, df, dataset_name = active_dataset(state)) {
+  if (is.null(df)) return(character())
+  columns <- names(df)
+  saved <- if (is.null(dataset_name)) NULL else {
+    column_order_saved(state, dataset_name)
+  }
+  column_order_normalize(saved %||% columns, columns)
+}
+
+#' Apply the view order to a grid frame
+#'
+#' `.row_id` stays last: the DT callback and the hidden-column definition both
+#' rely on it being the final column.
+#' @keywords internal
+data_order_columns <- function(grid, order) {
+  if (is.null(grid) || ncol(grid) == 0L) return(grid)
+  ordinary <- setdiff(names(grid), ".row_id")
+  ordered <- column_order_normalize(order, ordinary)
+  keep <- c(ordered, if (".row_id" %in% names(grid)) ".row_id")
+  grid[, keep, drop = FALSE]
+}
+
 #' Is a column date-like?
 #'
 #' The Data Studio swaps its text filter for the date range only on these
@@ -1054,6 +1081,12 @@ data_studio_ui <- function() {
           class = "rcmdr-data-grid-wrap",
           menu = "data_grid_menu",
           label = tr("Table actions"),
+          extra = list(
+            `data-rcmdr-dropzone` = "data",
+            `data-rcmdr-drop-reject` = tr(
+              "Drop a text data file (CSV, TSV or TXT) up to 2 MB."
+            )
+          ),
           htmltools::div(uiOutput("data_grid"))
         ),
         # The menu mirrors the inspector buttons and clicks them, so a column
@@ -1072,6 +1105,9 @@ data_studio_ui <- function() {
           context_menu_separator(),
           context_menu_item(tr("Add column"), click = "data_add_column"),
           context_menu_item(tr("Duplicate"), click = "data_duplicate_column"),
+          context_menu_separator(),
+          context_menu_item(tr("Move left"), click = "data_column_left"),
+          context_menu_item(tr("Move right"), click = "data_column_right"),
           context_menu_separator(),
           context_menu_item(tr("Duplicate selection"),
                             click = "data_duplicate_rows"),
@@ -1113,8 +1149,15 @@ data_studio_ui <- function() {
             actionButton("data_add_column", tr("Add column"),
                          class = "btn-sm btn-outline-secondary"),
             actionButton("data_duplicate_column", tr("Duplicate"),
+                         class = "btn-sm btn-outline-secondary"),
+            actionButton("data_column_left", tr("Move left"),
+                         class = "btn-sm btn-outline-secondary"),
+            actionButton("data_column_right", tr("Move right"),
                          class = "btn-sm btn-outline-secondary")
           ),
+          note(tr(
+            "Drag a column header to change the view order; the data is not changed."
+          )),
           uiOutput("data_selection_columns_ui")
         ),
         htmltools::div(

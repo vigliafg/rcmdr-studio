@@ -107,13 +107,14 @@ project_document_entry <- function(id, path = NULL, mode = "r", text = "",
 #' Describe a plot in a project
 #' @keywords internal
 project_plot_entry <- function(id, file = NULL, title = NULL, spec = NULL,
-                               pinned = FALSE) {
+                               pinned = FALSE, order = NULL) {
   list(
     id = as.character(id),
     file = if (is.null(file)) NULL else as.character(file),
     title = if (is.null(title)) NULL else as.character(title),
     spec = spec %||% NULL,
-    pinned = isTRUE(pinned)
+    pinned = isTRUE(pinned),
+    order = if (is.null(order)) NULL else as.numeric(order)
   )
 }
 
@@ -413,7 +414,8 @@ project_build <- function(state, path = NULL,
       file = file.path("assets", paste0(project_safe_name(id), ".", extension)),
       title = plot$title %||% NULL,
       spec = plot$spec %||% NULL,
-      pinned = isTRUE(plot$pinned)
+      pinned = isTRUE(plot$pinned),
+      order = plot$order %||% (length(plots) + 1L)
     )
   }
   project$plots <- plots
@@ -653,6 +655,7 @@ project_apply <- function(state, project, path = NULL) {
       title = entry$title %||% NULL,
       tags = character(),
       pinned = isTRUE(entry$pinned),
+      order = entry$order %||% index,
       interactive_code = NULL
     )
     suffix <- suppressWarnings(as.integer(sub("^.*-", "", entry$id)))

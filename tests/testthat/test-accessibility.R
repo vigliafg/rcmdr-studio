@@ -299,3 +299,20 @@ test_that("context menus open from the keyboard and return the focus", {
                fixed = TRUE)
   expect_match(css, ".rcmdr-context-menu-danger", fixed = TRUE)
 })
+
+test_that("drag and drop has a keyboard alternative", {
+  js <- as.character(app_js())
+  expect_match(js, "data-rcmdr-sortable", fixed = TRUE)
+  expect_match(js, "data-rcmdr-sortable-id", fixed = TRUE)
+  expect_match(js, "data_column_order", fixed = TRUE)
+  expect_match(js, "data_drop_file", fixed = TRUE)
+  expect_match(js, "FileReader", fixed = TRUE)
+  expect_match(js, "rcmdr-dropzone", fixed = TRUE)
+
+  # The same order is reachable from the buttons and from the menu.
+  app <- readLines(test_path("..", "..", "R", "app.R"))
+  expect_true(any(grepl("move_data_column(-1L)", app, fixed = TRUE)))
+  expect_true(any(grepl("move_data_column(1L)", app, fixed = TRUE)))
+  chart <- readLines(test_path("..", "..", "R", "chart-studio.R"))
+  expect_true(any(grepl("plot_move(state, index", chart, fixed = TRUE)))
+})

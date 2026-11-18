@@ -81,6 +81,68 @@ layout_clear <- function(state) {
   invisible(NULL)
 }
 
+# Column order ---------------------------------------------------------------
+#
+# The Data Studio column order is a view preference: it changes how the grid
+# reads, never the data frame and never the command history.
+
+column_order_version <- 1L
+
+#' Read a saved column order for a data set
+#' @keywords internal
+column_order_saved <- function(state, dataset_name) {
+  entry <- (state$options$column_order %||% list())[[dataset_name]]
+  if (!is.list(entry)) return(NULL)
+  version <- suppressWarnings(as.integer(entry$version %||% 0L))
+  if (length(version) != 1L || is.na(version) ||
+      version != column_order_version) {
+    return(NULL)
+  }
+  order <- as.character(entry$order %||% character())
+  order <- order[!is.na(order) & nzchar(order)]
+  if (length(order) == 0L) NULL else unique(order)
+}
+
+#' Keep every current column exactly once, in the preferred order
+#' @keywords internal
+column_order_normalize <- function(order, columns) {
+  columns <- as.character(columns)
+  order <- as.character(order %||% character())
+  order <- order[!is.na(order) & order %in% columns]
+  c(unique(order), setdiff(columns, order))
+}
+
+#' Store a column order
+#' @keywords internal
+column_order_store <- function(state, dataset_name, order, columns) {
+  if (is.null(dataset_name) || !nzchar(dataset_name)) return(invisible(NULL))
+  order <- column_order_normalize(order, columns)
+  if (is.null(state$options$column_order) ||
+      !is.list(state$options$column_order)) {
+    state$options$column_order <- list()
+  }
+  state$options$column_order[[dataset_name]] <- list(
+    version = column_order_version,
+    order = order
+  )
+  invisible(order)
+}
+
+#' Move one column inside an order
+#'
+#' Returns `NULL` when the column is unknown or the move would leave the
+#' range.
+#' @keywords internal
+column_order_move <- function(order, column, delta) {
+  columns <- as.character(order %||% character())
+  position <- match(column, columns)
+  if (is.na(position)) return(NULL)
+  target <- position + as.integer(delta)
+  if (target < 1L || target > length(columns)) return(NULL)
+  columns[c(position, target)] <- columns[c(target, position)]
+  columns
+}
+
 preferences_default_file <- function() {
   override <- Sys.getenv("RCMDRSHINY_PREFERENCES", unset = "")
   if (nzchar(override)) return(override)
@@ -132,7 +194,8 @@ preferences_snapshot <- function(state) {
     theme = state$options$theme %||% "system",
     density = state$options$density %||% "compact",
     auto_switch_result = isTRUE(state$options$auto_switch_result),
-    layouts = state$options$layouts %||% list()
+    layouts = state$options$layouts %||% list(),
+    column_order = state$options$column_order %||% list()
   )
 }
 
@@ -195,6 +258,25 @@ preferences_load <- function(state, path = preferences_file(state)) {
     }
     state$options$layouts <- cleaned
   }
+  columns <- value$column_order
+  if (is.list(columns) && length(columns) > 0L) {
+    cleaned <- list()
+    for (dataset_name in names(columns)) {
+      entry <- columns[[dataset_name]]
+      if (!is.list(entry)) next
+      version <- suppressWarnings(as.integer(entry$version %||% 0L))
+      order <- as.character(entry$order %||% character())
+      order <- order[!is.na(order) & nzchar(order)]
+      if (length(version) == 1L && !is.na(version) &&
+          version == column_order_version && length(order) > 0L) {
+        cleaned[[dataset_name]] <- list(
+          version = column_order_version,
+          order = unique(order)
+        )
+      }
+    }
+    state$options$column_order <- cleaned
+  }
   invisible(TRUE)
 }
 
@@ -234,6 +316,7 @@ preferences_clear <- function(state, remove = FALSE,
   state$dialog_presets_version <- 1L
   state$options$plugins <- character()
   layout_clear(state)
+  state$options$column_order <- list()
   if (isTRUE(remove) && !is.null(path) && nzchar(path) && file.exists(path)) {
     unlink(path)
   }

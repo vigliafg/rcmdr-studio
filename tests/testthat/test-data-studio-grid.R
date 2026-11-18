@@ -131,3 +131,14 @@ test_that("the Data Studio grid exposes its table actions", {
   expect_match(html, 'data-rcmdr-menu-click="data_col_summary"', fixed = TRUE)
   expect_match(html, 'data-rcmdr-menu-click="data_delete_rows"', fixed = TRUE)
 })
+
+test_that("the column order buttons and the drop zone are in the UI", {
+  html <- htmltools::renderTags(data_studio_ui())$html
+  expect_match(html, 'id="data_column_left"', fixed = TRUE)
+  expect_match(html, 'id="data_column_right"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-dropzone="data"', fixed = TRUE)
+  expect_match(html, "Drag a column header to change the view order",
+               fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-click="data_column_left"',
+               fixed = TRUE)
+})
