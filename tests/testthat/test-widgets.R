@@ -265,3 +265,29 @@ test_that("the native select is the class the listbox CSS expects", {
   css <- as.character(app_css())
   expect_match(css, "body select\\[multiple\\]\\.form-select", perl = TRUE)
 })
+
+test_that("date_input() and date_range_input() keep a date value", {
+  html <- as.character(date_input("d", "Date", value = "2026-11-18"))
+  expect_match(html, 'id="d"', fixed = TRUE)
+  expect_match(html, "sw-air-picker", fixed = TRUE)
+  expect_match(html, '"value":["2026-11-18"]', fixed = TRUE)
+  expect_match(html, '"clearButton":true', fixed = TRUE)
+
+  range <- as.character(date_range_input(
+    "r", "Range", value = c("2026-11-01", "2026-11-18")
+  ))
+  expect_match(range, 'id="r"', fixed = TRUE)
+  expect_match(range, '"range":true', fixed = TRUE)
+  expect_match(range, '"value":["2026-11-01","2026-11-18"]', fixed = TRUE)
+  expect_match(range, "Any date", fixed = TRUE)
+  expect_equal(date_widget_value(NULL), NULL)
+  expect_equal(date_widget_value(c("2026-11-01", "")), "2026-11-01")
+})
+
+test_that("a date field without a visible label still has a name", {
+  html <- as.character(date_range_input("dates", NULL))
+  expect_match(html, "visually-hidden", fixed = TRUE)
+  expect_match(html, "Date range", fixed = TRUE)
+  one <- as.character(date_input("one_date", NULL))
+  expect_match(one, ">Date</span>", fixed = TRUE)
+})

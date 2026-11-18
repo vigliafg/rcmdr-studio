@@ -410,6 +410,83 @@ color_input <- function(id, label, value = "#ffffff", width = "100%") {
   )
 }
 
+#' Date field
+#'
+#' A single date on the packaged air-datepicker.  The value the server reads is
+#' a date (or `NULL` after the clear button); it never reaches the R command as
+#' free text.
+#'
+#' @param id Input id.
+#' @param label Visible label.
+#' @param value Initial date, or `NULL`.
+#' @param min,max Optional bounds.
+#' @param language Picker language, from [current_language()] by default.
+#' @param width Control width.
+#' @param aria_label Accessible name used when `label` is `NULL`.
+#' @return A `div` tag.
+#' @export
+date_input <- function(id, label, value = NULL, min = NULL, max = NULL,
+                       language = current_language(), width = "100%",
+                       aria_label = tr("Date")) {
+  if (is.null(label)) {
+    label <- htmltools::tags$span(class = "visually-hidden", aria_label)
+  }
+  shinyWidgets::airDatepickerInput(
+    id, label,
+    value = date_widget_value(value),
+    minDate = min, maxDate = max,
+    dateFormat = "yyyy-MM-dd",
+    clearButton = TRUE, autoClose = TRUE,
+    language = date_widget_language(language),
+    width = width
+  )
+}
+
+#' Date range
+#'
+#' Two dates in one control; the server reads a date vector of length two, or
+#' `NULL` when the range is cleared.
+#'
+#' @inheritParams date_input
+#' @return A `div` tag.
+#' @export
+date_range_input <- function(id, label, value = NULL, min = NULL, max = NULL,
+                             language = current_language(),
+                             width = "100%",
+                             aria_label = tr("Date range")) {
+  if (is.null(label)) {
+    label <- htmltools::tags$span(class = "visually-hidden", aria_label)
+  }
+  shinyWidgets::airDatepickerInput(
+    id, label,
+    value = date_widget_value(value),
+    range = TRUE,
+    separator = " \u2013 ",
+    placeholder = tr("Any date"),
+    minDate = min, maxDate = max,
+    dateFormat = "yyyy-MM-dd",
+    clearButton = TRUE, autoClose = TRUE,
+    language = date_widget_language(language),
+    width = width
+  )
+}
+
+#' Normalise a value for the date widget
+#' @keywords internal
+date_widget_value <- function(value) {
+  if (is.null(value) || length(value) == 0L) return(NULL)
+  value <- as.character(value)
+  value <- value[!is.na(value) & nzchar(value)]
+  if (length(value) == 0L) NULL else utils::head(value, 2L)
+}
+
+#' air-datepicker language code
+#' @keywords internal
+date_widget_language <- function(language = current_language()) {
+  language <- i18n_normalize(language)
+  if (identical(language, "it")) "it" else "en"
+}
+
 #' Drop-down / combo box
 #' @export
 combo_input <- function(id, label, choices, selected = NULL, multiple = FALSE) {

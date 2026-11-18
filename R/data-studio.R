@@ -929,6 +929,39 @@ grid_rows_to_data <- function(grid, selected) {
   as.integer(ids[!is.na(ids)])
 }
 
+#' Is a column date-like?
+#'
+#' The Data Studio swaps its text filter for the date range only on these
+#' columns.  `POSIXlt` is included because `read.table()` and packages still
+#' produce it.
+#' @keywords internal
+date_column <- function(x) {
+  inherits(x, c("Date", "POSIXct", "POSIXlt"))
+}
+
+#' Rows kept by a date range
+#'
+#' The range is inclusive at both ends and compares calendar dates, so a
+#' `POSIXct` column is filtered by the day the user sees.  A missing end keeps
+#' the range open; an empty range keeps every row.
+#'
+#' @param x A `Date`, `POSIXct` or `POSIXlt` vector.
+#' @param range One or two dates, or `NULL`.
+#' @return A logical vector, one per element of `x`.
+#' @keywords internal
+date_range_keep <- function(x, range) {
+  keep <- rep(TRUE, length(x))
+  if (is.null(range) || length(range) == 0L) return(keep)
+  range <- suppressWarnings(as.Date(range))
+  range <- range[!is.na(range)]
+  if (length(range) == 0L) return(keep)
+  dates <- suppressWarnings(as.Date(x))
+  keep <- keep & !is.na(dates)
+  keep <- keep & dates >= min(range)
+  if (length(range) > 1L) keep <- keep & dates <= max(range)
+  keep
+}
+
 #' Row-selection callback for the Data Studio grid
 #'
 #' DT's built-in selection is not reliable across DataTables releases when the

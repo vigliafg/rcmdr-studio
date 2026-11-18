@@ -2211,15 +2211,26 @@ app_server <- function(env = globalenv()) {
         c("", names(df)),
         c(tr("(no column filter)"), names(df))
       )
-      selected <- isolate(input$data_filter_column %||% "")
+      selected <- input$data_filter_column %||% ""
       if (!selected %in% names(df)) selected <- ""
       value <- isolate(input$data_filter_value %||% "")
+      dates <- isolate(input$data_filter_dates %||% NULL)
+      by_date <- nzchar(selected) && date_column(df[[selected]])
       htmltools::div(
         class = "rcmdr-toolbar-fields",
         selectInput("data_filter_column", NULL, choices = choices,
                     selected = selected, width = "190px"),
-        textInput("data_filter_value", NULL, value = value,
-                  placeholder = tr("Filter value"), width = "150px"),
+        if (by_date) {
+          date_range_input(
+            "data_filter_dates", NULL,
+            value = dates,
+            language = current_language(),
+            width = "260px"
+          )
+        } else {
+          textInput("data_filter_value", NULL, value = value,
+                    placeholder = tr("Filter value"), width = "150px")
+        },
         actionButton("data_filter_clear", tr("Clear filter"),
                      class = "btn-sm btn-outline-secondary")
       )
@@ -2232,10 +2243,16 @@ app_server <- function(env = globalenv()) {
       if (is.null(df)) return(NULL)
       grid <- data_grid_frame(df)
       column <- input$data_filter_column %||% ""
-      value <- trim_blanks(data_filter_value_d() %||% "")
-      if (!nzchar(column) || !column %in% names(grid) || !nzchar(value)) {
-        return(grid)
+      if (!nzchar(column) || !column %in% names(grid)) return(grid)
+      # A date column has its own control: the text value keeps working for
+      # every other type, and neither path writes to the data set.
+      if (date_column(grid[[column]])) {
+        keep <- date_range_keep(grid[[column]],
+                                input$data_filter_dates %||% NULL)
+        return(grid[keep %in% TRUE, , drop = FALSE])
       }
+      value <- trim_blanks(data_filter_value_d() %||% "")
+      if (!nzchar(value)) return(grid)
       x <- grid[[column]]
       keep <- tryCatch({
         if (is.numeric(x)) {
@@ -2256,6 +2273,7 @@ app_server <- function(env = globalenv()) {
       if (!action_clicked(input$data_filter_clear)) return()
       updateSelectInput(session, "data_filter_column", selected = "")
       updateTextInput(session, "data_filter_value", value = "")
+      updateAirDateInput(session, "data_filter_dates", clear = TRUE)
       data_grid_revision(data_grid_revision() + 1L)
     }, ignoreInit = TRUE)
 
