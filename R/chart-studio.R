@@ -534,8 +534,8 @@ chart_options_accordion <- function(info, spec, open = NULL) {
 #' Builder panel
 #' @keywords internal
 chart_builder_ui <- function() {
-  htmltools::div(
-    class = "rcmdr-chart-layout",
+  split_pane(
+    "chart_layout",
     htmltools::div(
       class = "rcmdr-chart-builder",
       # The identity of the chart stays in view: type, data set, mapping and
@@ -718,7 +718,11 @@ chart_builder_ui <- function() {
                      tr("Open in the classic dialog (base R code)"),
                      class = "btn-sm btn-outline-primary")
       )
-    )
+    ),
+    class = "rcmdr-chart-layout",
+    initial = 5 / 12,
+    min = 300,
+    min_second = 320
   )
 }
 

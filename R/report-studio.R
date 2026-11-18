@@ -478,8 +478,8 @@ report_studio_ui <- function() {
     ),
     uiOutput("report_status_ui"),
     uiOutput("report_recovery_ui"),
-    htmltools::div(
-      class = "rcmdr-report-workspace",
+    split_pane(
+      "report_outline_layout",
       htmltools::div(
         htmltools::div(
           class = "rcmdr-section-card",
@@ -502,7 +502,9 @@ report_studio_ui <- function() {
           report_template_gallery_ui(compact = TRUE)
         )
       ),
-      htmltools::div(
+      split_pane(
+        "report_editor_layout",
+        htmltools::div(
         htmltools::div(
           class = "rcmdr-section-card",
           htmltools::tags$h6(tr("Editor")),
@@ -558,7 +560,16 @@ report_studio_ui <- function() {
           htmltools::tags$h6(tr("Knit history")),
           uiOutput("report_knit_history")
         )
-      )
+        ),
+        class = "rcmdr-report-editor-split",
+        initial = 5 / 9,
+        min = 260,
+        min_second = 280
+      ),
+      class = "rcmdr-report-workspace",
+      initial = 3 / 12,
+      min = 190,
+      min_second = 360
     ),
     htmltools::div(
       class = "visually-hidden",

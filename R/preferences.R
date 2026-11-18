@@ -1,9 +1,85 @@
 # Session preferences ---------------------------------------------------------
 #
-# Favourites, recents, menu expansion, dialog presets, language and theme are
-# user preferences, not statistical state.  They are kept in the session state
-# and written to a single RDS file so that they survive a restart.  The file is
-# deliberately small and dependency-free.
+# Favourites, recents, menu expansion, dialog presets, language, theme and the
+# split-pane sizes are user preferences, not statistical state.  They are kept
+# in the session state and written to a single RDS file so that they survive a
+# restart.  The file is deliberately small and dependency-free.
+
+# The layout entries carry their own version: a changed default can be adopted
+# without misreading a size saved by an older build.
+layout_version <- 1L
+layout_min_ratio <- 0.05
+layout_max_ratio <- 0.95
+
+#' A valid split ratio
+#'
+#' `NULL` or a non-finite value is rejected, so a corrupt preference falls back
+#' to the caller's default instead of producing an empty pane.
+#' @keywords internal
+layout_ratio <- function(value, fallback = NULL) {
+  if (length(value) != 1L) return(fallback)
+  value <- suppressWarnings(as.numeric(value))
+  if (!is.finite(value)) return(fallback)
+  min(max(value, layout_min_ratio), layout_max_ratio)
+}
+
+#' Read a saved split size
+#'
+#' The UI is built before the server exists, so the first render reads the same
+#' file `preferences_load()` will read a moment later.
+#'
+#' @param id Split pane id.
+#' @param layouts Optional layout list; the persisted file by default.
+#' @return A ratio, or `NULL` when the id has no usable entry.
+#' @keywords internal
+layout_saved <- function(id, layouts = NULL) {
+  if (is.null(layouts)) {
+    layouts <- tryCatch(preferences_peek()$layouts, error = function(e) NULL)
+  }
+  if (!is.list(layouts)) return(NULL)
+  entry <- layouts[[id]]
+  if (!is.list(entry)) return(NULL)
+  version <- suppressWarnings(as.integer(entry$version %||% 0L))
+  if (length(version) != 1L || is.na(version) || version != layout_version) {
+    return(NULL)
+  }
+  layout_ratio(entry$first, fallback = NULL)
+}
+
+#' Initial size of a split pane
+#'
+#' @inheritParams layout_saved
+#' @param default Ratio used when nothing usable is saved.
+#' @return A ratio.
+#' @keywords internal
+layout_initial <- function(id, default = 0.5, layouts = NULL) {
+  saved <- layout_saved(id, layouts)
+  if (is.null(saved)) layout_ratio(default, fallback = 0.5) else saved
+}
+
+#' Record a split size in the session preferences
+#'
+#' @param state Application state.
+#' @param id Split pane id.
+#' @param first New ratio.
+#' @return Invisibly, the stored ratio, or `NULL` when the value was rejected.
+#' @keywords internal
+layout_set <- function(state, id, first) {
+  value <- layout_ratio(first, fallback = NULL)
+  if (is.null(value) || !nzchar(id)) return(invisible(NULL))
+  if (is.null(state$options$layouts) || !is.list(state$options$layouts)) {
+    state$options$layouts <- list()
+  }
+  state$options$layouts[[id]] <- list(version = layout_version, first = value)
+  invisible(value)
+}
+
+#' Drop the saved split sizes
+#' @keywords internal
+layout_clear <- function(state) {
+  state$options$layouts <- list()
+  invisible(NULL)
+}
 
 preferences_default_file <- function() {
   override <- Sys.getenv("RCMDRSHINY_PREFERENCES", unset = "")
@@ -55,7 +131,8 @@ preferences_snapshot <- function(state) {
     language = state$options$language %||% current_language(),
     theme = state$options$theme %||% "system",
     density = state$options$density %||% "compact",
-    auto_switch_result = isTRUE(state$options$auto_switch_result)
+    auto_switch_result = isTRUE(state$options$auto_switch_result),
+    layouts = state$options$layouts %||% list()
   )
 }
 
@@ -107,6 +184,17 @@ preferences_load <- function(state, path = preferences_file(state)) {
     state$options$density <- density
   }
   state$options$auto_switch_result <- isTRUE(value$auto_switch_result)
+  layouts <- value$layouts
+  if (is.list(layouts) && length(layouts) > 0L) {
+    cleaned <- list()
+    for (id in names(layouts)) {
+      first <- layout_saved(id, layouts)
+      if (!is.null(first)) {
+        cleaned[[id]] <- list(version = layout_version, first = first)
+      }
+    }
+    state$options$layouts <- cleaned
+  }
   invisible(TRUE)
 }
 
@@ -145,6 +233,7 @@ preferences_clear <- function(state, remove = FALSE,
   state$dialog_presets <- list()
   state$dialog_presets_version <- 1L
   state$options$plugins <- character()
+  layout_clear(state)
   if (isTRUE(remove) && !is.null(path) && nzchar(path) && file.exists(path)) {
     unlink(path)
   }

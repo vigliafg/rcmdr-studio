@@ -317,3 +317,76 @@
     }
     .rcmdr-help-aside,
     .rcmdr-help-content { min-width: 0; }
+
+    /* Split panes ----------------------------------------------------------
+       The three working views keep their own grid class for the breakpoints
+       and the tests; this rule replaces their fixed tracks with the share the
+       separator writes.  The divider owns the space between the panes, so the
+       grid gap is zero here.  The first track never shrinks under the
+       declared minimum; below the breakpoint the whole split becomes one
+       column and the divider leaves the layout. */
+    .rcmdr-splitter {
+      display: grid;
+      grid-template-columns:
+        minmax(var(--rcmdr-split-min, 0px),
+               calc(var(--rcmdr-split-first, 50%) - .3rem))
+        .6rem
+        minmax(0, 1fr);
+      grid-template-rows: auto;
+      gap: 0;
+      align-items: start;
+      min-width: 0;
+    }
+    .rcmdr-splitter-pane { min-width: 0; }
+    .rcmdr-splitter-divider {
+      align-self: stretch;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 3rem; padding: 0;
+      border: 0; border-radius: var(--rcmdr-radius-sm);
+      background: transparent; color: var(--rcmdr-border-strong);
+      cursor: col-resize; touch-action: none;
+    }
+    .rcmdr-splitter-divider:hover { background: var(--rcmdr-hover); }
+    .rcmdr-splitter-grip {
+      display: block; width: 2px; height: 2.25rem;
+      background: currentColor; border-radius: 999px;
+      box-shadow: -4px 0 0 currentColor, 4px 0 0 currentColor;
+    }
+    .rcmdr-splitter-divider:hover .rcmdr-splitter-grip { color: var(--rcmdr-accent); }
+    /* A vertical split stacks the panes and turns the grip sideways. */
+    .rcmdr-splitter-vertical {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows:
+        minmax(var(--rcmdr-split-min, 0px),
+               calc(var(--rcmdr-split-first, 50%) - .3rem))
+        .6rem
+        minmax(0, 1fr);
+    }
+    .rcmdr-splitter-vertical > .rcmdr-splitter-divider { cursor: row-resize; }
+    .rcmdr-splitter-vertical .rcmdr-splitter-grip {
+      width: 2.25rem; height: 2px;
+      box-shadow: 0 -4px 0 currentColor, 0 4px 0 currentColor;
+    }
+    body.rcmdr-splitter-dragging,
+    body.rcmdr-splitter-dragging * { user-select: none !important; }
+
+    @media (max-width: 1199.98px) {
+      .rcmdr-chart-layout.rcmdr-splitter,
+      .rcmdr-report-workspace.rcmdr-splitter,
+      .rcmdr-report-editor-split.rcmdr-splitter {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+      }
+      .rcmdr-chart-layout.rcmdr-splitter > .rcmdr-splitter-divider,
+      .rcmdr-report-workspace.rcmdr-splitter > .rcmdr-splitter-divider,
+      .rcmdr-report-editor-split.rcmdr-splitter > .rcmdr-splitter-divider {
+        display: none;
+      }
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-splitter {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+      }
+      .rcmdr-splitter > .rcmdr-splitter-divider { display: none; }
+    }

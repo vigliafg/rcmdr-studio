@@ -289,3 +289,176 @@
       bodyObserver.observe(document.body, {childList: true});
       rcmdrWatchNotifications();
     });
+
+    // Split panes ----------------------------------------------------------
+    // The separator is a real focus target: the arrows move it, Home/End go to
+    // the edges, Enter/Space (and a double click) restore the default.  A
+    // pointer drag writes the same share.  The server persists the value only
+    // on release, so a drag does not flood the websocket.
+    function splitIsHorizontal(divider) {
+      var container = divider.closest('.rcmdr-splitter');
+      if (!container) return true;
+      return container.getAttribute('data-rcmdr-split-orientation') !== 'vertical';
+    }
+    function splitSize(divider) {
+      var container = divider.closest('.rcmdr-splitter');
+      if (!container) return 0;
+      var rect = container.getBoundingClientRect();
+      return splitIsHorizontal(divider) ? rect.width : rect.height;
+    }
+    function splitBounds(divider) {
+      var size = splitSize(divider);
+      if (!size) return null;
+      var dividerSize = splitIsHorizontal(divider)
+        ? divider.getBoundingClientRect().width
+        : divider.getBoundingClientRect().height;
+      var minFirst = parseFloat(divider.getAttribute('data-rcmdr-split-min')) || 0;
+      var minSecond = parseFloat(divider.getAttribute('data-rcmdr-split-min-second')) || 0;
+      var low = (minFirst / size) * 100;
+      var high = 100 - ((minSecond + dividerSize) / size) * 100;
+      if (!isFinite(low)) low = 5;
+      if (!isFinite(high) || high <= low) {
+        low = 5; high = 95;
+      }
+      return {low: low, high: high};
+    }
+    function splitSet(divider, percent, notify) {
+      var container = divider.closest('.rcmdr-splitter');
+      if (!container) return;
+      var bounds = splitBounds(divider);
+      var value = Number(percent);
+      if (!isFinite(value)) return;
+      if (bounds) value = Math.min(bounds.high, Math.max(bounds.low, value));
+      value = Math.min(95, Math.max(5, value));
+      container.style.setProperty('--rcmdr-split-first', value.toFixed(2) + '%');
+      divider.setAttribute('aria-valuenow', String(Math.round(value)));
+      divider.setAttribute('aria-valuetext', Math.round(value) + '%');
+      if (bounds) {
+        divider.setAttribute('aria-valuemin', String(Math.round(bounds.low)));
+        divider.setAttribute('aria-valuemax', String(Math.round(bounds.high)));
+      }
+      if (notify) {
+        var input = divider.getAttribute('data-rcmdr-split-input');
+        if (input && window.Shiny && window.Shiny.setInputValue) {
+          window.Shiny.setInputValue(input, value / 100, {priority: 'event'});
+        }
+      }
+    }
+    function splitReset(divider, notify) {
+      var fallback = parseFloat(divider.getAttribute('data-rcmdr-split-default'));
+      splitSet(divider, isFinite(fallback) ? fallback : 50, notify);
+    }
+    function splitInit(divider) {
+      var bounds = splitBounds(divider);
+      if (bounds) {
+        divider.setAttribute('aria-valuemin', String(Math.round(bounds.low)));
+        divider.setAttribute('aria-valuemax', String(Math.round(bounds.high)));
+      }
+    }
+    function splitDividers(root) {
+      return (root || document).querySelectorAll('.rcmdr-splitter-divider');
+    }
+    function splitInitAll() {
+      Array.prototype.forEach.call(splitDividers(), splitInit);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', splitInitAll);
+    } else {
+      splitInitAll();
+    }
+    document.addEventListener('shiny:connected', splitInitAll);
+    window.addEventListener('resize', splitInitAll);
+
+    var splitDrag = null;
+    document.addEventListener('pointerdown', function(event) {
+      if (event.button !== 0) return;
+      var divider = event.target.closest &&
+        event.target.closest('.rcmdr-splitter-divider');
+      if (!divider) return;
+      splitDrag = {
+        divider: divider,
+        pointerId: event.pointerId,
+        moved: false,
+        last: null
+      };
+      try { divider.setPointerCapture(event.pointerId); } catch (e) {}
+      document.body.classList.add('rcmdr-splitter-dragging');
+      event.preventDefault();
+    });
+    document.addEventListener('pointermove', function(event) {
+      if (!splitDrag || event.pointerId !== splitDrag.pointerId) return;
+      var divider = splitDrag.divider;
+      var container = divider.closest('.rcmdr-splitter');
+      if (!container) return;
+      var rect = container.getBoundingClientRect();
+      var horizontal = splitIsHorizontal(divider);
+      var pos = horizontal ? event.clientX - rect.left : event.clientY - rect.top;
+      var size = horizontal ? rect.width : rect.height;
+      var dividerSize = horizontal
+        ? divider.getBoundingClientRect().width
+        : divider.getBoundingClientRect().height;
+      if (size <= 0) return;
+      var percent = ((pos - dividerSize / 2) / size) * 100;
+      if (splitDrag.last !== null && Math.abs(percent - splitDrag.last) < 0.1) return;
+      splitDrag.last = percent;
+      splitDrag.moved = true;
+      splitSet(divider, percent, false);
+      event.preventDefault();
+    });
+    function splitEnd(event) {
+      if (!splitDrag) return;
+      if (event && event.pointerId !== splitDrag.pointerId) return;
+      var divider = splitDrag.divider;
+      var moved = splitDrag.moved;
+      try { divider.releasePointerCapture(splitDrag.pointerId); } catch (e) {}
+      splitDrag = null;
+      document.body.classList.remove('rcmdr-splitter-dragging');
+      if (moved) {
+        splitSet(divider, parseFloat(divider.getAttribute('aria-valuenow')), true);
+      }
+    }
+    document.addEventListener('pointerup', splitEnd);
+    document.addEventListener('pointercancel', splitEnd);
+
+    var splitKeyPending = null;
+    document.addEventListener('keydown', function(event) {
+      var divider = event.target.closest &&
+        event.target.closest('.rcmdr-splitter-divider');
+      if (!divider) return;
+      var horizontal = splitIsHorizontal(divider);
+      var current = parseFloat(divider.getAttribute('aria-valuenow'));
+      if (!isFinite(current)) current = 50;
+      var step = event.shiftKey ? 8 : 2;
+      var next = null;
+      if (horizontal && event.key === 'ArrowLeft') next = current - step;
+      else if (horizontal && event.key === 'ArrowRight') next = current + step;
+      else if (!horizontal && event.key === 'ArrowUp') next = current - step;
+      else if (!horizontal && event.key === 'ArrowDown') next = current + step;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = 100;
+      else if (event.key === 'Enter' || event.key === ' ' ||
+               event.key === 'Spacebar') next = 'reset';
+      if (next === null) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (next === 'reset') splitReset(divider, false);
+      else splitSet(divider, next, false);
+      splitKeyPending = divider;
+    }, true);
+    // The visual move is immediate; only the key release reaches the server,
+    // so a held arrow key does not rewrite the preferences file on repeat.
+    document.addEventListener('keyup', function(event) {
+      if (!splitKeyPending) return;
+      var divider = splitKeyPending;
+      splitKeyPending = null;
+      var current = parseFloat(divider.getAttribute('aria-valuenow'));
+      splitSet(divider, isFinite(current) ? current : 50, true);
+    }, true);
+
+    document.addEventListener('dblclick', function(event) {
+      var divider = event.target.closest &&
+        event.target.closest('.rcmdr-splitter-divider');
+      if (!divider) return;
+      event.preventDefault();
+      splitReset(divider, true);
+    });

@@ -1047,8 +1047,8 @@ data_studio_ui <- function() {
       right = uiOutput("data_info", inline = TRUE),
       label = tr("Data Studio")
     ),
-    htmltools::div(
-      class = "rcmdr-data-layout",
+    split_pane(
+      "data_layout",
       htmltools::div(uiOutput("data_grid")),
       htmltools::div(
         uiOutput("data_inspector"),
@@ -1102,7 +1102,11 @@ data_studio_ui <- function() {
                          class = "btn-sm btn-outline-primary")
           )
         )
-      )
+      ),
+      class = "rcmdr-data-layout",
+      initial = 2 / 3,
+      min = 320,
+      min_second = 300
     ),
     uiOutput("data_missingness"),
     uiOutput("data_selection_bar")

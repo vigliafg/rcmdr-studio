@@ -614,6 +614,11 @@ app_server <- function(env = globalenv()) {
       try(preferences_save(state), silent = TRUE)
       invisible(NULL)
     }
+    # Split sizes are preferences: the divider sends a ratio on release and the
+    # server stores it without making the project dirty.
+    for (split_id in split_pane_ids()) {
+      split_pane_server(split_id, input, state, persist_preferences)
+    }
     document_registry_ensure(state)
     tick <- reactiveVal(0L)
     menu_revision <- reactiveVal(0L)

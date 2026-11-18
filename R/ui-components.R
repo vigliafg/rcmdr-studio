@@ -198,6 +198,114 @@ split_view <- function(left, right, proportions = c(2, 3)) {
   )
 }
 
+#' Two panes with a keyboard-accessible separator
+#'
+#' The desktop counterpart of [split_view()]: the user can move the divider
+#' with the pointer or with the arrow keys, and the size is written to the
+#' session preferences.  `orientation = "horizontal"` places the panes side by
+#' side and draws a vertical separator; `"vertical"` stacks them.
+#'
+#' The separator follows the WAI-ARIA window splitter pattern: `role` is
+#' `separator`, the arrows move it, `Home` and `End` go to the minimum and the
+#' maximum, and `Enter`, `Space` or a double click restore the initial size.
+#' At the layout breakpoints the panes collapse to one column and the separator
+#' leaves the tab order, so a 200% zoom has nothing to drag.
+#'
+#' @param id Stable id, also the key of the saved size.
+#' @param first,second Pane content.
+#' @param orientation `"horizontal"` (side by side) or `"vertical"`.
+#' @param initial Initial share of the first pane, 0–1.
+#' @param min Minimum width (or height) of the first pane, in pixels.
+#' @param min_second Minimum size of the second pane, in pixels; used by the
+#'   client when it clamps a drag.
+#' @param class Extra classes for the grid container.
+#' @param label Accessible name of the separator.
+#' @return A `<div>` tag.
+#' @keywords internal
+split_pane <- function(id, first, second,
+                       orientation = c("horizontal", "vertical"),
+                       initial = 0.5, min = 260, min_second = 260,
+                       class = NULL, label = tr("Resize panels")) {
+  orientation <- match.arg(orientation)
+  ratio <- layout_initial(id, initial)
+  pct <- round(ratio * 100, 2)
+  aria_orientation <- if (identical(orientation, "horizontal")) {
+    "vertical"
+  } else {
+    "horizontal"
+  }
+  first_id <- paste0("rcmdr-split-first-", id)
+  second_id <- paste0("rcmdr-split-second-", id)
+  htmltools::div(
+    id = paste0(id, "_split"),
+    class = c("rcmdr-splitter", paste0("rcmdr-splitter-", orientation), class),
+    style = sprintf(
+      "--rcmdr-split-first: %.2f%%; --rcmdr-split-min: %dpx;",
+      pct, as.integer(min)
+    ),
+    `data-rcmdr-split` = id,
+    `data-rcmdr-split-orientation` = orientation,
+    htmltools::div(
+      id = first_id, class = "rcmdr-splitter-pane rcmdr-splitter-first", first
+    ),
+    htmltools::div(
+      class = "rcmdr-splitter-divider",
+      role = "separator",
+      tabindex = "0",
+      `aria-orientation` = aria_orientation,
+      `aria-label` = label,
+      `aria-controls` = paste(first_id, second_id),
+      `aria-valuemin` = "10",
+      `aria-valuemax` = "90",
+      `aria-valuenow` = sprintf("%.0f", pct),
+      `aria-valuetext` = sprintf("%.0f%%", pct),
+      `data-rcmdr-split-input` = paste0(id, "_size"),
+      `data-rcmdr-split-default` = sprintf("%.2f", round(initial * 100, 2)),
+      `data-rcmdr-split-min` = as.character(as.integer(min)),
+      `data-rcmdr-split-min-second` = as.character(as.integer(min_second)),
+      htmltools::tags$span(class = "rcmdr-splitter-grip", `aria-hidden` = "true")
+    ),
+    htmltools::div(
+      id = second_id, class = "rcmdr-splitter-pane rcmdr-splitter-second", second
+    )
+  )
+}
+
+#' Wire a split pane to the session preferences
+#'
+#' The client sends the new share on pointer release and on every arrow key;
+#' the server validates it, stores it under `state$options$layouts` and asks
+#' the app to persist.  Sizes are preferences, not project state: they do not
+#' make a project dirty.
+#'
+#' @param id Split pane id used in [split_pane()].
+#' @param input Shiny input.
+#' @param state Application state.
+#' @param persist Optional callback that writes the preferences file.
+#' @return Invisibly, `NULL`.
+#' @keywords internal
+split_pane_server <- function(id, input, state, persist = NULL) {
+  key <- paste0(id, "_size")
+  shiny::observeEvent(input[[key]], {
+    value <- layout_ratio(input[[key]])
+    if (is.null(value)) return()
+    layout_set(state, id, value)
+    if (is.function(persist)) persist()
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  invisible(NULL)
+}
+
+#' Every split pane the application wires up
+#' @keywords internal
+split_pane_ids <- function() {
+  c(
+    "data_layout",
+    "chart_layout",
+    "report_outline_layout",
+    "report_editor_layout"
+  )
+}
+
 #' A studio toolbar
 #'
 #' A single row of filters and actions.  `left` and `right` are the two ends of

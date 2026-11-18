@@ -235,3 +235,44 @@ test_that("busy states are announced and notifications are capped", {
   expect_match(css, ".shiny-notification {", fixed = TRUE)
   expect_match(css, ".shiny-notification-error {", fixed = TRUE)
 })
+
+test_that("the split separator is a keyboard window splitter", {
+  js <- as.character(app_js())
+  expect_match(js, "rcmdr-splitter-divider", fixed = TRUE)
+  expect_match(js, "event.key === 'ArrowLeft'", fixed = TRUE)
+  expect_match(js, "event.key === 'ArrowRight'", fixed = TRUE)
+  expect_match(js, "event.key === 'Home'", fixed = TRUE)
+  expect_match(js, "event.key === 'End'", fixed = TRUE)
+  expect_match(js, "splitReset(divider, true)", fixed = TRUE)
+  expect_match(js, "event.shiftKey ? 8 : 2", fixed = TRUE)
+  expect_match(js, "setPointerCapture", fixed = TRUE)
+  expect_match(js, "aria-valuetext", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".rcmdr-splitter {", fixed = TRUE)
+  expect_match(css, ".rcmdr-splitter-divider {", fixed = TRUE)
+  expect_match(css, "cursor: col-resize", fixed = TRUE)
+  expect_match(css, "cursor: row-resize", fixed = TRUE)
+  # At the narrow breakpoints the divider leaves the layout, so 200% zoom has
+  # nothing to drag and the panes stack.
+  expect_match(css, ".rcmdr-splitter > .rcmdr-splitter-divider { display: none; }",
+               fixed = TRUE)
+})
+
+test_that("every working view exposes its split pane", {
+  html <- htmltools::renderTags(chart_builder_ui())$html
+  expect_match(html, 'data-rcmdr-split="chart_layout"', fixed = TRUE)
+  html <- as.character(data_studio_ui())
+  expect_match(html, 'data-rcmdr-split="data_layout"', fixed = TRUE)
+  html <- as.character(report_studio_ui())
+  expect_match(html, 'data-rcmdr-split="report_outline_layout"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-split="report_editor_layout"', fixed = TRUE)
+  expect_equal(
+    split_pane_ids(),
+    c("data_layout", "chart_layout", "report_outline_layout",
+      "report_editor_layout")
+  )
+  app <- readLines(test_path("..", "..", "R", "app.R"))
+  expect_true(any(grepl("split_pane_server(split_id, input, state, persist_preferences)",
+                        app, fixed = TRUE)))
+})

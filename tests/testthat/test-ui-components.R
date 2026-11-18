@@ -345,3 +345,39 @@ test_that("help_tip() is a focusable trigger with a named bubble", {
   expect_match(html, 'aria-hidden="true"', fixed = TRUE)
   expect_match(html, "rcmdr-help-tip", fixed = TRUE)
 })
+
+test_that("split_pane() builds a labelled window splitter", {
+  html <- as.character(split_pane(
+    "unit_split", htmltools::div("left"), htmltools::div("right"),
+    initial = 0.4, min = 240, min_second = 200
+  ))
+  expect_match(html, 'class="rcmdr-splitter rcmdr-splitter-horizontal"',
+               fixed = TRUE)
+  expect_match(html, 'role="separator"', fixed = TRUE)
+  expect_match(html, 'tabindex="0"', fixed = TRUE)
+  # Side-by-side panes have a vertical separator, as ARIA defines it.
+  expect_match(html, 'aria-orientation="vertical"', fixed = TRUE)
+  expect_match(html, 'aria-valuemin="10"', fixed = TRUE)
+  expect_match(html, 'aria-valuemax="90"', fixed = TRUE)
+  expect_match(html, 'aria-valuenow=', fixed = TRUE)
+  expect_match(html, 'aria-valuetext=', fixed = TRUE)
+  expect_match(html, 'aria-controls="rcmdr-split-first-unit_split rcmdr-split-second-unit_split"',
+               fixed = TRUE)
+  expect_match(html, 'data-rcmdr-split-input="unit_split_size"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-split-default="40.00"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-split-min="240"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-split-min-second="200"', fixed = TRUE)
+  expect_match(html, "--rcmdr-split-min: 240px;", fixed = TRUE)
+  expect_match(html, "rcmdr-splitter-grip", fixed = TRUE)
+  expect_match(html, 'aria-hidden="true"', fixed = TRUE)
+})
+
+test_that("split_pane() stacks its panes when vertical", {
+  html <- as.character(split_pane(
+    "stacked", "top", "bottom", orientation = "vertical", initial = 0.3
+  ))
+  expect_match(html, "rcmdr-splitter-vertical", fixed = TRUE)
+  expect_match(html, 'aria-orientation="horizontal"', fixed = TRUE)
+  expect_match(html, "top", fixed = TRUE)
+  expect_match(html, "bottom", fixed = TRUE)
+})
