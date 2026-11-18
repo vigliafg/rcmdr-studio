@@ -500,6 +500,41 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 
 ---
 
+## Onda 17 — Completamento desktop
+
+Documento di settore: [`17-desktop-completion.md`](17-desktop-completion.md).
+Stato: pianificata — 12 step in 4 lotti da 3. Chiude i rinvii dell'Onda 16
+(§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| T1 | Tooltip e popover accessibili | [ ] | trigger focusabile, `Esc` |
+| T2 | Campi data e filtro date | [ ] | `airDatepickerInput`, Data Studio |
+| T3 | Notifiche, attesa e stato | [ ] | `showNotification` stilata, `aria-busy` |
+| T4 | Pannelli ridimensionabili | [ ] | separatore da tastiera, persistenza |
+| T5 | Menu contestuali | [ ] | tasto Menu, `Shift`+`F10` |
+| T6 | Drag-and-drop con alternativa da tastiera | [ ] | colonne, pin, file drop |
+| T7 | Tabelle di sola lettura (`reactable`?) | [ ] | gate, DT resta per i dati editabili |
+| T8 | Dialoghi dei plugin | [ ] | 15 plugin, contract |
+| T9 | Help centre e command palette | [ ] | listbox, ricerca, `aria-live` |
+| T10 | Rendering pigro delle viste pesanti | [ ] | misure prima/dopo |
+| T11 | e2e, screenshot, regressione visiva | [ ] | browser funzionante |
+| T12 | Chiusura | [ ] | NEWS, topic, diario, push |
+
+### Chiusura Onda 17
+
+- [ ] 12 step verdi, 4 handoff (T3, T6, T9, T12).
+- [ ] Tooltip, date, notifiche, split pane, menu e drag-and-drop da tastiera.
+- [ ] Tabelle: decisione su `reactable` misurata.
+- [ ] Plugin migrati per famiglia; contract verde.
+- [ ] Help e palette sui widget nuovi.
+- [ ] Rendering pigro senza dati stantii.
+- [ ] 8 temi × 2 densità, zoom 200%, reduced motion.
+- [ ] e2e e screenshot dove il browser funziona.
+- [ ] Documentazione e diario aggiornati.
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).

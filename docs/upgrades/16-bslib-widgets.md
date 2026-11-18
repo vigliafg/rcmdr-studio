@@ -663,18 +663,38 @@ pulito.
 
 ---
 
-## 8. Fuori onda
+## 8. Cosa resta fuori
 
-- `tooltip()`/`popover()`: rimandati; l'help testuale resta dove è.
-- `airDatepickerInput()`: nessun campo data oggi.
-- `reactable` o sostituzione di DT: progetto separato.
-- `bslib::card()`/`navset_*()`/`layout_columns()`: duplicano la shell.
-- Nuovi parametri statistici o di grafico (limiti assi, colori personalizzati):
-  cambierebbero i comandi, non solo la pelle.
-- Migrazione dei dialoghi dei plugin: useranno gli helper quando vorranno.
-- Lazy rendering dei pannelli: l'accordion non riduce il DOM; non si promette
-  un guadagno di prestazioni.
-- Risistemazione della shell, delle tab o dei menu: fatta nell'Onda 15.
+### 8.1 Rinviato all'Onda 17
+
+Il piano della prossima ondata è in
+[`17-desktop-completion.md`](17-desktop-completion.md). Ogni voce qui sotto ha
+la sua tappa.
+
+| Elemento | Perché non entra qui | Tappa |
+|---|---|---|
+| Tooltip e popover per i parametri | Richiedono stringhe i18n e un pattern accessibile che non sostituisca l'help testuale | T1 |
+| Campi data e intervalli di date | Oggi non c'è un campo data; serve prima un caso d'uso (filtro Data Studio su colonne `Date`) | T2 |
+| Notifiche, toast e indicatori di attesa | Il feedback esiste ma non è omogeneo; va progettato con la stessa specifica desktop | T3 |
+| Pannelli ridimensionabili | Chart builder/preview, griglia/inspector, outline/editor/preview: richiedono separatori da tastiera e persistenza | T4 |
+| Menu contestuali | Richiedono un pattern desktop (tasto Menu, Shift+F10, Esc, ritorno del focus) | T5 |
+| Drag-and-drop | Riordino colonne, pin della galleria, file drop: serve un'alternativa da tastiera | T6 |
+| Tabelle di sola lettura | `reactable` è una dipendenza nuova: si valuta solo per glossario, help, registro e confronto modelli; DT resta per i dati editabili | T7 |
+| Dialoghi dei plugin | 15 plugin: si migrano dopo che gli helper sono stabili | T8 |
+| Help centre e command palette | Possono usare il listbox e il picker nuovi, con ricerca e tastiera | T9 |
+| Rendering pigro delle viste pesanti | Gallery, Models, risultati Help e preview Report: si misura prima di promettere un guadagno | T10 |
+| e2e, screenshot e regressione visiva | Dipendono da un browser funzionante | T11 |
+| Chiusura e documentazione | — | T12 |
+
+### 8.2 Non previsto (nemmeno in Onda 17)
+
+| Elemento | Motivo |
+|---|---|
+| `bslib::card()`, `navset_*()`, `layout_columns()` | Duplicano `.rcmdr-section-card`, la shell e le griglie già esistenti |
+| `reactable` al posto di DT nei dati editabili | DT è integrato con selezione, filtri e test: sostituirlo è un progetto, non un restyle |
+| Nuovi parametri statistici o di grafico (limiti assi, colori personalizzati) | Cambierebbero i comandi, non solo la pelle: appartengono a un'ondata statistica |
+| Riscrittura di shell, tab o menu | Fatta nell'Onda 15; l'Onda 17 rifinisce solo le interazioni |
+| Framework UI alternativi | bslib resta il fornitore di Bootstrap 5 |
 
 ---
 
