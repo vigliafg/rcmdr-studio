@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 16 — bslib, shinyWidgets e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** lotti 1–3 completati (S1–S9); prossimo lotto S10–S12  
+**Stato:** lotti 1–4 completati (S1–S12); prossimo lotto S13–S15  
 **Ondata precedente:** `wave-15-ui-refresh.md` (Onda 15, 2.8.0)  
 **Documento di settore:** [`16-bslib-widgets.md`](../16-bslib-widgets.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
@@ -9,7 +9,7 @@
 
 ---
 
-## 1. Obiettivo dei primi tre lotti
+## 1. Obiettivo dei primi quattro lotti
 
 Il primo lotto ha preparato il terreno: specifica desktop, galleria di ogni
 famiglia di widget, bridge dei temi, campi e selettori binari, elenchi
@@ -19,7 +19,12 @@ sul Chart Builder. Il terzo porta il builder a sei pannelli, dà una gerarchia
 anche alle opzioni che cambiano con il tipo e sostituisce i controlli numerici
 e di colore con quelli desktop.
 
-Al termine del lotto 3:
+Il quarto lotto porta la stessa grammatica fuori dal Chart Builder: ogni
+selettore di variabile usa il controllo giusto per la lunghezza della lista,
+i dialoghi di importazione, distribuzione, modello e test si leggono per
+compiti, e un errore porta al campo che lo ha causato.
+
+Al termine del lotto 4:
 
 - `settings_accordion()`, `settings_panel()` e `settings_group()` sono il solo
   modo di costruire un accordion nell'app;
@@ -31,6 +36,10 @@ Al termine del lotto 3:
   quando si cambia tipo;
 - alpha, jitter, base size e notch width sono slider, lo sfondo è un color
   picker, e il comando di default non cambia;
+- i 106 `var_input()` usano listbox nativa, select nativa o picker secondo la
+  lunghezza, senza cambiare ID o selezione;
+- *Import*, *Frequency*, i modelli e i test principali sono a pannelli, e la
+  validazione inline arriva anche a loro;
 - la suite completa è verde.
 
 ---
@@ -193,7 +202,58 @@ Diario, README e verifica del primo lotto.
 
 ---
 
-## 5. Scelte e deviazioni
+## 5. Lotto 4 — listbox e dialoghi densi (S10–S12)
+
+### S10 — Selettori di variabile omogenei · `e7ef2eb`
+
+- `var_input()` sceglie il controllo dalla lunghezza: listbox nativa per una
+  lista multipla fino a 12 voci, `<select>` nativa per una scelta singola
+  corta, picker ricercabile oltre le 12. La soglia è una sola, in
+  `var_input_picker_threshold()`.
+- I 106 punti di chiamata non cambiano: ID, valori, `selected`, `multiple`,
+  `descriptions` e la larghezza restano gli stessi. Il server continua a
+  leggere un vettore per il multiplo e una stringa per il singolo.
+- La scelta singola conserva una prima voce con valore vuoto, etichettata
+  “nessuna variabile”: resta un valore che `on_ok()` può rifiutare, come
+  faceva il vecchio selectize, e un lettore di schermo la annuncia.
+  L'etichetta è arrivata in `71d23a3`, un fix separato perché S10 era già
+  committato; lo stesso fix normalizza a `""` una scelta singola vuota nel
+  picker, che prima finiva in un array vuoto.
+- Il `<select>` nativo riceve `form-select` sul tag. Shiny emette
+  `form-control`, quindi la regola della listbox non lo raggiungeva: ora
+  Bootstrap e i nostri token vestono sia il menu sia la lista.
+
+### S11 — Import e distribuzioni · `ab0bb90`
+
+- *Read Text Data* è quattro pannelli: *Source* (nome, posizione, path/URL),
+  *Parsing* (header, separatore e “other”, decimale, missing), *Variables*
+  (`stringsAsFactors`), *Options* (la nota sul comando). I `conditionalPanel`
+  restano nel pannello che possiede il controllo da cui dipendono.
+- *Frequency Distributions* è due pannelli: *Variables* e *Tests*. Il piano
+  nominava anche *Output*, ma il dialogo non ha un parametro di output:
+  aggiungerne uno avrebbe significato una nuova statistica. Un pannello vuoto
+  sarebbe stato peggio di nessun pannello.
+- Nessun ID, default o lettura di `on_ok()` cambia.
+
+### S12 — Modelli e test · `b09c2a7`
+
+- I modelli hanno *Model* (nome e formula), *Data* (subset, pesi, righe da
+  rimuovere) e *Options* (famiglia e link, metodo, REML). Un tipo senza
+  parametri extra, come il logit multinomiale, ha due pannelli: quello
+  *Options* non viene reso vuoto.
+- *Linear Regression* ha *Model* e *Data*. I t-test, i test sulle proporzioni
+  e l'ANOVA a una via usano *Variables*, *Hypothesis* e, quando serve,
+  *Options*. Gli ID, i default e le decisioni di `on_ok()` restano quelli.
+- `dialog_reject()` conserva il vecchio `error` e aggiunge `field_errors`:
+  il runtime segna il campo, apre i pannelli chiusi e porta il focus sul
+  primo campo invalido invece di mostrare solo una notifica.
+- Un test verifica, per ogni dialogo migrato, i valori dei pannelli, gli ID
+  una volta sola, l'appartenenza dei campi e il campo restituito da un input
+  invalido.
+
+---
+
+## 6. Scelte e deviazioni
 
 | Punto | Piano | Fatto | Motivo |
 |---|---|---|---|
@@ -209,14 +269,23 @@ Diario, README e verifica del primo lotto.
 | Jitter | nessun massimo | slider 0–0,5 | un handle ha bisogno di un limite; 0,5 copre l'uso reale |
 | Aggiornamento dello slider | `updateNumericInput()` | messaggio `rcmdr-set-slider` | shinyWidgets cambia il range ma non il valore dell'handle |
 | Sfondo bianco | `white` | `white` = `#ffffff` = `#fff` | il picker riporta sempre hex: senza normalizzazione il comando di default cambierebbe |
+| Soglia del selettore | non definita | 12 voci | dodici righe si leggono senza scorrere; oltre, cercare è più rapido che scansionare |
+| Voce vuota nella scelta singola | nessuna | prima opzione vuota, etichettata | una `<select>` nativa seleziona sempre la prima voce: senza quella voce “nessuna variabile” non sarebbe più un errore |
+| Classe della select nativa | solo CSS | `form-select` sul tag | Shiny emette `form-control`: senza la classe la regola della listbox non si applicava |
+| *Output* in *Frequency* | terzo pannello | due pannelli | il dialogo non ha un parametro di output; un pannello vuoto non aggiunge informazione |
+| `settings_group()` nei dialoghi | previsto | non usato | i pannelli sono già la gerarchia; nessun dialogo migrato aveva un sottogruppo che meritasse un titolo in più |
+| Errori nei dialoghi migrati | solo `error` | `dialog_reject()` con `field_errors` | il messaggio storico resta per i test, ma il runtime deve poter aprire il pannello e focalizzare il campo |
+| Altri test | tutti i test | correlazione, varianze, Wilcoxon e sigma restano piatti | hanno 3–4 parametri: un pannello per campo sarebbe rumore, non gerarchia |
+| Modelli extra | tutti i modelli | stepwise, subset, bootstrap e diagnostica restano piatti | hanno 3–5 parametri: non c'è un secondo compito da separare |
 
 Nessuna modifica a ID, valori, comandi R, `dialog_spec()` o stringhe esistenti.
-Le uniche stringhe nuove sono i valori stabili dei pannelli, che non sono
-tradotti e non compaiono nell'interfaccia.
+I titoli nuovi dei pannelli passano da `tr()` e, finché il catalogo non li
+contiene, ricadono sull'inglese come già *Style*, *Axes* e *Text*; i valori
+stabili restano inglesi e non compaiono nell'interfaccia.
 
 ---
 
-## 6. File toccati nei lotti 2 e 3
+## 7. File toccati nei lotti 2–4
 
 ### Creati
 
@@ -233,9 +302,13 @@ tradotti e non compaiono nell'interfaccia.
   `chart_option_controls()`, notch width su slider.
 - `R/chart-spec.R`, `R/chart-ggplot.R`: `chart_background_is_white()`.
 - `R/widgets.R`: `slider_input()` su noUiSlider, `color_input()` su spectrum,
-  `update_number_input()` e il messaggio dello slider.
+  `update_number_input()`, il messaggio dello slider, la soglia di
+  `var_input()` e `native_select_input()`.
 - `NAMESPACE`: `export(color_input)`.
 - `R/app.R`: messaggio `rcmdr-open-accordions` prima degli errori di campo.
+- `R/dialogs-import-text.R`, `R/dialogs-stats.R`, `R/dialogs-models.R`:
+  pannelli di import, distribuzione, modelli e test.
+- `R/dialog-validation.R`: `dialog_reject()`.
 - `inst/www/js/40-interactions.js`: `rcmdrShowAccordions`, focus dopo la
   transizione, handler `rcmdr-set-slider`.
 - `inst/www/css/20-components.css`: ritmo dell'accordion, dei gruppi e
@@ -246,34 +319,39 @@ tradotti e non compaiono nell'interfaccia.
 - `inst/www/css/60-views.css`: margine dell'accordion nella colonna builder.
 - `docs/upgrades/UI-TOKENS.md`: § 12.4, contratto dell'accordion e dei
   controlli desktop.
-- `docs/upgrades/CHECKLIST.md`: S4–S9 chiusi.
+- `docs/upgrades/CHECKLIST.md`: S4–S12 chiusi.
 - `tests/testthat/test-ui-components.R`, `test-accessibility.R`,
   `test-dialog-validation.R`, `test-phase1.R`, `test-chart-studio.R`,
-  `test-chart-types.R`, `test-chart-theme.R`, `test-widget-library.R`.
+  `test-chart-types.R`, `test-chart-theme.R`, `test-widget-library.R`,
+  `test-widgets.R`, `test-enhanced-selectors.R`, `test-data-studio-dialogs.R`,
+  `test-dialogs-stat.R`, `test-dialogs-models.R`.
 - `tools/widget_gallery.R`: accordion, slider e colore usano i componenti
   reali.
 
 ---
 
-## 7. Verifica
+## 8. Verifica
 
 | Controllo | Esito |
 |---|---|
-| Suite completa del lotto 3 | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
+| Suite completa del lotto 4 | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
 | Test mirati S7 | Chart Studio, tipi, accessibilità |
 | Test mirati S8 | copertura dei gruppi per ogni tipo, ID piatti = ID raggruppati, stato dei pannelli, livello 4 |
 | Test mirati S9 | markup e decimali, handler JS, instradamento degli ID, picker, reset, bianco equivalente |
+| Test mirati S10 | soglia 12, listbox nativa, voce vuota, `form-select`, contract dei dialoghi |
+| Test mirati S11 | pannelli di Import e Frequency, conditional nel pannello giusto, ID una volta |
+| Test mirati S12 | pannelli dei modelli e dei test, ID una volta, `field_errors` sul campo |
 | Galleria in check mode | `gallery ok` |
 | Comando di riferimento del Chart Builder | invariato, anche con sfondo `#ffffff` |
 | Tutti gli ID di *Options* e del builder | presenti una volta |
 | JS | `node --check` verde |
 | Colori nei file nuovi | nessun letterale |
 
-Log: `/tmp/opencode/tests-w16-batch3.log`.
+Log: `/tmp/opencode/tests-w16-batch4.log`.
 
 ---
 
-## 8. Problemi noti e blocchi
+## 9. Problemi noti e blocchi
 
 | Problema | Impatto | Workaround | Task |
 |---|---|---|---|
@@ -283,42 +361,46 @@ Log: `/tmp/opencode/tests-w16-batch3.log`.
 | Slider, color picker e stato dei pannelli non sono stati visti in un browser | forma, tooltip e transizioni non confermati | galleria pronta; handler coperti dai test | QA |
 | Jitter ha ora un limite 0–0,5 | un valore maggiore non è più digitabile | nessuno nell'uso reale | S9 |
 | 26 e2e ancora saltati | copertura browser non esercitata | `RCMDRSHINY_E2E=1` | QA |
+| I pannelli dei dialoghi non sono stati visti in un browser | apertura, focus e altezza non confermati | test strutturali e JS coperti | QA |
+| La soglia di 12 voci è una scelta di progetto | un dataset con 13 variabili passa al picker | la soglia è una funzione sola, cambiarla è un punto | QA |
 
 Nessun blocco di codice: il lotto è chiuso.
 
 ---
 
-## 9. Prossimo passo
+## 10. Prossimo passo
 
-**Lotto 4 — listbox nei dialoghi e dialoghi densi (S10–S12):**
+**Lotto 5 — accessibilità, rifinitura desktop e chiusura (S13–S15):**
 
-1. **S10** — `var_input()` sul listbox nativo dove la lista è corta e sul
-   picker dove è lunga; stessi ID e stessa selezione.
-2. **S11** — accordion nei dialoghi con più di 8–10 parametri (*Import*,
-   *Frequency*, modelli, test), con `settings_group()` per i sottogruppi.
-3. **S12** — validazione inline estesa ai dialoghi migrati, apertura dei
-   pannelli e focus sul primo campo invalido.
+1. **S13** — accessibilità ed errori: ARIA dei pannelli, tastiera, focus
+   visibile, contrasto, reduced motion, zoom 200%.
+2. **S14** — rifinitura desktop e QA visiva: DT, Ace, fogli, menu, galleria
+   nelle 8 palette × 2 densità.
+3. **S15** — NEWS, topic, token, diario, QA finale e push.
 
-Gate del lotto: nessun dialogo perde un ID o un valore; la suite resta verde;
-la galleria copre le famiglie usate.
+Gate del lotto: `EXIT=0`, nessun controllo con l'aspetto del browser,
+working tree pulito e commit pushati.
 
 ---
 
-## 10. Domande aperte
+## 11. Domande aperte
 
 - [ ] Conferma visiva del dropdown virtual select (posizione, ombra, chip) su
       Chrome e Firefox reali.
 - [ ] Il titolo “Chart and data” vale una chiave i18n dedicata, o `tr("Chart")`
       basta anche nella versione italiana?
-- [ ] La `<select multiple>` nativa è sufficiente per i 106 `var_input()`, o
-      serve il picker anche nei dialoghi? La decisione è in S10.
+- [x] La `<select multiple>` nativa è sufficiente per i 106 `var_input()`:
+      sì sotto le 12 voci, picker sopra.
+- [ ] La soglia di 12 voci è quella giusta per i dataset reali?
+- [ ] I titoli *Source*, *Parsing*, *Variables*, *Tests*, *Model* e
+      *Hypothesis* vanno tradotti nel catalogo, o bastano come sono?
 - [ ] Il peso di Font Awesome è accettabile? Oggi sì, perché è locale.
 - [ ] `--rcmdr-shadow-sm` è abbastanza distinto dall'ombra grande nei temi
       scuri?
 
 ---
 
-## 11. Checklist di handoff
+## 12. Checklist di handoff
 
 - [x] S1–S3 committati e handoff `b3355d2`.
 - [x] S4 committato (`43634a9`).
@@ -327,18 +409,26 @@ la galleria copre le famiglie usate.
 - [x] S7 committato (`62f3fd8`).
 - [x] S8 committato (`e9f0391`).
 - [x] S9 committato (`55e4124`).
+- [x] S10 committato (`e7ef2eb`, voce vuota nominata in `71d23a3`).
+- [x] S11 committato (`ab0bb90`).
+- [x] S12 committato (`b09c2a7`).
 - [x] Suite completa verde: `EXIT=0`.
 - [x] Galleria in check mode verde.
-- [x] `UI-TOKENS.md` con il contratto dell'accordion e dei controlli desktop.
-- [x] `CHECKLIST.md` aggiornata (S1–S9).
+- [x] `UI-TOKENS.md` con il contratto dell'accordion, dei controlli desktop e
+      della soglia dei selettori.
+- [x] `CHECKLIST.md` aggiornata (S1–S12).
 - [x] Diario aggiornato.
 - [x] Nessun ID, valore o comando cambiato.
-- [x] Utente informato: “lotto 3 pronto, puoi compattare il contesto”.
+- [x] Utente informato: “lotto 4 pronto, puoi compattare il contesto”.
 
 ---
 
-## 12. Artefatti
+## 13. Artefatti
 
+- `/tmp/opencode/tests-w16-batch4.log` — suite del lotto 4.
+- `/tmp/opencode/t-s10a.log`, `t-s10b.log` — test mirati S10.
+- `/tmp/opencode/t-s11a.log`, `t-s11b.log` — test mirati S11.
+- `/tmp/opencode/t-s12a.log`, `t-s12b.log`, `t-s12c.log` — test mirati S12.
 - `/tmp/opencode/tests-w16-batch3.log` — suite del lotto 3.
 - `/tmp/opencode/tests-w16-batch2b.log` — suite del lotto 2 dopo il fix del flush.
 - `/tmp/opencode/tests-w16-batch2.log` — prima suite del lotto 2.

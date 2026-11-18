@@ -148,10 +148,11 @@ var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
     ))
   }
 
-  # A native single select always shows a first option.  The blank row keeps
+  # A native single select always shows a first option.  The empty row keeps
   # the old selectize behaviour where nothing was selected until the user
-  # picked, so required-field validation still has something to catch.
-  labels <- c(stats::setNames("", ""), labels)
+  # picked, so required-field validation still has something to catch; naming
+  # it keeps the option audible instead of leaving a blank line.
+  labels <- c(stats::setNames("", tr("<no variable selected>")), labels)
   native_select_input(
     id, label, labels,
     selected = if (length(selected) == 0L) "" else selected[[1L]],
@@ -283,7 +284,9 @@ picker_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
       htmltools::tags$div(class = "text-muted", tr("No variables available"))
     ))
   }
-  if (is.null(selected)) selected <- if (isTRUE(multiple)) character() else ""
+  if (length(selected) == 0L) {
+    selected <- if (isTRUE(multiple)) character() else ""
+  }
   selected <- as.character(selected)
   shinyWidgets::virtualSelectInput(
     id, label,

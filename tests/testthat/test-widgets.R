@@ -234,7 +234,8 @@ test_that("a single variable selector keeps an empty choice", {
                fixed = TRUE)
   expect_false(grepl('multiple="multiple"', html, fixed = TRUE))
   # Nothing selected stays a value the dialog can reject.
-  expect_match(html, '<option value="" selected></option>', fixed = TRUE)
+  expect_match(html, '<option value="" selected>&lt;no variable selected&gt;</option>',
+               fixed = TRUE)
   expect_match(html, '<option value="y">y \u2014 numeric</option>', fixed = TRUE)
   expect_match(html, '<option value="x">x \u2014 numeric</option>', fixed = TRUE)
 
@@ -247,6 +248,10 @@ test_that("a single variable selector keeps an empty choice", {
                                    selected = "b"))
   expect_match(picker, 'class="virtual-select"', fixed = TRUE)
   expect_match(picker, '"multiple":false', fixed = TRUE)
+  # An empty single choice is still no choice, not an empty array.
+  empty <- as.character(var_input("v", "Variable", letters[1:13],
+                                  selected = ""))
+  expect_match(empty, '"selectedValue":""', fixed = TRUE)
 })
 
 test_that("the native select is the class the listbox CSS expects", {
