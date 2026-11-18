@@ -504,14 +504,14 @@ Stato: completata (S1–S15); conferma visiva ed e2e rimandate a un ambiente con
 ## Onda 17 — Completamento desktop
 
 Documento di settore: [`17-desktop-completion.md`](17-desktop-completion.md).
-Stato: pianificata — 12 step in 4 lotti da 3. Chiude i rinvii dell'Onda 16
-(§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
+Stato: in corso — lotto 1 fatto (T1–T3), prossimo lotto T4–T6. Chiude i rinvii
+dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| T1 | Tooltip e popover accessibili | [ ] | trigger focusabile, `Esc` |
-| T2 | Campi data e filtro date | [ ] | `airDatepickerInput`, Data Studio |
-| T3 | Notifiche, attesa e stato | [ ] | `showNotification` stilata, `aria-busy` |
+| T1 | Tooltip e popover accessibili | [x] | `0be8a6d`; trigger focusabile, `Esc`, uso nel builder |
+| T2 | Campi data e filtro date | [x] | `069f2e7`; `airDatepickerInput`, Data Studio |
+| T3 | Notifiche, attesa e stato | [x] | `3f40a12`; coda a tre, `aria-busy`, live region |
 | T4 | Pannelli ridimensionabili | [ ] | separatore da tastiera, persistenza |
 | T5 | Menu contestuali | [ ] | tasto Menu, `Shift`+`F10` |
 | T6 | Drag-and-drop con alternativa da tastiera | [ ] | colonne, pin, file drop |

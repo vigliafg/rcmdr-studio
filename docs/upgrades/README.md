@@ -139,12 +139,13 @@ in 5 lotti da 3; nessun cambio di ID o comandi. S1–S15 fatte; il diario è
 verbale di QA è [`QA-WIDGETS.md`](QA-WIDGETS.md). La conferma visiva e i 26
 e2e restano da eseguire su una macchina con browser funzionante.
 
-**Onda 17 pianificata il 18 novembre 2026.** Il piano è in
+**Onda 17 in corso dal 18 novembre 2026.** Il piano è in
 [`17-desktop-completion.md`](17-desktop-completion.md): chiude i rinvii
 dell'Onda 16 — tooltip, campi data, notifiche, pannelli ridimensionabili, menu
 contestuali, drag-and-drop, tabelle di sola lettura, dialoghi dei plugin,
-Help/palette e rendering pigro. 12 step in 4 lotti da 3; il diario sarà
-`diary/wave-17-desktop-completion.md`.
+Help/palette e rendering pigro. 12 step in 4 lotti da 3. Lotto 1 fatto
+(T1–T3); il diario è
+[`diary/wave-17-desktop-completion.md`](diary/wave-17-desktop-completion.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.

@@ -1,7 +1,7 @@
 # Onda 17 — Completamento desktop
 
 **Data:** 2026-11-18  
-**Stato:** pianificata — 12 step in 4 lotti da 3  
+**Stato:** in corso — T1–T3 fatti (lotto 1), prossimo lotto T4–T6  
 **Baseline:** RcmdrShiny Studio 2.8.0 + Onda 16  
 **Dipende da:** Onda 16 (sistema dei widget, accordion, Chart Builder)  
 **Documento padre:** [`README.md`](README.md)  
