@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 17 — completamento desktop
 
 **Data:** 2026-11-18  
-**Stato:** lotto 2 completato (T1–T6); prossimo lotto T7–T9  
+**Stato:** lotto 3 completato (T1–T9); prossimo lotto T10–T12  
 **Ondata precedente:** `wave-16-bslib-widgets.md` (Onda 16, 2.8.0)  
 **Documento di settore:** [`17-desktop-completion.md`](../17-desktop-completion.md)  
 **QA dei widget:** [`QA-WIDGETS.md`](../QA-WIDGETS.md)  
@@ -142,18 +142,18 @@ Nessun blocco di codice: il lotto è chiuso.
 
 ## 7. Prossimo lotto
 
-**Lotto 3 — tabelle, plugin, Help (T7–T9):**
+**Lotto 4 — prestazioni, QA, chiusura (T10–T12):**
 
-1. **T7** — valutare `reactable` per le tabelle di sola lettura; DT resta per
-   i dati editabili. Il gate decide se la dipendenza entra.
-2. **T8** — dialoghi dei plugin: contratto unico per i 15 plugin, senza
-   duplicare la logica dei dialoghi nativi.
-3. **T9** — Help centre e command palette: listbox, ricerca, `aria-live`.
+1. **T10** — rendering pigro delle viste pesanti, con misure prima/dopo,
+   cache e invalidazione; nessun dato stantio.
+2. **T11** — e2e, screenshot e regressione visiva dove il browser funziona;
+   riesame delle checklist manuali.
+3. **T12** — chiusura: NEWS, topic, diario, checklist e push.
 
-Gate del lotto: ogni plugin apre un dialogo coerente; le tabelle di sola
-lettura non perdono selezione né copia; la palette resta usabile da tastiera.
+Gate del lotto: primo render e invalidazione verdi; nessuna vista pesante
+costruita prima della prima apertura.
 
-Il dettaglio del lotto 2 chiuso è nel §11.
+Il dettaglio del lotto 3 chiuso è nel §12.
 
 ---
 
@@ -312,3 +312,92 @@ percorso “Import...” esistente.
 | Ordine colonne di vista | non è nei checkpoint dati | T6 |
 | Drop solo testo | Excel e file binari passano da “Import...” | T6/T11 |
 | Il separatore non ha un test e2e | la tastiera è coperta dal JS, non da un browser | T11 |
+
+---
+
+## 12. Lotto 3 in dettaglio (T7–T9)
+
+### T7 — Tabelle di sola lettura · `e05a8d5`
+
+**Esito del gate: `reactable` non entra.**
+
+- Prototipo `reactable 0.4.5` in una libreria temporanea; tabella di confronto
+  modelli con tema dai token, `compact`, `striped`.
+- Peso: 3,5 MB installati per `reactable`, 1,9 MB per `reactR`; circa 3,6 MB
+  di asset front-end (React 18, core-js, htmlwidgets, bundle reactable) contro
+  165 KB di CSS+JS dell'app.
+- La tabella nasce lato client dentro un `div`: senza JavaScript non c'è
+  `<table>`, e la navigazione da tastiera non è nel widget.
+- La misura completa e la decisione sono in
+  [`QA-WIDGETS.md`](../QA-WIDGETS.md) § 8.
+
+**Rifiniture al posto del widget:**
+
+- `table_scroll()`: regione `role="region"`, `tabindex="0"` e nome, attorno a
+  una tabella nativa.
+- Header sticky e ritmo di riga DT (`--rcmdr-table-row-h`, 32/40 px) per
+  `.rcmdr-table`, `.rcmdr-models-table` e i topic Help.
+- Overflow orizzontale nel corpo Help.
+- Il dashboard modelli usa la regione con nome “Model comparison”.
+
+Test: `test-readonly-tables.R` verifica la regione, lo sticky, il ritmo e che
+`reactable`/`reactR` non rientrino in DESCRIPTION o nel codice.
+
+### T8 — Dialoghi dei plugin · `cbd2060`
+
+**API:** esportati `settings_accordion()` e `settings_panel()`; nessun comando,
+ID o `dialog_spec()` cambiato.
+
+**Migrati (5):**
+
+- ROC: sei pannelli — Data options, AUC, Confidence interval, Plot,
+  Smoothing, Test.
+- UCA: Phase I, Phase II, Parameters, Options, costruiti in base alla fase.
+- Export: Content, Typesetting/Layout, File per xtable, latex e format.df.
+- PcaRobust: Variables, Output, Plots.
+- sos: Search, Filter.
+
+**Non migrati (10):** DoE, TeachingDemos, NMBU, EZR, survival, TeachStat, HH,
+KMggplot2, aRnova, FactoMineR. Sono dialoghi brevi o fabbriche di 3–6 campi;
+un accordion nasconderebbe l'intero modulo. L'inventario è in
+[`PLUGIN-DIALOGS.md`](../PLUGIN-DIALOGS.md).
+
+Test: `test-plugin-dialogs.R` rende i cinque dialoghi, controlla i pannelli e
+gli ID letti da `on_ok`; le suite plugin restano verdi.
+
+### T9 — Help e palette · `2970e71`
+
+- Il filtro “Source” dell'Help è un `picker_input()` ricercabile, con label
+  visibile e `ariaLabelledby`; “Clear filters” usa `updateVirtualSelect()`.
+  Il filtro “Type” resta un select nativo perché la lista è corta.
+- I risultati hanno una riga di conteggio `role="status"` con `aria-live`:
+  ricerca, filtri e categorie annunciano quanti argomenti hanno trovato.
+- La palette mantiene il listbox e aggiunge:
+  - `id` per ogni opzione e `aria-selected`;
+  - `aria-activedescendant` sulla query, così il focus resta nella casella;
+  - `Home`/`End` oltre alle frecce e a `Enter`;
+  - una riga di conteggio annunciata;
+  - la pulizia dell'`activedescendant` quando la query ricostruisce la lista.
+- La ricerca full-text e il contratto della palette non cambiano.
+
+Test: `test-help-ui.R` per picker, label e conteggio;
+`test-accessibility.R` per `aria-activedescendant`, `Home`/`End` e opzioni.
+
+### Verifica del lotto 3
+
+| Controllo | Esito |
+|---|---|
+| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w17-lotto3.log`) |
+| Gate `reactable` | chiuso, misure in `QA-WIDGETS.md` § 8 |
+| Plugin | 5 migrati, 10 elencati; contract e suite plugin verdi |
+| Help e palette | picker, conteggi, `aria-activedescendant`, Home/End |
+| App | riavviata su `http://127.0.0.1:3841`, HTTP 200 |
+
+### Limiti del lotto 3
+
+| Limite | Impatto | Task |
+|---|---|---|
+| `reactable` non adottato | niente tabelle client-side | decisione registrata |
+| 10 plugin piatti | nessun accordion dove non serve | T8 |
+| Nessun browser | picker, palette e pannelli non visti a schermo | T11 |
+| 26 e2e saltati | copertura browser non esercitata | T11 |

@@ -1,7 +1,7 @@
 # Onda 17 — Completamento desktop
 
 **Data:** 2026-11-18  
-**Stato:** in corso — T1–T6 fatti (lotti 1–2), prossimo lotto T7–T9  
+**Stato:** in corso — T1–T9 fatti (lotti 1–3), prossimo lotto T10–T12  
 **Baseline:** RcmdrShiny Studio 2.8.0 + Onda 16  
 **Dipende da:** Onda 16 (sistema dei widget, accordion, Chart Builder)  
 **Documento padre:** [`README.md`](README.md)  

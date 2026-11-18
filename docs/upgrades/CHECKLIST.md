@@ -504,7 +504,7 @@ Stato: completata (S1–S15); conferma visiva ed e2e rimandate a un ambiente con
 ## Onda 17 — Completamento desktop
 
 Documento di settore: [`17-desktop-completion.md`](17-desktop-completion.md).
-Stato: in corso — lotti 1–2 fatti (T1–T6), prossimo lotto T7–T9. Chiude i
+Stato: in corso — lotti 1–3 fatti (T1–T9), prossimo lotto T10–T12. Chiude i
 rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 
 | ID | Task | Stato | Note |
@@ -515,6 +515,9 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 | T4 | Pannelli ridimensionabili | [x] | `08d63d9`; separatore da tastiera, persistenza |
 | T5 | Menu contestuali | [x] | `10ee7fe`; tasto Menu, `Shift`+`F10` |
 | T6 | Drag-and-drop con alternativa da tastiera | [x] | `7e9230b`; colonne, pin, file drop |
+| T7 | Tabelle di sola lettura (`reactable`?) | [x] | `e05a8d5`; gate chiuso, sticky header e regione |
+| T8 | Dialoghi dei plugin | [x] | `cbd2060`; 5 plugin migrati, 10 elencati |
+| T9 | Help centre e command palette | [x] | `2970e71`; picker, conteggi, `aria-activedescendant` |
 | T4 | Pannelli ridimensionabili | [ ] | separatore da tastiera, persistenza |
 | T5 | Menu contestuali | [ ] | tasto Menu, `Shift`+`F10` |
 | T6 | Drag-and-drop con alternativa da tastiera | [ ] | colonne, pin, file drop |
@@ -664,4 +667,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              contestuali, drag-and-drop con alternativa da tastiera. Ordine
              colonne e pin persistiti; drop testo nel dialogo di import.
              Suite completa verde, 26 e2e saltati per assenza di browser.
+2026-11-18 — Onda 17, lotto 3: gate reactable chiuso (3,6 MB di front-end per
+             quattro tabelle), sticky header e regioni native; 5 plugin su 15
+             con accordion, 10 elencati; picker Help, conteggi live e palette
+             con aria-activedescendant. Suite completa verde.
 ```

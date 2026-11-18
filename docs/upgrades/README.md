@@ -143,8 +143,8 @@ e2e restano da eseguire su una macchina con browser funzionante.
 [`17-desktop-completion.md`](17-desktop-completion.md): chiude i rinvii
 dell'Onda 16 — tooltip, campi data, notifiche, pannelli ridimensionabili, menu
 contestuali, drag-and-drop, tabelle di sola lettura, dialoghi dei plugin,
-Help/palette e rendering pigro. 12 step in 4 lotti da 3. Lotti 1–2 fatti
-(T1–T6); il diario è
+Help/palette e rendering pigro. 12 step in 4 lotti da 3. Lotti 1–3 fatti
+(T1–T9); il diario è
 [`diary/wave-17-desktop-completion.md`](diary/wave-17-desktop-completion.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
