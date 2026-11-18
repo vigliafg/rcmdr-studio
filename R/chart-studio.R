@@ -1423,6 +1423,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   }, ignoreInit = TRUE)
 
   output$chart_models_grid <- renderUI({
+    req(view_ready(input, "charts"),
+        subview_ready(input, "chart_mode", "models"))
     table <- chart_model_table(
       analysis = input$chart_models_analysis %||% "all",
       type = input$chart_models_type %||% "all",
@@ -1727,6 +1729,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   # -- gallery -------------------------------------------------------------
 
   output$chart_gallery_grid <- renderUI({
+    req(view_ready(input, "charts"),
+        subview_ready(input, "chart_mode", "gallery"))
     chart_revision()
     app_tick()
     table <- plot_list(
@@ -1756,6 +1760,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   })
 
   output$chart_detail <- renderUI({
+    req(view_ready(input, "charts"),
+        subview_ready(input, "chart_mode", "gallery"))
     current <- current_detail()
     if (is.null(current)) {
       return(empty_state(
@@ -1767,6 +1773,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
   })
 
   output$chart_detail_plotly_ui <- renderUI({
+    req(view_ready(input, "charts"),
+        subview_ready(input, "chart_mode", "gallery"))
     if (!plotly_available()) return(NULL)
     current <- current_detail()
     if (is.null(current)) return(NULL)
@@ -1784,6 +1792,8 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
 
   if (plotly_available()) {
     output$chart_detail_plotly <- plotly::renderPlotly({
+      req(view_ready(input, "charts"),
+          subview_ready(input, "chart_mode", "gallery"))
       chart_revision()
       current <- current_detail()
       req(current)

@@ -73,6 +73,9 @@ test_that("the Chart Studio server renders and applies a chart", {
     expect_equal(length(state$plots), 1L)
     expect_equal(state$plots[[1L]]$spec$type, "histogram")
 
+    # The gallery is built on first open now, not while Build is active.
+    session$setInputs(chart_mode = "gallery")
+    session$flushReact()
     gallery <- htmltools::renderTags(output$chart_gallery_grid)$html
     expect_match(gallery, "Histogram of y")
     detail <- htmltools::renderTags(output$chart_detail)$html

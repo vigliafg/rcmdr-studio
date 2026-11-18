@@ -836,6 +836,7 @@ report_studio_server <- function(input, output, session, state, refresh,
   # -- editor --------------------------------------------------------------
 
   output$report_editor_ui <- renderUI({
+    req(view_ready(input, "report"))
     htmltools::div(
       id = "report_editor_ui",
       shinyAce::aceEditor(
@@ -913,6 +914,7 @@ report_studio_server <- function(input, output, session, state, refresh,
   # -- outline and chunks --------------------------------------------------
 
   output$report_outline <- renderUI({
+    req(view_ready(input, "report"))
     text_debounced()
     outline <- document_outline(document_text(state), document_mode(state))
     if (nrow(outline) == 0L) {
@@ -935,6 +937,7 @@ report_studio_server <- function(input, output, session, state, refresh,
   })
 
   output$report_chunks <- renderUI({
+    req(view_ready(input, "report"))
     text_debounced()
     chunks <- document_chunks(document_text(state), document_mode(state))
     if (nrow(chunks) == 0L) {
@@ -987,6 +990,7 @@ report_studio_server <- function(input, output, session, state, refresh,
   })
 
   output$report_preview <- renderUI({
+    req(view_ready(input, "report"))
     report_revision()
     tick_reactive()
     mode <- input$report_preview_mode %||% "markdown"
@@ -1018,6 +1022,7 @@ report_studio_server <- function(input, output, session, state, refresh,
   # -- status --------------------------------------------------------------
 
   output$report_status_ui <- renderUI({
+    req(view_ready(input, "report"))
     report_revision()
     tick_reactive()
     htmltools::div(

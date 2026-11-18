@@ -56,6 +56,7 @@ help_server <- function(input, output, session, state) {
   }
 
   output$help_context <- shiny::renderUI({
+    req(view_ready(input, "help"))
     language_token()
     if (is.null(state$current_dialog)) return(NULL)
     spec <- get_dialog_spec(state$current_dialog)
@@ -70,6 +71,7 @@ help_server <- function(input, output, session, state) {
   })
 
   output$help_categories <- shiny::renderUI({
+    req(view_ready(input, "help"))
     language_token()
     index <- help_index()
     latest <- filter()
@@ -89,6 +91,7 @@ help_server <- function(input, output, session, state) {
   })
 
   output$help_recent <- shiny::renderUI({
+    req(view_ready(input, "help"))
     language_token()
     ids <- recent()
     if (length(ids) == 0L) return(NULL)
@@ -117,6 +120,7 @@ help_server <- function(input, output, session, state) {
   }
 
   output$help_results <- shiny::renderUI({
+    req(view_ready(input, "help"))
     language_token()
     category <- filter()
     query <- input$help_query %||% ""
@@ -179,6 +183,7 @@ help_server <- function(input, output, session, state) {
   })
 
   output$help_topic <- shiny::renderUI({
+    req(view_ready(input, "help"))
     language_token()
     topic <- current_topic()
     if (is.null(topic)) return(help_welcome_ui(state))

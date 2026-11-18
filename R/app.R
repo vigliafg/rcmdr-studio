@@ -595,6 +595,27 @@ app_ui <- function() {
   )
 }
 
+#' Is a view the one the user is looking at?
+#'
+#' The heavy outputs are computed on first open, not on the initial flush.  A
+#' missing input means a direct call (tests, a scripted render), which keeps
+#' the historical behaviour: the output is built.
+#' @keywords internal
+view_ready <- function(input, view) {
+  current <- input$main_tabs %||% ""
+  if (!nzchar(current)) return(TRUE)
+  identical(current, view)
+}
+
+#' Is a sub-view the active one?
+#' @inheritParams view_ready
+#' @keywords internal
+subview_ready <- function(input, id, value) {
+  current <- input[[id]] %||% ""
+  if (!nzchar(current)) return(TRUE)
+  identical(current, value)
+}
+
 #' Application server
 #'
 #' @param env Evaluation environment for commands.
@@ -1731,6 +1752,7 @@ app_server <- function(env = globalenv()) {
     }, ignoreInit = TRUE)
 
     output$workflow_panel <- renderUI({
+      req(view_ready(input, "workflows"))
       tick()
       workflow_panel_ui(state)
     })
@@ -2735,6 +2757,7 @@ app_server <- function(env = globalenv()) {
     )
 
     output$environment_pane <- renderUI({
+      req(view_ready(input, "environment"))
       tick()
       objects <- ls(envir = state$env)
       if (length(objects) == 0L) {
@@ -2762,11 +2785,13 @@ app_server <- function(env = globalenv()) {
     # -- environment and models ---------------------------------------------
 
     output$environment_objects <- renderUI({
+      req(view_ready(input, "environment"))
       tick()
       environment_objects_ui(state, input$environment_filter %||% "")
     })
 
     output$environment_preview <- renderUI({
+      req(view_ready(input, "environment"))
       tick()
       preview <- state$environment_preview
       if (is.null(preview) || !nzchar(preview)) {
@@ -2776,20 +2801,20 @@ app_server <- function(env = globalenv()) {
     })
 
     output$environment_datasets <- renderUI({
+      req(view_ready(input, "environment"))
       tick()
       environment_datasets_ui(state)
     })
 
     output$models_dashboard <- renderUI({
+      req(view_ready(input, "environment"))
       tick()
       menu_revision()
       models_dashboard_ui(state)
     })
 
-    outputOptions(output, "environment_objects", suspendWhenHidden = FALSE)
-    outputOptions(output, "environment_preview", suspendWhenHidden = FALSE)
-    outputOptions(output, "environment_datasets", suspendWhenHidden = FALSE)
-    outputOptions(output, "models_dashboard", suspendWhenHidden = FALSE)
+    # The environment outputs are built on first open; no hidden output keeps
+    # the models dashboard alive in the background.
 
     observeEvent(input$environment_action, {
       action <- input$environment_action
