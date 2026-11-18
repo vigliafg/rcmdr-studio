@@ -1,3 +1,47 @@
+# RcmdrShiny Studio 2.9.0
+
+## Desktop completion
+
+- **Help where it is needed**: `help_tip()` adds a focusable question-mark
+  trigger with a themed tooltip to the densest parameters; `Esc` closes the
+  bubble without closing the dialog.
+- **Dates**: `date_input()` and `date_range_input()` wrap the packaged
+  air-datepicker, and the Data Studio filters a `Date`/`POSIXct` column by an
+  inclusive calendar range. The filter is a view: it writes neither the data
+  nor a command.
+- **Feedback**: notifications use the Studio tokens and keep the newest
+  three; long operations set `aria-busy` and announce themselves in a polite
+  live region.
+- **Split panes**: `split_pane()` gives Data Studio, Chart Builder and Report
+  Studio a keyboard-accessible separator (arrows, Home/End, reset). Sizes are
+  versioned preferences and survive a restart; below the breakpoints the panes
+  stack and the separator leaves the layout.
+- **Context menus**: `context_menu()` opens from the context-menu key or
+  `Shift`+`F10`, keeps one panel open, stays inside the viewport and returns
+  the focus. Items click the existing controls or send the existing payload,
+  so no action is implemented twice.
+- **Drag and drop**: pinned charts reorder in the gallery, grid headers
+  reorder the view columns, and a dropped text file opens the normal Read Text
+  Data dialog. Every gesture has a keyboard alternative, and neither the data
+  nor the commands change.
+- **Read-only tables**: the `reactable` gate stayed closed (about 3.6 MB of
+  front-end for four tables); native tables gained sticky headers, the DT row
+  rhythm and a focusable scroll region.
+- **Plugin dialogs**: `settings_accordion()` and `settings_panel()` are part
+  of the plugin API. ROC, UCA, Export, PcaRobust and sos group their fields;
+  the ten short dialogs stay flat and are listed in
+  `docs/upgrades/PLUGIN-DIALOGS.md`.
+- **Help and palette**: the Help source filter is a searchable picker with a
+  live result count; the palette keeps the query focus and announces the
+  active option through `aria-activedescendant`, with Home/End added.
+- **Lazy views**: Gallery, Models, Help, Report and Environment outputs are
+  built on first open and rebuilt from current state; no hidden view keeps a
+  stale copy. `app_ui()` and the command engine are unchanged.
+
+No statistical command, dialog id, generated R command or existing i18n
+string changed. The browser e2e suite remains skipped where Chrome cannot
+navigate to `http(s)`; `tools/check_browser.R` records the limit.
+
 # RcmdrShiny Studio 2.8.0
 
 ## Parameter panels and one widget family

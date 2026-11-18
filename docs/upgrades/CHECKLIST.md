@@ -504,7 +504,7 @@ Stato: completata (S1–S15); conferma visiva ed e2e rimandate a un ambiente con
 ## Onda 17 — Completamento desktop
 
 Documento di settore: [`17-desktop-completion.md`](17-desktop-completion.md).
-Stato: in corso — lotti 1–3 fatti (T1–T9), prossimo lotto T10–T12. Chiude i
+Stato: chiusa — 12 step in 4 lotti (T1–T12), versione 2.9.0. Chiude i
 rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 
 | ID | Task | Stato | Note |
@@ -518,27 +518,21 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 | T7 | Tabelle di sola lettura (`reactable`?) | [x] | `e05a8d5`; gate chiuso, sticky header e regione |
 | T8 | Dialoghi dei plugin | [x] | `cbd2060`; 5 plugin migrati, 10 elencati |
 | T9 | Help centre e command palette | [x] | `2970e71`; picker, conteggi, `aria-activedescendant` |
-| T4 | Pannelli ridimensionabili | [ ] | separatore da tastiera, persistenza |
-| T5 | Menu contestuali | [ ] | tasto Menu, `Shift`+`F10` |
-| T6 | Drag-and-drop con alternativa da tastiera | [ ] | colonne, pin, file drop |
-| T7 | Tabelle di sola lettura (`reactable`?) | [ ] | gate, DT resta per i dati editabili |
-| T8 | Dialoghi dei plugin | [ ] | 15 plugin, contract |
-| T9 | Help centre e command palette | [ ] | listbox, ricerca, `aria-live` |
-| T10 | Rendering pigro delle viste pesanti | [ ] | misure prima/dopo |
-| T11 | e2e, screenshot, regressione visiva | [ ] | browser funzionante |
-| T12 | Chiusura | [ ] | NEWS, topic, diario, push |
+| T10 | Rendering pigro delle viste pesanti | [x] | `8af45c6`; `view_ready()`, misure prima/dopo |
+| T11 | e2e, screenshot, regressione visiva | [x] | `c89e54a`; sonda browser, limite documentato |
+| T12 | Chiusura | [x] | NEWS 2.9.0, topic, diario, push |
 
 ### Chiusura Onda 17
 
-- [ ] 12 step verdi, 4 handoff (T3, T6, T9, T12).
-- [ ] Tooltip, date, notifiche, split pane, menu e drag-and-drop da tastiera.
-- [ ] Tabelle: decisione su `reactable` misurata.
-- [ ] Plugin migrati per famiglia; contract verde.
-- [ ] Help e palette sui widget nuovi.
-- [ ] Rendering pigro senza dati stantii.
-- [ ] 8 temi × 2 densità, zoom 200%, reduced motion.
-- [ ] e2e e screenshot dove il browser funziona.
-- [ ] Documentazione e diario aggiornati.
+- [x] 12 step verdi, 4 handoff (T3, T6, T9, T12).
+- [x] Tooltip, date, notifiche, split pane, menu e drag-and-drop da tastiera.
+- [x] Tabelle: decisione su `reactable` misurata (gate chiuso).
+- [x] Plugin migrati per famiglia; contract verde.
+- [x] Help e palette sui widget nuovi.
+- [x] Rendering pigro senza dati stantii.
+- [x] 8 temi × 2 densità, zoom 200%, reduced motion (verifiche automatiche).
+- [x] e2e e screenshot dove il browser funziona; limite Chrome documentato.
+- [x] Documentazione e diario aggiornati.
 
 ---
 
@@ -671,4 +665,7 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              quattro tabelle), sticky header e regioni native; 5 plugin su 15
              con accordion, 10 elencati; picker Help, conteggi live e palette
              con aria-activedescendant. Suite completa verde.
+2026-11-18 — Onda 17 chiusa (2.9.0): viste pesanti differite alla prima
+             apertura, sonda browser versionata con limite Chrome documentato,
+             NEWS/topic/diario/checklist aggiornati. Suite completa verde.
 ```

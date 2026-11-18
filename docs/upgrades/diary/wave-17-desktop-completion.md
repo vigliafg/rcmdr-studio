@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 17 — completamento desktop
 
 **Data:** 2026-11-18  
-**Stato:** lotto 3 completato (T1–T9); prossimo lotto T10–T12  
+**Stato:** onda chiusa (T1–T12), versione 2.9.0  
 **Ondata precedente:** `wave-16-bslib-widgets.md` (Onda 16, 2.8.0)  
 **Documento di settore:** [`17-desktop-completion.md`](../17-desktop-completion.md)  
 **QA dei widget:** [`QA-WIDGETS.md`](../QA-WIDGETS.md)  
@@ -140,20 +140,10 @@ Nessun blocco di codice: il lotto è chiuso.
 
 ---
 
-## 7. Prossimo lotto
+## 7. Chiusura
 
-**Lotto 4 — prestazioni, QA, chiusura (T10–T12):**
-
-1. **T10** — rendering pigro delle viste pesanti, con misure prima/dopo,
-   cache e invalidazione; nessun dato stantio.
-2. **T11** — e2e, screenshot e regressione visiva dove il browser funziona;
-   riesame delle checklist manuali.
-3. **T12** — chiusura: NEWS, topic, diario, checklist e push.
-
-Gate del lotto: primo render e invalidazione verdi; nessuna vista pesante
-costruita prima della prima apertura.
-
-Il dettaglio del lotto 3 chiuso è nel §12.
+L'onda è chiusa: il dettaglio del lotto 3 è nel §12, quello del lotto 4 e la
+consegna nel §13. Il prossimo lavoro parte dal piano dell'Onda 18.
 
 ---
 
@@ -401,3 +391,73 @@ Test: `test-help-ui.R` per picker, label e conteggio;
 | 10 plugin piatti | nessun accordion dove non serve | T8 |
 | Nessun browser | picker, palette e pannelli non visti a schermo | T11 |
 | 26 e2e saltati | copertura browser non esercitata | T11 |
+
+---
+
+## 13. Lotto 4 e chiusura (T10–T12)
+
+### T10 — Rendering pigro · `8af45c6`
+
+- `view_ready(input, view)` e `subview_ready(input, id, value)` sono il gate
+  dei `renderUI` pesanti; un input assente mantiene il comportamento storico
+  per test e chiamate dirette.
+- Differiti: Gallery e Models di Chart Studio, Help (risultati, categorie,
+  recenti, topic, contesto), Report (editor, outline, chunk, anteprima,
+  stato), Environment (griglia, oggetti, anteprima, dataset, dashboard
+  modelli) e Workflows.
+- Misure (`testServer`, dataset 200 righe, `main_tabs = "home"`): la Gallery
+  passa da 41 ms di costruzione a 3 ms di rifiuto; le altre viste restano
+  vuote finché non si aprono. All'apertura la Gallery si costruisce in 7 ms.
+- `app_ui()` resta ~1,1 s: il costo è l'inlining dei 165 KB di asset, che
+  serve al primo paint e non cambia.
+- Il test `a lazy view is rebuilt...` aggiunge un grafico mentre la Gallery è
+  nascosta e verifica che alla riapertura compaiano entrambi.
+- Dettaglio e limiti in [`LAZY-VIEWS.md`](../LAZY-VIEWS.md).
+
+### T11 — Browser ed e2e · `c89e54a`
+
+- Chrome 157 è installato; `about:blank` e i `data:` URL funzionano, ma
+  `Page.navigate` verso `http(s)` va in timeout. La sonda
+  `tools/check_browser.R` distingue i due casi e registra l'uscita.
+- I 26 e2e restano saltati senza `RCMDRSHINY_E2E=1`; forzarli fallisce
+  all'avvio di `AppDriver`, non in un flusso dell'app.
+- `tools/help_screenshots.R` non può rigenerare le immagini; la matrice
+  visiva 8 × 2 e la regressione restano da eseguire su un desktop.
+- Limite scritto in [`QA-WIDGETS.md`](../QA-WIDGETS.md) § 9, qui e nella
+  checklist.
+
+### T12 — Chiusura
+
+- `DESCRIPTION` e `NEWS.md` a **2.9.0**; `about.md` ha la sezione
+  “Desktop interactions”.
+- Checklist, piano, README dell'archivio e questo diario sono aggiornati.
+- Suite completa verde prima del commit di chiusura.
+
+### Verifica finale
+
+| Controllo | Esito |
+|---|---|
+| Suite completa | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w17-lotto4-b.log`) |
+| Lazy views | gate, primo render, invalidazione e dati freschi |
+| Browser probe | `about:blank`/`data:` ok, `http` timeout documentato |
+| App | riavviata su `http://127.0.0.1:3841`, HTTP 200 |
+| Working tree | pulito dopo il push |
+
+### Limiti finali dell'onda
+
+| Limite | Impatto |
+|---|---|
+| Chrome non naviga `http(s)` in questo ambiente | 26 e2e e screenshot restano da eseguire su un desktop |
+| `reactable` non adottato | tabelle di sola lettura native, con sticky header e regione |
+| 10 plugin piatti | scelta registrata, non un difetto |
+| Ordine colonne di vista | non consuma checkpoint dati |
+
+### Checklist di handoff finale
+
+- [x] T10 committato (`8af45c6`).
+- [x] T11 committato (`c89e54a`).
+- [x] T12: NEWS, topic, checklist, piano, README, diario.
+- [x] Suite completa verde.
+- [x] App riavviata (HTTP 200).
+- [x] Push su `main`.
+- [x] Limiti e domande aperte documentati.

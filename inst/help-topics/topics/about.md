@@ -63,6 +63,25 @@ options are the only nested group.
 - **Validation**: when a dialog is rejected, every panel opens and the first
   invalid field is focused, so an error cannot stay hidden.
 
+## Desktop interactions
+
+- **Parameter help** opens from a small question-mark button with `Tab`, and
+  `Esc` closes the bubble without closing the dialog.
+- **Dates** use the packaged calendar; the Data Studio date range is a view
+  filter and never changes the data or the command.
+- **Split panes** let you resize the Data Studio grid, the Chart Builder and
+  the Report Studio with the arrow keys, `Home`/`End` or the pointer. The size
+  is remembered; at the narrow breakpoints the panes stack.
+- **Context menus** open with the Menu key or `Shift`+`F10` and return the
+  focus when they close. The items are the same actions as the toolbars.
+- **Drag and drop** reorders pinned charts and grid columns, and a dropped
+  text file opens the normal import dialog. Every gesture has a keyboard
+  alternative.
+- **Notifications** keep the newest three and are announced to screen
+  readers; long commands set `aria-busy`.
+- **Read-only tables** keep native semantics with sticky headers and a
+  keyboard-reachable scroll region.
+
 ## Attribution
 
 RcmdrShiny is derived from Rcmdr 2.15.0, Copyright (C) 2001-2026 John Fox,
