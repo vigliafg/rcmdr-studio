@@ -26,62 +26,72 @@ options_dialog <- function() {
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
 
-      htmltools::tagList(
-        htmltools::tags$h6(tr("Interface")),
-        segmented_input(
-          ns("ui_mode"), tr("Interface mode"),
-          c("Studio" = "studio", "Classic" = "classic"),
-          m$ui_mode
+      settings_accordion(
+        id = ns("settings"),
+        open = "Interface",
+        settings_panel(
+          "Interface",
+          segmented_input(
+            ns("ui_mode"), tr("Interface mode"),
+            c("Studio" = "studio", "Classic" = "classic"),
+            m$ui_mode
+          ),
+          selectInput(
+            ns("theme"), tr("Theme"),
+            choices = theme_choices(),
+            selected = m$theme %||% "system",
+            width = "100%"
+          ),
+          segmented_input(
+            ns("density"), tr("Density"),
+            ui_density_choices(),
+            m$density %||% ui_density(state)
+          ),
+          help_text(tr(
+            "Compact keeps more fields on the screen; Comfortable restores the wider spacing. Studio mode adds the Home, Charts and Console workspaces; Classic mode keeps the original tabs."
+          ))
         ),
-        selectInput(
-          ns("theme"), tr("Theme"),
-          choices = theme_choices(),
-          selected = m$theme %||% "system",
-          width = "100%"
+        settings_panel(
+          "Output",
+          number_input(ns("digits"), tr("Number of significant digits:"),
+                       m$digits, min = 1, max = 22, step = 1),
+          number_input(ns("width"), tr("Output width (characters):"),
+                       m$width, min = 40, max = 300, step = 1)
         ),
-        segmented_input(
-          ns("density"), tr("Density"),
-          ui_density_choices(),
-          m$density %||% ui_density(state)
+        settings_panel(
+          "Data",
+          number_input(
+            ns("edit_threshold"), tr("Maximum cells for interactive editing:"),
+            m$edit_threshold, min = 0, max = 1e7, step = 1000
+          ),
+          switch_input(
+            ns("stringsAsFactors"),
+            tr("Convert character variables to factors when importing"),
+            m$stringsAsFactors
+          ),
+          help_text(
+            tr("The editing threshold applies to the active data set; set it to 0 to disable the editor.")
+          )
         ),
-        help_text(tr(
-          "Compact keeps more fields on the screen; Comfortable restores the wider spacing. Studio mode adds the Home, Charts and Console workspaces; Classic mode keeps the original tabs."
-        )),
-        htmltools::tags$hr(),
-        htmltools::tags$h6(tr("Output")),
-        number_input(ns("digits"), tr("Number of significant digits:"),
-                     m$digits, min = 1, max = 22, step = 1),
-        number_input(ns("width"), tr("Output width (characters):"),
-                     m$width, min = 40, max = 300, step = 1),
-        htmltools::tags$hr(),
-        htmltools::tags$h6(tr("Data")),
-        number_input(
-          ns("edit_threshold"), tr("Maximum cells for interactive editing:"),
-          m$edit_threshold, min = 0, max = 1e7, step = 1000
+        settings_panel(
+          "Documents",
+          switch_input(
+            ns("use_markdown"), tr("Show the R Markdown document commands"),
+            isTRUE(m$use_markdown)
+          ),
+          switch_input(
+            ns("use_knitr"), tr("Show the knitr document commands"),
+            isTRUE(m$use_knitr)
+          ),
+          help_text(tr(
+            "The document commands are always available from the Script tab; these options keep the corresponding File and Edit entries visible after a restart."
+          ))
         ),
-        switch_input(
-          ns("stringsAsFactors"),
-          tr("Convert character variables to factors when importing"),
-          m$stringsAsFactors
-        ),
-        help_text(
-          tr("The editing threshold applies to the active data set; set it to 0 to disable the editor.")
-        ),
-        htmltools::tags$hr(),
-        htmltools::tags$h6(tr("Documents")),
-        switch_input(
-          ns("use_markdown"), tr("Show the R Markdown document commands"),
-          isTRUE(m$use_markdown)
-        ),
-        switch_input(
-          ns("use_knitr"), tr("Show the knitr document commands"),
-          isTRUE(m$use_knitr)
-        ),
-        help_text(tr(
-          "The document commands are always available from the Script tab; these options keep the corresponding File and Edit entries visible after a restart."
-        )),
-        htmltools::tags$hr(),
-        chart_ext_ui()
+        settings_panel(
+          "Optional extensions",
+          chart_ext_ui(heading = FALSE),
+          grid = FALSE
+        )
       )
     },
     on_ok = function(input, state) {
@@ -90,15 +100,22 @@ options_dialog <- function() {
       threshold <- as.numeric(input[[ns("edit_threshold")]] %||% 10000)
       stringsAsFactors <- isTRUE(input[[ns("stringsAsFactors")]])
 
+      # Inline errors: the runtime opens every accordion panel and focuses the
+      # first invalid field, so a problem in a closed panel is never hidden.
+      field_errors <- list()
       if (is.na(digits) || digits < 1 || digits > 22) {
-        return(list(error = tr("The number of digits must be between 1 and 22.")))
+        field_errors$digits <-
+          tr("The number of digits must be between 1 and 22.")
       }
       if (is.na(width) || width < 40 || width > 300) {
-        return(list(error = tr("The output width must be between 40 and 300.")))
+        field_errors$width <-
+          tr("The output width must be between 40 and 300.")
       }
       if (is.na(threshold) || threshold < 0) {
-        return(list(error = tr("The editing threshold cannot be negative.")))
+        field_errors$edit_threshold <-
+          tr("The editing threshold cannot be negative.")
       }
+      if (length(field_errors) > 0L) return(list(field_errors = field_errors))
 
       state$options$digits <- digits
       state$options$width <- width

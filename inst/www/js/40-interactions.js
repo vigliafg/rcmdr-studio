@@ -28,14 +28,45 @@
       }, {priority: 'event'});
       return false;
     };
+    // Open every collapsed panel under `root`.  Used when validation fails:
+    // an error inside a closed accordion panel would otherwise stay hidden.
+    function rcmdrShowAccordions(root) {
+      var scope = root || document;
+      var panels = scope.querySelectorAll(
+        '.accordion-collapse.collapse:not(.show)'
+      );
+      Array.prototype.forEach.call(panels, function(panel) {
+        var Collapse = window.bootstrap && window.bootstrap.Collapse;
+        if (Collapse) {
+          Collapse.getOrCreateInstance(panel, {toggle: false}).show();
+          return;
+        }
+        panel.classList.add('show');
+        var button = document.querySelector(
+          '[data-bs-target="#' + panel.id + '"]'
+        );
+        if (button) {
+          button.classList.remove('collapsed');
+          button.setAttribute('aria-expanded', 'true');
+        }
+      });
+    }
+    window.rcmdrShowAccordions = rcmdrShowAccordions;
+    Shiny.addCustomMessageHandler('rcmdr-open-accordions', function(message) {
+      rcmdrShowAccordions();
+    });
     window.rcmdrFocusField = function(id) {
       var el = document.getElementById(id);
       if (!el) el = document.querySelector('[id$="_' + id + '"]');
       if (!el) return false;
       el.classList.add('is-invalid');
       el.setAttribute('aria-invalid', 'true');
-      if (el.focus) el.focus();
-      if (el.scrollIntoView) el.scrollIntoView({block: 'center'});
+      rcmdrShowAccordions(el.closest('.modal') || document);
+      // The collapse transition needs a frame before the field is focusable.
+      setTimeout(function() {
+        if (el.focus) el.focus();
+        if (el.scrollIntoView) el.scrollIntoView({block: 'center'});
+      }, 200);
       return false;
     };
     Shiny.addCustomMessageHandler('rcmdr-field-errors', function(message) {
@@ -53,7 +84,12 @@
         el.setAttribute('aria-invalid', 'true');
         if (!first) first = el;
       });
-      if (first && first.focus) first.focus();
+      if (!first) return;
+      rcmdrShowAccordions(first.closest('.modal') || document);
+      setTimeout(function() {
+        if (first.focus) first.focus();
+        if (first.scrollIntoView) first.scrollIntoView({block: 'center'});
+      }, 200);
     });
     var rcmdrTourStarted = false;
     function rcmdrTourCheck() {

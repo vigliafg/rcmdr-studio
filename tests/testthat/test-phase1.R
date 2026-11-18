@@ -20,13 +20,11 @@ test_that("Options dialog updates the state and R options", {
   expect_equal(getOption("digits"), 5)
   expect_equal(getOption("width"), 120)
 
-  expect_match(
-    spec$on_ok(list(
-      Options_digits = 50, Options_width = 80,
-      Options_edit_threshold = 1000, Options_stringsAsFactors = TRUE
-    ), state)$error,
-    "between 1 and 22"
-  )
+  invalid <- spec$on_ok(list(
+    Options_digits = 50, Options_width = 80,
+    Options_edit_threshold = 1000, Options_stringsAsFactors = TRUE
+  ), state)
+  expect_match(dialog_field_errors(invalid)$digits, "between 1 and 22")
 })
 
 test_that("Setwd dialog validates the directory and generates setwd()", {

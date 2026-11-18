@@ -188,9 +188,9 @@ registry_description <- function(id) {
 
 #' Options panel section listing the optional extensions
 #' @keywords internal
-chart_ext_ui <- function() {
+chart_ext_ui <- function(heading = TRUE) {
   htmltools::tagList(
-    htmltools::tags$h6(tr("Optional extensions")),
+    if (isTRUE(heading)) htmltools::tags$h6(tr("Optional extensions")),
     help_text(tr(
       "The Studio detects these packages at run time. Charts that need a missing package are hidden instead of failing."
     )),

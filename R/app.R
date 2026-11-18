@@ -1249,6 +1249,9 @@ app_server <- function(env = globalenv()) {
         )
         state$dialog_errors <- as.list(prefixed)
         dialog_revision(dialog_revision() + 1L)
+        # An invalid field may sit in a closed panel: open them all before
+        # the focus message so the highlight is reachable.
+        session$sendCustomMessage("rcmdr-open-accordions", list())
         session$sendCustomMessage("rcmdr-field-errors",
                                   dialog_validation_payload(state$dialog_errors))
         return(invisible(FALSE))

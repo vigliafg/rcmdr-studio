@@ -30,3 +30,63 @@ test_that("the browser payload keeps the field identifiers", {
   payload <- dialog_validation_payload(list(x = "Pick a variable"))
   expect_equal(payload$errors$x, "Pick a variable")
 })
+
+test_that("the Options dialog is five accordion panels with every id", {
+  spec <- get_dialog_spec("Options")
+  html <- htmltools::renderTags(
+    spec$ui(AppState(env = new.env()), NULL)
+  )$html
+
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 5L
+  )
+  for (panel in c("Interface", "Output", "Data", "Documents",
+                  "Optional extensions")) {
+    expect_match(html, sprintf('data-value="%s"', panel), fixed = TRUE)
+  }
+  # Only the first panel is open.
+  expect_equal(
+    lengths(regmatches(
+      html, gregexpr('class="accordion-collapse collapse show"', html)
+    )), 1L
+  )
+  # Every control keeps its id.
+  for (id in c("ui_mode", "theme", "density", "digits", "width",
+               "edit_threshold", "stringsAsFactors", "use_markdown",
+               "use_knitr")) {
+    expect_match(html, sprintf('id="Options_%s"', id), fixed = TRUE)
+  }
+  # The old separators and sub-headings are gone: the panels are the titles.
+  expect_false(grepl("<hr", html, fixed = TRUE))
+  expect_false(grepl("<h6", html, fixed = TRUE))
+})
+
+test_that("an invalid Options field becomes an inline error", {
+  spec <- get_dialog_spec("Options")
+  state <- AppState(env = new.env())
+  result <- spec$on_ok(
+    list(Options_digits = 50, Options_width = 10,
+         Options_edit_threshold = -1),
+    state
+  )
+  errors <- dialog_field_errors(result)
+  expect_match(errors$digits, "between 1 and 22")
+  expect_match(errors$width, "between 40 and 300")
+  expect_match(errors$edit_threshold, "cannot be negative")
+  # The state is untouched when the dialog is rejected.
+  expect_null(result$memory)
+})
+
+test_that("validation opens the closed panels before focusing", {
+  js <- as.character(app_js())
+  expect_match(js, "rcmdr-open-accordions", fixed = TRUE)
+  expect_match(js, "rcmdrShowAccordions", fixed = TRUE)
+  expect_match(js, "Collapse.getOrCreateInstance", fixed = TRUE)
+  expect_match(js, "aria-expanded", fixed = TRUE)
+  # Focus waits for the collapse transition.
+  expect_match(js, "setTimeout", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".rcmdr-dialog-grid > .accordion { grid-column: 1 / -1; }",
+               fixed = TRUE)
+})

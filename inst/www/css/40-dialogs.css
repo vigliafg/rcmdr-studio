@@ -2,6 +2,8 @@
        inputs take a cell; headings, help text, previews and any other block
        keep the full width, so unusual dialogs cannot be squeezed. */
     .rcmdr-dialog-grid > * { grid-column: 1 / -1; }
+    /* An accordion is a block of the dialog, not one field of the grid. */
+    .rcmdr-dialog-grid > .accordion { grid-column: 1 / -1; }
     .rcmdr-dialog-grid > .form-group,
     .rcmdr-dialog-grid > .shiny-input-container { grid-column: auto; }
     .rcmdr-dialog-grid > .shiny-input-radiogroup,
