@@ -475,7 +475,7 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 | S4 | `settings_accordion()`, `settings_panel()`, `settings_group()` | [x] | heading semantics, densità; questo commit |
 | S5 | *Options* su accordion + apertura su errore | [ ] | prima vetrina del lotto 2 |
 | S6 | Chart Builder: scheda fissa + accordion | [x] | stessi ID, stesso comando; questo commit |
-| S7 | Sottopannelli ggplot2 (*Style*, *Axes*, *Text*, *Theme*, *Output*) | [ ] | nessuna opzione persa |
+| S7 | Sottopannelli ggplot2 (*Style*, *Axes*, *Text*, *Theme*, *Output*) | [x] | nessuna opzione persa; questo commit |
 | S8 | Gruppi di opzioni per tipo e stato dei pannelli | [ ] | `option_groups`, `isolate()` |
 | S9 | `slider_input()` e `color_input()` | [ ] | valori e comandi invariati |
 | S10 | `var_input()` sulla famiglia scelta | [ ] | 106 punti, passo reversibile |

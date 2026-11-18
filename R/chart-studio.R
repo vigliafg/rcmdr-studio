@@ -538,43 +538,7 @@ chart_builder_ui <- function() {
           value = "Options"
         ),
         settings_panel(
-          tr("Theme and labels"),
-          selectInput("chart_palette", tr("Palette"),
-                      choices = chart_palette_choices(),
-                      selected = "default"),
-          number_input("chart_base_size", tr("Base size"), 12,
-                       min = 6, max = 32, step = 1),
-          selectInput(
-            "chart_legend", tr("Legend"),
-            choices = stats::setNames(
-              c("right", "left", "top", "bottom", "none"),
-              c(tr("Right"), tr("Left"), tr("Top"), tr("Bottom"),
-                tr("None"))
-            ),
-            selected = "right"
-          ),
-          textInput("chart_background", tr("Background"),
-                    value = "white"),
-          checkboxInput("chart_grid", tr("Grid"), value = TRUE),
-          htmltools::div(
-            class = "rcmdr-field-wide",
-            textInput("chart_title", tr("Title"), "")
-          ),
-          htmltools::div(
-            class = "rcmdr-field-wide",
-            textInput("chart_caption", tr("Caption"), "")
-          ),
-          textInput("chart_xlab", tr("X label"), ""),
-          textInput("chart_ylab", tr("Y label"), ""),
-          value = "Theme and labels"
-        ),
-        settings_panel(
-          tr("ggplot2 options"),
-          selectInput(
-            "chart_gg_theme", tr("ggplot2 theme"),
-            choices = chart_gg_theme_choices(),
-            selected = "minimal"
-          ),
+          tr("Style"),
           selectInput(
             "chart_gg_position", tr("Position"),
             choices = stats::setNames(
@@ -587,6 +551,10 @@ chart_builder_ui <- function() {
                        min = 0, max = 1, step = 0.05),
           number_input("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
                        min = 0, step = 0.1),
+          number_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
+                       min = 0, step = 0.05),
+          number_input("chart_gg_shape", tr("Point shape"), 19,
+                       min = 0, max = 25, step = 1),
           selectInput(
             "chart_gg_smooth", tr("Smooth"),
             choices = stats::setNames(
@@ -595,12 +563,20 @@ chart_builder_ui <- function() {
             ),
             selected = "lm"
           ),
-          number_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
-                       min = 0, step = 0.05),
-          number_input("chart_gg_shape", tr("Point shape"), 19,
-                       min = 0, max = 25, step = 1),
           checkboxInput("chart_gg_se", tr("Confidence band"), FALSE),
           checkboxInput("chart_gg_flip", tr("Flip coordinates"), FALSE),
+          value = "Style"
+        ),
+        settings_panel(
+          tr("Axes"),
+          selectInput(
+            "chart_gg_x_format", tr("X axis format"),
+            choices = chart_axis_format_choices(), selected = "auto"
+          ),
+          selectInput(
+            "chart_gg_y_format", tr("Y axis format"),
+            choices = chart_axis_format_choices(), selected = "auto"
+          ),
           selectInput(
             "chart_gg_facet_scales", tr("Facet scales"),
             choices = stats::setNames(
@@ -611,23 +587,55 @@ chart_builder_ui <- function() {
           ),
           number_input("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
                        0, min = 0, step = 1),
-          textInput("chart_gg_subtitle", tr("Subtitle"), ""),
-          textInput("chart_gg_tag", tr("Tag"), ""),
-          selectInput(
-            "chart_gg_x_format", tr("X axis format"),
-            choices = chart_axis_format_choices(), selected = "auto"
-          ),
-          selectInput(
-            "chart_gg_y_format", tr("Y axis format"),
-            choices = chart_axis_format_choices(), selected = "auto"
-          ),
           checkboxInput("chart_gg_polar", tr("Polar coordinates"), FALSE),
           selectInput(
             "chart_gg_polar_theta", tr("Polar angle"),
             choices = stats::setNames(c("x", "y"), c("X", "Y")),
             selected = "x"
           ),
-          value = "ggplot2 options"
+          value = "Axes"
+        ),
+        settings_panel(
+          tr("Text"),
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_title", tr("Title"), "")
+          ),
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_caption", tr("Caption"), "")
+          ),
+          textInput("chart_xlab", tr("X label"), ""),
+          textInput("chart_ylab", tr("Y label"), ""),
+          textInput("chart_gg_subtitle", tr("Subtitle"), ""),
+          textInput("chart_gg_tag", tr("Tag"), ""),
+          number_input("chart_base_size", tr("Base size"), 12,
+                       min = 6, max = 32, step = 1),
+          value = "Text"
+        ),
+        settings_panel(
+          tr("Theme"),
+          selectInput(
+            "chart_gg_theme", tr("ggplot2 theme"),
+            choices = chart_gg_theme_choices(),
+            selected = "minimal"
+          ),
+          selectInput("chart_palette", tr("Palette"),
+                      choices = chart_palette_choices(),
+                      selected = "default"),
+          selectInput(
+            "chart_legend", tr("Legend"),
+            choices = stats::setNames(
+              c("right", "left", "top", "bottom", "none"),
+              c(tr("Right"), tr("Left"), tr("Top"), tr("Bottom"),
+                tr("None"))
+            ),
+            selected = "right"
+          ),
+          textInput("chart_background", tr("Background"),
+                    value = "white"),
+          checkboxInput("chart_grid", tr("Grid"), value = TRUE),
+          value = "Theme"
         ),
         settings_panel(
           tr("Output"),

@@ -211,17 +211,16 @@ test_that("the gallery and model cards use the shared components", {
   expect_false(grepl("d-flex", html, fixed = TRUE))
 })
 
-test_that("the builder keeps its identity card and four settings panels", {
+test_that("the builder keeps its identity card and six settings panels", {
   html <- htmltools::renderTags(chart_builder_ui())$html
 
   expect_match(html, "rcmdr-chart-identity", fixed = TRUE)
   expect_match(html, 'id="chart_settings"', fixed = TRUE)
   expect_match(html, 'class="accordion-item"', fixed = TRUE)
   expect_equal(
-    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 4L
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 6L
   )
-  for (panel in c("Options", "Theme and labels", "ggplot2 options",
-                  "Output")) {
+  for (panel in c("Options", "Style", "Axes", "Text", "Theme", "Output")) {
     expect_match(html, sprintf('data-value="%s"', panel), fixed = TRUE)
   }
   # Only Options starts open: the identity card carries the required choices.
@@ -251,4 +250,50 @@ test_that("the builder keeps its identity card and four settings panels", {
 
   # The dynamic per-type options and the arbitrary help keep their slots.
   expect_match(html, "chart_options_ui", fixed = TRUE)
+
+  # The eighteen ggplot2 fields are spread over four panels, once each.
+  gg <- regmatches(html, gregexpr('id="chart_gg_[a-z_]+"', html))[[1]]
+  expect_equal(length(gg), 17L)
+  expect_equal(anyDuplicated(gg), 0L)
+})
+
+test_that("each semantic panel owns its fields and nothing else", {
+  html <- htmltools::renderTags(chart_builder_ui())$html
+  panel_fields <- function(value) {
+    start <- regexpr(sprintf('data-value="%s"', value), html, fixed = TRUE)[[1]]
+    rest <- substring(html, start)
+    end <- regexpr('data-value="', substring(rest, 20), fixed = TRUE)[[1]]
+    body <- if (end > 0) substr(rest, 1, end + 18) else rest
+    # The Output panel is the last one: stop before the preview column.
+    preview <- regexpr('rcmdr-chart-preview-column', body, fixed = TRUE)[[1]]
+    if (preview > 0) body <- substr(body, 1, preview - 1)
+    sort(regmatches(body, gregexpr('id="(chart_[a-z_]+|chart_gg_[a-z_]+)"',
+                                   body))[[1]])
+  }
+
+  expect_setequal(
+    panel_fields("Style"),
+    paste0('id="chart_gg_', c("position", "alpha", "binwidth", "jitter",
+                              "shape", "smooth", "se", "flip"), '"')
+  )
+  expect_setequal(
+    panel_fields("Axes"),
+    paste0('id="chart_gg_', c("x_format", "y_format", "facet_scales",
+                              "facet_ncol", "polar", "polar_theta"), '"')
+  )
+  expect_setequal(
+    panel_fields("Text"),
+    paste0('id="', c("chart_title", "chart_caption", "chart_xlab",
+                     "chart_ylab", "chart_base_size", "chart_gg_subtitle",
+                     "chart_gg_tag"), '"')
+  )
+  expect_setequal(
+    panel_fields("Theme"),
+    paste0('id="', c("chart_gg_theme", "chart_palette", "chart_legend",
+                     "chart_background", "chart_grid"), '"')
+  )
+  expect_setequal(
+    panel_fields("Output"),
+    paste0('id="', c("chart_width", "chart_height"), '"')
+  )
 })
