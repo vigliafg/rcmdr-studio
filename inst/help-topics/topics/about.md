@@ -30,7 +30,8 @@ script log, the output and the report.
   Help centre.
 - **Classic mode** preserves the 1.13 layout with separate Script, Output,
   Messages, Plots, Report, Data, Environment and Help tabs.
-- Switch mode from the top bar or from **Options**.
+- Switch mode from the top bar or from **View > Preferences...** (the
+  Options dialog).
 
 ## What Studio adds
 
@@ -39,7 +40,7 @@ script log, the output and the report.
 - live R-command preview in dialogs;
 - isolated previews for plots and Markdown;
 - eight themes — follow system, three light, three dark, high contrast — and
-  two densities, Compact and Comfortable, from **Options**;
+  two densities, Compact and Comfortable, from **View > Preferences...**;
 - one shared vocabulary of cards, notes, toolbars and dialogs, so every view
   and dialog reads the same way.
 - a minimal console with Output, Messages and History.
@@ -81,6 +82,31 @@ options are the only nested group.
   readers; long commands set `aria-busy`.
 - **Read-only tables** keep native semantics with sticky headers and a
   keyboard-reachable scroll region.
+
+## Desktop workspace
+
+- **One navigation**: the Studio menubar is the primary navigation. `Alt` or
+  `F10` enters it, the arrow keys move between menus, and the workspace shows
+  one view at a time. Classic keeps its original tabs.
+- **Two slots**: the primary view and an optional secondary view are two
+  separate renders; a saved layout sets the split and survives a restart.
+- **Undo and redo**: `Ctrl+Z` and `Ctrl+Shift+Z` cover data changes and
+  gallery pins, with an Edit menu entry and a status-bar message.
+- **Selection**: Data Studio selects rows, or a cell range copied as TSV with
+  `Ctrl+C`. The grid is a keyboard tab stop: arrows move a row cursor,
+  `Enter`/`Space` select, `Shift`+arrows extend, `Esc` clears.
+- **Layout**: the last view, the sidebar, the DT column widths and the dialog
+  sizes are remembered. **View > Reset layout** restores them without touching
+  the data, the history or the undo stack.
+- **Keyboard**: `F6`/`Shift+F6` cycle primary view, secondary view, inner
+  panel, modeless panel and status bar; the status bar names the active data
+  set, the model, the selection and the last action.
+- **Large data**: above 5,000 rows the grid pages on the server, so the
+  browser receives only the visible page; above 10,000 cells the browser
+  editor is disabled and the notice says why. Reading, selection and copy
+  keep working.
+- **Zoom and motion**: at 200% zoom the shell becomes one column; reduced
+  motion zeroes animations and transitions.
 
 ## Attribution
 

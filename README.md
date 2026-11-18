@@ -13,45 +13,22 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 2.0 Wave 7 (Platform release).** The core exposes 230 dialogs and,
-> with all 15 plugins loaded, 863 of 900 menu entries are implemented. The
-> package ships a Studio shell with a Home tab, command palette, structured
-> command history, live R-command preview in dialogs, isolated previews,
-> theme tokens and a Classic mode that preserves the 1.13 layout. The Data
-> Studio adds a data set registry, a searchable grid, a column inspector,
-> reproducible structural operations, session checkpoints, a data dictionary
-> and an import preview. The Chart Studio adds a visual builder, an isolated
-> live preview, typed chart specifications, themed commands, a searchable
-> gallery with pin/rename/reopen/compare, PNG/PDF/SVG/HTML export and an
-> opt-in ggplot2 engine. The Report Studio adds a document registry, a
-> clickable outline, a chunk list, a fast Markdown preview that never runs
-> code, executable cells with inline output, five templates, conservative
-> YAML editing, a knit manager with history and a recovery-aware autosave.
-> The Workbench adds multi-document script tabs, executable cells with run
-> above/below, an R console with recall, filterable output and message cards,
-> an object explorer with reproducible actions and a model registry with a
-> comparison dashboard. The navigation layer adds an advanced command palette
-> with favourites and recents, live menu search, breadcrumbs, complete
-> shortcuts, dialog presets and inline validation, five guided workflows that
-> orchestrate the existing dialogs, and contextual variable suggestions in the
-> Data Studio inspector. The help centre now has a full-text index with ranked
-> results and filters, highlighted snippets, tables of contents, related
-> dialogs and commands, runnable examples that go through the command engine,
-> contextual error-to-topic links, a glossary, a four-step first-run tour and a
-> Home checklist. Italian covers 27 core topics and the Studio's own interface
-> strings, and the language switch re-renders the shell without a restart. The
-> menu platform adds a horizontal SPSS/Minitab-style menubar with hierarchical
-> dropdowns, curated workflow groups, a single File > Save with one item per
-> format, and stable `menu_id` / `item_id` identifiers backed by
-> `inst/menus/core.yml` and first-party module fragments. The platform wave
-> adds versioned projects, autosave/recovery, bundles, session checkpoints,
-> a plugin SDK v2, health/diagnostics and a benchmark suite. The remaining
-> disabled core entries are the three lifecycle commands, the nine
-> browser-delegated Edit actions and `Identify3D`; EZR, NMBU and DoE
-> implement every plugin-specific entry. The package includes a searchable
-> offline help centre covering every dialog, interactive plotly versions of
-> the main charts, R Markdown report export, plugin command aliases,
-> accessibility landmarks, vignettes and release engineering.
+> **Status: 3.0 Wave 18 (Desktop workspace).** The Studio shell is menu-first:
+> one horizontal menubar (`Alt`/`F10`), one workspace view at a time with an
+> optional second slot, hideable Inspector/Preview panels, application undo and
+> redo, row and cell-range selection with TSV copy, resizable dialogs and
+> modeless Help/Console/Output. The desktop chrome is denser (40/28/40 px,
+> 4/6/8 px radii, flat cards), Home is a two-column start page, and theme,
+> language and density live in **View > Preferences...**. The layout — last
+> view, sidebar, DT column widths, dialog sizes — survives a restart and resets
+> without touching the data. The status bar names the data set, model,
+> selection and last action, and `F6` cycles the workspace regions. Large data
+> is honest: above 5,000 rows the grid pages on the server (measured in
+> `docs/upgrades/QA-DATA.md`), above 10,000 cells the browser editor is
+> disabled, and both limits say why. Classic keeps its original tabbed layout.
+> Commands, dialog ids, generated R code and existing i18n strings are
+> unchanged.
+
 
 ## Requirements
 
@@ -98,7 +75,7 @@ RcmdrShiny::run(env = env)
 | Command runner (`run_command`) with output, messages, warnings and errors | done |
 | Script pane (Ace), run selection / run all, open and download `.R` | done |
 | Output and Messages panes (clear, download) | done |
-| Data view (`DT`) and interactive editor (`rhandsontable`, 10,000-cell threshold) | done |
+| Data view (`DT`, server-side paging above 5,000 rows) and interactive editor (`rhandsontable`, 10,000-cell threshold) | done |
 | Data set registry and active-data selector | done |
 | Data grid with global search, column filter and original-row selection | done |
 | Column inspector with statistics, levels and distribution preview | done |
@@ -137,6 +114,9 @@ RcmdrShiny::run(env = env)
 | Plot capture, history gallery, PNG/PDF export | done |
 | rgl 3D scene rendered with `rglwidget()` | done |
 | Studio shell with Home, Charts and Console workspaces | done |
+| Menu-first desktop workspace with two slots, hideable panels and modeless views | done |
+| Application undo/redo, row and cell-range selection, TSV copy | done |
+| Persistent geometry: last view, sidebar, column widths, dialog sizes, reset | done |
 | Classic mode preserving the 1.13 layout | done |
 | Horizontal menubar with hierarchical, workflow-grouped menus | done |
 | Stable `menu_id` / `item_id` registry and first-party module fragments | done |

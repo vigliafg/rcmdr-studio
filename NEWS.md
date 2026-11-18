@@ -1,3 +1,77 @@
+# RcmdrShiny Studio 3.0.0
+
+## Desktop workspace
+
+- **One navigation.** Studio has a single horizontal menubar with `Alt`/`F10`
+  access, and the workspace shows one view at a time instead of a tabset of
+  every view. `input$main_tabs` stays the navigation contract. Classic keeps
+  its original tabs, labels and `data-value` attributes.
+- **Two slots.** A primary view and an optional secondary view render as two
+  distinct slots with their own outputs; a saved layout chooses the split.
+  The same view cannot be shown twice, and switching slots loses no state.
+- **Panels.** The Data Studio Inspector and the Chart Studio Preview can be
+  hidden without losing data or output; the hidden panel's output is not
+  built. Help, Console and Output can open in a modeless panel with a title
+  and a *Back to workspace* button.
+- **Undo and redo.** `Ctrl+Z` and `Ctrl+Shift+Z` work outside text entry for
+  data changes and gallery pins, with an Edit menu entry and a status-bar
+  message. The stack keeps 20 entries or 50 MB, a project load clears it, and
+  a gallery undo restores the metadata, not the deleted PNG.
+- **Rows and Cells.** Data Studio selects rows as before, or a rectangular
+  cell range copied as TSV with `Ctrl+C`; the status bar reports the range,
+  its size and the non-empty cells. `Esc` clears.
+- **Resizable windows.** Dialogs remember their size per dialog id and expose
+  a keyboard-accessible grip. Sizes are preference data, never statistical
+  state.
+
+## Desktop chrome and geometry
+
+- Topbar 40 px, menubar 28 px, view bar and toolbar 40 px, radii 4/6/8 px,
+  flat cards with a 1 px border. Every rule is scoped to
+  `body.rcmdr-mode-studio`, so Classic keeps its spacing.
+- Home is a two-column start page (actions and keyboard on the left,
+  Continue/Recent/Projects on the right); the hero and its gradient are gone.
+- Theme, language and density moved from the topbar to **View >
+  Preferences...** (the Options dialog). Hidden `theme` and `language`
+  inputs keep the existing observers for Ace, menus and help alive.
+- A versioned `geometry` object remembers the last view, the sidebar, the DT
+  column widths per data set and the dialog sizes. An old or corrupt file
+  falls back to the default. **View > Reset layout** restores the layout
+  without touching the data, the history, the log or the undo stack.
+- The status bar names the data set, its shape, the model, the selection and
+  the last action; `F6`/`Shift+F6` cycle primary, secondary, inner panel,
+  modeless panel and status bar. Selection and undo are announced through a
+  polite live region.
+
+## Large data
+
+- The grid switches to server-side paging above **5,000 rows** and to the
+  browser editor below **10,000 cells**, decided in one place
+  (`data_grid_plan()`). A visible notice names the limit that applies and
+  what still works (reading, selection, copy).
+- The thresholds are measured, not guessed: the client payload grows from
+  474 KB at 10,000 rows to 4.9 MB at 100,000 rows, while a server page stays
+  1.3 KB. The method, the table and the memory figures are in
+  `docs/upgrades/QA-DATA.md`.
+- No new table engine: if 100,000 rows are not enough, the documented
+  `rtabulator`/`toastui` gate is the next step.
+
+## Accessibility
+
+- The data grid is a keyboard tab stop: arrows move a row cursor,
+  `Enter`/`Space` select, `Shift`+arrows extend a cell range, `Esc` clears.
+- The DT column grip is a focusable `separator`: arrows change the width by
+  16 px and `Home` returns to the automatic width.
+- At 200% zoom the CSS viewport falls below the breakpoint, so the shell
+  becomes one column and the stacked sidebar stays within 40vh. Reduced
+  motion still zeroes animations and transitions.
+- A new browser e2e file covers F6 focus, the 640 px reflow and the theme
+  classes; it is skipped, like the rest of the suite, where Chrome cannot
+  navigate to `http(s)`.
+
+No statistical command, dialog id, generated R command or existing i18n
+string changed.
+
 # RcmdrShiny Studio 2.9.0
 
 ## Desktop completion

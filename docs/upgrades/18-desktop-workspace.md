@@ -1,7 +1,7 @@
 # Onda 18 — Spazio di lavoro desktop
 
 **Data:** 2026-11-18  
-**Stato:** in corso — S1–S9 fatti (lotti 1–3), prossimo S10–S12  
+**Stato:** chiusa — S1–S12 fatti (4 lotti), versione 3.0.0  
 **Baseline:** RcmdrShiny Studio 2.9.0 + T13 (hardening editor)  
 **Dipende da:** Onda 17 (split pane, menu contestuali, drag-and-drop, viste
 pigre) e T13 (editor legato a dataset/vista)  
@@ -458,6 +458,9 @@ sono raggiungibili da tastiera; nessun conflitto con Ace/input.
 
 #### S10 — Dati grandi
 
+**Esito:** `ca2f1bc`; soglie 5.000 righe / 10.000 celle, misure in
+[`QA-DATA.md`](QA-DATA.md).
+
 **Obiettivo:** numeri onesti, non promesse.
 
 **File:** `R/app.R`, `R/data-studio.R`, `R/benchmark.R`,
@@ -473,6 +476,9 @@ regressione per i dataset piccoli; il limite è documentato.
 
 #### S11 — Accessibilità desktop ed e2e
 
+**Esito:** `52475a1`; griglia e grip da tastiera, collasso a 200% di zoom,
+audit statico e 3 e2e desktop (saltati senza browser navigabile).
+
 **Obiettivo:** verificare, non assumere.
 
 **File:** `tests/testthat/*-e2e.R`, `tools/help_screenshots.R`,
@@ -487,6 +493,8 @@ rigenerati; differenze accettate scritte.
 **Commit:** `test(ui): audit the desktop keyboard and zoom`
 
 #### S12 — Chiusura
+
+**Esito:** NEWS 3.0.0, topic About, README, checklist, diario e push.
 
 **Obiettivo:** consegnare.
 
@@ -541,18 +549,18 @@ l'onda ha davvero cambiato la sensazione d'uso.
 
 ## 9. Criteri di chiusura
 
-- [ ] 12 step verdi, 4 handoff (S3, S6, S9, S12).
-- [ ] Una menu bar, nessuna navigazione duplicata in Studio.
-- [ ] Due slot, viste uniche, layout salvati e ripristinati.
-- [ ] Pannelli nascondibili senza perdere dati o output.
-- [ ] Undo/redo dati e galleria con menu e scorciatoie.
-- [ ] Selezione intervallo e copia TSV.
-- [ ] Dialoghi con geometria ricordata; Help/Console modeless.
-- [ ] Densità desktop, 8 × 2, zoom 200%, reduced motion.
-- [ ] Status bar con selezione, undo e dataset.
-- [ ] Misure dati grandi e soglie documentate.
-- [ ] Classica strutturalmente identica.
-- [ ] Suite completa `EXIT=0`; app HTTP 200; push.
+- [x] 12 step verdi, 4 handoff (S3, S6, S9, S12).
+- [x] Una menu bar, nessuna navigazione duplicata in Studio.
+- [x] Due slot, viste uniche, layout salvati e ripristinati.
+- [x] Pannelli nascondibili senza perdere dati o output.
+- [x] Undo/redo dati e galleria con menu e scorciatoie.
+- [x] Selezione intervallo e copia TSV.
+- [x] Dialoghi con geometria ricordata; Help/Console modeless.
+- [x] Densità desktop, 8 × 2, zoom 200%, reduced motion.
+- [x] Status bar con selezione, undo e dataset.
+- [x] Misure dati grandi e soglie documentate.
+- [x] Classica strutturalmente identica.
+- [x] Suite completa `EXIT=0`; app HTTP 200; push.
 
 ---
 

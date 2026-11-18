@@ -539,7 +539,7 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 ## Onda 18 — Spazio di lavoro desktop
 
 Documento di settore: [`18-desktop-workspace.md`](18-desktop-workspace.md).
-Stato: in corso — lotti 1–3 fatti (S1–S9), prossimo S10–S12; ADR-018.
+Stato: chiusa — 12 step in 4 lotti (S1–S12), versione 3.0.0; ADR-018.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -552,9 +552,9 @@ Stato: in corso — lotti 1–3 fatti (S1–S9), prossimo S10–S12; ADR-018.
 | S7 | Densità e chrome desktop | [x] | `6da52af`; Studio-only, start page, 8 × 2 |
 | S8 | Geometria persistente | [x] | `d566b85`; ultima vista, larghezze, dialoghi, reset |
 | S9 | Status bar e navigazione da tastiera | [x] | `47bbe56`; F6, contesto, annunci |
-| S10 | Dati grandi | [ ] | misure e soglie, nessun motore nuovo |
-| S11 | Accessibilità desktop ed e2e | [ ] | tastiera, zoom, screenshot |
-| S12 | Chiusura | [ ] | NEWS 3.0.0, topic, diario, push |
+| S10 | Dati grandi | [x] | `ca2f1bc`; 5.000 righe server, 10.000 celle editor, `QA-DATA.md` |
+| S11 | Accessibilità desktop ed e2e | [x] | `52475a1`; griglia e grip da tastiera, zoom 200%, audit |
+| S12 | Chiusura | [x] | NEWS 3.0.0, topic, README, diario, push |
 
 ---
 
@@ -687,6 +687,12 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
              quattro tabelle), sticky header e regioni native; 5 plugin su 15
              con accordion, 10 elencati; picker Help, conteggi live e palette
              con aria-activedescendant. Suite completa verde.
+2026-11-18 — Onda 18 chiusa (3.0.0): shell menu-first, due slot, pannelli
+             nascondibili, undo/redo, selezione Rows/Cells, dialoghi
+             ridimensionabili e modeless, chrome desktop, geometria
+             persistente, status bar e F6, soglie dati grandi misurate e
+             accessibilità della griglia. 29 e2e (26 + 3 desktop) restano
+             saltati dove Chrome non naviga http(s).
 2026-11-18 — Onda 17 chiusa (2.9.0): viste pesanti differite alla prima
              apertura, sonda browser versionata con limite Chrome documentato,
              NEWS/topic/diario/checklist aggiornati. Suite completa verde.

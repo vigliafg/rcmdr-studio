@@ -146,13 +146,13 @@ contestuali, drag-and-drop, tabelle di sola lettura, dialoghi dei plugin,
 Help/palette e rendering pigro. 12 step in 4 lotti; il diario è
 [`diary/wave-17-desktop-completion.md`](diary/wave-17-desktop-completion.md).
 
-**Onda 18 pianificata il 18 novembre 2026 (3.0.0).** Il piano è in
+**Onda 18 chiusa il 18 novembre 2026 (3.0.0).** Il piano è in
 [`18-desktop-workspace.md`](18-desktop-workspace.md): menu-first, workspace a
 due slot con layout salvati, undo/redo applicativo, selezione a intervallo,
 dialoghi e pannelli modeless, densità desktop, geometria persistente, status
-bar e scala dei dati grandi. 12 step in 4 lotti; lotti 1–3 (S1–S9) fatti;
-l'ADR è la 018 e il diario è
-[`diary/wave-18-desktop-workspace.md`](diary/wave-18-desktop-workspace.md).
+bar e scala dei dati grandi. 12 step in 4 lotti (S1–S12); l'ADR è la 018, il
+diario è [`diary/wave-18-desktop-workspace.md`](diary/wave-18-desktop-workspace.md)
+e le misure dei dati grandi sono in [`QA-DATA.md`](QA-DATA.md).
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.
