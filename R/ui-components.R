@@ -408,6 +408,28 @@ help_tip <- function(text, label = tr("More information"),
   )
 }
 
+#' A focusable scroll region around a read-only table
+#'
+#' The table itself keeps its native semantics; the wrapper only makes a long
+#' table scrollable and reachable with the keyboard.  A screen reader enters
+#' the region with its name and then reads the real `<table>`, which is why
+#' the gate kept native tables instead of a client-side widget.
+#'
+#' @param ... Table content.
+#' @param label Accessible name of the region.
+#' @param class Extra classes.
+#' @return A `<div>` tag.
+#' @keywords internal
+table_scroll <- function(..., label = NULL, class = NULL) {
+  htmltools::div(
+    class = c("rcmdr-table-scroll", class),
+    role = "region",
+    tabindex = "0",
+    `aria-label` = label,
+    ...
+  )
+}
+
 #' A status badge
 #'
 #' A short label with a semantic colour.  The colour is never the only signal:

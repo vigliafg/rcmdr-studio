@@ -435,3 +435,12 @@ test_that("tabs_strip() attaches one menu per tab", {
     "one menu per tab"
   )
 })
+
+test_that("table_scroll() accepts extra classes and content", {
+  html <- as.character(table_scroll(
+    class = "wide", label = "Registry",
+    htmltools::tags$p("body")
+  ))
+  expect_match(html, 'class="rcmdr-table-scroll wide"', fixed = TRUE)
+  expect_match(html, ">body<", fixed = TRUE)
+})

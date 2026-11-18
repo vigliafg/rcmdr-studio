@@ -175,3 +175,58 @@ Da eseguire su `Rscript tools/widget_gallery.R`, una voce per ogni tema
 
 Questi limiti sono gli stessi registrati nel diario dell'onda e nella
 checklist di chiusura.
+
+---
+
+## 8. Gate `reactable` (Onda 17, T7)
+
+**Domanda:** conviene spostare le tabelle di sola lettura — glossario,
+topic Help, registro documenti e confronto modelli — su `reactable`?
+
+**Prototipo:** `reactable 0.4.5` installato in una libreria temporanea
+(`/tmp/opencode/rlib`), tabella di confronto modelli resa con
+`reactable(compact = TRUE, striped = TRUE, bordered = FALSE)` e tema dai
+token. Nessun file del repository è stato cambiato per il prototipo.
+
+| Misura | Valore |
+|---|---|
+| `reactable` installato | 3,5 MB |
+| `reactR` installato (dipendenza nuova) | 1,9 MB |
+| Asset front-end `reactable` | 3.312.830 byte (3,3 MB) |
+| React 18 | 170.431 byte |
+| core-js | 93.205 byte |
+| htmlwidgets | 33.190 byte |
+| Totale front-end aggiunto | circa 3,6 MB |
+| Asset CSS + JS dell'app oggi | 165 KB |
+| Nuove dipendenze dichiarate | `reactable`, `reactR` |
+| Tastiera | nessuna navigazione di riga o colonna nel widget: va aggiunta |
+| Tema | `reactableTheme()` accetta i token, ma li applica lato JS |
+| ARIA | la tabella nasce lato client dentro un `div`; il `<table>` non è nel primo HTML |
+
+**Esito: il gate non passa.**
+
+- Il peso front-end è circa **22 volte** tutti gli asset attuali
+  dell'applicazione, per quattro tabelle di sola lettura.
+- Il markup utile non è nel primo HTML: senza JavaScript non c'è tabella.
+  Le tabelle native invece sono leggibili subito e conservano semantica,
+  selezione del testo e stampa.
+- La tastiera non è fornita dal widget: sarebbe comunque JS nostro, sopra un
+  runtime React.
+- DT resta la scelta per i dati editabili, la selezione e i filtri; per il
+  solo leggere una tabella nativa è più leggera e più accessibile.
+
+**Cosa è stato rifinito al posto del widget:**
+
+- header `position: sticky` per `.rcmdr-table`, `.rcmdr-models-table` e
+  `.rcmdr-help-body thead th`;
+- lo stesso ritmo di riga di DT (`--rcmdr-table-row-h`, 32/40 px secondo la
+  densità);
+- `table_scroll()`: regione `role="region"`, `tabindex="0"` e nome, così una
+  tabella lunga si raggiunge e si scorre da tastiera senza perdere il
+  `<table>` interno;
+- overflow orizzontale nel corpo Help, dove i topic possono contenere tabelle
+  larghe.
+
+La decisione è vincolante per l'onda: nessuna tabella editabile passa a
+`reactable`, e il test `test-readonly-tables.R` fallisce se la dipendenza
+rientra da DESCRIPTION o da un `reactable::` nel codice.

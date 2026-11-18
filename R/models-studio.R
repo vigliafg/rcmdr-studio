@@ -389,16 +389,19 @@ models_dashboard_ui <- function(state) {
     )
   })
   htmltools::tagList(
-    htmltools::tags$table(
-      class = "table table-sm rcmdr-models-table",
-      htmltools::tags$thead(htmltools::tags$tr(
-        htmltools::tags$th(tr("Model")), htmltools::tags$th(tr("Class")),
-        htmltools::tags$th(tr("Formula")), htmltools::tags$th(tr("n")),
-        htmltools::tags$th("AIC"), htmltools::tags$th(tr("Delta AIC")),
-        htmltools::tags$th("BIC"), htmltools::tags$th(tr("R squared")),
-        htmltools::tags$th(tr("Actions"))
-      )),
-      htmltools::tags$tbody(rows)
+    table_scroll(
+      label = tr("Model comparison"),
+      htmltools::tags$table(
+        class = "table table-sm rcmdr-models-table",
+        htmltools::tags$thead(htmltools::tags$tr(
+          htmltools::tags$th(tr("Model")), htmltools::tags$th(tr("Class")),
+          htmltools::tags$th(tr("Formula")), htmltools::tags$th(tr("n")),
+          htmltools::tags$th("AIC"), htmltools::tags$th(tr("Delta AIC")),
+          htmltools::tags$th("BIC"), htmltools::tags$th(tr("R squared")),
+          htmltools::tags$th(tr("Actions"))
+        )),
+        htmltools::tags$tbody(rows)
+      )
     ),
     if (!is.null(selected)) {
       model_actions_ui(state, selected)

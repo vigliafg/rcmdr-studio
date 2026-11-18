@@ -319,6 +319,37 @@
     .rcmdr-table {
       font-size: var(--rcmdr-text-sm); margin-bottom: 0;
     }
+    /* Read-only tables: the same row rhythm as DT, a header that stays put
+       while the region scrolls, and a wrapper that a keyboard can enter. */
+    .rcmdr-table-scroll {
+      max-height: 60vh; overflow: auto;
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-sm);
+    }
+    .rcmdr-table-scroll > .table { margin-bottom: 0; }
+    .rcmdr-table thead th,
+    .rcmdr-models-table thead th,
+    .rcmdr-help-body thead th {
+      position: sticky; top: 0; z-index: 1;
+      height: calc(var(--rcmdr-table-row-h) - .25rem);
+      padding: 0 var(--rcmdr-space-2);
+      background: var(--rcmdr-surface-muted);
+      color: var(--rcmdr-heading);
+      border-bottom: 1px solid var(--rcmdr-border);
+      font-size: var(--rcmdr-text-sm);
+      font-weight: var(--rcmdr-weight-strong);
+      text-align: start; white-space: nowrap;
+    }
+    .rcmdr-table tbody td,
+    .rcmdr-table tbody th,
+    .rcmdr-models-table tbody td,
+    .rcmdr-models-table tbody th {
+      height: var(--rcmdr-table-row-h);
+      padding: 0 var(--rcmdr-space-2);
+      border-bottom: 1px solid var(--rcmdr-border);
+      vertical-align: middle;
+    }
+    .rcmdr-help-body { overflow-x: auto; }
     /* Two-column definition list: term and value, no Bootstrap grid. */
     .rcmdr-dl {
       display: grid; grid-template-columns: auto minmax(0, 1fr);
