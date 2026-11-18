@@ -109,17 +109,27 @@ frequency_distribution_dialog <- function() {
     id = id, title = tr("Frequency Distributions"), help = "table",
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
-      htmltools::tagList(
-        var_input(ns("variables"), tr("Variables (pick one or more)"),
-                  names(dataset(state))[vapply(dataset(state),
-                                               function(x) is.factor(x) || is.character(x) || is.logical(x),
-                                               logical(1))],
-                  selected = m$variables, multiple = TRUE),
-        checkbox_input(ns("goodness"),
-                       tr("Chi-square goodness-of-fit test (for one variable only)"),
-                       m$goodness),
-        entry_input(ns("probs"), tr("Hypothesized probabilities (comma separated, optional):"),
-                    m$probs)
+      settings_accordion(
+        id = ns("settings"),
+        open = "Variables",
+        settings_panel(
+          tr("Variables"),
+          var_input(ns("variables"), tr("Variables (pick one or more)"),
+                    names(dataset(state))[vapply(dataset(state),
+                                                 function(x) is.factor(x) || is.character(x) || is.logical(x),
+                                                 logical(1))],
+                    selected = m$variables, multiple = TRUE),
+          value = "Variables"
+        ),
+        settings_panel(
+          tr("Tests"),
+          checkbox_input(ns("goodness"),
+                         tr("Chi-square goodness-of-fit test (for one variable only)"),
+                         m$goodness),
+          entry_input(ns("probs"), tr("Hypothesized probabilities (comma separated, optional):"),
+                      m$probs),
+          value = "Tests"
+        )
       )
     },
     on_ok = function(input, state) {

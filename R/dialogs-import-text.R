@@ -24,57 +24,78 @@ import_text_dialog <- function() {
     ui = function(state, memory) {
       m <- utils::modifyList(defaults, memory %||% list())
 
-      htmltools::tagList(
-        entry_input(ns("dsname"), tr("Enter name for data set:"), m$dsname),
-        segmented_input(
-          ns("location"), tr("Location of Data File"),
-          c(
-            "Local file system" = "local",
-            "Clipboard" = "clipboard",
-            "Internet URL" = "url"
+      settings_accordion(
+        id = ns("settings"),
+        open = "Source",
+        # The conditional fields stay in the panel that owns the control they
+        # depend on: the location chooses the path, the separator the "other"
+        # entry.
+        settings_panel(
+          tr("Source"),
+          entry_input(ns("dsname"), tr("Enter name for data set:"), m$dsname),
+          segmented_input(
+            ns("location"), tr("Location of Data File"),
+            c(
+              "Local file system" = "local",
+              "Clipboard" = "clipboard",
+              "Internet URL" = "url"
+            ),
+            m$location
           ),
-          m$location
-        ),
-        conditionalPanel(
-          sprintf("input['%s'] == 'local'", ns("location")),
-          file_input(
-            ns("path"), tr("File path:"), m$path,
-            placeholder = tr("/path/to/data.csv")
-          )
-        ),
-        conditionalPanel(
-          sprintf("input['%s'] == 'url'", ns("location")),
-          entry_input(ns("url"), tr("Internet URL:"), m$url,
-                      placeholder = "https://example.org/data.csv")
-        ),
-        checkbox_input(ns("header"), tr("Variable names in file"), m$header),
-        checkbox_input(
-          ns("stringsAsFactors"),
-          tr("Convert character variables to factors"),
-          m$stringsAsFactors
-        ),
-        radio_input(
-          ns("delimiter"), tr("Field Separator"),
-          c(
-            "White space" = "whitespace",
-            "Commas [,]" = "commas",
-            "Semicolons [;]" = "semicolons",
-            "Tabs" = "tabs",
-            "Other" = "other"
+          conditionalPanel(
+            sprintf("input['%s'] == 'local'", ns("location")),
+            file_input(
+              ns("path"), tr("File path:"), m$path,
+              placeholder = tr("/path/to/data.csv")
+            )
           ),
-          m$delimiter
+          conditionalPanel(
+            sprintf("input['%s'] == 'url'", ns("location")),
+            entry_input(ns("url"), tr("Internet URL:"), m$url,
+                        placeholder = "https://example.org/data.csv")
+          ),
+          value = "Source"
         ),
-        conditionalPanel(
-          sprintf("input['%s'] == 'other'", ns("delimiter")),
-          entry_input(ns("other"), tr("Specify:"), m$other)
+        settings_panel(
+          tr("Parsing"),
+          checkbox_input(ns("header"), tr("Variable names in file"), m$header),
+          radio_input(
+            ns("delimiter"), tr("Field Separator"),
+            c(
+              "White space" = "whitespace",
+              "Commas [,]" = "commas",
+              "Semicolons [;]" = "semicolons",
+              "Tabs" = "tabs",
+              "Other" = "other"
+            ),
+            m$delimiter
+          ),
+          conditionalPanel(
+            sprintf("input['%s'] == 'other'", ns("delimiter")),
+            entry_input(ns("other"), tr("Specify:"), m$other)
+          ),
+          segmented_input(
+            ns("decimal"), tr("Decimal-Point Character"),
+            c("Period [.]" = "period", "Comma [,]" = "comma"),
+            m$decimal
+          ),
+          entry_input(ns("missing"), tr("Missing data indicator:"), m$missing),
+          value = "Parsing"
         ),
-        segmented_input(
-          ns("decimal"), tr("Decimal-Point Character"),
-          c("Period [.]" = "period", "Comma [,]" = "comma"),
-          m$decimal
+        settings_panel(
+          tr("Variables"),
+          checkbox_input(
+            ns("stringsAsFactors"),
+            tr("Convert character variables to factors"),
+            m$stringsAsFactors
+          ),
+          value = "Variables"
         ),
-        entry_input(ns("missing"), tr("Missing data indicator:"), m$missing),
-        help_text(tr("The generated read.table() command is shown in the script pane."))
+        settings_panel(
+          tr("Options"),
+          help_text(tr("The generated read.table() command is shown in the script pane.")),
+          value = "Options"
+        )
       )
     },
     on_ok = function(input, state) {

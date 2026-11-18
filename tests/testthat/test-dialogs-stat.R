@@ -382,3 +382,44 @@ test_that("long option labels stay radio lists, not pills", {
   # keep the checkbox, never the switch.
   expect_false(grepl("rcmdr-switch", render("kmeansClustering"), fixed = TRUE))
 })
+
+test_that("the frequency dialog separates variables from its tests", {
+  env <- new.env()
+  env$D <- data.frame(y = 1:6, g = factor(rep(c("a", "b"), 3)))
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+
+  html <- htmltools::renderTags(
+    get_dialog_spec("frequencyDistribution")$ui(state, NULL)
+  )$html
+
+  expect_match(html, 'id="frequencyDistribution_settings"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 2L
+  )
+  expect_setequal(
+    regmatches(html, gregexpr('data-value="[^"]*"', html))[[1L]],
+    c('data-value="Variables"', 'data-value="Tests"')
+  )
+  expect_match(html, 'data-value="Variables"', fixed = TRUE)
+  expect_match(html, "collapse show", fixed = TRUE)
+
+  # The variable listbox stays in its panel, the test parameters in the other.
+  split <- regexpr('data-value="Tests"', html, fixed = TRUE)[[1L]]
+  variables <- substr(html, 1, split - 1L)
+  tests <- substr(html, split, nchar(html))
+  expect_match(variables, 'id="frequencyDistribution_variables"', fixed = TRUE)
+  expect_match(tests, 'id="frequencyDistribution_goodness"', fixed = TRUE)
+  expect_match(tests, 'id="frequencyDistribution_probs"', fixed = TRUE)
+  expect_false(grepl('id="frequencyDistribution_goodness"', variables,
+                     fixed = TRUE))
+
+  # All three ids the command builder reads are still present.
+  for (name in c("variables", "goodness", "probs")) {
+    expect_equal(
+      lengths(regmatches(html, gregexpr(
+        sprintf('id="frequencyDistribution_%s"', name), html
+      ))), 1L, info = name
+    )
+  }
+})

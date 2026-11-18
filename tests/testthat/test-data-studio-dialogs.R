@@ -176,3 +176,66 @@ test_that("data and import dialogs use the segmented control for short choices",
   expect_null(result$error)
   expect_match(result$commands[[1L]], "sum", fixed = TRUE)
 })
+
+test_that("the text import dialog groups its fields in four panels", {
+  env <- new.env()
+  env$D <- data.frame(a = 1:5, b = 6:10)
+  state <- AppState(env = env)
+  active_dataset(state, "D")
+
+  html <- htmltools::renderTags(
+    get_dialog_spec("readDataSet")$ui(state, NULL)
+  )$html
+
+  expect_match(html, 'id="readDataSet_settings"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 4L
+  )
+  expect_setequal(
+    regmatches(html, gregexpr('data-value="[^"]*"', html))[[1L]],
+    sprintf('data-value="%s"', c("Source", "Parsing", "Variables", "Options"))
+  )
+  # One panel is open: the source, which every user has to answer first.
+  expect_equal(
+    lengths(regmatches(html, gregexpr("collapse show", html))), 1L
+  )
+  source <- regmatches(
+    html,
+    regexpr('(?s)data-value="Source".*?data-value="Parsing"', html,
+            perl = TRUE)
+  )
+  expect_match(source, "collapse show", fixed = TRUE)
+
+  IDs <- c("dsname", "location", "path", "url", "header", "delimiter",
+           "other", "decimal", "missing", "stringsAsFactors")
+  for (name in IDs) {
+    expect_equal(
+      lengths(regmatches(html, gregexpr(
+        sprintf('id="readDataSet_%s"', name), html
+      ))), 1L, info = name
+    )
+  }
+
+  # The conditional fields live in the panel of the control they depend on.
+  panel_of <- function(value, next_value = NULL) {
+    start <- regexpr(sprintf('data-value="%s"', value), html, fixed = TRUE)[[1L]]
+    body <- substring(html, start)
+    if (!is.null(next_value)) {
+      end <- regexpr(sprintf('data-value="%s"', next_value), body,
+                     fixed = TRUE)[[1L]]
+      if (end > 0L) body <- substr(body, 1L, end - 1L)
+    }
+    body
+  }
+  parsing <- panel_of("Parsing", "Variables")
+  variables <- panel_of("Variables", "Options")
+  expect_match(parsing, 'id="readDataSet_other"', fixed = TRUE)
+  expect_match(parsing, "data-display-if", fixed = TRUE)
+  expect_match(variables, 'id="readDataSet_stringsAsFactors"', fixed = TRUE)
+  expect_false(grepl('id="readDataSet_stringsAsFactors"', parsing,
+                     fixed = TRUE))
+  # Variables is one field and Options one note: no panel is empty.
+  expect_match(variables, "Convert character variables to factors",
+               fixed = TRUE)
+  expect_match(panel_of("Options"), "read.table\\(\\)", perl = TRUE)
+})
