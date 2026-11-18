@@ -540,11 +540,17 @@ per questi tre.
   `layout_columns()`: duplicherebbero la shell e le griglie esistenti.
 - **shinyWidgets** entra in `Imports` con una versione minima verificata.
   Si adottano **solo**:
-  - `pickerInput()` per la selezione variabile con ricerca;
+  - `virtualSelectInput()` oppure `pickerInput()` — uno solo, scelto in S3 —
+    per gli elenchi lunghi e la selezione multipla;
   - `noUiSliderInput()` per i numeri limitati;
   - `spectrumInput()` per i colori.
   Gli altri widget (switch, radio/checkbox decorati, dropdown, date picker)
   restano fuori finché non c'è un caso d'uso e un test.
+- Le famiglie di campi, checkbox, radio, switch e listbox hanno una specifica
+  desktop comune (altezze, bordo 1 px, raggio, elevazione, hover, focus,
+  disabled, invalid) e una galleria di sviluppo (`tools/widget_gallery.R`) che
+  le mostra in tutte le 8 palette × 2 densità. La specifica è parte della
+  decisione, non un dettaglio di stile.
 - Ogni widget esterno passa da un wrapper in `R/widgets.R`
   (`picker_input()`, `slider_input()`, `color_input()`): i dialoghi non
   chiamano la libreria.

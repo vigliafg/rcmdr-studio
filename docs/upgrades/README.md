@@ -102,7 +102,7 @@ Le decisioni sono registrate in forma di ADR in
 | **12** | [`12-ggplot-only-types.md`](12-ggplot-only-types.md) | Violino, ECDF, densità 2D e heatmap solo ggplot2 | 0–11 |
 | **13** | [`13-interactive-builder.md`](13-interactive-builder.md) | Anteprima plotly nel builder, selezione e subset | 0–12 |
 | **15** | [`15-ui-refresh.md`](15-ui-refresh.md) | Rifacimento visivo: asset, token, componenti, dialoghi, viste, QA | 0, 5 |
-| **16** | [`16-bslib-widgets.md`](16-bslib-widgets.md) | bslib, shinyWidgets e accordion per i parametri | 15 |
+| **16** | [`16-bslib-widgets.md`](16-bslib-widgets.md) | bslib, shinyWidgets, accordion e sistema dei widget | 15 |
 
 Dopo l'Onda 0, le ondate 1–3 sono parallelizzabili. L'ordine consigliato resta
 **Data → Charts → Report** perché il Chart Studio riusa il modello dati e il
@@ -130,10 +130,11 @@ pelle, componenti e chrome dei dialoghi. U0–U5 fatte; il diario è
 è [`QA-UI-REFRESH.md`](QA-UI-REFRESH.md).
 
 **Onda 16 pianificata il 18 novembre 2026.** Il piano è in
-[`16-bslib-widgets.md`](16-bslib-widgets.md): accordion bslib per i parametri,
-shinyWidgets per picker, slider e colore, Chart Builder e dialoghi densi
-riorganizzati. 12 step in 4 lotti da 3; nessun cambio di ID o comandi. Il
-diario sarà `diary/wave-16-bslib-widgets.md`, creato al primo handoff.
+[`16-bslib-widgets.md`](16-bslib-widgets.md): sistema dei widget con specifica
+desktop e galleria, accordion bslib per i parametri, shinyWidgets per picker,
+listbox, slider e colore, Chart Builder e dialoghi densi riorganizzati. 15 step
+in 5 lotti da 3; nessun cambio di ID o comandi. Il diario sarà
+`diary/wave-16-bslib-widgets.md`, creato al primo handoff.
 
 **Ordine di grandezza:** 35–45 settimane-uomo per una persona esperta. Non è
 una stima contrattuale.

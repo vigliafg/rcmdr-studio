@@ -1,7 +1,7 @@
-# Onda 16 — bslib, shinyWidgets e accordion per i parametri
+# Onda 16 — bslib, shinyWidgets, accordion e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** pianificata — 12 step in 4 lotti da 3  
+**Stato:** pianificata — 15 step in 5 lotti da 3  
 **Baseline:** RcmdrShiny Studio 2.8.0  
 **Dipende da:** Onda 15 (token, componenti, viste, matrice 8 × 2)  
 **Documento padre:** [`README.md`](README.md)  
@@ -19,13 +19,21 @@ librerie già coerenti con Bootstrap 5, senza riaprire il contratto dell'app:
   selezione ricercabile, slider per valori limitati, selettore di colore;
 - **accordion** nel Chart Builder e nei dialoghi con più di 8–10 parametri,
   così i campi visibili sono quelli che servono e il resto è a una riga di
-  distanza.
+  distanza;
+- **un sistema di widget unico** per campi, dropdown, listbox, checkbox,
+  radio, switch, slider e colore: stessa altezza, stesso bordo, stesso focus,
+  stesso comportamento da tastiera;
+- **aspetto desktop** in tutta l'interfaccia: densità, bordi da 1 px,
+  elevazione discreta solo sulle superfici flottanti, hover netti, nessun
+  controllo lasciato al disegno predefinito del browser.
 
 Non è un cambio di motore: comandi R, ID degli input, valori letti dal server,
 `dialog_spec()`, modalità Classica e i18n restano quelli di prima.
 
 Al termine dell'onda:
 
+- ogni famiglia di input ha una specifica visiva e una galleria che la rende
+  verificabile in tutte le 8 palette × 2 densità;
 - il Chart Builder passa da una colonna di ~30 controlli a una scheda
   “Chart and data” sempre visibile e 6 pannelli richiudibili;
 - i dialoghi *Options*, *Import text data*, *Frequency Distributions*,
@@ -47,6 +55,10 @@ Al termine dell'onda:
 | Chart Builder | 29 controlli statici + fino a 9 opzioni dinamiche + mapping, in 3 schede e 2 `hr` nella stessa colonna | La colonna è lunga 3–4 schermate; i parametri rari sono mescolati a quelli frequenti |
 | Dialoghi | corpo reso in un unico `.rcmdr-field-grid.rcmdr-dialog-grid`; *Options* ha 9 controlli + estensione grafici in 5 sezioni con `hr`/`h6` | Le sezioni sono solo visive: non si possono chiudere |
 | Altri dialoghi densi | *Import text data* ~10 controlli, *Frequency Distributions* ~10, modelli 6–10, test 5–8 | Stesso problema, meno grave |
+| Famiglie widget | text/number/textarea/select/checkbox/radio/switch sono già tokenizzate; selectize e dropdown hanno override; checkbox e radio conservano la forma Bootstrap | Manca una specifica unica e un banco di prova che le mostri tutte insieme |
+| Elenchi | `var_input()` usa `selectizeInput` in 106 punti | Non è un listbox desktop: mostra tag, non righe selezionabili |
+| Controlli speciali | slider e colore assenti o affidati a campi testuali; date assente | I parametri limitati non si leggono a colpo d'occhio |
+| Galleria | assente | Non esiste un posto dove vedere ogni widget in ogni stato |
 | Validazione | `dialog_validation_ui()` e `rcmdrFocusField()` cercano il campo per ID | Un campo dentro un pannello chiuso non è raggiungibile: serve aprirlo |
 | Temi | 8 temi × 2 densità, contrasto verificato da `test-theme-matrix.R` | Ogni componente esterno va mappato sui token, non tematizzato a mano |
 | Test | 132 file, 776 blocchi `test_that`; contract su tutti i dialoghi; 26 e2e saltati senza browser | Gli ID sono il contratto: si aggiungono classi, non si rinominano |
@@ -74,10 +86,38 @@ Al termine dell'onda:
    diario e l'utente compatta il contesto.
 8. **Niente framework UI.** bslib resta il fornitore di Bootstrap 5; non si
    adottano Fluent, Semantic, shinydashboard o React.
+9. **Desktop first.** Un controllo deve sembrare parte di un'applicazione
+   desktop: 1 px di bordo, raggio contenuto, elevazione solo se flottante,
+   hover immediato, focus a anello, nessun effetto “mobile”.
+10. **Una famiglia per volta.** Ogni famiglia di widget ha la sua specifica,
+    la sua galleria e il suo test; non si ristilizza “tutto insieme” senza un
+    criterio verificabile.
 
 ---
 
 ## 4. Architettura target
+
+### 4.0 Specifica desktop
+
+La specifica vale per ogni famiglia e viene verificata nella galleria
+(`tools/widget_gallery.R`) e nella matrice 8 × 2.
+
+| Elemento | Regola |
+|---|---|
+| Altezza | 34 px compatto / 40 px comodo per campi e bottoni; nessuna eccezione per widget esterni |
+| Bordo | 1 px `--rcmdr-border-strong` sui controlli; `--rcmdr-border` sulle superfici decorative |
+| Raggio | 6 px sui controlli, 8 px su dropdown e pannelli, 12 px su modali |
+| Elevazione | solo su dropdown, popover, modali; un `--rcmdr-shadow-sm` nuovo per i menu, il grande resta ai modali |
+| Hover | cambia bordo e superficie, non sposta il contenuto; nessuna transizione oltre 150 ms |
+| Focus | un solo anello da 2 px, offset 2 px, visibile su tutte le palette |
+| Disabled | opacità e cursore coerenti, nessun hover, valore ancora leggibile |
+| Errore | bordo `--rcmdr-danger` + messaggio; mai solo il colore |
+| Checkbox/radio | 16 px, quadrato 2 px di raggio o cerchio, segno netto, stato indeterminato |
+| Dropdown | superficie, bordo 1 px, ombra piccola, ricerca sticky, massimo 320 px di altezza |
+| Listbox | 8–10 righe, hover di riga, selezione d'accento, tastiera con Ctrl/Shift |
+| Tabelle | righe da 32 px in compatto, header sticky, hover e selezione coerenti |
+| Movimento | 120–150 ms; `prefers-reduced-motion` azzera tutto |
+| Cursore | default sui campi, pointer su bottoni, link e righe cliccabili |
 
 ### 4.1 Cosa prendiamo da bslib
 
@@ -92,7 +132,8 @@ Al termine dell'onda:
 
 | Widget | Wrapper nostro | Dove | Perché |
 |---|---|---|---|
-| `pickerInput()` | `picker_input()` | mapping del Chart Builder, filtro del Data Studio | Ricerca, gruppi e selezione multipla dove `selectize` è debole |
+| `virtualSelectInput()` | `picker_input()` | elenchi lunghi e selezione multipla (variabili, livelli) | Ricerca, gruppi, “seleziona tutto” e virtual scrolling: il più vicino a un listbox desktop |
+| `pickerInput()` | `picker_input()` | alternativa a `virtualSelectInput()` | Si sceglie **uno** dei due in S3, non entrambi |
 | `noUiSliderInput()` | `slider_input()` | parametri numerici limitati: alpha, jitter, base size, notch width | Un valore bounded si legge meglio su un binario che in una casella |
 | `spectrumInput()` | `color_input()` | sfondo del grafico | Oggi è un `textInput` in cui si può scrivere qualsiasi cosa |
 | `airDatepickerInput()` | `date_input()` | **rinviato** | Non c'è oggi un campo data: si aggiunge solo quando serve |
@@ -104,8 +145,9 @@ Al termine dell'onda:
 
 `card_head()`, `note()`, `action_row()`, `toolbar()`, `tabs_strip()`,
 `badge()`, `empty_state()`, `segmented_input()`, `switch_input()`,
-`number_input()`, `field()`, `field_grid()`, le 18 icone e il chrome dei
-modali. Le librerie non li sostituiscono.
+`number_input()`, `field()`, `field_grid()`, `listbox_input()` per il
+multi-select nativo, le 18 icone e il chrome dei modali. Le librerie non li
+sostituiscono.
 
 ### 4.4 Il bridge dei temi
 
@@ -183,45 +225,116 @@ settings_group(title, ..., help = NULL)
 
 ## 5. Sequenza degli step
 
-Quattro lotti da tre. Stima: **10–12 giornate** effettive.
+Cinque lotti da tre. Stima: **14–16 giornate** effettive.
 
 | Lotto | Step | Tema | Stima |
 |---|---|---|---|
-| 1 | S1–S3 | Dipendenze, bridge, componente accordion, *Options* | 2 gg |
-| 2 | S4–S6 | Chart Builder: guscio, sottopannelli, gruppi per tipo | 3 gg |
-| 3 | S7–S9 | Picker, slider, colore; dialoghi dati e distribuzioni | 3 gg |
-| 4 | S10–S12 | Dialoghi modelli e test; accessibilità; chiusura | 3 gg |
+| 1 | S1–S3 | Specifica desktop, galleria, famiglie di widget | 4 gg |
+| 2 | S4–S6 | Accordion e prima migrazione | 2 gg |
+| 3 | S7–S9 | Chart Builder in profondità | 3 gg |
+| 4 | S10–S12 | Listbox nei dialoghi e dialoghi densi | 3,5 gg |
+| 5 | S13–S15 | Accessibilità, rifinitura desktop, chiusura | 2,5 gg |
 
-### Lotto 1 — Fondamenta
+### Lotto 1 — Il sistema dei widget
 
-#### S1 — Dipendenze, inventario e bridge dei temi
+#### S1 — Inventario, specifica desktop, dipendenze, galleria
 
-**Obiettivo:** aggiungere shinyWidgets e predisporre i due fogli di bridge
-senza cambiare l'aspetto dell'app.
+**Obiettivo:** avere un inventario completo dei widget, una specifica scritta e
+un banco di prova che li mostri tutti, prima di cambiarne uno.
 
-**File:** `DESCRIPTION`, `R/app.R` (`app_css_files()`), `start.sh` (elenco
-delle dipendenze nel messaggio di errore), `inst/www/css/15-bootstrap.css`,
-`inst/www/css/55-shinywidgets.css`, `docs/upgrades/UI-TOKENS.md`,
-`tests/testthat/test-ui-tokens.R`.
+**File:** `DESCRIPTION`, `start.sh`, `R/app.R` (`app_css_files()`),
+`inst/www/css/15-bootstrap.css`, `inst/www/css/55-shinywidgets.css`,
+`docs/upgrades/UI-TOKENS.md`, `tools/widget_gallery.R`,
+`tests/testthat/test-ui-tokens.R`, `tests/testthat/test-widgets.R`.
 
 **Cosa cambia:**
 
 - `shinyWidgets` in `Imports` con la versione minima verificata; installazione
   locale e `sessionInfo()` registrato nel diario;
-- inventario dei tre widget scelti: classi Bootstrap 5 emesse, supporto
-  tastiera, peso CSS/JS, presenza di asset remoti;
-- `15-bootstrap.css` con le variabili `--bs-accordion-*` e il chevron;
-- `55-shinywidgets.css` con lo scheletro dei tre widget;
-- `UI-TOKENS.md`: tabella “chi possiede cosa” (bslib, shinyWidgets, nostro).
+- inventario delle famiglie: testo, numero, textarea, search, file, select
+  singola/multipla, selectize, picker/listbox, checkbox, radio, switch,
+  segmented, slider, colore, date, tabelle, editor, foglio;
+- specifica desktop in `UI-TOKENS.md` (§ 4.0), con un token
+  `--rcmdr-shadow-sm` per i menu;
+- bridge CSS: `15-bootstrap.css` per `--bs-accordion-*` e i componenti
+  Bootstrap, `55-shinywidgets.css` per picker, slider e colore;
+- `tools/widget_gallery.R`: app Shiny di sviluppo, **non spedita**, che mostra
+  ogni famiglia in tutti gli stati (normale, hover, focus, disabled, errore,
+  read-only) con selettore di tema e densità;
+- inventario di compatibilità Bootstrap 5 per `virtualSelectInput`,
+  `pickerInput`, `noUiSliderInput`, `spectrumInput`.
 
-**Accettazione:** l'app si avvia e non cambia visivamente; `app_css()` include
-i due file nell'ordine giusto; nessun URL `http(s)` nelle dipendenze di
-`app_ui()`; i token dell'accordion superano il contrasto in tutte le palette;
-un test renderizza i tre widget e verifica che l'ID sia quello atteso.
+**Accettazione:** l'app non cambia visivamente; la galleria rende tutte le
+famiglie; nessun URL `http(s)` nelle dipendenze; i token superano il contrasto
+in tutte le palette; la galleria non è inclusa nel pacchetto installato.
 
-**Commit:** `build(ui): add shinyWidgets and the Bootstrap token bridge`
+**Commit:** `build(ui): add the widget gallery and the desktop spec`
 
-#### S2 — Componente accordion
+#### S2 — Campi, checkbox, radio, switch
+
+**Obiettivo:** togliere gli ultimi segni del disegno predefinito del browser e
+dare a campi e selettori binari la stessa mano.
+
+**File:** `inst/www/css/30-forms.css`, `inst/www/css/50-widgets.css`,
+`inst/www/css/55-shinywidgets.css`, `tests/testthat/test-widgets.R`,
+`tests/testthat/test-contrast.R`.
+
+**Cosa cambia:**
+
+- checkbox e radio con `appearance: none`: 16 px, quadrato a 2 px di raggio o
+  cerchio, segno netto, stato indeterminato, disabled, invalid, focus;
+- switch rifinito sulla stessa griglia (36 × 20, pomello, on/off leggibili);
+- campi testo, numero, textarea, search, input-group e file: bordo 1 px,
+  hover, focus, placeholder, read-only, invalid, disabled;
+- select nativa: freccia, padding e option hover coerenti; multi-select
+  nativa come listbox a righe;
+- test: markup e ID invariati; ogni stato presente nella galleria; contrasto
+  8 temi × 2 densità.
+
+**Accettazione:** nella galleria non resta un controllo con l'aspetto del
+browser; i valori e gli ID sono quelli di prima; la matrice è verde.
+
+**Commit:** `feat(ui): refine the field, checkbox and radio families`
+
+#### S3 — Dropdown, listbox, picker
+
+**Obiettivo:** scegliere **un** widget per ogni ruolo di elenco e dargli
+l'aspetto di un menu desktop.
+
+**File:** `R/widgets.R`, `inst/www/css/55-shinywidgets.css`,
+`tests/testthat/test-widgets.R`, `tools/widget_gallery.R`.
+
+**Cosa cambia:**
+
+- prototipo di `virtualSelectInput`, `pickerInput` e listbox nativa nella
+  galleria;
+- decisione scritta per ruolo:
+  - scelta singola corta → `<select>` nativa stilizzata;
+  - elenco lungo o multiplo → `virtualSelectInput()` (preferito) oppure
+    `pickerInput()`, mai entrambi;
+  - listbox sempre visibile → `<select multiple>` nativa con
+    `listbox_input()`;
+- wrapper `picker_input()` e `listbox_input()`, con normalizzazione del vuoto
+  al confine del chiamante;
+- dropdown: superficie, bordo 1 px, ombra piccola, ricerca sticky, massimo
+  320 px, chip, gruppi, stato vuoto, tastiera e type-ahead;
+- primo uso reale: mapping del Chart Builder.
+
+**Accettazione:** stessa selezione letta dal server; tastiera completa; 8 × 2
+verde; se `virtualSelectInput` o `pickerInput` non reggono Bootstrap 5 o i
+token, si sceglie il listbox nativo e la decisione va nel diario.
+
+**Commit:** `feat(ui): add the dropdown and listbox families`
+
+**Gate del lotto 1:** la galleria, nelle 8 palette × 2 densità, non mostra
+controlli con l'aspetto del browser. Se il gate non passa, ci si ferma e si
+rivede la specifica prima dell'accordion.
+
+---
+
+### Lotto 2 — Accordion e prima migrazione
+
+#### S4 — Componente accordion
 
 **Obiettivo:** avere l'API `settings_accordion()` / `settings_panel()` /
 `settings_group()` con stile, ARIA e test.
@@ -247,7 +360,7 @@ test verdi.
 
 **Commit:** `feat(ui): add the settings accordion component`
 
-#### S3 — *Options* come prima vetrina
+#### S5 — *Options* come prima vetrina
 
 **Obiettivo:** migrare un dialogo reale e chiudere il cerchio su validazione e
 pannelli.
@@ -262,7 +375,7 @@ pannelli.
   dei pannelli; tutti i 9 ID e l'ordine interno restano;
 - `.rcmdr-dialog-grid > .accordion { grid-column: 1 / -1; }`;
 - su errore di validazione: messaggio `rcmdr-open-accordions`, apertura di
-  tutti i pannelli, poi focus sul primo campo (con un tick di attesa);
+  tutti i pannelli, poi focus sul primo campo;
 - test: gli ID ci sono ancora, *Apply* salva le stesse preferenze, il contract
   passa.
 
@@ -272,15 +385,7 @@ cambia.
 
 **Commit:** `feat(ui): group the Options dialog into accordion panels`
 
-**Gate del lotto 1:** *Options* + accordion di prova nelle 8 palette × 2
-densità. Se il bridge non regge, ci si ferma qui e si rivede § 4.4 prima di
-toccare il Chart Builder.
-
----
-
-### Lotto 2 — Chart Builder
-
-#### S4 — Guscio del builder su accordion
+#### S6 — Guscio del Chart Builder su accordion
 
 **Obiettivo:** la colonna dei parametri diventa una scheda fissa più un
 accordion, senza cambiare un solo ID.
@@ -303,7 +408,14 @@ pannelli è quello dichiarato.
 
 **Commit:** `feat(chart): put the builder parameters into accordion panels`
 
-#### S5 — Sottopannelli semantici di ggplot2
+**Gate del lotto 2:** *Options* e Chart Builder nelle 8 palette × 2 densità;
+nessuna regressione nel contract.
+
+---
+
+### Lotto 3 — Chart Builder in profondità
+
+#### S7 — Sottopannelli semantici di ggplot2
 
 **Obiettivo:** spezzare il blocco unico di 18 controlli in pannelli che
 raccontano un compito.
@@ -323,7 +435,7 @@ aggiorna i campi anche se il pannello è chiuso; il comando resta identico.
 
 **Commit:** `feat(chart): split the ggplot2 options into semantic panels`
 
-#### S6 — Gruppi di opzioni per tipo e stato dei pannelli
+#### S8 — Gruppi di opzioni per tipo e stato dei pannelli
 
 **Obiettivo:** anche le opzioni dinamiche (3–9 per tipo) hanno una gerarchia,
 e il cambio tipo non perde i pannelli aperti.
@@ -346,36 +458,7 @@ cambiando tipo i pannelli ancora validi restano aperti.
 
 **Commit:** `feat(chart): group the per-type options and keep the open panels`
 
-**Gate del lotto 2:** tutti i 25 tipi (meno quelli non disponibili) renderizzati
-in prova; un grafico per famiglia con comando identico; nessuna opzione persa.
-
----
-
-### Lotto 3 — Widget specialistici e dialoghi dati
-
-#### S7 — Picker ricercabile
-
-**Obiettivo:** sostituire la selezione variabile dove la lista è lunga e la
-ricerca è il gesto principale.
-
-**File:** `R/widgets.R`, `R/chart-studio.R`, `R/data-studio.R`,
-`inst/www/css/55-shinywidgets.css`, test dedicati.
-
-**Cosa cambia:**
-
-- `picker_input()` con `liveSearch`, `actionsBox`, `noneSelectedText`, larghezza
-  100%, dimensione dal controllo;
-- uso nel mapping del Chart Builder e nel filtro del Data Studio;
-- normalizzazione del vuoto al confine del chiamante: `pickerInput` restituisce
-  `character(0)`, il codice esistente spesso si aspetta `""`.
-
-**Accettazione:** il valore letto dal server è lo stesso di prima per selezione
-singola e multipla; il comando del grafico non cambia; label e tastiera
-funzionano; nessun asset remoto.
-
-**Commit:** `feat(ui): use a searchable picker for variable selection`
-
-#### S8 — Slider e colore
+#### S9 — Slider e colore
 
 **Obiettivo:** rendere leggibili i parametri limitati e correggere il campo
 colore libero.
@@ -397,7 +480,36 @@ sulle 8 palette.
 
 **Commit:** `feat(ui): use sliders and a colour picker for bounded parameters`
 
-#### S9 — Dialoghi dati e distribuzioni
+**Gate del lotto 3:** tutti i 25 tipi (meno quelli non disponibili)
+renderizzati; un grafico per famiglia con comando identico; nessuna opzione
+persa.
+
+---
+
+### Lotto 4 — Listbox nei dialoghi e dialoghi densi
+
+#### S10 — `var_input()` sulla famiglia scelta
+
+**Obiettivo:** far sì che tutte le selezioni di variabili abbiano lo stesso
+aspetto, non solo quelle del Chart Builder.
+
+**File:** `R/widgets.R`, `tests/testthat/test-widgets.R`,
+`tests/testthat/test-dialog-contract.R`, test dei dialoghi rappresentativi.
+
+**Cosa cambia:**
+
+- `var_input()` delega a `listbox_input()` o `picker_input()` scelto in S3,
+  mantenendo `descriptions`, `multiple`, `selected` e la larghezza;
+- i 106 punti di chiamata non cambiano: è la cucitura a cambiare;
+- se il contract completo non regge (valori, ID, ordinamento, descrizioni), si
+  torna a `selectizeInput` e si documenta il perché.
+
+**Accettazione:** contract e dialoghi verdi; la selezione letta dal server è
+identica; tastiera e 8 × 2 verdi; nessun dialogo cambia ID.
+
+**Commit:** `feat(ui): give every variable selector the same listbox`
+
+#### S11 — Dialoghi dati e distribuzioni
 
 **Obiettivo:** raggruppare i dialoghi con molti parametri di lettura e
 distribuzione.
@@ -413,20 +525,13 @@ distribuzione.
 - *Frequency Distributions*: *Variables*, *Tests*, *Output*;
 - i `conditionalPanel` restano dentro il pannello che li possiede.
 
-**Accettazione:** contract verde; tutti gli ID presenti; i pannelli condizionali
-si aprono e si chiudono senza perdere valori; un errore apre il pannello giusto
-grazie alla regola generale di S3.
+**Accettazione:** contract verde; tutti gli ID presenti; i pannelli
+condizionali si aprono e si chiudono senza perdere valori; un errore apre il
+pannello giusto grazie alla regola generale di S5.
 
 **Commit:** `feat(dialogs): group the data and distribution dialogs`
 
-**Gate del lotto 3:** contract completo; campi condizionali dentro pannelli
-chiusi; nessuna regressione nei valori letti.
-
----
-
-### Lotto 4 — Dialoghi, accessibilità, chiusura
-
-#### S10 — Dialoghi modelli e test
+#### S12 — Dialoghi modelli e test
 
 **Obiettivo:** completare i dialoghi densi rimasti.
 
@@ -446,29 +551,60 @@ restano; i valori di default sono gli stessi.
 
 **Commit:** `feat(dialogs): group the model and test dialogs`
 
-#### S11 — Accessibilità, errori e matrice temi
+**Gate del lotto 4:** contract completo; nessun campo perso o duplicato; la
+selezione variabile è la stessa in tutti i dialoghi.
+
+---
+
+### Lotto 5 — Accessibilità, rifinitura desktop, chiusura
+
+#### S13 — Accessibilità ed errori
 
 **Obiettivo:** chiudere i requisiti trasversali sui nuovi componenti.
 
 **File:** `inst/www/js/70-keyboard.js` (se serve),
 `tests/testthat/test-accessibility.R`,
-`tests/testthat/test-theme-matrix.R`, `docs/upgrades/QA-WIDGETS.md`.
+`tests/testthat/test-theme-matrix.R`.
 
 **Cosa cambia:**
 
 - heading semantics e `aria-level` verificati su ogni accordion;
 - frecce tra header (solo se Bootstrap non le offre) e `Esc` invariato;
 - focus ring unico, `prefers-reduced-motion`, contrasto dei nuovi token;
-- matrice 8 × 2 estesa a un accordion con picker, slider e color picker;
 - prova di errore: campo in pannello chiuso → apertura + focus;
-- nuovo `QA-WIDGETS.md`: metodo, comandi, esito, limiti e checklist manuale.
+- tastiera di picker/listbox: apertura, frecce, Invio, Esc, type-ahead.
 
-**Accettazione:** matrice verde; nessuna violazione di contrasto; il focus non
-finisce mai su un elemento `display:none`; i test di tastiera passano.
+**Accettazione:** il focus non finisce mai su un elemento `display:none`; i
+test di tastiera passano; nessuna violazione di contrasto.
 
 **Commit:** `test(ui): cover accordions and widgets across themes and keyboard`
 
-#### S12 — Chiusura
+#### S14 — Rifinitura desktop e QA visiva
+
+**Obiettivo:** controllare i widget specialistici e chiudere l'aspetto
+“desktop” su tutta l'interfaccia.
+
+**File:** `inst/www/css/50-widgets.css`, `inst/www/css/60-views.css`,
+`tools/widget_gallery.R`, `docs/upgrades/QA-WIDGETS.md`,
+`tests/testthat/test-theme-matrix.R`.
+
+**Cosa cambia:**
+
+- audit e rifinitura di DT (filtri, paginazione, selezione), Ace,
+  rhandsontable, shinyFiles, plotly, menu, tab, alert e progress;
+- tabelle con righe da 32 px in compatto, header sticky, hover e selezione;
+- scrollbar e cursori coerenti; nessun controllo con l'aspetto del browser;
+- galleria: screenshot per le 8 palette × 2 densità dove il browser funziona;
+- matrice 8 × 2 estesa a un accordion con picker, slider e color picker;
+- `QA-WIDGETS.md`: metodo, comandi, esito, limiti e checklist manuale.
+
+**Accettazione:** matrice verde; nessuna violazione di contrasto; la galleria
+mostra ogni famiglia negli stati previsti; i limiti e2e/screenshot sono
+documentati.
+
+**Commit:** `test(ui): finish the desktop polish and the widget QA`
+
+#### S15 — Chiusura
 
 **Obiettivo:** documentare, verificare e consegnare.
 
@@ -479,9 +615,10 @@ finisce mai su un elemento `display:none`; i test di tastiera passano.
 
 **Cosa cambia:**
 
-- NEWS: accordion, widget adottati, cosa resta nostro;
+- NEWS: accordion, famiglie di widget, cosa resta nostro;
 - topic `about-studio`: dove sono i pannelli e come si comportano;
-- `UI-TOKENS.md`: bridge `--bs-*` e proprietà dei widget;
+- `UI-TOKENS.md`: bridge `--bs-*`, token `--rcmdr-shadow-sm` e proprietà dei
+  widget;
 - checklist e diario chiusi; limiti e2e/screenshot ripetuti;
 - suite completa, app riavviata, push.
 
@@ -498,11 +635,12 @@ pulito.
 |---|---|---|---|---|
 | Gruppi richiudibili | bslib | `settings_accordion()` | *Options*, Chart Builder | medio: ARIA e stato |
 | Switch manutenuto | bslib | `switch_input()` (condizionale) | 7 chiamate | basso |
-| Selezione ricercabile | shinyWidgets | `picker_input()` | mapping Chart, filtro Data | medio: valore vuoto |
+| Elenco lungo o multiplo | shinyWidgets | `picker_input()` | Chart mapping, `var_input()` | medio: valore vuoto, BS5 |
+| Listbox sempre visibile | nativa | `listbox_input()` | `var_input()` | medio: 106 chiamate |
 | Numero limitato | shinyWidgets | `slider_input()` | alpha, jitter, size, notch | basso |
 | Colore | shinyWidgets | `color_input()` | sfondo grafico | basso |
-| Data | shinyWidgets | `date_input()` | nessuna oggi | rinviato |
-| Tabelle | DT | — | Data Studio | nessun cambio |
+| Campi e binari | nostro CSS | `field()`, `checkbox_input()`, `radio_input()`, `switch_input()` | ovunque | basso |
+| Tabelle | DT | — | Data Studio | basso: solo rifinitura |
 | Icone | nostro set | — | ovunque | nessun cambio |
 
 ---
@@ -512,9 +650,11 @@ pulito.
 | Rischio | Impatto | Mitigazione |
 |---|---|---|
 | shinyWidgets non è allineato a Bootstrap 5 su un widget | stile rotto o JS in errore | inventario in S1; un widget non conforme non entra |
-| I widget esterni non seguono le 8 palette | terzo linguaggio visivo | bridge in `55-shinywidgets.css` + matrice in S11 |
+| `virtualSelectInput`/`pickerInput` pesanti o incompatibili | esperienza peggiore del selectize | prototipo in S3; fallback al listbox nativo |
+| `var_input()` cambiato in 106 punti | contract rosso | S10 è un passo isolato e reversibile; il contract è il gate |
+| I widget esterni non seguono le 8 palette | terzo linguaggio visivo | bridge in `55-shinywidgets.css` + matrice in S14 |
 | L'accordion perde lo stato al cambio tipo | pannelli che si richiudono | ID stabile + `isolate()` + default espliciti |
-| Un errore finisce in un pannello chiuso | validazione invisibile | apertura di tutti i pannelli + focus (S3) |
+| Un errore finisce in un pannello chiuso | validazione invisibile | apertura di tutti i pannelli + focus (S5) |
 | bslib non emette heading | navigazione screen reader debole | `role="heading"` + `aria-level` in `settings_accordion()` |
 | Cambio di markup e test fragili | suite rossa | ID invariati; si aggiornano solo le asserzioni strutturali |
 | Peso delle dipendenze | installazione più lenta | misurare CSS/JS in S1; niente widget in più |
@@ -534,17 +674,20 @@ pulito.
 - Migrazione dei dialoghi dei plugin: useranno gli helper quando vorranno.
 - Lazy rendering dei pannelli: l'accordion non riduce il DOM; non si promette
   un guadagno di prestazioni.
+- Risistemazione della shell, delle tab o dei menu: fatta nell'Onda 15.
 
 ---
 
 ## 9. Criteri di chiusura
 
-- [ ] 12 step, 4 lotti, ognuno con commit verde e handoff dopo il terzo.
+- [ ] 15 step, 5 lotti, ognuno con commit verde e handoff dopo il terzo.
 - [ ] Nessun ID, valore, comando o stringa i18n cambiato.
+- [ ] Ogni famiglia di widget ha specifica, galleria e test.
+- [ ] Nessun controllo con l'aspetto predefinito del browser nella galleria.
 - [ ] Chart Builder con “Chart and data” fisso e 6 pannelli; nessuna opzione
       persa.
 - [ ] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
-- [ ] picker, slider e color picker usati solo dove aggiungono valore.
+- [ ] `var_input()` usa la famiglia scelta in tutti i 106 punti.
 - [ ] 8 temi × 2 densità verdi, nuovi componenti inclusi.
 - [ ] Accessibilità: heading, aria, tastiera, focus, reduced motion.
 - [ ] Errore in pannello chiuso → pannello aperto e campo focalizzato.
@@ -556,7 +699,7 @@ pulito.
 
 ## 10. Protocollo di handoff
 
-Dopo **S3**, **S6**, **S9** e **S12**:
+Dopo **S3**, **S6**, **S9**, **S12** e **S15**:
 
 1. suite completa (`Rscript --vanilla -e 'testthat::test_local()'`) e log in
    `/tmp/opencode/tests-w16-<lotto>.log`;
