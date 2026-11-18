@@ -281,3 +281,6 @@ Data: %s	Dati: %s
 Model: %s	Modello: %s
 Last action: %s	Ultima azione: %s
 No selection	Nessuna selezione
+Editing is disabled above %s cells; reading, selection and copy still work.	La modifica è disattivata sopra %s celle; lettura, selezione e copia restano disponibili.
+Rows are paged on the server, so only the visible page is sent to the browser.	Le righe sono paginate sul server: al browser arriva solo la pagina visibile.
+ (server-side paging)	 (paginazione lato server)

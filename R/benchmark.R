@@ -76,6 +76,103 @@ benchmark_grid <- function(rows = 10000L) {
   )
 }
 
+#' A synthetic data frame for the grid benchmarks
+#'
+#' Five columns: two numeric, one integer, one factor and one character.  That
+#' is the shape the documented payload figures assume.
+#' @keywords internal
+benchmark_data_frame <- function(rows = 10000L) {
+  rows <- as.integer(rows)
+  data.frame(
+    id = seq_len(rows),
+    x = stats::rnorm(rows),
+    y = stats::rnorm(rows),
+    group = sample(letters[1:8], rows, replace = TRUE),
+    label = sprintf("row-%06d", seq_len(rows)),
+    stringsAsFactors = FALSE
+  )
+}
+
+#' Widget payload in bytes
+#'
+#' Shiny serializes an htmlwidget to JSON before sending it.  For a data frame
+#' the JSON size is what the browser has to download, so it is the honest
+#' number behind the client/server decision.  `jsonlite` is an htmlwidgets
+#' dependency; when it is missing the estimate falls back to the in-memory
+#' size and says so.
+#' @keywords internal
+benchmark_payload_bytes <- function(data) {
+  if (requireNamespace("jsonlite", quietly = TRUE)) {
+    return(as.numeric(object.size(jsonlite::toJSON(
+      data, dataframe = "columns", null = "null", na = "null",
+      auto_unbox = TRUE
+    ))))
+  }
+  as.numeric(object.size(data))
+}
+
+#' Benchmark the Data Studio grid at a set of sizes
+#'
+#' Measures the first view (frame, DT widget and the payload Shiny would send),
+#' a numeric filter over the frame and a one-page TSV copy.  The result is the
+#' table behind `docs/upgrades/QA-DATA.md`.
+#'
+#' @param sizes Row counts to measure.
+#' @return A data frame with one row per size.
+#' @keywords internal
+benchmark_data_scale <- function(sizes = c(10000L, 50000L, 100000L)) {
+  rows <- lapply(as.integer(sizes), function(size) {
+    df <- benchmark_data_frame(size)
+    frame <- data_grid_frame(df)
+    build <- benchmark_time(
+      widget <- DT::datatable(
+        frame, options = list(pageLength = 25L, scrollX = TRUE)
+      )
+    )
+    client <- benchmark_time(benchmark_payload_bytes(widget$x$data))
+    page <- utils::head(frame, 25L)
+    server <- benchmark_time(benchmark_payload_bytes(page))
+    filter <- benchmark_time({
+      keep <- !is.na(frame$x) & frame$x > 0
+      frame[keep, , drop = FALSE]
+    })
+    state <- AppState(new.env())
+    state$env$bench <- df
+    dataset_register(state, "bench")
+    active_dataset(state, "bench")
+    copy_frame <- utils::head(frame, 1000L)
+    set_data_selection(state, rows = copy_frame$.row_id)
+    copy <- benchmark_time(selection_tsv(state, copy_frame))
+    data.frame(
+      rows = size,
+      cells = size * ncol(df),
+      dataframe_mb = as.numeric(object.size(df)) / 1024^2,
+      grid_mb = as.numeric(object.size(frame)) / 1024^2,
+      build_ms = unname(build$elapsed_ms),
+      client_kb = as.numeric(client$value) / 1024,
+      client_json_ms = unname(client$elapsed_ms),
+      server_kb = as.numeric(server$value) / 1024,
+      filter_ms = unname(filter$elapsed_ms),
+      copy_ms = unname(copy$elapsed_ms),
+      first_view_ms = unname(build$elapsed_ms + client$elapsed_ms),
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, rows)
+}
+
+#' Benchmark the grid first view for the benchmark suite
+#' @keywords internal
+benchmark_data_grid <- function(rows = 10000L) {
+  scale <- benchmark_data_scale(rows)
+  data.frame(
+    scenario = sprintf("data grid %d rows", as.integer(rows)),
+    rows = as.integer(rows),
+    elapsed_ms = scale$first_view_ms[[1L]],
+    stringsAsFactors = FALSE
+  )
+}
+
 #' Benchmark history growth and trimming
 #' @keywords internal
 benchmark_history <- function(commands = 100L) {
@@ -232,6 +329,13 @@ benchmark_suite <- function(quick = FALSE) {
     ),
     plugin_rows
   )
+  if (!isTRUE(quick)) {
+    rows <- c(rows, list(
+      benchmark_data_grid(10000L),
+      benchmark_data_grid(50000L),
+      benchmark_data_grid(100000L)
+    ))
+  }
   result <- do.call(rbind, rows)
   rownames(result) <- NULL
   result
@@ -249,9 +353,11 @@ benchmark_budgets <- function() {
                  "50 plot registrations", "help index rebuild",
                  "load 1 plugin", "load all plugins",
                  "first catalogue after deferred loading",
-                 "menu tree warm"),
+                 "menu tree warm", "data grid 10000 rows",
+                 "data grid 50000 rows", "data grid 100000 rows"),
     budget_ms = c(3000, 1500, 3000, 3000, 15000, 500, 500, 500, 500,
-                  500, 500, 5000, 6000, 15000, 15000, 4000),
+                  500, 500, 5000, 6000, 15000, 15000, 4000,
+                  1000, 1500, 2500),
     stringsAsFactors = FALSE
   )
 }

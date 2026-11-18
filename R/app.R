@@ -2439,16 +2439,22 @@ app_server <- function(env = globalenv()) {
 
     output$data_info <- renderUI({
       tick()
-      df <- dataset(state)
-      if (is.null(df)) return(NULL)
+      plan <- data_grid_plan(state)
+      if (is.null(plan)) return(NULL)
       htmltools::tags$span(
         class = "text-muted",
         sprintf(tr("%d rows x %d columns, %d cells"),
-                nrow(df), ncol(df), nrow(df) * ncol(df)),
-        if (!editable_dataset(state)) {
+                plan$rows, plan$columns, plan$cells),
+        if (!isTRUE(plan$editable)) {
           htmltools::tags$span(
             class = "text-warning",
             tr(" (editing disabled: threshold exceeded)")
+          )
+        },
+        if (isTRUE(plan$server)) {
+          htmltools::tags$span(
+            class = "text-muted",
+            tr(" (server-side paging)")
           )
         }
       )
@@ -2849,19 +2855,15 @@ app_server <- function(env = globalenv()) {
         ))
       }
       mode <- input$data_mode %||% "view"
-      if (identical(mode, "edit") && editable_dataset(state)) {
+      plan <- data_grid_plan(state, df)
+      if (identical(mode, "edit") && isTRUE(plan$editable)) {
         return(rhandsontable::rHandsontableOutput("data_studio_editor"))
       }
-      targeted <- identical(mode, "edit") && !editable_dataset(state)
-      server_mode <- nrow(df) > (state$options$dt_server_threshold %||% 5000L)
+      # The notice names the limit that applies; the output id comes from the
+      # same plan, so the toolbar search and the grid can never disagree.
       htmltools::tagList(
-        if (targeted) {
-          htmltools::tags$div(
-            class = "alert alert-warning py-2",
-            tr("This data set is above the interactive editing threshold. Targeted column and row actions remain available.")
-          )
-        },
-        if (server_mode) {
+        data_grid_notice(plan, mode),
+        if (isTRUE(plan$server)) {
           DT::dataTableOutput("data_studio_table_server")
         } else {
           DT::dataTableOutput("data_studio_table")
@@ -3160,7 +3162,8 @@ app_server <- function(env = globalenv()) {
     observeEvent(input$data_search, {
       df <- dataset(state)
       if (is.null(df)) return()
-      id <- if (nrow(df) > (state$options$dt_server_threshold %||% 5000L)) {
+      plan <- data_grid_plan(state, df)
+      id <- if (isTRUE(plan$server)) {
         "data_studio_table_server"
       } else {
         "data_studio_table"

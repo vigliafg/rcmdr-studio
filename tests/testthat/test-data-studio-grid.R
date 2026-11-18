@@ -160,3 +160,138 @@ test_that("the editor explains its read-only columns and the pending edit", {
     expect_match(html, "Apply changes before leaving Edit", fixed = TRUE)
   })
 })
+
+# Large data (Wave 18, S10) ---------------------------------------------------
+
+test_that("the grid plan separates the row budget from the cell budget", {
+  state <- AppState(env = new.env())
+
+  small <- data.frame(a = 1:10)
+  plan <- data_grid_plan(state, small)
+  expect_false(plan$server)
+  expect_true(plan$editable)
+  expect_equal(plan$output_id, "data_studio_table")
+
+  # 6000 rows is above the row budget but still inside the cell budget.
+  tall <- data.frame(a = seq_len(6000L))
+  plan <- data_grid_plan(state, tall)
+  expect_true(plan$server)
+  expect_equal(plan$output_id, "data_studio_table_server")
+  expect_true(plan$editable)
+
+  # 3000 rows by 5 columns is 15000 cells: below the row budget, above the
+  # editing threshold.
+  wide <- as.data.frame(matrix(1, nrow = 3000L, ncol = 5L))
+  plan <- data_grid_plan(state, wide)
+  expect_false(plan$server)
+  expect_false(plan$editable)
+  expect_equal(plan$cells, 15000)
+  expect_null(data_grid_plan(state, NULL))
+})
+
+test_that("the grid thresholds fall back to safe defaults", {
+  state <- AppState(env = new.env())
+  expect_equal(data_grid_server_threshold(state), 5000L)
+
+  for (value in list(NA_integer_, -1L, integer(), "nope")) {
+    state$options$dt_server_threshold <- value
+    expect_equal(data_grid_server_threshold(state), 5000L)
+  }
+  state$options$dt_server_threshold <- 20000L
+  expect_equal(data_grid_server_threshold(state), 20000L)
+
+  state$options$edit_threshold <- NA_real_
+  plan <- data_grid_plan(state, data.frame(a = 1:3))
+  expect_false(plan$editable)
+})
+
+test_that("the grid notice names the limit that applies", {
+  state <- AppState(env = new.env())
+  expect_null(data_grid_notice(
+    data_grid_plan(state, data.frame(a = 1:10)), "view"
+  ))
+
+  tall <- htmltools::renderTags(data_grid_notice(
+    data_grid_plan(state, data.frame(a = seq_len(6000L))), "view"
+  ))$html
+  expect_match(tall, "rcmdr-note", fixed = TRUE)
+  expect_match(tall, "Rows are paged on the server", fixed = TRUE)
+  expect_false(grepl("Editing is disabled", tall, fixed = TRUE))
+
+  wide <- as.data.frame(matrix(1, nrow = 3000L, ncol = 5L))
+  view <- htmltools::renderTags(data_grid_notice(
+    data_grid_plan(state, wide), "view"
+  ))$html
+  expect_match(view, "Editing is disabled above 10000 cells", fixed = TRUE)
+  expect_match(view, "selection and copy still work", fixed = TRUE)
+
+  edit <- htmltools::renderTags(data_grid_notice(
+    data_grid_plan(state, wide), "edit"
+  ))$html
+  expect_match(edit, "alert alert-warning", fixed = TRUE)
+})
+
+test_that("a large data set renders the server table and says why", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  # 6000 rows by 3 columns: above both the row budget and the cell budget.
+  env$Big <- data.frame(a = seq_len(6000L), b = seq_len(6000L),
+                        c = seq_len(6000L))
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "Big")
+    session$setInputs(menu_search = "", data_mode = "view")
+    session$flushReact()
+
+    grid <- htmltools::renderTags(output$data_grid)$html
+    expect_match(grid, "data_studio_table_server", fixed = TRUE)
+    expect_match(grid, "Rows are paged on the server", fixed = TRUE)
+    expect_match(grid, "Editing is disabled above 10000 cells", fixed = TRUE)
+
+    info <- htmltools::renderTags(output$data_info)$html
+    expect_match(info, "server-side paging", fixed = TRUE)
+    expect_match(info, "editing disabled", fixed = TRUE)
+
+    # Above the cell budget the editor is refused; the grid stays readable.
+    session$setInputs(data_mode = "edit")
+    session$flushReact()
+    edit <- htmltools::renderTags(output$data_grid)$html
+    expect_match(edit, "data_studio_table_server", fixed = TRUE)
+    expect_match(edit, "alert alert-warning", fixed = TRUE)
+    expect_false(grepl("rhandsontable", edit, fixed = TRUE))
+  })
+})
+
+test_that("the editor is refused above the cell budget alone", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  # 3000 rows by 5 columns: client grid, but 15000 cells.
+  env$Wide <- as.data.frame(matrix(seq_len(15000L), nrow = 3000L))
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "Wide")
+    session$setInputs(menu_search = "", data_mode = "edit")
+    session$flushReact()
+    grid <- htmltools::renderTags(output$data_grid)$html
+    expect_match(grid, "data_studio_table", fixed = TRUE)
+    expect_match(grid, "alert alert-warning", fixed = TRUE)
+    expect_false(grepl("rhandsontable", grid, fixed = TRUE))
+  })
+})
+
+test_that("small data keeps the client grid and no notice", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$Small <- data.frame(a = 1:4, b = letters[1:4])
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "Small")
+    session$setInputs(menu_search = "", data_mode = "view")
+    session$flushReact()
+
+    grid <- htmltools::renderTags(output$data_grid)$html
+    expect_match(grid, "data_studio_table", fixed = TRUE)
+    expect_false(grepl("data_studio_table_server", grid, fixed = TRUE))
+    expect_false(grepl("Rows are paged", grid, fixed = TRUE))
+  })
+})

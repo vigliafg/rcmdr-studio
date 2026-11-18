@@ -108,3 +108,20 @@ test_that("the benchmark suite runs at smoke sizes", {
   budgets <- benchmark_budgets()
   expect_true(all(result$scenario %in% budgets$scenario))
 })
+
+test_that("the large data benchmark reports the documented measures", {
+  skip_on_cran()
+  scale <- benchmark_data_scale(10000L)
+  expect_s3_class(scale, "data.frame")
+  expect_equal(scale$rows, 10000L)
+  expect_equal(scale$cells, 50000)
+  expect_true(all(c("dataframe_mb", "grid_mb", "build_ms", "client_kb",
+                    "client_json_ms", "server_kb", "filter_ms", "copy_ms",
+                    "first_view_ms") %in% names(scale)))
+  # The whole point of the threshold: the client payload follows the rows,
+  # the server page does not.
+  expect_gt(scale$client_kb, 100)
+  expect_lt(scale$server_kb, 10)
+  expect_gt(scale$first_view_ms, 0)
+  expect_gte(scale$grid_mb, scale$dataframe_mb)
+})

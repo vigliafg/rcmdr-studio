@@ -1007,6 +1007,94 @@ data_grid_frame <- function(df) {
   grid
 }
 
+# Grid plan ------------------------------------------------------------------
+
+#' Rows above which the grid is paged on the server
+#'
+#' The default is measured, not guessed: see `docs/upgrades/QA-DATA.md`.  A
+#' value below zero or of the wrong length falls back to the default.
+#' @keywords internal
+data_grid_server_threshold <- function(state) {
+  value <- suppressWarnings(
+    as.integer(state$options$dt_server_threshold %||% 5000L)
+  )
+  if (length(value) != 1L || is.na(value) || value < 0L) 5000L else value
+}
+
+#' Plan the Data Studio grid
+#'
+#' Two limits answer two different questions.  The row budget decides whether
+#' the whole frame is shipped to the browser (client-side DT) or paged on the
+#' server; the cell budget decides whether the data set can be edited in the
+#' browser with rhandsontable.  A data set can be readable but not editable,
+#' and the plan is the single place that says which is which.
+#'
+#' @param state Application state.
+#' @param df Data frame to plan for; the active data set by default.
+#' @return A list, or `NULL` when there is no data.
+#' @keywords internal
+data_grid_plan <- function(state, df = dataset(state)) {
+  if (is.null(df)) return(NULL)
+  rows <- as.integer(nrow(df))
+  columns <- as.integer(ncol(df))
+  cells <- as.numeric(rows) * as.numeric(columns)
+  server_threshold <- data_grid_server_threshold(state)
+  edit_threshold <- suppressWarnings(
+    as.numeric(state$options$edit_threshold %||% 0)
+  )
+  if (length(edit_threshold) != 1L || !is.finite(edit_threshold)) {
+    edit_threshold <- 0
+  }
+  server <- rows > server_threshold
+  list(
+    rows = rows,
+    columns = columns,
+    cells = cells,
+    server = server,
+    server_threshold = server_threshold,
+    editable = cells <= edit_threshold,
+    edit_threshold = edit_threshold,
+    output_id = if (server) {
+      "data_studio_table_server"
+    } else {
+      "data_studio_table"
+    }
+  )
+}
+
+#' Notice shown above the grid when a limit applies
+#'
+#' The notice names the limit that applies and what still works, so a large
+#' data set never looks broken.  In Edit it is a warning (the user asked for
+#' something the app cannot do); in View it is a plain note.
+#'
+#' @param plan A [data_grid_plan()] result.
+#' @param mode `"view"` or `"edit"`.
+#' @return UI, or `NULL` when no limit applies.
+#' @keywords internal
+data_grid_notice <- function(plan, mode = "view") {
+  if (is.null(plan)) return(NULL)
+  messages <- character()
+  if (!isTRUE(plan$editable)) {
+    messages <- c(messages, sprintf(
+      tr("Editing is disabled above %s cells; reading, selection and copy still work."),
+      format(plan$edit_threshold, scientific = FALSE, trim = TRUE)
+    ))
+  }
+  if (isTRUE(plan$server)) {
+    messages <- c(
+      messages,
+      tr("Rows are paged on the server, so only the visible page is sent to the browser.")
+    )
+  }
+  if (length(messages) == 0L) return(NULL)
+  text <- paste(messages, collapse = " ")
+  if (identical(mode, "edit") && !isTRUE(plan$editable)) {
+    return(htmltools::div(class = "alert alert-warning py-2", text))
+  }
+  note(text)
+}
+
 #' Saved column widths for a data set
 #' @keywords internal
 data_widths_saved <- function(state, dataset_name = active_dataset(state)) {

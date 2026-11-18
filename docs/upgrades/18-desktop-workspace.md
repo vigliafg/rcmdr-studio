@@ -269,10 +269,20 @@ list(
 
 ### 5.10 Dati grandi
 
-- Misurare 10.000 / 50.000 / 100.000 righe: tempo di prima vista, memoria,
-  cambio filtro, copia di un intervallo.
-- Soglia DT server-side misurata, non scelta a occhio; l'editor resta limitato
-  e dice perché.
+Misure e metodo sono in [`QA-DATA.md`](QA-DATA.md).
+
+- A 10.000 / 50.000 / 100.000 righe il widget DT resta piatto (~80–90 ms); il
+  costo che cresce è il payload client: 474 KB → 2.4 MB → 4.9 MB. La pagina
+  server-side resta 1.3 KB a ogni dimensione.
+- **Soglia server-side: 5.000 righe** (`dt_server_threshold`), misurata: sopra
+  questa soglia il payload raddoppia circa ogni 5.000 righe senza vantaggi.
+- **Soglia editor: 10.000 celle** (`edit_threshold`), invariata e indipendente:
+  riguarda rhandsontable, non DT.
+- `data_grid_plan()` è l'unico punto che applica le due soglie; render, proxy
+  di ricerca e avviso leggono lo stesso piano. L'avviso dice quale limite vale
+  e cosa continua a funzionare.
+- Memoria misurata: il frame di vista è circa il doppio del data set (~20 MB a
+  100.000 righe per la forma di riferimento).
 - Nessun nuovo motore di tabelle in questa onda: se i numeri non bastano, il
   gate `rtabulator`/`toastui` resta il passo successivo.
 

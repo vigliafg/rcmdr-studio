@@ -20,6 +20,9 @@ Rscript tests/benchmarks/benchmark.R --csv results.csv
 | Import CSV, 100 000 rows | 15 000 ms |
 | Grid page, 1 000 rows | 500 ms |
 | Grid page, 10 000 rows | 500 ms |
+| Data grid first view, 10 000 rows | 1000 ms |
+| Data grid first view, 50 000 rows | 1500 ms |
+| Data grid first view, 100 000 rows | 2500 ms |
 | 50 history entries | 500 ms |
 | 100 history entries | 500 ms |
 | 25 plot registrations | 500 ms |
@@ -31,3 +34,8 @@ investigated against the previous release, not against a single machine.
 
 The unit suite calls `benchmark_suite(quick = TRUE)` in
 `tests/testthat/test-performance.R`; browser E2E is separate.
+
+The full suite also runs the data-grid scenarios at 10 000, 50 000 and 100 000
+rows.  The per-size table behind the client/server threshold is
+`benchmark_data_scale()`, documented in
+[`docs/upgrades/QA-DATA.md`](../docs/upgrades/QA-DATA.md).
