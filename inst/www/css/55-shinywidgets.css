@@ -125,6 +125,14 @@
       background: var(--rcmdr-surface);
       box-shadow: var(--rcmdr-shadow-sm);
     }
+    .noUi-tooltip {
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-xs);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+      box-shadow: var(--rcmdr-shadow-sm);
+      font-size: var(--rcmdr-text-xs);
+    }
     .noUi-handle:focus-visible {
       outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
       outline-offset: var(--rcmdr-focus-offset);

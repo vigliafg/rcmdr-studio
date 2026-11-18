@@ -172,11 +172,8 @@ gallery_ui <- function() {
           "Sliders, colour, date",
           htmltools::tagList(
             sliderInput("g_slider", "Shiny slider", 0, 1, .5, .05),
-            shinyWidgets::noUiSliderInput(
-              "g_noui", "noUiSlider", 0, 1, .5, step = .05,
-              width = "100%"
-            ),
-            shinyWidgets::spectrumInput("g_colour", "Colour", "white"),
+            slider_input("g_slider_desktop", "Studio slider", 0, 1, .5, .05),
+            color_input("g_colour", "Colour"),
             shinyWidgets::airDatepickerInput("g_date", "Date")
           )
         ),

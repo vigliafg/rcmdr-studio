@@ -575,12 +575,11 @@ chart_builder_ui <- function() {
             ),
             selected = "identity"
           ),
-          number_input("chart_gg_alpha", tr("Alpha"), 0.7,
-                       min = 0, max = 1, step = 0.05),
+          slider_input("chart_gg_alpha", tr("Alpha"), 0, 1, 0.7, 0.05),
           number_input("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
                        min = 0, step = 0.1),
-          number_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0,
-                       min = 0, step = 0.05),
+          slider_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0, 0.5,
+                       0, 0.05),
           number_input("chart_gg_shape", tr("Point shape"), 19,
                        min = 0, max = 25, step = 1),
           selectInput(
@@ -637,8 +636,7 @@ chart_builder_ui <- function() {
           textInput("chart_ylab", tr("Y label"), ""),
           textInput("chart_gg_subtitle", tr("Subtitle"), ""),
           textInput("chart_gg_tag", tr("Tag"), ""),
-          number_input("chart_base_size", tr("Base size"), 12,
-                       min = 6, max = 32, step = 1),
+          slider_input("chart_base_size", tr("Base size"), 6, 32, 12, 1),
           value = "Text"
         ),
         settings_panel(
@@ -660,8 +658,7 @@ chart_builder_ui <- function() {
             ),
             selected = "right"
           ),
-          textInput("chart_background", tr("Background"),
-                    value = "white"),
+          color_input("chart_background", tr("Background")),
           checkboxInput("chart_grid", tr("Grid"), value = TRUE),
           value = "Theme"
         ),
@@ -1342,7 +1339,7 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       if (is.logical(value)) {
         updateCheckboxInput(session, input_id, value = value)
       } else if (is.numeric(value)) {
-        updateNumericInput(session, input_id, value = value)
+        update_number_input(session, input_id, value)
       } else {
         updateSelectInput(session, input_id, selected = as.character(value))
       }
@@ -1561,17 +1558,18 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
         if (is.logical(value)) {
           updateCheckboxInput(session, id, value = value)
         } else if (is.numeric(value)) {
-          updateNumericInput(session, id, value = value)
+          update_number_input(session, id, value)
         } else {
           updateTextInput(session, id, value = as.character(value))
         }
       }
     }
     updateSelectInput(session, "chart_palette", selected = "default")
-    updateNumericInput(session, "chart_base_size", value = 12)
+    update_number_input(session, "chart_base_size", 12)
     updateCheckboxInput(session, "chart_grid", value = TRUE)
     updateSelectInput(session, "chart_legend", selected = "right")
-    updateTextInput(session, "chart_background", value = "white")
+    shinyWidgets::updateSpectrumInput(session, "chart_background",
+                                      selected = "#ffffff")
     updateTextInput(session, "chart_title", value = "")
     updateTextInput(session, "chart_xlab", value = "")
     updateTextInput(session, "chart_ylab", value = "")
@@ -1585,9 +1583,9 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     updateSelectInput(session, "chart_gg_position", selected = "identity")
     updateSelectInput(session, "chart_gg_smooth", selected = "lm")
     updateSelectInput(session, "chart_gg_facet_scales", selected = "fixed")
-    updateNumericInput(session, "chart_gg_alpha", value = 0.7)
+    update_number_input(session, "chart_gg_alpha", 0.7)
     updateNumericInput(session, "chart_gg_binwidth", value = 0)
-    updateNumericInput(session, "chart_gg_jitter", value = 0)
+    update_number_input(session, "chart_gg_jitter", 0)
     updateNumericInput(session, "chart_gg_shape", value = 19)
     updateNumericInput(session, "chart_gg_facet_ncol", value = 0)
     updateCheckboxInput(session, "chart_gg_se", value = FALSE)
@@ -1721,14 +1719,16 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       updateSelectInput(session, "chart_dataset", selected = spec$dataset)
       updateSelectInput(session, "chart_palette",
                         selected = spec$theme$palette %||% "default")
-      updateNumericInput(session, "chart_base_size",
-                         value = spec$theme$base_size %||% 12)
+      update_number_input(session, "chart_base_size",
+                          spec$theme$base_size %||% 12)
       updateCheckboxInput(session, "chart_grid",
                           value = isTRUE(spec$theme$grid %||% TRUE))
       updateSelectInput(session, "chart_legend",
                         selected = spec$theme$legend %||% "right")
-      updateTextInput(session, "chart_background",
-                      value = spec$theme$background %||% "white")
+      shinyWidgets::updateSpectrumInput(
+        session, "chart_background",
+        selected = spec$theme$background %||% "#ffffff"
+      )
       title_value <- spec$labels$title %||% ""
       if (!nzchar(title_value)) {
         # A rename in the gallery is metadata; when it differs from the
@@ -1764,12 +1764,12 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
                         selected = spec$options$smooth_method %||% "lm")
       updateSelectInput(session, "chart_gg_facet_scales",
                         selected = spec$options$facet_scales %||% "fixed")
-      updateNumericInput(session, "chart_gg_alpha",
-                         value = spec$options$alpha %||% 0.7)
+      update_number_input(session, "chart_gg_alpha",
+                          spec$options$alpha %||% 0.7)
       updateNumericInput(session, "chart_gg_binwidth",
                          value = spec$options$binwidth %||% 0)
-      updateNumericInput(session, "chart_gg_jitter",
-                         value = spec$options$jitter %||% 0)
+      update_number_input(session, "chart_gg_jitter",
+                          spec$options$jitter %||% 0)
       updateNumericInput(session, "chart_gg_shape",
                          value = spec$options$shape %||% 19)
       updateNumericInput(session, "chart_gg_facet_ncol",

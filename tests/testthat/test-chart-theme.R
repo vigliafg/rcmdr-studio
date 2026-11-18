@@ -55,3 +55,24 @@ test_that("the selected palette reaches the applied command", {
   expect_match(log, "scale_fill_manual\\(values = c", perl = TRUE)
   expect_match(log, "#4D4D4D", fixed = TRUE)
 })
+
+test_that("white and its hex form are the same default surface", {
+  expect_true(chart_background_is_white("white"))
+  expect_true(chart_background_is_white("#FFFFFF"))
+  expect_true(chart_background_is_white("#fff"))
+  expect_false(chart_background_is_white("#fefefe"))
+  expect_false(chart_background_is_white(""))
+
+  plain <- chart_spec("histogram", "D", list(x = "y"))
+  hex_white <- chart_spec("histogram", "D", list(x = "y"),
+                          theme = list(background = "#ffffff"))
+  # The colour picker returns hex, so the default command must not change.
+  expect_equal(chart_spec_command(hex_white), chart_spec_command(plain))
+  expect_equal(chart_theme_prefix(hex_white), chart_theme_prefix(plain))
+
+  # A real colour is still emitted.
+  dark <- chart_spec("histogram", "D", list(x = "y"),
+                     theme = list(background = "#101010"))
+  expect_match(chart_theme_prefix(dark), 'par\\(bg = "#101010"\\)')
+  expect_match(chart_spec_command(dark), "plot.background")
+})

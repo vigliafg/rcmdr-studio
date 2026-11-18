@@ -356,3 +356,52 @@ test_that("a type without metadata still renders one options panel", {
   )
   expect_match(html, 'data-value="Options"', fixed = TRUE)
 })
+
+test_that("the bounded parameters are sliders and the colour is a picker", {
+  html <- htmltools::renderTags(chart_builder_ui())$html
+  for (id in c("chart_gg_alpha", "chart_gg_jitter", "chart_base_size")) {
+    expect_match(html, sprintf('id="%s" class="sw-no-ui-slider"', id),
+                 fixed = TRUE)
+  }
+  expect_match(html, 'id="chart_background" class="form-control sw-spectrum"',
+               fixed = TRUE)
+  # The boxplot notch width follows the same rule.
+  box <- as.character(
+    chart_type("boxplot")$controls(chart_spec("boxplot", "D", list()))
+  )
+  expect_match(box, 'id="chart_opt_notchwidth" class="sw-no-ui-slider"',
+               fixed = TRUE)
+})
+
+test_that("Reset moves the sliders and keeps the default command", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$Dataset <- data.frame(y = 1:6, x = 2 * (1:6),
+                            g = factor(rep(c("a", "b"), 3)))
+
+  suppressWarnings(shiny::testServer(app_server(env), {
+    active_dataset(state, "Dataset")
+    session$setInputs(
+      menu_search = "", chart_mode = "build", chart_type = "boxplot",
+      chart_dataset = "Dataset", chart_map_x = "y", chart_map_group = "",
+      chart_gg_alpha = 0.4, chart_gg_jitter = 0.3, chart_base_size = 20,
+      chart_opt_notchwidth = 0.8, chart_background = "#101010"
+    )
+    session$flushReact()
+
+    # Reset reaches a noUi handle through the wrapper message, and a colour
+    # field through updateSpectrumInput: neither may throw.
+    expect_error({
+      session$setInputs(chart_reset = 1)
+      session$flushReact()
+    }, NA)
+
+    # The value the server reads is still a number and a colour string.
+    session$setInputs(chart_gg_alpha = 0.35, chart_background = "#ffffff")
+    session$flushReact()
+    command <- output$chart_command_text
+    expect_match(command, "alpha = 0.35", fixed = TRUE)
+    # Pure white is the default surface: no plot.background layer.
+    expect_false(grepl("plot.background", command, fixed = TRUE))
+  }))
+})

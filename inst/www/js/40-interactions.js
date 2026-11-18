@@ -55,6 +55,14 @@
     Shiny.addCustomMessageHandler('rcmdr-open-accordions', function(message) {
       rcmdrShowAccordions();
     });
+    // shinyWidgets can change the range of a noUiSlider but not its handle,
+    // so the slider wrapper sends this message; .set() fires the binding's
+    // change event, which is what updates the Shiny input.
+    Shiny.addCustomMessageHandler('rcmdr-set-slider', function(message) {
+      var el = document.getElementById(message.id);
+      if (!el || !el.noUiSlider) return;
+      el.noUiSlider.set(message.value);
+    });
     window.rcmdrFocusField = function(id) {
       var el = document.getElementById(id);
       if (!el) el = document.querySelector('[id$="_' + id + '"]');

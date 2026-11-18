@@ -256,9 +256,8 @@ chart_types_core <- function() {
         htmltools::tagList(
           checkbox_input("chart_opt_notch", tr("Notched box"),
                          isTRUE(options$notch)),
-          number_input("chart_opt_notchwidth", tr("Notch width"),
-                     options$notchwidth %||% 0.5, min = 0, max = 1,
-                     step = 0.05),
+          slider_input("chart_opt_notchwidth", tr("Notch width"),
+                       0, 1, options$notchwidth %||% 0.5, 0.05),
           checkbox_input("chart_opt_varwidth", tr("Width by group size"),
                          isTRUE(options$varwidth)),
           checkbox_input("chart_opt_horizontal", tr("Horizontal"),

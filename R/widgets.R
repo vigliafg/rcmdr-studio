@@ -265,9 +265,89 @@ listbox_input <- function(id, label, choices, selected = NULL, size = 8L,
 }
 
 #' Slider
+#'
+#' A bounded number on a noUiSlider handle: drag it, tap the track or use the
+#' arrow keys.  The id and the numeric value are the same as Shiny's
+#' `sliderInput()`, so the server code does not change.
+#'
+#' @param id Input id.
+#' @param label Visible label.
+#' @param min,max Bounds.
+#' @param value Initial value.
+#' @param step Increment; its decimals set the tooltip precision.
+#' @return A `div` tag.
 #' @export
 slider_input <- function(id, label, min, max, value, step = 1) {
-  sliderInput(id, label, min = min, max = max, value = value, step = step)
+  shinyWidgets::noUiSliderInput(
+    id, label,
+    min = min, max = max, value = value, step = step,
+    tooltips = TRUE,
+    format = shinyWidgets::wNumbFormat(decimals = slider_decimals(step)),
+    update_on = "change",
+    width = "100%"
+  )
+}
+
+#' Decimals of a slider step
+#' @keywords internal
+slider_decimals <- function(step) {
+  step <- suppressWarnings(as.numeric(step))
+  if (is.na(step) || step <= 0) return(0L)
+  text <- format(step, scientific = FALSE, trim = TRUE)
+  if (!grepl(".", text, fixed = TRUE)) return(0L)
+  decimals <- sub("^.*\\.", "", text)
+  nchar(sub("0+$", "", decimals))
+}
+
+#' Bounded numbers drawn by [slider_input()]
+#'
+#' `shinyWidgets::updateNoUiSliderInput()` can change the range but not the
+#' handle, so the wrapper needs its own message.  The list is explicit: a
+#' number field and a slider share the id and the value, never the update
+#' path.
+#' @keywords internal
+slider_input_ids <- function() {
+  c("chart_gg_alpha", "chart_gg_jitter", "chart_base_size",
+    "chart_opt_notchwidth")
+}
+
+#' Move a slider handle from the server
+#' @keywords internal
+update_slider_input <- function(session, id, value) {
+  session$sendCustomMessage(
+    "rcmdr-set-slider", list(id = id, value = as.numeric(value))
+  )
+}
+
+#' Update a bounded number, slider or field
+#' @keywords internal
+update_number_input <- function(session, id, value) {
+  if (id %in% slider_input_ids()) {
+    update_slider_input(session, id, value)
+  } else {
+    shiny::updateNumericInput(session, id, value = value)
+  }
+}
+
+#' Colour picker
+#'
+#' A colour field with a spectrum picker, built on shinyWidgets.  Shiny reads
+#' a hex string; the chart layer treats pure white as the default surface, so
+#' a white pick still produces the default command.
+#'
+#' @param id Input id.
+#' @param label Visible label.
+#' @param value Initial colour, any CSS colour string.
+#' @param width Control width.
+#' @return A `div` tag.
+#' @export
+color_input <- function(id, label, value = "#ffffff", width = "100%") {
+  shinyWidgets::spectrumInput(
+    id, label,
+    selected = value,
+    update_on = "change",
+    width = width
+  )
 }
 
 #' Drop-down / combo box

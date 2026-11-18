@@ -256,7 +256,7 @@ chart_gg_theme <- function(spec) {
     extra <- c(extra, sprintf("legend.position = %s", chart_quote(legend)))
   }
   background <- theme$background %||% "white"
-  if (!identical(background, "white")) {
+  if (!chart_background_is_white(background)) {
     extra <- c(extra, sprintf(
       "plot.background = ggplot2::element_rect(fill = %s, colour = NA)",
       chart_quote(background)

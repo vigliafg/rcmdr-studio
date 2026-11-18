@@ -106,7 +106,7 @@ test_that("the widget gallery covers every family and is not shipped", {
   for (marker in c("textInput", "selectInput", "checkboxInput",
                    "radioButtons", "switch_input", "segmented_input",
                    "virtualSelectInput", "picker_input", "listbox_input",
-                   "var_input", "sliderInput", "noUiSliderInput", "spectrumInput",
+                   "var_input", "sliderInput", "slider_input", "color_input",
                    "airDatepickerInput", "accordion", "datatable")) {
     expect_match(text, marker, fixed = TRUE,
                  label = sprintf("gallery has %s", marker))
@@ -128,4 +128,49 @@ test_that("the gallery renders in check mode", {
   if (is.null(status)) status <- 0L
   expect_equal(status, 0L)
   expect_match(paste(out, collapse = "\n"), "gallery ok", fixed = TRUE)
+})
+
+test_that("slider_input() keeps the id and the number on a noUi handle", {
+  html <- as.character(slider_input("w_alpha", "Alpha", 0, 1, 0.7, 0.05))
+  expect_match(html, 'id="w_alpha"', fixed = TRUE)
+  expect_match(html, "sw-no-ui-slider", fixed = TRUE)
+  # The value is the only thing that changed from sliderInput(): the id and
+  # the bound numbers are the ones the server already reads.
+  expect_match(html, '"start":0.7', fixed = TRUE)
+  expect_match(html, '"range":{"min":0,"max":1}', fixed = TRUE)
+  expect_match(html, '"step":0.05', fixed = TRUE)
+  # The tooltip shows the precision of the step.
+  expect_match(html, '"decimals":2', fixed = TRUE)
+  whole <- as.character(slider_input("w_size", "Size", 6, 32, 12, 1))
+  expect_match(whole, '"decimals":0', fixed = TRUE)
+  expect_equal(slider_decimals(1), 0L)
+  expect_equal(slider_decimals(0.05), 2L)
+  expect_equal(slider_decimals(0.5), 1L)
+})
+
+test_that("the server can move a slider handle", {
+  # shinyWidgets changes the range but not the value, so the wrapper owns a
+  # message; the browser handler is what makes update_number_input() work.
+  js <- as.character(app_js())
+  expect_match(js, "rcmdr-set-slider", fixed = TRUE)
+  expect_match(js, "noUiSlider.set", fixed = TRUE)
+
+  expect_true(all(c("chart_gg_alpha", "chart_gg_jitter", "chart_base_size",
+                    "chart_opt_notchwidth") %in% slider_input_ids()))
+  skip_if_not_installed("shiny")
+  session <- shiny::MockShinySession$new()
+  expect_error(update_number_input(session, "chart_gg_alpha", 0.35), NA)
+  # A number field takes the ordinary Shiny message.
+  expect_error(update_number_input(session, "chart_gg_binwidth", 0.2), NA)
+})
+
+test_that("color_input() is a spectrum field with a hex value", {
+  html <- as.character(color_input("w_colour", "Background"))
+  expect_match(html, 'id="w_colour"', fixed = TRUE)
+  expect_match(html, "sw-spectrum", fixed = TRUE)
+  expect_match(html, 'data-color="#ffffff"', fixed = TRUE)
+  expect_match(html, 'data-update-on="change"', fixed = TRUE)
+  # A named colour stays a colour string.
+  named <- as.character(color_input("w_colour2", "Background", "white"))
+  expect_match(named, 'data-color="white"', fixed = TRUE)
 })

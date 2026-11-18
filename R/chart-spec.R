@@ -299,7 +299,7 @@ chart_theme_prefix <- function(spec) {
 
   arguments <- character()
   background <- theme$background %||% "white"
-  if (!identical(background, "white")) {
+  if (!chart_background_is_white(background)) {
     arguments <- c(arguments, sprintf("bg = %s", chart_quote(background)))
   }
   base_size <- suppressWarnings(as.numeric(theme$base_size %||% 12))
@@ -310,6 +310,20 @@ chart_theme_prefix <- function(spec) {
     commands <- c(commands, sprintf("par(%s)", paste(arguments, collapse = ", ")))
   }
   commands
+}
+
+#' Whether a background is the default white surface
+#'
+#' A colour picker returns hex, so the default white arrives as `#ffffff`.
+#' Both notations mean the same surface: the default emits no background
+#' layer, whichever one the control produced.
+#'
+#' @param background A colour string.
+#' @return `TRUE` for white, `#ffffff` and `#fff`, in any case.
+#' @keywords internal
+chart_background_is_white <- function(background) {
+  background <- tolower(as.character(background %||% "white"))
+  background %in% c("white", "#ffffff", "#fff")
 }
 
 #' Title and axis labels emitted after the plot
