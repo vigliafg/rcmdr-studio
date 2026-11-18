@@ -60,7 +60,7 @@ section_card <- function(title, body, collapsed = FALSE) {
 #' @param level Heading level, 1–6.  Dialogs usually want 3.
 #' @param class Extra classes for the accordion.
 #' @return A `<div>` tag.
-#' @keywords internal
+#' @export
 settings_accordion <- function(..., id = NULL, open = NULL, multiple = TRUE,
                                level = 3L, class = NULL) {
   level <- as.integer(level %||% 3L)[[1L]]
@@ -110,7 +110,7 @@ settings_accordion <- function(..., id = NULL, open = NULL, multiple = TRUE,
 #' @param badge Optional badge label (or a ready badge tag).
 #' @param grid Wrap the body in [field_grid()].
 #' @return A `bslib_accordion_panel`.
-#' @keywords internal
+#' @export
 settings_panel <- function(title, ..., value = NULL, icon = NULL,
                            badge = NULL, grid = TRUE) {
   if (is.null(value)) {

@@ -2,6 +2,10 @@
 
 export_dialog_id <- function(name) paste0("export_", name)
 
+export_panel <- function(title, ...) {
+  RcmdrShiny::settings_panel(title, value = title, grid = FALSE, ...)
+}
+
 export_xtable_dialog <- function() {
   id <- "xtableExport"
   ns <- function(x) paste0(id, "_", x)
@@ -24,33 +28,53 @@ export_xtable_dialog <- function() {
             "No printable object is available. Run a command that prints an object first."
           )
         },
-        RcmdrShiny::radio_input(
-          ns("type"), "Export format",
-          c("LaTeX" = "latex", "HTML" = "html"),
-          memory$type %||% "latex"
-        ),
-        RcmdrShiny::entry_input(ns("caption"), "Caption:", memory$caption %||% ""),
-        RcmdrShiny::radio_input(
-          ns("caption_place"), "Caption place",
-          c("Top" = "top", "Bottom" = "bottom"),
-          memory$caption_place %||% "bottom"
-        ),
-        RcmdrShiny::entry_input(ns("label"), "Label:", memory$label %||% ""),
-        RcmdrShiny::entry_input(ns("align"), "Align:", memory$align %||% ""),
-        RcmdrShiny::entry_input(ns("digits"), "Digits:", memory$digits %||% ""),
-        RcmdrShiny::entry_input(ns("display"), "Display:", memory$display %||% ""),
-        RcmdrShiny::entry_input(ns("size"), "Size:", memory$size %||% "normal"),
-        RcmdrShiny::entry_input(ns("na"), "NA string:", memory$na %||% ""),
-        RcmdrShiny::entry_input(ns("file"), "File (without extension):",
-                                memory$file %||% ""),
-        RcmdrShiny::checkbox_input(ns("append"), "Append",
-                                   memory$append %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("floating"), "Floating",
-                                   memory$floating %||% TRUE),
-        RcmdrShiny::radio_input(
-          ns("tab_env"), "Tabular environment",
-          c("tabular" = "tabular", "longtable" = "longtable"),
-          memory$tab_env %||% "tabular"
+        RcmdrShiny::settings_accordion(
+          id = paste0(id, "_settings"),
+          open = "Content",
+          export_panel(
+            "Content",
+            RcmdrShiny::radio_input(
+              ns("type"), "Export format",
+              c("LaTeX" = "latex", "HTML" = "html"),
+              memory$type %||% "latex"
+            ),
+            RcmdrShiny::entry_input(ns("caption"), "Caption:",
+                                    memory$caption %||% ""),
+            RcmdrShiny::radio_input(
+              ns("caption_place"), "Caption place",
+              c("Top" = "top", "Bottom" = "bottom"),
+              memory$caption_place %||% "bottom"
+            ),
+            RcmdrShiny::entry_input(ns("label"), "Label:",
+                                    memory$label %||% "")
+          ),
+          export_panel(
+            "Typesetting",
+            RcmdrShiny::entry_input(ns("align"), "Align:",
+                                    memory$align %||% ""),
+            RcmdrShiny::entry_input(ns("digits"), "Digits:",
+                                    memory$digits %||% ""),
+            RcmdrShiny::entry_input(ns("display"), "Display:",
+                                    memory$display %||% ""),
+            RcmdrShiny::entry_input(ns("size"), "Size:",
+                                    memory$size %||% "normal"),
+            RcmdrShiny::entry_input(ns("na"), "NA string:",
+                                    memory$na %||% ""),
+            RcmdrShiny::radio_input(
+              ns("tab_env"), "Tabular environment",
+              c("tabular" = "tabular", "longtable" = "longtable"),
+              memory$tab_env %||% "tabular"
+            )
+          ),
+          export_panel(
+            "File",
+            RcmdrShiny::entry_input(ns("file"), "File (without extension):",
+                                    memory$file %||% ""),
+            RcmdrShiny::checkbox_input(ns("append"), "Append",
+                                       memory$append %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("floating"), "Floating",
+                                       memory$floating %||% TRUE)
+          )
         )
       )
     },
@@ -109,38 +133,56 @@ export_latex_dialog <- function() {
             "No printable object is available. Run a command that prints an object first."
           )
         },
-        RcmdrShiny::entry_input(ns("caption"), "Caption:", memory$caption %||% ""),
-        RcmdrShiny::radio_input(
-          ns("caption_place"), "Caption location",
-          c("Top" = "top", "Bottom" = "bottom"),
-          memory$caption_place %||% "top"
-        ),
-        RcmdrShiny::entry_input(ns("label"), "Label:", memory$label %||% ""),
-        RcmdrShiny::entry_input(ns("digits"), "Digits:", memory$digits %||% ""),
-        RcmdrShiny::entry_input(ns("size"), "Size:", memory$size %||% "normal"),
-        RcmdrShiny::entry_input(ns("center"), "Center:", memory$center %||% "center"),
-        RcmdrShiny::entry_input(ns("file"), "File (without extension):",
-                                memory$file %||% ""),
-        RcmdrShiny::checkbox_input(ns("append"), "Append",
-                                   memory$append %||% TRUE),
-        RcmdrShiny::checkbox_input(ns("preview"), "Preview",
-                                   memory$preview %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("longtable"), "Use longtable",
-                                   memory$longtable %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("table_env"), "Table environment",
-                                   memory$table_env %||% TRUE),
-        RcmdrShiny::checkbox_input(ns("landscape"), "Landscape",
-                                   memory$landscape %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("booktabs"), "Use booktabs",
-                                   memory$booktabs %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("ctable"), "Use ctable",
-                                   memory$ctable %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("vbar"), "Vertical bar",
-                                   memory$vbar %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("nomargins"), "No margins",
-                                   memory$nomargins %||% TRUE),
-        RcmdrShiny::checkbox_input(ns("blank_na"), "Blank NA",
-                                   memory$blank_na %||% TRUE)
+        RcmdrShiny::settings_accordion(
+          id = paste0(id, "_settings"),
+          open = "Content",
+          export_panel(
+            "Content",
+            RcmdrShiny::entry_input(ns("caption"), "Caption:",
+                                    memory$caption %||% ""),
+            RcmdrShiny::radio_input(
+              ns("caption_place"), "Caption location",
+              c("Top" = "top", "Bottom" = "bottom"),
+              memory$caption_place %||% "top"
+            ),
+            RcmdrShiny::entry_input(ns("label"), "Label:",
+                                    memory$label %||% "")
+          ),
+          export_panel(
+            "Layout",
+            RcmdrShiny::entry_input(ns("digits"), "Digits:",
+                                    memory$digits %||% ""),
+            RcmdrShiny::entry_input(ns("size"), "Size:",
+                                    memory$size %||% "normal"),
+            RcmdrShiny::entry_input(ns("center"), "Center:",
+                                    memory$center %||% "center"),
+            RcmdrShiny::checkbox_input(ns("longtable"), "Use longtable",
+                                       memory$longtable %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("table_env"), "Table environment",
+                                       memory$table_env %||% TRUE),
+            RcmdrShiny::checkbox_input(ns("landscape"), "Landscape",
+                                       memory$landscape %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("booktabs"), "Use booktabs",
+                                       memory$booktabs %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("ctable"), "Use ctable",
+                                       memory$ctable %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("vbar"), "Vertical bar",
+                                       memory$vbar %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("nomargins"), "No margins",
+                                       memory$nomargins %||% TRUE)
+          ),
+          export_panel(
+            "File",
+            RcmdrShiny::entry_input(ns("file"), "File (without extension):",
+                                    memory$file %||% ""),
+            RcmdrShiny::checkbox_input(ns("append"), "Append",
+                                       memory$append %||% TRUE),
+            RcmdrShiny::checkbox_input(ns("preview"), "Preview",
+                                       memory$preview %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("blank_na"), "Blank NA",
+                                       memory$blank_na %||% TRUE)
+          )
+        )
       )
     },
     on_ok = function(input, state) {
@@ -202,29 +244,40 @@ export_formatdf_dialog <- function() {
             tables, memory$object %||% tables[[1L]]
           )
         },
-        RcmdrShiny::entry_input(ns("dec"), "Decimals:", memory$dec %||% "2"),
-        RcmdrShiny::entry_input(ns("cdec"), "Column decimals:",
-                                memory$cdec %||% ""),
-        RcmdrShiny::checkbox_input(ns("numeric_dollar"), "Numeric dollar",
-                                   memory$numeric_dollar %||% TRUE),
-        RcmdrShiny::checkbox_input(ns("na_blank"), "Blank NA",
-                                   memory$na_blank %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("na_dot"), "Dot NA",
-                                   memory$na_dot %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("blank_dot"), "Dot blank",
-                                   memory$blank_dot %||% FALSE),
-        RcmdrShiny::entry_input(ns("col_just"), "Column justify:",
-                                memory$col_just %||% ""),
-        RcmdrShiny::checkbox_input(ns("cdot"), "Centered dot",
-                                   memory$cdot %||% FALSE),
-        RcmdrShiny::entry_input(ns("scientific"), "Scientific notation:",
-                                memory$scientific %||% "c(-4,4)"),
-        RcmdrShiny::checkbox_input(ns("math_row"), "Math row names",
-                                   memory$math_row %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("math_col"), "Math column names",
-                                   memory$math_col %||% FALSE),
-        RcmdrShiny::checkbox_input(ns("double_slash"), "Escape backslashes",
-                                   memory$double_slash %||% FALSE)
+        RcmdrShiny::settings_accordion(
+          id = paste0(id, "_settings"),
+          open = "Numbers",
+          export_panel(
+            "Numbers",
+            RcmdrShiny::entry_input(ns("dec"), "Decimals:",
+                                    memory$dec %||% "2"),
+            RcmdrShiny::entry_input(ns("cdec"), "Column decimals:",
+                                    memory$cdec %||% ""),
+            RcmdrShiny::checkbox_input(ns("numeric_dollar"), "Numeric dollar",
+                                       memory$numeric_dollar %||% TRUE),
+            RcmdrShiny::checkbox_input(ns("na_blank"), "Blank NA",
+                                       memory$na_blank %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("na_dot"), "Dot NA",
+                                       memory$na_dot %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("blank_dot"), "Dot blank",
+                                       memory$blank_dot %||% FALSE),
+            RcmdrShiny::entry_input(ns("scientific"), "Scientific notation:",
+                                    memory$scientific %||% "c(-4,4)")
+          ),
+          export_panel(
+            "Layout",
+            RcmdrShiny::entry_input(ns("col_just"), "Column justify:",
+                                    memory$col_just %||% ""),
+            RcmdrShiny::checkbox_input(ns("cdot"), "Centered dot",
+                                       memory$cdot %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("math_row"), "Math row names",
+                                       memory$math_row %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("math_col"), "Math column names",
+                                       memory$math_col %||% FALSE),
+            RcmdrShiny::checkbox_input(ns("double_slash"), "Escape backslashes",
+                                       memory$double_slash %||% FALSE)
+          )
+        )
       )
     },
     on_ok = function(input, state) {

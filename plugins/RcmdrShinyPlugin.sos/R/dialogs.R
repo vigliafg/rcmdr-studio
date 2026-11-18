@@ -15,32 +15,41 @@ sos_dialog <- function() {
           "Separate up to nine terms with | (union) or & (intersection). ",
           "Use only one operator per search."
         ),
-        RcmdrShiny::entry_input(
-          ns("search"), "Search string:", memory$search %||% ""
-        ),
-        RcmdrShiny::spin_input(
-          ns("max_page"), "Maximum pages:", memory$max_page %||% 20,
-          min = 1, max = 99, step = 1
-        ),
-        RcmdrShiny::checkbox_input(
-          ns("summary"), "Summary", memory$summary %||% FALSE
-        ),
-        RcmdrShiny::checkbox_input(
-          ns("xls"), "Write to spreadsheet", memory$xls %||% FALSE
-        ),
-        htmltools::tags$hr(),
-        RcmdrShiny::entry_input(
-          ns("filter"), "Filter results:", memory$filter %||% ""
-        ),
-        RcmdrShiny::combo_input(
-          ns("column"), "Filter column",
-          c("Package" = "Package", "Function" = "",
-            "Description" = "Description"),
-          memory$column %||% ""
-        ),
-        RcmdrShiny::checkbox_input(
-          ns("ignore_case"), "Ignore case",
-          memory$ignore_case %||% TRUE
+        RcmdrShiny::settings_accordion(
+          id = paste0(id, "_settings"),
+          open = "Search",
+          RcmdrShiny::settings_panel(
+            "Search", value = "Search", grid = FALSE,
+            RcmdrShiny::entry_input(
+              ns("search"), "Search string:", memory$search %||% ""
+            ),
+            RcmdrShiny::spin_input(
+              ns("max_page"), "Maximum pages:", memory$max_page %||% 20,
+              min = 1, max = 99, step = 1
+            ),
+            RcmdrShiny::checkbox_input(
+              ns("summary"), "Summary", memory$summary %||% FALSE
+            ),
+            RcmdrShiny::checkbox_input(
+              ns("xls"), "Write to spreadsheet", memory$xls %||% FALSE
+            )
+          ),
+          RcmdrShiny::settings_panel(
+            "Filter", value = "Filter", grid = FALSE,
+            RcmdrShiny::entry_input(
+              ns("filter"), "Filter results:", memory$filter %||% ""
+            ),
+            RcmdrShiny::combo_input(
+              ns("column"), "Filter column",
+              c("Package" = "Package", "Function" = "",
+                "Description" = "Description"),
+              memory$column %||% ""
+            ),
+            RcmdrShiny::checkbox_input(
+              ns("ignore_case"), "Ignore case",
+              memory$ignore_case %||% TRUE
+            )
+          )
         )
       )
     },

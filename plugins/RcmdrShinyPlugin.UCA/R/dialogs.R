@@ -18,59 +18,71 @@ uca_qcc_dialog <- function(id, title, type, phase = "1",
     id = id, title = title, help = help, help_package = "qcc",
     ui = function(state, memory) {
       numeric <- RcmdrShiny::numeric_variables(state)
-      htmltools::tagList(
-        if (identical(phase, "p")) {
-          htmltools::tagList(
-            RcmdrShiny::entry_input(ns("center"), "Center:",
-                                    memory$center %||% ""),
-            if (uca_multicolumn(type)) {
-              RcmdrShiny::entry_input(ns("stddev"), "Standard deviation:",
-                                      memory$stddev %||% "")
-            }
-          )
-        },
-        if (phase %in% c("1", "2")) {
-          htmltools::tagList(
+      panels <- list()
+      if (identical(phase, "p")) {
+        panels <- c(panels, list(RcmdrShiny::settings_panel(
+          "Parameters", value = "Parameters", grid = FALSE,
+          RcmdrShiny::entry_input(ns("center"), "Center:",
+                                  memory$center %||% ""),
+          if (uca_multicolumn(type)) {
+            RcmdrShiny::entry_input(ns("stddev"), "Standard deviation:",
+                                    memory$stddev %||% "")
+          }
+        )))
+      }
+      if (phase %in% c("1", "2")) {
+        panels <- c(panels, list(RcmdrShiny::settings_panel(
+          "Phase I", value = "Phase I", grid = FALSE,
+          RcmdrShiny::var_input(
+            ns("x1"), x1title, numeric,
+            memory$x1 %||% character(), multiple = TRUE
+          ),
+          if (with_sizes) {
             RcmdrShiny::var_input(
-              ns("x1"), x1title, numeric,
-              memory$x1 %||% character(), multiple = TRUE
-            ),
-            if (with_sizes) {
-              RcmdrShiny::var_input(
-                ns("n1"), n1title, numeric,
-                memory$n1 %||% character(), multiple = FALSE
-              )
-            },
-            RcmdrShiny::subset_input(ns("subset"), value = memory$subset %||% "")
-          )
-        },
-        if (phase %in% c("2", "p")) {
-          htmltools::tagList(
-            RcmdrShiny::var_input(
-              ns("x2"), x2title, numeric,
-              memory$x2 %||% character(), multiple = TRUE
-            ),
-            if (with_sizes) {
-              RcmdrShiny::var_input(
-                ns("n2"), n2title, numeric,
-                memory$n2 %||% character(), multiple = FALSE
-              )
-            },
-            RcmdrShiny::subset_input(ns("subset2"), value = memory$subset2 %||% "")
-          )
-        },
-        if (identical(phase, "2")) {
-          htmltools::tagList(
-            RcmdrShiny::checkbox_input(
-              ns("plot_all"), "Plot all data", memory$plot_all %||% FALSE
-            ),
-            RcmdrShiny::checkbox_input(
-              ns("renumber"), "Renumber second phase data",
-              memory$renumber %||% FALSE
+              ns("n1"), n1title, numeric,
+              memory$n1 %||% character(), multiple = FALSE
             )
+          },
+          RcmdrShiny::subset_input(ns("subset"), value = memory$subset %||% "")
+        )))
+      }
+      if (phase %in% c("2", "p")) {
+        panels <- c(panels, list(RcmdrShiny::settings_panel(
+          "Phase II", value = "Phase II", grid = FALSE,
+          RcmdrShiny::var_input(
+            ns("x2"), x2title, numeric,
+            memory$x2 %||% character(), multiple = TRUE
+          ),
+          if (with_sizes) {
+            RcmdrShiny::var_input(
+              ns("n2"), n2title, numeric,
+              memory$n2 %||% character(), multiple = FALSE
+            )
+          },
+          RcmdrShiny::subset_input(ns("subset2"), value = memory$subset2 %||% "")
+        )))
+      }
+      if (identical(phase, "2")) {
+        panels <- c(panels, list(RcmdrShiny::settings_panel(
+          "Options", value = "Options", grid = FALSE,
+          RcmdrShiny::checkbox_input(
+            ns("plot_all"), "Plot all data", memory$plot_all %||% FALSE
+          ),
+          RcmdrShiny::checkbox_input(
+            ns("renumber"), "Renumber second phase data",
+            memory$renumber %||% FALSE
           )
-        }
-      )
+        )))
+      }
+      open_panel <- if (length(panels) > 0L) {
+        panels[[1L]]$attribs[["data-value"]]
+      } else {
+        NULL
+      }
+      do.call(RcmdrShiny::settings_accordion, c(
+        panels,
+        list(id = paste0(id, "_settings"), open = open_panel)
+      ))
     },
     on_ok = function(input, state) {
       options <- list(

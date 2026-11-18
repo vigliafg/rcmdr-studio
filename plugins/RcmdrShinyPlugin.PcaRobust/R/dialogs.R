@@ -11,17 +11,22 @@ pca_robust_dialog_full <- function() {
     help_package = "rrcov",
     ui = function(state, memory) {
       numeric <- RcmdrShiny::numeric_variables(state)
-      htmltools::tagList(
-        RcmdrShiny::var_input(
-          ns("variables"), "Variables (select two or more)",
-          numeric, memory$variables %||% numeric, multiple = TRUE
+      RcmdrShiny::settings_accordion(
+        id = paste0(id, "_settings"),
+        open = "Variables",
+        RcmdrShiny::settings_panel(
+          "Variables", value = "Variables", grid = FALSE,
+          RcmdrShiny::var_input(
+            ns("variables"), "Variables (select two or more)",
+            numeric, memory$variables %||% numeric, multiple = TRUE
+          ),
+          RcmdrShiny::entry_input(
+            ns("alpha"), "Confidence level (0.5 to 1):",
+            memory$alpha %||% "0.75"
+          )
         ),
-        RcmdrShiny::entry_input(
-          ns("alpha"), "Confidence level (0.5 to 1):",
-          memory$alpha %||% "0.75"
-        ),
-        htmltools::tags$fieldset(
-          htmltools::tags$legend("Output"),
+        RcmdrShiny::settings_panel(
+          "Output", value = "Output", grid = FALSE,
           RcmdrShiny::checkbox_input(
             ns("loadings"), "Factor loadings", memory$loadings %||% FALSE
           ),
@@ -29,8 +34,8 @@ pca_robust_dialog_full <- function() {
             ns("scores"), "Scores", memory$scores %||% FALSE
           )
         ),
-        htmltools::tags$fieldset(
-          htmltools::tags$legend("Plots"),
+        RcmdrShiny::settings_panel(
+          "Plots", value = "Plots", grid = FALSE,
           RcmdrShiny::checkbox_input(
             ns("screeplot"), "Screeplot", memory$screeplot %||% FALSE
           ),

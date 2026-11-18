@@ -41,10 +41,13 @@ roc_data_ui <- function(state, ns, memory, comparison = FALSE,
   )
 }
 
-roc_options_ui <- function(ns, memory, comparison = FALSE) {
-  tagList(
-    htmltools::tags$fieldset(
-      htmltools::tags$legend("Data options"),
+roc_options_ui <- function(ns, memory, comparison = FALSE,
+                           dialog_id = "roc") {
+  RcmdrShiny::settings_accordion(
+    id = paste0(dialog_id, "_settings"),
+    open = "Data options",
+    RcmdrShiny::settings_panel(
+      "Data options", value = "Data options", grid = FALSE,
       RcmdrShiny::radio_input(
         ns("direction"), "Direction",
         c("auto" = "auto", "Control > cases" = "gt",
@@ -59,8 +62,8 @@ roc_options_ui <- function(ns, memory, comparison = FALSE) {
         roc_memory(memory, "percent", FALSE)
       )
     ),
-    htmltools::tags$fieldset(
-      htmltools::tags$legend("AUC"),
+    RcmdrShiny::settings_panel(
+      "AUC", value = "AUC", grid = FALSE,
       RcmdrShiny::checkbox_input(
         ns("auc"), "Compute area under the curve (AUC)",
         roc_memory(memory, "auc", TRUE)
@@ -87,8 +90,8 @@ roc_options_ui <- function(ns, memory, comparison = FALSE) {
         roc_memory(memory, "partial_correct", FALSE)
       )
     ),
-    htmltools::tags$fieldset(
-      htmltools::tags$legend("Confidence interval"),
+    RcmdrShiny::settings_panel(
+      "Confidence interval", value = "Confidence interval", grid = FALSE,
       RcmdrShiny::checkbox_input(
         ns("ci_compute"), "Compute confidence interval (CI)",
         roc_memory(memory, "ci_compute", TRUE)
@@ -130,8 +133,8 @@ roc_options_ui <- function(ns, memory, comparison = FALSE) {
         roc_memory(memory, "ci_plot_type", "shape")
       )
     ),
-    htmltools::tags$fieldset(
-      htmltools::tags$legend("Plot"),
+    RcmdrShiny::settings_panel(
+      "Plot", value = "Plot", grid = FALSE,
       RcmdrShiny::checkbox_input(
         ns("plot"), "Plot ROC curve", roc_memory(memory, "plot", TRUE)
       ),
@@ -188,8 +191,8 @@ roc_options_ui <- function(ns, memory, comparison = FALSE) {
         roc_memory(memory, "values", FALSE)
       )
     ),
-    htmltools::tags$fieldset(
-      htmltools::tags$legend("Smoothing"),
+    RcmdrShiny::settings_panel(
+      "Smoothing", value = "Smoothing", grid = FALSE,
       RcmdrShiny::checkbox_input(
         ns("smooth"), "Smooth ROC curve",
         roc_memory(memory, "smooth", FALSE)
@@ -221,8 +224,8 @@ roc_options_ui <- function(ns, memory, comparison = FALSE) {
       )
     ),
     if (isTRUE(comparison)) {
-      htmltools::tags$fieldset(
-        htmltools::tags$legend("Test"),
+      RcmdrShiny::settings_panel(
+      "Test", value = "Test", grid = FALSE,
         RcmdrShiny::radio_input(
           ns("test_method"), "Test method",
           c("auto" = "auto", "delong" = "delong",
@@ -331,7 +334,7 @@ roc_single_dialog <- function() {
     ui = function(state, memory) {
       htmltools::tagList(
         roc_data_ui(state, ns, memory),
-        roc_options_ui(ns, memory)
+        roc_options_ui(ns, memory, dialog_id = id)
       )
     },
     on_ok = function(input, state) {
@@ -364,7 +367,7 @@ roc_comparison_dialog <- function(paired) {
       htmltools::tagList(
         roc_data_ui(state, ns, memory, comparison = TRUE,
                     two_labels = !isTRUE(paired)),
-        roc_options_ui(ns, memory, comparison = TRUE)
+        roc_options_ui(ns, memory, comparison = TRUE, dialog_id = id)
       )
     },
     on_ok = function(input, state) {
@@ -407,7 +410,7 @@ roc_lr_dialog <- function() {
           htmltools::tags$strong("Active model: "),
           model %||% "none"
         ),
-        roc_options_ui(ns, memory)
+        roc_options_ui(ns, memory, dialog_id = id)
       )
     },
     on_ok = function(input, state) {
