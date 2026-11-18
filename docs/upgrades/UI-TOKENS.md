@@ -416,6 +416,8 @@ nessun JavaScript.
 | Tabelle | righe da 32 px in compatto, header sticky |
 | Movimento | 120–150 ms; `prefers-reduced-motion` azzera |
 | Cursore | default sui campi, pointer su bottoni, link e righe cliccabili |
+| Slider | traccia a token, handle 16 px, tooltip con i decimali dello step, frecce e Home/End |
+| Colore | campo con anteprima, valore hex, picker locale, nessun colore scritto a mano |
 
 ### 12.4 Accordion
 
@@ -427,7 +429,7 @@ nessun JavaScript.
 | Hover | superficie `--rcmdr-hover`, nessuno spostamento |
 | Focus | un solo anello `--rcmdr-focus`, offset interno all'header |
 | Corpo | padding `--rcmdr-space-3`; i campi restano nella griglia condivisa |
-| Gruppi | `settings_group()` non richiudibile, livello 4, nessun accordion annidato |
+| Gruppi | `settings_group()` non richiudibile, livello 4; l'unico accordion annidato è quello delle opzioni per tipo, con `rcmdr-accordion-nested` |
 | Errore | il dialogo apre tutti i pannelli, poi sposta il focus sul primo campo |
 | Valori | chiavi stabili e uniche; `open` che non nomina un pannello è un errore |
 | Titoli | il testo è tradotto, il valore no: lo stato aperto non dipende dalla lingua |

@@ -1,7 +1,7 @@
 # Diario di handoff — Onda 16 — bslib, shinyWidgets e sistema dei widget
 
 **Data:** 2026-11-18  
-**Stato:** lotti 1 e 2 completati (S1–S6); prossimo lotto S7–S9  
+**Stato:** lotti 1–3 completati (S1–S9); prossimo lotto S10–S12  
 **Ondata precedente:** `wave-15-ui-refresh.md` (Onda 15, 2.8.0)  
 **Documento di settore:** [`16-bslib-widgets.md`](../16-bslib-widgets.md)  
 **Contratto dei token:** [`UI-TOKENS.md`](../UI-TOKENS.md)  
@@ -9,22 +9,28 @@
 
 ---
 
-## 1. Obiettivo dei primi due lotti
+## 1. Obiettivo dei primi tre lotti
 
 Il primo lotto ha preparato il terreno: specifica desktop, galleria di ogni
 famiglia di widget, bridge dei temi, campi e selettori binari, elenchi
-ricercabili. Il secondo lotto costruisce sopra quella base il componente che
-riduce il carico visivo: un accordion con semantica di heading, usato prima su
-*Options* e poi sul Chart Builder.
+ricercabili. Il secondo ha costruito il componente che riduce il carico
+visivo: un accordion con semantica di heading, usato prima su *Options* e poi
+sul Chart Builder. Il terzo porta il builder a sei pannelli, dà una gerarchia
+anche alle opzioni che cambiano con il tipo e sostituisce i controlli numerici
+e di colore con quelli desktop.
 
-Al termine del lotto 2:
+Al termine del lotto 3:
 
 - `settings_accordion()`, `settings_panel()` e `settings_group()` sono il solo
   modo di costruire un accordion nell'app;
 - *Options* è cinque pannelli e un errore apre il pannello giusto e porta il
   focus sul campo;
-- il Chart Builder è una scheda “Chart and data” sempre visibile più quattro
+- il Chart Builder è una scheda “Chart and data” sempre visibile più sei
   pannelli, con tutti i 29 ID statici invariati;
+- le opzioni per tipo hanno gruppi, e i pannelli ancora validi restano aperti
+  quando si cambia tipo;
+- alpha, jitter, base size e notch width sono slider, lo sfondo è un color
+  picker, e il comando di default non cambia;
 - la suite completa è verde.
 
 ---
@@ -126,7 +132,68 @@ Diario, README e verifica del primo lotto.
 
 ---
 
-## 4. Scelte e deviazioni
+## 4. Lotto 3 — Chart Builder in profondità (S7–S9)
+
+### S7 — Sottopannelli semantici di ggplot2 · `62f3fd8`
+
+- Il pannello unico con diciotto controlli diventa quattro pannelli che
+  nominano un compito: *Style* (position, alpha, bin width, jitter, point
+  shape, smooth, confidence band, flip), *Axes* (formati X/Y, facet scales e
+  colonne, coordinate polari e angolo), *Text* (titolo, caption, etichette X/Y,
+  subtitle, tag, base size), *Theme* (tema ggplot2, palette, legenda, sfondo,
+  griglia). *Output* resta larghezza e altezza.
+- Cambia solo la posizione: ID, valori, default e chiamate del server identici.
+  Reset, caricamento modello e comando generato non toccano i pannelli.
+- Test: sei pannelli, solo *Options* aperto, ognuno dei 17 ID `chart_gg_*` una
+  volta, e un controllo di appartenenza che nessun campo sia nel pannello
+  sbagliato.
+
+### S8 — Gruppi per tipo e stato dei pannelli · `e9f0391`
+
+- Metadato opzionale `option_groups` nei descrittori: lista nominata con chiavi
+  stabili (anche titolo inglese) e valori presi da `defaults`. Otto tipi core
+  lo usano (density, boxplot, scatter, dot, strip, qq, means, violin); gli
+  altri restano a un gruppo solo.
+- `chart_option_groups()` scarta i nomi sconosciuti e mette nel primo gruppo le
+  opzioni rimaste fuori: un refuso non può nascondere un controllo. Un test
+  verifica che i gruppi coprano `defaults` esattamente, senza duplicati.
+- `chart_option_controls()` partiziona i tag di `controls(spec)` in base
+  all'ID `chart_opt_*`: nessun tipo ripete le proprie definizioni per avere un
+  pannello. Un test confronta gli ID resi con quelli piatti per ogni tipo del
+  registro, stat inclusi.
+- `chart_options_ui()` rende `settings_accordion()` con ID stabile
+  `chart_type_options`, livello 4 e classe `rcmdr-accordion-nested`. I valori
+  aperti si leggono con `isolate()` e si filtrano sui gruppi del nuovo tipo:
+  *Box* sparisce su un dot plot, *Layout* resta aperto.
+- CSS: l'unico accordion annidato perde il margine e usa il passo piccolo del
+  titolo; l'accordion dentro una griglia occupa tutte le colonne.
+
+### S9 — Slider e colore · `55e4124`
+
+- `slider_input()` disegna un handle noUiSlider e conserva ID, valore numerico,
+  minimo, massimo e passo del vecchio `sliderInput()`. Tooltip con i decimali
+  dello step (`wNumbFormat`), `update_on = "change"`, tastiera sulle frecce.
+  Alpha, jitter, base size e notch width lo usano; jitter ha ora un limite
+  0–0,5.
+- `shinyWidgets` non sa spostare l'handle dal server: il wrapper ha un
+  messaggio proprio, `rcmdr-set-slider`, che chiama `noUiSlider.set()` e lascia
+  che l'evento `change` del binding aggiorni Shiny.
+  `update_number_input()` instrada i quattro ID degli slider lì e tutto il resto
+  su `updateNumericInput()`; reset, caricamento modello e reopen restano
+  invariati.
+- `color_input()` avvolge `spectrumInput()` per lo sfondo del grafico. Il
+  binding riporta sempre hex, quindi il bianco di default arriva come
+  `#ffffff`: `chart_background_is_white()` tratta `white`, `#ffffff` e `#fff`
+  come la stessa superficie, così il comando resta identico. Un colore vero
+  continua a produrre `par(bg = ...)` e `plot.background`.
+- Galleria: slider Shiny e slider Studio affiancati, colore con il wrapper.
+- Test: markup e decimali, handler e instradamento degli ID, il picker, i
+  quattro ID nel builder, reset senza errori, lettura numerica e di colore,
+  equivalenza del bianco nei due engine.
+
+---
+
+## 5. Scelte e deviazioni
 
 | Punto | Piano | Fatto | Motivo |
 |---|---|---|---|
@@ -134,8 +201,14 @@ Diario, README e verifica del primo lotto.
 | `switch_input()` | valutare `bslib::input_switch()` | resta il nostro | markup, classi e tre test cambierebbero senza guadagno |
 | Pannelli di *Options* | *Chart extensions* | *Optional extensions* | riusa la stringa già esistente, nessuna nuova chiave i18n |
 | Errore di *Options* | solo messaggio | `field_errors` | l'errore deve portare al campo, non solo comparire |
-| Pannelli del Chart Builder | 6 in totale | 4 in S6, 6 dopo S7 | S7 spezza *ggplot2 options* in *Style*, *Axes*, *Text*, *Theme*; S6 non anticipa il lavoro |
+| Pannelli del Chart Builder | 6 in totale | 4 in S6, 6 in S7 | S7 spezza *ggplot2 options* in *Style*, *Axes*, *Text*, *Theme*; S6 non anticipa il lavoro |
 | Titolo della scheda fissa | “Chart and data” | `tr("Chart")` | evita una nuova chiave i18n; la scheda è concettualmente “Chart and data” |
+| Sottogruppi per tipo | `settings_group()` dentro un pannello | un pannello per gruppo | il gruppo *è* la gerarchia: annidare un gruppo in un pannello avrebbe aggiunto un livello senza informazione |
+| Accordion annidato | vietato dai token | ammesso solo per le opzioni per tipo | S8 chiede un accordion con ID proprio dentro *Options*; il livello 4 e la classe `rcmdr-accordion-nested` lo distinguono, `UI-TOKENS.md` registra l'eccezione |
+| Coordinate polari | non elencate in S7 | nel pannello *Axes* | sono una proprietà degli assi: nessun altro pannello le ospiterebbe senza perdere l'ID |
+| Jitter | nessun massimo | slider 0–0,5 | un handle ha bisogno di un limite; 0,5 copre l'uso reale |
+| Aggiornamento dello slider | `updateNumericInput()` | messaggio `rcmdr-set-slider` | shinyWidgets cambia il range ma non il valore dell'handle |
+| Sfondo bianco | `white` | `white` = `#ffffff` = `#fff` | il picker riporta sempre hex: senza normalizzazione il comando di default cambierebbe |
 
 Nessuna modifica a ID, valori, comandi R, `dialog_spec()` o stringhe esistenti.
 Le uniche stringhe nuove sono i valori stabili dei pannelli, che non sono
@@ -143,7 +216,7 @@ tradotti e non compaiono nell'interfaccia.
 
 ---
 
-## 5. File toccati nel lotto 2
+## 6. File toccati nei lotti 2 e 3
 
 ### Creati
 
@@ -154,73 +227,84 @@ tradotti e non compaiono nell'interfaccia.
 - `R/ui-components.R`: componenti accordion, gruppo e badge.
 - `R/dialogs-tools.R`: *Options* in pannelli, validazione inline.
 - `R/chart-ext.R`: `heading` opzionale.
-- `R/chart-studio.R`: scheda identità e accordion.
+- `R/chart-studio.R`: scheda identità, sei pannelli, accordion per tipo,
+  slider e color picker.
+- `R/chart-types.R`: `option_groups`, `chart_option_groups()`,
+  `chart_option_controls()`, notch width su slider.
+- `R/chart-spec.R`, `R/chart-ggplot.R`: `chart_background_is_white()`.
+- `R/widgets.R`: `slider_input()` su noUiSlider, `color_input()` su spectrum,
+  `update_number_input()` e il messaggio dello slider.
+- `NAMESPACE`: `export(color_input)`.
 - `R/app.R`: messaggio `rcmdr-open-accordions` prima degli errori di campo.
 - `inst/www/js/40-interactions.js`: `rcmdrShowAccordions`, focus dopo la
-  transizione.
-- `inst/www/css/20-components.css`: ritmo dell'accordion e dei gruppi.
+  transizione, handler `rcmdr-set-slider`.
+- `inst/www/css/20-components.css`: ritmo dell'accordion, dei gruppi e
+  dell'annidato.
+- `inst/www/css/30-forms.css`: accordion a tutta larghezza nella griglia.
 - `inst/www/css/40-dialogs.css`: accordion a tutta larghezza nel dialogo.
+- `inst/www/css/55-shinywidgets.css`: tooltip dello slider.
 - `inst/www/css/60-views.css`: margine dell'accordion nella colonna builder.
-- `docs/upgrades/UI-TOKENS.md`: § 12.4, contratto dell'accordion.
-- `docs/upgrades/CHECKLIST.md`: S4–S6 chiusi.
+- `docs/upgrades/UI-TOKENS.md`: § 12.4, contratto dell'accordion e dei
+  controlli desktop.
+- `docs/upgrades/CHECKLIST.md`: S4–S9 chiusi.
 - `tests/testthat/test-ui-components.R`, `test-accessibility.R`,
-  `test-dialog-validation.R`, `test-phase1.R`, `test-chart-studio.R`.
-- `tools/widget_gallery.R`: la card dell'accordion usa il componente reale.
+  `test-dialog-validation.R`, `test-phase1.R`, `test-chart-studio.R`,
+  `test-chart-types.R`, `test-chart-theme.R`, `test-widget-library.R`.
+- `tools/widget_gallery.R`: accordion, slider e colore usano i componenti
+  reali.
 
 ---
 
-## 6. Verifica
+## 7. Verifica
 
 | Controllo | Esito |
 |---|---|
-| Suite completa (dopo il fix del flush) | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
-| Test mirati S4 | componenti, accessibilità, galleria |
-| Test mirati S5 | validazione, *Options*, densità, contract |
-| Test mirati S6 | Chart Studio, tipi, estensioni, contract |
+| Suite completa del lotto 3 | `EXIT=0`; 0 failure; 26 e2e saltati; 3 warning noti |
+| Test mirati S7 | Chart Studio, tipi, accessibilità |
+| Test mirati S8 | copertura dei gruppi per ogni tipo, ID piatti = ID raggruppati, stato dei pannelli, livello 4 |
+| Test mirati S9 | markup e decimali, handler JS, instradamento degli ID, picker, reset, bianco equivalente |
 | Galleria in check mode | `gallery ok` |
-| Comando di riferimento del Chart Builder | invariato |
+| Comando di riferimento del Chart Builder | invariato, anche con sfondo `#ffffff` |
 | Tutti gli ID di *Options* e del builder | presenti una volta |
+| JS | `node --check` verde |
 | Colori nei file nuovi | nessun letterale |
 
-Log: `/tmp/opencode/tests-w16-batch2.log`.
+Log: `/tmp/opencode/tests-w16-batch3.log`.
 
 ---
 
-## 7. Problemi noti e blocchi
+## 8. Problemi noti e blocchi
 
 | Problema | Impatto | Workaround | Task |
 |---|---|---|---|
 | Il dropdown virtual select non è stato visto in un browser | forma e ombra non confermate | galleria pronta | QA |
 | L'apertura dei pannelli su errore non ha un e2e | verificata a livello JS e R | e2e su macchina con browser | QA |
 | La transizione del collapse non è misurata | 200 ms scelti per il focus | il focus attende comunque il frame | S5 |
-| Il Chart Builder ha ancora 4 pannelli | S7 deve spezzare *ggplot2 options* | piano invariato | S7 |
+| Slider, color picker e stato dei pannelli non sono stati visti in un browser | forma, tooltip e transizioni non confermati | galleria pronta; handler coperti dai test | QA |
+| Jitter ha ora un limite 0–0,5 | un valore maggiore non è più digitabile | nessuno nell'uso reale | S9 |
 | 26 e2e ancora saltati | copertura browser non esercitata | `RCMDRSHINY_E2E=1` | QA |
 
 Nessun blocco di codice: il lotto è chiuso.
 
 ---
 
-## 8. Prossimo passo
+## 9. Prossimo passo
 
-**Lotto 3 — Chart Builder in profondità (S7–S9):**
+**Lotto 4 — listbox nei dialoghi e dialoghi densi (S10–S12):**
 
-1. **S7** — *Style* (position, alpha, binwidth, jitter, shape, smooth, SE,
-   flip), *Axes* (formati X/Y, facet scales, facet columns), *Text* (subtitle,
-   tag, title, caption, xlab, ylab, base size), *Theme* (gg theme, palette,
-   legend, background, grid), *Output* (width, height). Solo posizione: gli ID
-   restano.
-2. **S8** — gruppi di opzioni per tipo con `option_groups`, ID stabile
-   `chart_type_options`, pannelli aperti letti con `isolate()` e filtrati sui
-   gruppi disponibili; `settings_group()` per i sottogruppi.
-3. **S9** — `slider_input()` su `noUiSliderInput` per i valori limitati e
-   `color_input()` su `spectrumInput` per lo sfondo; stessi ID e stessi valori.
+1. **S10** — `var_input()` sul listbox nativo dove la lista è corta e sul
+   picker dove è lunga; stessi ID e stessa selezione.
+2. **S11** — accordion nei dialoghi con più di 8–10 parametri (*Import*,
+   *Frequency*, modelli, test), con `settings_group()` per i sottogruppi.
+3. **S12** — validazione inline estesa ai dialoghi migrati, apertura dei
+   pannelli e focus sul primo campo invalido.
 
-Gate del lotto: ogni `chart_gg_*` una volta, comando identico, stato dei
-pannelli conservato al cambio tipo.
+Gate del lotto: nessun dialogo perde un ID o un valore; la suite resta verde;
+la galleria copre le famiglie usate.
 
 ---
 
-## 9. Domande aperte
+## 10. Domande aperte
 
 - [ ] Conferma visiva del dropdown virtual select (posizione, ombra, chip) su
       Chrome e Firefox reali.
@@ -234,27 +318,33 @@ pannelli conservato al cambio tipo.
 
 ---
 
-## 10. Checklist di handoff
+## 11. Checklist di handoff
 
 - [x] S1–S3 committati e handoff `b3355d2`.
 - [x] S4 committato (`43634a9`).
 - [x] S5 committato (`2b8e410`).
 - [x] S6 committato (`3952ab6`).
+- [x] S7 committato (`62f3fd8`).
+- [x] S8 committato (`e9f0391`).
+- [x] S9 committato (`55e4124`).
 - [x] Suite completa verde: `EXIT=0`.
 - [x] Galleria in check mode verde.
-- [x] `UI-TOKENS.md` con il contratto dell'accordion.
-- [x] `CHECKLIST.md` aggiornata (S1–S6).
+- [x] `UI-TOKENS.md` con il contratto dell'accordion e dei controlli desktop.
+- [x] `CHECKLIST.md` aggiornata (S1–S9).
 - [x] Diario aggiornato.
 - [x] Nessun ID, valore o comando cambiato.
-- [x] Utente informato: “lotto 2 pronto, puoi compattare il contesto”.
+- [x] Utente informato: “lotto 3 pronto, puoi compattare il contesto”.
 
 ---
 
-## 11. Artefatti
+## 12. Artefatti
 
+- `/tmp/opencode/tests-w16-batch3.log` — suite del lotto 3.
+- `/tmp/opencode/tests-w16-batch2b.log` — suite del lotto 2 dopo il fix del flush.
 - `/tmp/opencode/tests-w16-batch2.log` — prima suite del lotto 2.
-- `/tmp/opencode/tests-w16-batch2b.log` — suite dopo il fix del flush.
 - `/tmp/opencode/t-s4.log`, `t-s4b.log`, `t-s4c.log` — test mirati S4.
 - `/tmp/opencode/t-s5.log` — test mirati S5.
 - `/tmp/opencode/t-s6.log` — test mirati S6.
+- `/tmp/opencode/t-s8.log` — test mirati S8.
+- `/tmp/opencode/t-s9.log`, `t-s9b.log` — test mirati S9.
 - `/tmp/opencode/tests-w16-batch1.log` — suite del lotto 1.
