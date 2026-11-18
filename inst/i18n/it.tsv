@@ -243,7 +243,7 @@ Undone: %s	Annullato: %s
 Redone: %s	Ripetuto: %s
 Nothing to undo.	Nulla da annullare.
 Nothing to redo.	Nulla da ripetere.
-Nothing to restore.	Nulla da ripristinare.
+Not available right now	Non disponibile al momento
 Add chart	Aggiungi grafico
 Pin chart	Fissa il grafico
 Unpin chart	Libera il grafico
@@ -259,3 +259,10 @@ Change	Modifica
 The change is larger than the undo memory cap.	La modifica supera il limite di memoria per l'annullamento.
 Undo the last data or gallery change	Annulla l'ultima modifica ai dati o alla galleria
 Redo the last undone change	Ripeti l'ultima modifica annullata
+Rows	Righe
+Cells	Celle
+Copy selection	Copia selezione
+Select one or more cells first.	Seleziona prima una o più celle.
+Copied %d row(s) and %d column(s) as TSV.	Copiate %d righe e %d colonne come TSV.
+%d non-empty cell(s)	%d celle non vuote
+This action is not available right now.	Questa azione non è disponibile al momento.

@@ -74,6 +74,11 @@
       background: var(--rcmdr-selection) !important;
       color: var(--rcmdr-heading) !important;
     }
+    table.dataTable tbody td.rcmdr-cell-selected {
+      background: var(--rcmdr-selection) !important;
+      color: var(--rcmdr-heading) !important;
+      box-shadow: inset 0 0 0 1px var(--rcmdr-primary);
+    }
     .dataTables_wrapper .dataTables_filter input,
     .dataTables_wrapper .dataTables_length select {
       min-height: var(--rcmdr-control-h);

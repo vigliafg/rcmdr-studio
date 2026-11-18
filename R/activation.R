@@ -305,6 +305,9 @@ command_status <- function(state, command, activation = "", install = "") {
   if (!evaluate_condition(state, install)) return("hidden")
   undo_status <- undo_command_status(state, command)
   if (!is.null(undo_status)) return(undo_status)
+  if (identical(command, "copySelection")) {
+    return(if (selection_has_content(state)) "enabled" else "disabled")
+  }
   if (!is_implemented_command(command)) return("porting")
   # The plugin loader must remain reachable even when no plugin is installed.
   if (identical(command, "loadPlugins")) return("enabled")
@@ -333,7 +336,7 @@ command_status_reason <- function(status) {
     porting = tr("Not ported yet"),
     inactive = tr("Not available for the current data set"),
     hidden = tr("Not available in this environment"),
-    disabled = tr("Nothing to restore"),
+    disabled = tr("Not available right now"),
     ""
   )
 }
@@ -346,7 +349,7 @@ command_status_message <- function(status) {
     porting = tr("This command has not been ported yet."),
     inactive = tr("This command is not available for the current data set."),
     hidden = tr("This command is not available in this environment."),
-    disabled = tr("Nothing to restore."),
+    disabled = tr("This action is not available right now."),
     ""
   )
 }
@@ -398,6 +401,12 @@ command_availability <- function(state, command) {
   if (!is.null(undo_status)) {
     return(list(status = undo_status,
                 reason = command_status_reason(undo_status),
+                command = command, path = "", activation = "", install = ""))
+  }
+
+  if (identical(command, "copySelection")) {
+    status <- if (selection_has_content(state)) "enabled" else "disabled"
+    return(list(status = status, reason = command_status_reason(status),
                 command = command, path = "", activation = "", install = ""))
   }
 

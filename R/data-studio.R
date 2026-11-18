@@ -409,15 +409,16 @@ data_selection <- function(state) {
   current <- active_dataset(state)
   if (is.null(selection) || !identical(selection$dataset, current)) {
     return(list(dataset = current, rows = integer(), columns = character(),
-                expression = ""))
+                expression = "", cells = NULL))
   }
+  selection$cells <- selection$cells %||% NULL
   selection
 }
 
 #' Set the data selection
 #' @keywords internal
 set_data_selection <- function(state, rows = NULL, columns = NULL,
-                               expression = NULL,
+                               expression = NULL, cells = NULL,
                                dataset = active_dataset(state)) {
   if (is.null(dataset)) return(invisible(NULL))
   df <- dataset(state)
@@ -438,7 +439,8 @@ set_data_selection <- function(state, rows = NULL, columns = NULL,
     dataset = dataset,
     rows = rows,
     columns = columns,
-    expression = expression
+    expression = expression,
+    cells = cells
   )
   invisible(state$data_selection)
 }
@@ -459,6 +461,9 @@ clear_data_selection <- function(state) {
 selection_summary <- function(state) {
   selection <- data_selection(state)
   parts <- character()
+  if (!is.null(selection$cells) && nzchar(selection$cells$range %||% "")) {
+    parts <- c(parts, selection$cells$range)
+  }
   if (length(selection$rows) > 0L) {
     parts <- c(parts, sprintf(tr("%d row(s)"), length(selection$rows)))
   }
@@ -482,6 +487,85 @@ selection_expression <- function(state) {
     return(paste0("c(", paste(as.integer(rows), collapse = ", "), ")"))
   }
   paste0("c(", paste0(r_quote_data(rows), collapse = ", "), ")")
+}
+
+#' Whether the selection has anything to copy or act on
+#' @keywords internal
+selection_has_content <- function(state) {
+  selection <- data_selection(state)
+  length(selection$rows) > 0L ||
+    length(selection$cells$row_ids %||% integer()) > 0L
+}
+
+selection_subset_frame <- function(state, frame) {
+  if (is.null(frame) || nrow(frame) == 0L) return(NULL)
+  selection <- data_selection(state)
+  cells <- selection$cells %||% NULL
+  if (!is.null(cells) && length(cells$row_ids %||% integer()) > 0L) {
+    ids <- frame$.row_id %||% seq_len(nrow(frame))
+    keep <- which(ids %in% as.integer(cells$row_ids))
+    if (length(keep) == 0L) return(NULL)
+    columns <- setdiff(names(frame), ".row_id")
+    wanted <- as.character(cells$columns %||% columns)
+    columns <- names(frame)[names(frame) %in% wanted]
+    columns <- setdiff(columns, ".row_id")
+    if (length(columns) == 0L) return(NULL)
+    subset <- frame[keep, columns, drop = FALSE]
+    order <- order(match(ids[keep], as.integer(cells$row_ids)))
+    return(subset[order, , drop = FALSE])
+  }
+  if (length(selection$rows) == 0L) return(NULL)
+  ids <- frame$.row_id %||% seq_len(nrow(frame))
+  keep <- which(ids %in% as.integer(selection$rows))
+  if (length(keep) == 0L) return(NULL)
+  columns <- setdiff(names(frame), ".row_id")
+  frame[keep, columns, drop = FALSE]
+}
+
+selection_nonempty <- function(subset) {
+  if (is.null(subset) || ncol(subset) == 0L) return(0L)
+  count <- 0L
+  for (column in subset) {
+    text <- as.character(column)
+    count <- count + sum(!is.na(column) & nzchar(text))
+  }
+  as.integer(count)
+}
+
+#' Copy the current selection as tab-separated text
+#'
+#' The values come from the view frame, so the order of the rows and of the
+#' columns is what the user sees, not the order in the data set.
+#' @keywords internal
+selection_tsv <- function(state, frame) {
+  subset <- selection_subset_frame(state, frame)
+  if (is.null(subset) || nrow(subset) == 0L) return("")
+  escape <- function(x) {
+    text <- as.character(x)
+    text[is.na(x)] <- ""
+    text <- gsub("\t", " ", text, fixed = TRUE)
+    gsub("[\r\n]+", " ", text)
+  }
+  lines <- do.call(paste, c(lapply(subset, escape), sep = "\t"))
+  paste(lines, collapse = "\n")
+}
+
+#' Selection line for the status bar
+#' @keywords internal
+selection_status_text <- function(state, frame) {
+  subset <- selection_subset_frame(state, frame)
+  if (is.null(subset) || nrow(subset) == 0L) return("")
+  selection <- data_selection(state)
+  range <- selection$cells$range %||% ""
+  parts <- character()
+  if (nzchar(range)) parts <- c(parts, range)
+  parts <- c(
+    parts,
+    sprintf(tr("%d row(s)"), nrow(subset)),
+    sprintf(tr("%d column(s)"), ncol(subset)),
+    sprintf(tr("%d non-empty cell(s)"), selection_nonempty(subset))
+  )
+  paste(parts, collapse = " - ")
 }
 
 #' Command that turns the current selection into a new data set
@@ -1025,34 +1109,17 @@ date_range_keep <- function(x, range) {
   keep
 }
 
-#' Row-selection callback for the Data Studio grid
+#' Row- and cell-selection callback for the Data Studio grid
 #'
 #' DT's built-in selection is not reliable across DataTables releases when the
-#' table lives in a dynamically rendered container.  The callback records the
-#' hidden `.row_id` of the clicked rows and sends the original row numbers to
-#' Shiny, so a view filter never changes what a selection means.
+#' table lives in a dynamically rendered container.  The callback delegates to
+#' `inst/www/js/65-data-selection.js`: Rows keeps the original row behaviour,
+#' Cells selects a rectangular range and publishes it as TSV-ready coordinates.
+#' @param mode `"rows"` or `"cells"`.
 #' @keywords internal
-grid_selection_callback <- function() {
-  # DT wraps this code in `function(table) { ... }` itself, so the body only.
-  DT::JS(
-    "table.on('click', 'tbody tr', function(e) {",
-    "  var $tr = $(this);",
-    "  if (e.ctrlKey || e.metaKey) {",
-    "    $tr.toggleClass('rcmdr-row-selected');",
-    "  } else {",
-    "    $(table.table().body()).find('tr.rcmdr-row-selected')",
-    "      .removeClass('rcmdr-row-selected');",
-    "    $tr.addClass('rcmdr-row-selected');",
-    "  }",
-    "  var ids = [];",
-    "  table.rows('.rcmdr-row-selected').every(function() {",
-    "    var data = this.data();",
-    "    ids.push(data[data.length - 1]);",
-    "  });",
-    "  Shiny.setInputValue('data_grid_selection', ids,",
-    "    {priority: 'event'});",
-    "});"
-  )
+grid_selection_callback <- function(mode = "rows") {
+  mode <- if (identical(mode, "cells")) "cells" else "rows"
+  DT::JS(sprintf("window.rcmdrGridSelection(table, '%s');", mode))
 }
 
 #' Open a dialog with prefilled memory
@@ -1084,6 +1151,13 @@ data_studio_ui <- function(show_inspector = TRUE) {
           segmented_input(
             "data_mode", NULL,
             stats::setNames(c("view", "edit"), c(tr("View"), tr("Edit")))
+          )
+        ),
+        htmltools::div(
+          class = "rcmdr-toolbar-field",
+          segmented_input(
+            "data_selection_mode", NULL,
+            stats::setNames(c("rows", "cells"), c(tr("Rows"), tr("Cells")))
           )
         ),
         htmltools::div(

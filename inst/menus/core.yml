@@ -640,6 +640,16 @@ items:
   module: core
   legacy_ids:
   - onSelectAll
+- id: item.core.menu_edit.copy_selection
+  parent: menu.edit
+  label: Copy selection
+  command: copySelection
+  activation: ''
+  install: ''
+  order: 1051.5
+  module: core
+  legacy_ids:
+  - copySelection
 - kind: separator
   parent: menu.edit
   order: 1052

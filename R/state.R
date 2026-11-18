@@ -30,6 +30,7 @@ AppState <- function(env = globalenv()) {
   state$checkpoints <- list()
   state$checkpoint_counter <- 0L
   state$data_selection <- NULL
+  state$data_selection_mode <- "rows"
   state$data_grid_revision <- 0L
   state$last_checkpoint_skip <- NULL
 

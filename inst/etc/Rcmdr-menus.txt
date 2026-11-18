@@ -56,6 +56,7 @@
     item    editMenu        separator       ""                                              ""                          ""          ""
     item    editMenu        command         "Find..."                                       onFind                      ""          ""
     item    editMenu        command         "Select all"                                    onSelectAll                 ""          ""
+    item    editMenu        command         "Copy selection"                                copySelection               ""          ""
     item    editMenu        separator       ""                                              ""                          ""          ""
     item	editMenu		command			"Undo"											onUndo						""			""
     item	editMenu		command			"Redo"											onRedo						""			""

@@ -61,6 +61,7 @@ app_js_files <- function() {
     "40-interactions.js",
     "50-menubar.js",
     "60-help.js",
+    "65-data-selection.js",
     "70-keyboard.js"
   )
 }
@@ -587,6 +588,7 @@ app_ui <- function() {
       actionButton("shortcuts_open", tr("Keyboard shortcuts")),
       actionButton("undo_shortcut", tr("Undo")),
       actionButton("redo_shortcut", tr("Redo")),
+      actionButton("copy_selection_shortcut", tr("Copy selection")),
       actionButton("help_shortcut", tr("Help")),
       downloadButton("download_report_rmd", tr("Download report (.Rmd)")),
       downloadButton("download_report_html", tr("Download report (.html)"))
@@ -2675,12 +2677,13 @@ app_server <- function(env = globalenv()) {
     output$data_studio_table <- DT::renderDataTable({
       tick()
       data_grid_revision()
+      selection_mode <- input$data_selection_mode %||% "rows"
       grid <- data_view_frame()
       req(grid)
       DT::datatable(
         grid,
         selection = "none",
-        callback = grid_selection_callback(),
+        callback = grid_selection_callback(selection_mode),
         options = list(
           pageLength = 25L, scrollX = TRUE, searchHighlight = TRUE,
           autoWidth = TRUE,
@@ -2695,12 +2698,13 @@ app_server <- function(env = globalenv()) {
     output$data_studio_table_server <- DT::renderDataTable({
       tick()
       data_grid_revision()
+      selection_mode <- input$data_selection_mode %||% "rows"
       grid <- data_view_frame()
       req(grid)
       DT::datatable(
         grid,
         selection = "none",
-        callback = grid_selection_callback(),
+        callback = grid_selection_callback(selection_mode),
         options = list(
           pageLength = 25L, scrollX = TRUE, autoWidth = TRUE,
           dom = "ftip",
@@ -2823,20 +2827,101 @@ app_server <- function(env = globalenv()) {
         class = "rcmdr-selection-bar",
         htmltools::tags$span(selection_summary(state)),
         if (length(selection$rows) > 0L || length(selection$columns) > 0L ||
-            nzchar(selection$expression %||% "")) {
-          actionButton("data_selection_clear", tr("Clear selection"),
-                       class = "btn-sm btn-link")
+            nzchar(selection$expression %||% "") ||
+            length(selection$cells$row_ids %||% integer()) > 0L) {
+          htmltools::tagList(
+            actionButton("data_selection_copy", tr("Copy selection"),
+                         class = "btn-sm btn-link"),
+            actionButton("data_selection_clear", tr("Clear selection"),
+                         class = "btn-sm btn-link")
+          )
         }
       )
     })
 
+    observeEvent(input$data_selection_mode, {
+      mode <- input$data_selection_mode %||% "rows"
+      state$data_selection_mode <- if (identical(mode, "cells")) "cells" else "rows"
+      clear_data_selection(state)
+      data_selection_revision(data_selection_revision() + 1L)
+      data_grid_revision(data_grid_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    # A redraw invalidates the visual selection: the row nodes and the page
+    # are new, and a stale range would copy the wrong rows.
+    observeEvent(data_grid_revision(), {
+      if (!is.null(state$data_selection)) {
+        clear_data_selection(state)
+        data_selection_revision(data_selection_revision() + 1L)
+      }
+    }, ignoreInit = TRUE)
+
     observeEvent(input$data_grid_selection, {
+      if (!identical(state$data_selection_mode %||% "rows", "rows")) return()
       rows <- input$data_grid_selection %||% integer()
       rows <- as.integer(rows)
       rows <- rows[!is.na(rows)]
       columns <- data_selection(state)$columns
       set_data_selection(state, rows = rows, columns = columns)
       data_selection_revision(data_selection_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_cell_selection, {
+      if (!identical(state$data_selection_mode %||% "rows", "cells")) return()
+      payload <- input$data_cell_selection
+      frame <- data_view_frame()
+      if (is.null(payload) || is.null(frame)) {
+        clear_data_selection(state)
+        data_selection_revision(data_selection_revision() + 1L)
+        return()
+      }
+      row_ids <- suppressWarnings(as.integer(unlist(payload$row_ids %||% integer())))
+      row_ids <- row_ids[!is.na(row_ids)]
+      columns <- as.character(unlist(payload$columns %||% character()))
+      row_ids <- frame$.row_id[frame$.row_id %in% row_ids]
+      columns <- setdiff(names(frame)[names(frame) %in% columns], ".row_id")
+      if (length(row_ids) == 0L || length(columns) == 0L) {
+        clear_data_selection(state)
+        data_selection_revision(data_selection_revision() + 1L)
+        return()
+      }
+      row_pos <- match(row_ids, frame$.row_id)
+      col_pos <- match(columns, names(frame))
+      range <- sprintf("R%dC%d:R%dC%d", min(row_pos), min(col_pos),
+                       max(row_pos), max(col_pos))
+      set_data_selection(
+        state, rows = row_ids, columns = columns,
+        cells = list(row_ids = row_ids, columns = columns, range = range)
+      )
+      data_selection_revision(data_selection_revision() + 1L)
+    }, ignoreInit = TRUE)
+
+    copy_selection <- function() {
+      frame <- data_view_frame()
+      text <- selection_tsv(state, frame)
+      if (!nzchar(text)) {
+        showNotification(tr("Select one or more cells first."),
+                         type = "message", duration = 4)
+        return(invisible(FALSE))
+      }
+      session$sendCustomMessage("rcmdr-copy", list(text = text))
+      subset <- selection_subset_frame(state, frame)
+      showNotification(
+        sprintf(tr("Copied %d row(s) and %d column(s) as TSV."),
+                nrow(subset), ncol(subset)),
+        type = "message", duration = 3
+      )
+      invisible(TRUE)
+    }
+    state$copy_selection <- copy_selection
+
+    observeEvent(input$data_selection_copy, {
+      if (!action_clicked(input$data_selection_copy)) return()
+      copy_selection()
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$copy_selection_shortcut, {
+      copy_selection()
     }, ignoreInit = TRUE)
 
     observeEvent(input$data_selection_columns, {
@@ -3451,6 +3536,7 @@ app_server <- function(env = globalenv()) {
 
     output$statusbar <- renderUI({
       tick()
+      data_selection_revision()
       version <- tryCatch(
         as.character(utils::packageVersion("RcmdrShiny")),
         error = function(e) "0.1.0"
@@ -3461,6 +3547,7 @@ app_server <- function(env = globalenv()) {
       } else {
         sprintf("%d x %d", nrow(df), ncol(df))
       }
+      selection_text <- selection_status_text(state, data_view_frame())
       # One item per fact: the separators are CSS borders, so a screen reader
       # reads the facts, not a row of pipes.
       htmltools::tagList(
@@ -3485,6 +3572,12 @@ app_server <- function(env = globalenv()) {
           class = "rcmdr-status-item",
           sprintf(tr("%d plot(s)"), length(state$plots))
         ),
+        if (nzchar(selection_text)) {
+          htmltools::tags$span(
+            class = "rcmdr-status-item rcmdr-status-selection",
+            selection_text
+          )
+        },
         if (!is.null(state$undo_message) && nzchar(state$undo_message)) {
           htmltools::tags$span(
             class = "rcmdr-status-item rcmdr-status-undo",

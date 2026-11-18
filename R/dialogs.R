@@ -182,6 +182,10 @@ base_direct_commands <- function() {
       }
       invisible(ok)
     },
+    copySelection = function(state) {
+      if (is.function(state$copy_selection)) return(state$copy_selection())
+      invisible(NULL)
+    },
     summarizeDataSet = function(state) {
       ds <- active_dataset(state)
       if (is.null(ds)) return(NULL)
