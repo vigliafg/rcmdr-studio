@@ -17,6 +17,8 @@
       --rcmdr-btn-h-sm: calc(var(--rcmdr-control-h) - .375rem);
       --rcmdr-section-gap: .4rem;
       --rcmdr-help-size: var(--rcmdr-text-xs);
+      /* DT rows and rhandsontable share this rhythm. */
+      --rcmdr-table-row-h: 2rem;
     }
     body.rcmdr-density-compact { --rcmdr-space: var(--rcmdr-space-2); }
     body.rcmdr-density-comfortable {
@@ -29,6 +31,7 @@
       --rcmdr-section-gap: 1rem;
       --rcmdr-help-size: var(--rcmdr-text-sm);
       --rcmdr-space: var(--rcmdr-space-3);
+      --rcmdr-table-row-h: 2.5rem;
     }
     body .form-group,
     body .shiny-input-container { margin-bottom: var(--rcmdr-field-gap); }

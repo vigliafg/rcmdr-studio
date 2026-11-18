@@ -33,21 +33,92 @@
       color: var(--rcmdr-heading);
       background-color: var(--rcmdr-hover);
     }
-    body.rcmdr-dark .dataTable tbody tr.rcmdr-row-selected td,
-    body.rcmdr-dark .dataTable tbody tr.selected td {
-      background-color: var(--rcmdr-selection) !important;
-      color: var(--rcmdr-text) !important;
+    /* DT chrome -----------------------------------------------------------
+       One row rhythm on every palette: 32 px compact, 40 px comfortable.
+       The token is in 30-forms.css; the header sits on the muted surface and
+       stays put while the rows scroll. */
+    table.dataTable {
+      border-collapse: separate;
+      border-spacing: 0;
+      color: var(--rcmdr-text);
     }
-    body.rcmdr-dark .dataTables_wrapper,
-    body.rcmdr-dark .dataTables_info,
-    body.rcmdr-dark .dataTables_filter label,
-    body.rcmdr-dark .dataTables_length label { color: var(--rcmdr-text); }
-    body.rcmdr-dark .dataTables_paginate .paginate_button { color: var(--rcmdr-text) !important; }
-    body.rcmdr-dark .dataTables_paginate .paginate_button.current {
+    table.dataTable thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      height: calc(var(--rcmdr-table-row-h) - .25rem);
+      padding: 0 var(--rcmdr-space-2);
+      background: var(--rcmdr-surface-muted);
+      border-bottom: 1px solid var(--rcmdr-border);
+      color: var(--rcmdr-heading);
+      font-size: var(--rcmdr-text-sm);
+      font-weight: var(--rcmdr-weight-strong);
+      white-space: nowrap;
+    }
+    table.dataTable tbody td,
+    table.dataTable tbody th {
+      height: var(--rcmdr-table-row-h);
+      padding: 0 var(--rcmdr-space-2);
+      border-bottom: 1px solid var(--rcmdr-border);
+      vertical-align: middle;
+    }
+    table.dataTable tbody tr:hover > td,
+    table.dataTable tbody tr:hover > th {
+      background: var(--rcmdr-hover);
+      color: var(--rcmdr-heading);
+    }
+    table.dataTable tbody tr.selected > td,
+    table.dataTable tbody tr.selected > th,
+    table.dataTable tbody tr.rcmdr-row-selected > td,
+    table.dataTable tbody tr.rcmdr-row-selected > th {
       background: var(--rcmdr-selection) !important;
-      border-color: var(--rcmdr-border) !important;
       color: var(--rcmdr-heading) !important;
     }
+    .dataTables_wrapper .dataTables_filter input,
+    .dataTables_wrapper .dataTables_length select {
+      min-height: var(--rcmdr-control-h);
+      padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface);
+      color: var(--rcmdr-text);
+    }
+    .dataTables_wrapper .dataTables_filter input {
+      margin-left: var(--rcmdr-space-2);
+    }
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info {
+      color: var(--rcmdr-muted);
+      font-size: var(--rcmdr-text-sm);
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: var(--rcmdr-control-h);
+      min-height: var(--rcmdr-control-h);
+      margin: 0 var(--rcmdr-space-1) 0 0;
+      padding: 0 var(--rcmdr-space-2);
+      border: 1px solid var(--rcmdr-border) !important;
+      border-radius: var(--rcmdr-radius-sm);
+      background: var(--rcmdr-surface) !important;
+      color: var(--rcmdr-text) !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+      background: var(--rcmdr-hover) !important;
+      border-color: var(--rcmdr-border-strong) !important;
+      color: var(--rcmdr-heading) !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: var(--rcmdr-selection) !important;
+      border-color: var(--rcmdr-border-strong) !important;
+      color: var(--rcmdr-heading) !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+      color: var(--rcmdr-disabled) !important;
+    }
+    /* The dialog data table keeps its pointer affordance (40-dialogs.css). */
     body.rcmdr-dark .modal-header .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
     body.rcmdr-dark .btn-close { filter: invert(1) grayscale(1) brightness(1.7); }
     body.rcmdr-dark a { color: var(--rcmdr-link); }

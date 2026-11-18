@@ -802,6 +802,11 @@ report_studio_server <- function(input, output, session, state, refresh,
   report_revision <- reactiveVal(0L)
   tick_reactive <- if (is.function(tick)) tick else reactiveVal(0L)
   app_tick <- function() tick_reactive()
+  # The report editor follows the palette without rebuilding on every tick.
+  ace_theme <- reactiveVal(ui_ace_theme(ui_theme(state)))
+  observeEvent(input$theme, {
+    ace_theme(ui_ace_theme(input$theme %||% "system"))
+  }, ignoreInit = TRUE)
 
   bump <- function(global = FALSE) {
     report_revision(report_revision() + 1L)
@@ -826,7 +831,7 @@ report_studio_server <- function(input, output, session, state, refresh,
         "report_editor",
         value = isolate(document_text(state)),
         mode = document_ace_mode(document_mode(state)),
-        theme = "textmate", height = "520px", fontSize = 13,
+        theme = ace_theme(), height = "520px", fontSize = 13,
         selectionId = "report_editor_selection", autoComplete = "enabled"
       )
     )

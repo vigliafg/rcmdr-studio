@@ -191,16 +191,33 @@ gallery_ui <- function() {
               "Second",
               htmltools::tags$p("The second panel is closed."),
               grid = FALSE
+            ),
+            settings_panel(
+              "Third",
+              htmltools::tagList(
+                picker_input(
+                  "g_panel_picker", "Picker in a panel",
+                  c("Alpha" = "a", "Beta" = "b", "Gamma" = "g")
+                ),
+                slider_input(
+                  "g_panel_slider", "Slider in a panel", 0, 1, .5, .05
+                ),
+                color_input("g_panel_colour", "Colour in a panel")
+              ),
+              value = "Third"
             )
-          )
+          ),
+          note = "The only state the matrix needs: header, picker, slider and colour together."
         ),
         gallery_card(
           "Table",
           DT::datatable(
-            utils::head(mtcars, 6),
+            utils::head(mtcars, 12),
             rownames = FALSE,
-            options = list(dom = "t", pageLength = 6)
-          )
+            class = "table table-striped table-hover",
+            options = list(dom = "ftip", pageLength = 6)
+          ),
+          note = "32 px rows in compact, 40 px comfortable, sticky head, filter and pagination."
         )
       )
     )

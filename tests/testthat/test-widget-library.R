@@ -29,7 +29,8 @@ test_that("the bridge files load in the documented order", {
 })
 
 test_that("the bridge writes no literal colour", {
-  for (file in c("15-bootstrap.css", "55-shinywidgets.css")) {
+  for (file in c("15-bootstrap.css", "55-shinywidgets.css",
+                 "50-widgets.css", "60-views.css", "70-refine.css")) {
     css <- app_asset_text("css", file)
     expect_false(grepl("#[0-9a-fA-F]{3,8}", css),
                  label = sprintf("%s has no hex colour", file))

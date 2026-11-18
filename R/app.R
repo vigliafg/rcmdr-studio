@@ -622,6 +622,9 @@ app_server <- function(env = globalenv()) {
     data_grid_revision <- reactiveVal(0L)
     data_selection_revision <- reactiveVal(0L)
     chart_revision <- reactiveVal(0L)
+    # The Ace editor is rebuilt only when the palette changes, not on every
+    # tick: a theme swap must not discard the undo history mid-sentence.
+    ace_theme <- reactiveVal(ui_ace_theme(ui_theme(state)))
     state$notify <- function() tick(tick() + 1L)
     state$script_consumed <- 0L
     state$set_script <- function(value) {
@@ -964,7 +967,7 @@ app_server <- function(env = globalenv()) {
       mode <- editor_mode()
       shinyAce::aceEditor(
         "script", value = isolate(script_value()),
-        mode = document_ace_mode(mode), theme = "textmate",
+        mode = document_ace_mode(mode), theme = ace_theme(),
         height = "460px", fontSize = 13, selectionId = "script_selection",
         autoComplete = "enabled"
       )
@@ -1789,6 +1792,7 @@ app_server <- function(env = globalenv()) {
 
     observeEvent(input$theme, {
       set_ui_theme(state, input$theme %||% "system")
+      ace_theme(ui_ace_theme(input$theme %||% "system"))
       persist_preferences()
       session$sendCustomMessage("rcmdr-theme", list(
         theme = input$theme %||% "system",
@@ -2028,7 +2032,10 @@ app_server <- function(env = globalenv()) {
       req(df, editable_dataset(state))
       rhandsontable::rhandsontable(
         df, height = 480, stretchH = "all", useTypes = TRUE
-      )
+      ) |>
+        rhandsontable::hot_rows(
+          rowHeights = ui_table_row_height(ui_density(state))
+        )
     })
 
     action_clicked <- function(value) {
@@ -2334,7 +2341,9 @@ app_server <- function(env = globalenv()) {
         rhandsontable::hot_context_menu(allowRowEdit = TRUE,
                                         allowColEdit = FALSE) |>
         rhandsontable::hot_cols(manualColumnResize = TRUE, columnSorting = TRUE) |>
-        rhandsontable::hot_rows(rowHeights = 28)
+        rhandsontable::hot_rows(
+          rowHeights = ui_table_row_height(ui_density(state))
+        )
     })
 
     output$data_inspector <- renderUI({

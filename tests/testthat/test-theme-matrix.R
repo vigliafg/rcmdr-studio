@@ -88,12 +88,15 @@ test_that("density changes spacing and never a colour", {
   spacing <- c("--rcmdr-field-gap", "--rcmdr-label-size",
                "--rcmdr-label-gap", "--rcmdr-control-size",
                "--rcmdr-control-pad", "--rcmdr-control-h",
-               "--rcmdr-section-gap", "--rcmdr-help-size", "--rcmdr-space")
+               "--rcmdr-section-gap", "--rcmdr-help-size", "--rcmdr-space",
+               "--rcmdr-table-row-h")
   expect_true(all(tokens(comfortable) %in% spacing),
               label = "the comfortable block only sets spacing tokens")
   # Both heights exist and comfortable is the taller one.
   expect_match(compact, "--rcmdr-control-h: 2.125rem", fixed = TRUE)
+  expect_match(compact, "--rcmdr-table-row-h: 2rem", fixed = TRUE)
   expect_match(comfortable, "--rcmdr-control-h: 2.5rem", fixed = TRUE)
+  expect_match(comfortable, "--rcmdr-table-row-h: 2.5rem", fixed = TRUE)
   expect_match(comfortable, "--rcmdr-label-size: var(--rcmdr-text-md)",
                fixed = TRUE)
 })
@@ -144,4 +147,49 @@ test_that("text and controls keep AA contrast at every theme and density", {
       }
     }
   }
+})
+
+test_that("the data grid shares one row rhythm and one chrome", {
+  css <- as.character(app_css())
+  expect_match(css, "table.dataTable tbody td", fixed = TRUE)
+  expect_match(css, "height: var(--rcmdr-table-row-h);", fixed = TRUE)
+  expect_match(css, "table.dataTable thead th", fixed = TRUE)
+  expect_match(css, "position: sticky;", fixed = TRUE)
+  # Alerts, progress and scrollbars are mapped once, not per palette.
+  expect_match(css, "--bs-alert-bg: var(--rcmdr-surface-muted);", fixed = TRUE)
+  expect_match(css, "--bs-progress-bg: var(--rcmdr-surface-muted);",
+               fixed = TRUE)
+  expect_match(
+    css,
+    "scrollbar-color: var(--rcmdr-border-strong) var(--rcmdr-surface);",
+    fixed = TRUE
+  )
+  # No DT rule is scoped to a single palette any more.
+  expect_false(grepl("body.rcmdr-dark .dataTable", css, fixed = TRUE))
+})
+
+test_that("the editor theme follows the palette from the installed package", {
+  expect_equal(ui_ace_theme("light"), "textmate")
+  expect_equal(ui_ace_theme("light-warm"), "textmate")
+  expect_equal(ui_ace_theme("light-cool"), "textmate")
+  expect_equal(ui_ace_theme("contrast"), "textmate")
+  # "system" cannot be resolved on the server: it keeps the light theme.
+  expect_equal(ui_ace_theme("system"), "textmate")
+  for (theme in c("dark", "dark-dim", "dark-graphite")) {
+    expect_equal(ui_ace_theme(theme), "tomorrow_night", label = theme)
+  }
+  expect_true(all(c("textmate", "tomorrow_night") %in%
+                    shinyAce::getAceThemes()))
+
+  root <- test_path("..", "..")
+  app <- readLines(file.path(root, "R", "app.R"))
+  report <- readLines(file.path(root, "R", "report-studio.R"))
+  expect_true(any(grepl("theme = ace_theme()", app, fixed = TRUE)))
+  expect_true(any(grepl("theme = ace_theme()", report, fixed = TRUE)))
+})
+
+test_that("the data grid row height follows the density", {
+  expect_equal(ui_table_row_height("compact"), 32L)
+  expect_equal(ui_table_row_height("comfortable"), 40L)
+  expect_equal(ui_table_row_height("unknown"), 32L)
 })

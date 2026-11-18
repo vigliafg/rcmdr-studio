@@ -30,6 +30,22 @@
     .rcmdr-help-category,
     .rcmdr-report-outline a { color: var(--rcmdr-link); }
 
+    /* Desktop scrollbars ---------------------------------------------------
+       The native bar is left in place; only its two colours are mapped, so
+       the OS keeps the hit area and the keyboard/pinch behaviour. */
+    body {
+      scrollbar-color: var(--rcmdr-border-strong) var(--rcmdr-surface);
+      scrollbar-width: thin;
+    }
+    body ::-webkit-scrollbar { width: .75rem; height: .75rem; }
+    body ::-webkit-scrollbar-track { background: var(--rcmdr-surface); }
+    body ::-webkit-scrollbar-thumb {
+      background: var(--rcmdr-border-strong);
+      border: 2px solid var(--rcmdr-surface);
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    body ::-webkit-scrollbar-thumb:hover { background: var(--rcmdr-heading); }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .01ms !important;

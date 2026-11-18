@@ -352,3 +352,65 @@
       background: var(--rcmdr-surface); color: var(--rcmdr-text);
       border-color: var(--rcmdr-border) var(--rcmdr-border) var(--rcmdr-surface);
     }
+
+    /* Alerts and progress ---------------------------------------------------
+       Bootstrap 5.3 exposes both families as custom properties.  Mapping them
+       to the status pairs keeps a warning readable in the eight palettes and
+       replaces the stock yellow, blue and green with the Studio's own. */
+    .alert {
+      --bs-alert-color: var(--rcmdr-text);
+      --bs-alert-bg: var(--rcmdr-surface-muted);
+      --bs-alert-border-color: var(--rcmdr-border);
+      --bs-alert-link-color: var(--rcmdr-link);
+    }
+    .alert-primary,
+    .alert-secondary {
+      --bs-alert-color: var(--rcmdr-heading);
+      --bs-alert-bg: var(--rcmdr-selection);
+      --bs-alert-border-color: var(--rcmdr-border-strong);
+    }
+    .alert-success {
+      --bs-alert-color: var(--rcmdr-ok-fg);
+      --bs-alert-bg: var(--rcmdr-ok-bg);
+      --bs-alert-border-color: var(--rcmdr-success);
+    }
+    .alert-warning {
+      --bs-alert-color: var(--rcmdr-warn-fg);
+      --bs-alert-bg: var(--rcmdr-warn-bg);
+      --bs-alert-border-color: var(--rcmdr-warning);
+    }
+    .alert-danger,
+    .alert-error {
+      --bs-alert-color: var(--rcmdr-err-fg);
+      --bs-alert-bg: var(--rcmdr-err-bg);
+      --bs-alert-border-color: var(--rcmdr-danger);
+    }
+    .alert-info {
+      --bs-alert-color: var(--rcmdr-heading);
+      --bs-alert-bg: var(--rcmdr-selection);
+      --bs-alert-border-color: var(--rcmdr-accent);
+    }
+    .alert-light,
+    .alert-dark {
+      --bs-alert-color: var(--rcmdr-text);
+      --bs-alert-bg: var(--rcmdr-surface-muted);
+      --bs-alert-border-color: var(--rcmdr-border);
+    }
+    .progress {
+      --bs-progress-bg: var(--rcmdr-surface-muted);
+      --bs-progress-bar-bg: var(--rcmdr-primary);
+      --bs-progress-bar-color: var(--rcmdr-on-primary);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-pill);
+      overflow: hidden;
+    }
+    .progress-bar {
+      background-color: var(--bs-progress-bar-bg);
+      color: var(--bs-progress-bar-color);
+      font-size: var(--rcmdr-text-xs);
+    }
+    /* Bootstrap's .bg-* utilities outrank the progress variable; map the
+       three fills the data tab uses so they still follow the palette. */
+    .progress-bar.bg-warning { background-color: var(--rcmdr-warning) !important; }
+    .progress-bar.bg-success { background-color: var(--rcmdr-success) !important; }
+    .progress-bar.bg-danger { background-color: var(--rcmdr-danger) !important; }

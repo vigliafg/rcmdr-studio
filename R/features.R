@@ -133,6 +133,38 @@ set_ui_theme <- function(state, theme = "system") {
   invisible(theme)
 }
 
+#' Ace editor theme for a palette
+#'
+#' Both themes ship inside the installed `shinyAce` package, so the choice
+#' costs no network request.  `system` stays on the light theme because the
+#' server cannot know the client preference; the editor is rebuilt only when
+#' the user picks a palette in the topbar.
+#'
+#' @param theme A value in [ui_themes()].
+#' @return `"tomorrow_night"` for the three dark palettes, `"textmate"`
+#'   otherwise.
+#' @keywords internal
+ui_ace_theme <- function(theme = "system") {
+  theme <- as.character(theme %||% "system")[[1L]]
+  if (theme %in% c("dark", "dark-dim", "dark-graphite")) {
+    "tomorrow_night"
+  } else {
+    "textmate"
+  }
+}
+
+#' Height of a data-grid row
+#'
+#' The same token drives DT rows in `60-views.css`; rhandsontable needs the
+#' number in R because it draws its own canvas-like grid.
+#'
+#' @param density A value in [ui_densities()].
+#' @return 32L in compact, 40L in comfortable.
+#' @keywords internal
+ui_table_row_height <- function(density = "compact") {
+  if (identical(density, "comfortable")) 40L else 32L
+}
+
 #' Supported interface densities
 #' @return `c("compact", "comfortable")`.
 #' @keywords internal
