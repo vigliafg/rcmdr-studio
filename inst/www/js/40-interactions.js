@@ -462,3 +462,138 @@
       event.preventDefault();
       splitReset(divider, true);
     });
+
+    // Context menus --------------------------------------------------------
+    // One panel at a time.  The target says which menu it wants and carries a
+    // small JSON payload; the items either click an existing control or send
+    // the action to a Shiny input that already handles it.
+    var rcmdrMenu = null;
+    var rcmdrMenuTrigger = null;
+    function rcmdrMenuItems(menu) {
+      return Array.prototype.filter.call(
+        menu.querySelectorAll('[role="menuitem"]'),
+        function(item) {
+          return item.getAttribute('aria-disabled') !== 'true';
+        }
+      );
+    }
+    function rcmdrMenuClose(restoreFocus) {
+      if (!rcmdrMenu) return;
+      var menu = rcmdrMenu;
+      var trigger = rcmdrMenuTrigger;
+      menu.hidden = true;
+      rcmdrMenu = null;
+      rcmdrMenuTrigger = null;
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      if (restoreFocus && trigger && trigger.focus) trigger.focus();
+    }
+    function rcmdrMenuOpen(trigger, x, y) {
+      var id = trigger.getAttribute('data-rcmdr-context-menu');
+      var menu = id && document.getElementById(id);
+      if (!menu) return;
+      rcmdrMenuClose(false);
+      rcmdrMenu = menu;
+      rcmdrMenuTrigger = trigger;
+      trigger.setAttribute('aria-expanded', 'true');
+      menu.hidden = false;
+      menu.style.left = '0px';
+      menu.style.top = '0px';
+      var rect = menu.getBoundingClientRect();
+      var vw = document.documentElement.clientWidth || window.innerWidth;
+      var vh = document.documentElement.clientHeight || window.innerHeight;
+      var left = Math.max(4, Math.min(x, vw - rect.width - 4));
+      var top = Math.max(4, Math.min(y, vh - rect.height - 4));
+      menu.style.left = Math.max(4, left) + 'px';
+      menu.style.top = Math.max(4, top) + 'px';
+      var first = rcmdrMenuItems(menu)[0];
+      if (first) first.focus(); else menu.focus();
+    }
+    function rcmdrMenuActivate(item) {
+      var trigger = rcmdrMenuTrigger;
+      if (!trigger) return;
+      var clickId = item.getAttribute('data-rcmdr-menu-click');
+      var input = item.getAttribute('data-rcmdr-menu-input');
+      var action = item.getAttribute('data-rcmdr-menu-action');
+      var payload = {};
+      try {
+        payload = JSON.parse(
+          trigger.getAttribute('data-rcmdr-menu-payload') || '{}'
+        );
+      } catch (e) {
+        payload = {};
+      }
+      rcmdrMenuClose(false);
+      if (clickId) {
+        var target = document.getElementById(clickId);
+        if (target) target.click();
+      } else if (input && window.Shiny && window.Shiny.setInputValue) {
+        if (action) payload.action = action;
+        window.Shiny.setInputValue(input, payload, {priority: 'event'});
+      }
+      if (trigger && trigger.focus) trigger.focus();
+    }
+    document.addEventListener('contextmenu', function(event) {
+      var trigger = event.target.closest &&
+        event.target.closest('[data-rcmdr-context-menu]');
+      if (!trigger) return;
+      event.preventDefault();
+      rcmdrMenuOpen(trigger, event.clientX, event.clientY);
+    });
+    document.addEventListener('keydown', function(event) {
+      var trigger = event.target.closest &&
+        event.target.closest('[data-rcmdr-context-menu]');
+      var openKey = event.key === 'ContextMenu' ||
+        (event.shiftKey && event.key === 'F10');
+      if (openKey && trigger) {
+        event.preventDefault();
+        var rect = trigger.getBoundingClientRect();
+        rcmdrMenuOpen(trigger, rect.left, rect.bottom + 4);
+        return;
+      }
+      if (!rcmdrMenu) return;
+      if (!rcmdrMenu.contains(event.target) && event.target !== rcmdrMenu) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        rcmdrMenuClose(true);
+        return;
+      }
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        rcmdrMenuClose(true);
+        return;
+      }
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' &&
+          event.key !== 'Home' && event.key !== 'End') return;
+      event.preventDefault();
+      var items = rcmdrMenuItems(rcmdrMenu);
+      if (!items.length) return;
+      var index = items.indexOf(document.activeElement);
+      var next;
+      if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = items.length - 1;
+      else if (event.key === 'ArrowDown') next = (index + 1) % items.length;
+      else next = (index - 1 + items.length) % items.length;
+      items[next].focus();
+    }, true);
+    document.addEventListener('click', function(event) {
+      if (!rcmdrMenu) return;
+      var item = event.target.closest &&
+        event.target.closest('.rcmdr-context-menu-item');
+      if (item && rcmdrMenu.contains(item)) {
+        event.preventDefault();
+        rcmdrMenuActivate(item);
+        return;
+      }
+      if (!rcmdrMenu.contains(event.target)) rcmdrMenuClose(false);
+    }, true);
+    document.addEventListener('pointerdown', function(event) {
+      if (!rcmdrMenu) return;
+      if (rcmdrMenu.contains(event.target)) return;
+      var trigger = event.target.closest &&
+        event.target.closest('[data-rcmdr-context-menu]');
+      if (trigger) return;
+      rcmdrMenuClose(false);
+    }, true);
+    window.addEventListener('resize', function() { rcmdrMenuClose(false); });
+    window.addEventListener('scroll', function() { rcmdrMenuClose(false); }, true);

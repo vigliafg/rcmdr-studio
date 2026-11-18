@@ -813,37 +813,60 @@ chart_gallery_ui_cards <- function(table) {
         title = row$title, code = row$code, url = row$url,
         pinned = row$pinned, tags = character()
       )
-      htmltools::div(
-        class = paste("rcmdr-chart-card", if (row$pinned) "pinned"),
-        htmltools::div(
-          class = "rcmdr-chart-thumb",
-          onclick = sprintf(
-            "Shiny.setInputValue('chart_action', {index: %d, action: 'detail'}, {priority: 'event'});",
-            row$index
-          ),
-          if (nzchar(row$url)) {
-            htmltools::tags$img(src = row$url, alt = row$title)
-          } else {
-            htmltools::div(class = "rcmdr-chart-thumb-empty",
-                           tr("No preview"))
-          }
-        ),
-        htmltools::div(
-          class = "rcmdr-chart-card-body",
-          htmltools::tags$h6(row$title),
-          note(sprintf("%s - %s", row$type %||% "", row$time)),
-          action_row(
-            tight = TRUE,
-            chart_action_link(tr("Detail"), row$index, "detail",
-                              "btn btn-sm btn-outline-primary"),
-            chart_action_link(
-              if (isTRUE(row$pinned)) tr("Unpin") else tr("Pin"),
-              row$index, "pin", "btn btn-sm btn-outline-secondary"
+      menu_id <- sprintf("chart_card_menu_%d", as.integer(row$index))
+      htmltools::tagList(
+        context_menu_target(
+          class = paste("rcmdr-chart-card", if (row$pinned) "pinned"),
+          menu = menu_id,
+          payload = sprintf('{"index":%d}', as.integer(row$index)),
+          label = sprintf("%s: %s", tr("Chart actions"), row$title),
+          htmltools::div(
+            class = "rcmdr-chart-thumb",
+            onclick = sprintf(
+              "Shiny.setInputValue('chart_action', {index: %d, action: 'detail'}, {priority: 'event'});",
+              row$index
             ),
-            chart_action_link(tr("Reopen"), row$index, "reopen",
-                              "btn btn-sm btn-outline-secondary"),
-            chart_copy_link(plot)
+            if (nzchar(row$url)) {
+              htmltools::tags$img(src = row$url, alt = row$title)
+            } else {
+              htmltools::div(class = "rcmdr-chart-thumb-empty",
+                             tr("No preview"))
+            }
+          ),
+          htmltools::div(
+            class = "rcmdr-chart-card-body",
+            htmltools::tags$h6(row$title),
+            note(sprintf("%s - %s", row$type %||% "", row$time)),
+            action_row(
+              tight = TRUE,
+              chart_action_link(tr("Detail"), row$index, "detail",
+                                "btn btn-sm btn-outline-primary"),
+              chart_action_link(
+                if (isTRUE(row$pinned)) tr("Unpin") else tr("Pin"),
+                row$index, "pin", "btn btn-sm btn-outline-secondary"
+              ),
+              chart_action_link(tr("Reopen"), row$index, "reopen",
+                                "btn btn-sm btn-outline-secondary"),
+              chart_copy_link(plot)
+            )
           )
+        ),
+        context_menu(
+          menu_id,
+          context_menu_item(tr("Detail"), input = "chart_action",
+                            action = "detail"),
+          context_menu_item(
+            if (isTRUE(row$pinned)) tr("Unpin") else tr("Pin"),
+            input = "chart_action", action = "pin"
+          ),
+          context_menu_item(tr("Reopen"), input = "chart_action",
+                            action = "reopen"),
+          context_menu_separator(),
+          context_menu_item(tr("Rename"), input = "chart_action",
+                            action = "rename"),
+          context_menu_item(tr("Delete"), input = "chart_action",
+                            action = "delete", danger = TRUE),
+          label = tr("Chart actions")
         )
       )
     })

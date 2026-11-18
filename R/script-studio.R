@@ -431,6 +431,17 @@ script_document_tabs_ui <- function(state) {
     payload = TRUE,
     closable = TRUE,
     class = "rcmdr-doc-tabs",
+    menus = lapply(table$id, function(value) {
+      context_menu(
+        paste0("script_tab_menu_", value),
+        context_menu_item(tr("Activate"), input = "script_tab_action",
+                          action = "activate"),
+        context_menu_separator(),
+        context_menu_item(tr("Close"), input = "script_tab_action",
+                          action = "close", danger = TRUE),
+        label = tr("Tab actions")
+      )
+    }),
     trailing = htmltools::tags$button(
       type = "button", class = "rcmdr-doc-new", title = tr("New script"),
       onclick = "Shiny.setInputValue('script_new', Math.random(), {priority: 'event'});",

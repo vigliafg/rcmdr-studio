@@ -417,3 +417,18 @@ test_that("dense chart parameters carry a tip without losing the help text", {
   expect_match(html, "The mapping fields change with the chart type",
                fixed = TRUE)
 })
+
+test_that("gallery cards carry their own context menu", {
+  table <- data.frame(
+    index = c(2L, 1L), id = c("plot-0002", "plot-0001"),
+    title = c("B", "A"), type = c("scatter", "histogram"),
+    dataset = c("D", "D"), time = c("now", "now"),
+    pinned = c(TRUE, FALSE), code = c("scatterplot(...)", "Hist(...)"),
+    url = c("", ""), stringsAsFactors = FALSE
+  )
+  html <- htmltools::renderTags(chart_gallery_ui_cards(table))$html
+  expect_match(html, "data-rcmdr-context-menu=", fixed = TRUE)
+  expect_match(html, "chart_card_menu_", fixed = TRUE)
+  expect_match(html, 'role="menu"', fixed = TRUE)
+  expect_match(html, "data-rcmdr-menu-input=\"chart_action\"", fixed = TRUE)
+})

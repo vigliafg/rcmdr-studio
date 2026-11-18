@@ -166,8 +166,9 @@ test_that("accordion headers move with the arrow keys inside their group", {
   }
   # Only headers with a box take focus.
   expect_match(js, "el.getClientRects().length > 0", fixed = TRUE)
-  # Esc remains Bootstrap's modal contract.
-  expect_false(grepl("event.key === 'Escape'", js, fixed = TRUE))
+  # Esc is captured by the tooltip and the context menus only; the accordion
+  # handler above never claims it.
+  expect_match(js, "rcmdrMenuClose(true)", fixed = TRUE)
 })
 
 test_that("the searchable picker is named by its visible label", {
@@ -275,4 +276,26 @@ test_that("every working view exposes its split pane", {
   app <- readLines(test_path("..", "..", "R", "app.R"))
   expect_true(any(grepl("split_pane_server(split_id, input, state, persist_preferences)",
                         app, fixed = TRUE)))
+})
+
+test_that("context menus open from the keyboard and return the focus", {
+  js <- as.character(app_js())
+  expect_match(js, "data-rcmdr-context-menu", fixed = TRUE)
+  expect_match(js, "event.key === 'ContextMenu'", fixed = TRUE)
+  expect_match(js, "event.shiftKey && event.key === 'F10'", fixed = TRUE)
+  expect_match(js, "rcmdrMenuClose(true)", fixed = TRUE)
+  expect_match(js, "setInputValue(input, payload", fixed = TRUE)
+  expect_match(js, "event.key === 'ArrowDown'", fixed = TRUE)
+  expect_match(js, "event.key === 'Home'", fixed = TRUE)
+  # Opening a menu closes the previous one first.
+  expect_match(js, "rcmdrMenuOpen(trigger, event.clientX", fixed = TRUE)
+  expect_match(js, "Math.min(x, vw - rect.width - 4)", fixed = TRUE)
+  expect_match(js, "Math.min(y, vh - rect.height - 4)", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".rcmdr-context-menu {", fixed = TRUE)
+  expect_match(css, "position: fixed", fixed = TRUE)
+  expect_match(css, ".rcmdr-context-menu[hidden] { display: none; }",
+               fixed = TRUE)
+  expect_match(css, ".rcmdr-context-menu-danger", fixed = TRUE)
 })

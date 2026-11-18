@@ -565,7 +565,7 @@ modal_shell <- function(title, ..., category = NULL, icon = NULL,
 tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
                        labels = NULL, payload = FALSE, closable = FALSE,
                        close_label = tr("Close"), trailing = NULL,
-                       class = NULL) {
+                       menus = NULL, class = NULL) {
   if (length(tabs) == 0L) return(NULL)
   if (is.null(names(tabs)) || any(!nzchar(names(tabs)))) {
     stop("tabs_strip() needs a named character vector: label = value.",
@@ -579,6 +579,9 @@ tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
   }
   if (!is.null(labels) && length(labels) != length(values)) {
     stop("tabs_strip() needs one label per tab.", call. = FALSE)
+  }
+  if (!is.null(menus) && length(menus) != length(values)) {
+    stop("tabs_strip() needs one menu per tab.", call. = FALSE)
   }
   selected <- selected %||% values[[1L]]
   callback <- function(value, action) {
@@ -597,6 +600,8 @@ tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
     lapply(seq_along(values), function(i) {
       active <- identical(values[[i]], selected)
       content <- if (is.null(labels)) names(tabs)[[i]] else labels[[i]]
+      menu_tag <- if (is.null(menus)) NULL else menus[[i]]
+      menu_id <- if (is.null(menu_tag)) NULL else menu_tag$attribs$id
       htmltools::tags$span(
         class = c("rcmdr-tabs-item", if (active) "active"),
         `data-value` = values[[i]],
@@ -604,6 +609,11 @@ tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
           type = "button",
           class = "rcmdr-tabs-button",
           `aria-pressed` = if (active) "true" else "false",
+          `data-rcmdr-context-menu` = menu_id,
+          `data-rcmdr-menu-payload` =
+            if (is.null(menu_id)) NULL else sprintf('{"id":"%s"}', values[[i]]),
+          `aria-haspopup` = if (is.null(menu_id)) NULL else "menu",
+          `aria-expanded` = if (is.null(menu_id)) NULL else "false",
           onclick = callback(values[[i]], "activate"),
           content
         ),
@@ -615,10 +625,107 @@ tabs_strip <- function(id, tabs, selected = NULL, label = NULL,
             onclick = callback(values[[i]], "close"),
             "\u00d7"
           )
-        }
+        },
+        menu_tag
       )
     }),
     trailing
+  )
+}
+
+#' A desktop context menu
+#'
+#' A hidden `role="menu"` panel.  The items inside are
+#' [context_menu_item()] entries; the panel is opened by a target built with
+#' [context_menu_target()], by the context-menu key, or by `Shift`+`F10`.
+#' `40-interactions.js` keeps one menu open at a time, positions it inside the
+#' viewport and returns the focus to the target when it closes.
+#'
+#' @param id Menu id, referenced by the target.
+#' @param ... Items and separators.
+#' @param label Accessible name of the menu.
+#' @param class Extra classes.
+#' @return A `<div>` tag.
+#' @keywords internal
+context_menu <- function(id, ..., label = tr("Actions"), class = NULL) {
+  htmltools::div(
+    id = id,
+    class = c("rcmdr-context-menu", class),
+    role = "menu",
+    `aria-label` = label,
+    tabindex = "-1",
+    hidden = "hidden",
+    ...
+  )
+}
+
+#' One item of a context menu
+#'
+#' `click` names an existing action input (or any clickable element) and
+#' clicks it, so the menu never carries a second implementation of an action.
+#' `input` and `action` send the action to a Shiny input that already handles
+#' it; the target supplies the rest of the payload through
+#' [context_menu_target()].
+#'
+#' @param label Visible text.
+#' @param click Optional id of the element to click.
+#' @param input Optional Shiny input to update.
+#' @param action Optional action name added to the payload.
+#' @param danger Use the danger colour.
+#' @param disabled Announce and draw the item as unavailable.
+#' @return A `<button>` tag.
+#' @keywords internal
+context_menu_item <- function(label, click = NULL, input = NULL, action = NULL,
+                              danger = FALSE, disabled = FALSE) {
+  htmltools::tags$button(
+    type = "button",
+    class = c("rcmdr-context-menu-item",
+              if (isTRUE(danger)) "rcmdr-context-menu-danger"),
+    role = "menuitem",
+    tabindex = "-1",
+    `data-rcmdr-menu-click` = click,
+    `data-rcmdr-menu-input` = input,
+    `data-rcmdr-menu-action` = action,
+    `aria-disabled` = if (isTRUE(disabled)) "true" else NULL,
+    label
+  )
+}
+
+#' A separator between context-menu groups
+#' @keywords internal
+context_menu_separator <- function() {
+  htmltools::div(
+    class = "rcmdr-context-menu-separator", role = "separator",
+    `aria-hidden` = "true"
+  )
+}
+
+#' Mark a region as the target of a context menu
+#'
+#' The target is focusable, so the menu is reachable without a pointer:
+#' `Shift`+`F10` or the context-menu key opens it from the keyboard.  `payload`
+#' is a JSON object the items merge with their own action; it is how one menu
+#' can serve many cards without repeating the handlers.
+#'
+#' @param ... Content.
+#' @param menu Menu id from [context_menu()].
+#' @param payload JSON object with the target data.
+#' @param label Accessible name of the target.
+#' @param class Extra classes.
+#' @param tag Tag to build, a `<div>` by default.
+#' @return A tag.
+#' @keywords internal
+context_menu_target <- function(..., menu, payload = "{}", label = NULL,
+                                class = NULL, tag = htmltools::tags$div) {
+  tag(
+    class = c("rcmdr-context-target", class),
+    tabindex = "0",
+    `data-rcmdr-context-menu` = menu,
+    `data-rcmdr-menu-payload` = payload,
+    `aria-haspopup` = "menu",
+    `aria-expanded` = "false",
+    `aria-label` = label,
+    ...
   )
 }
 

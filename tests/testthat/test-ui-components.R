@@ -381,3 +381,57 @@ test_that("split_pane() stacks its panes when vertical", {
   expect_match(html, "top", fixed = TRUE)
   expect_match(html, "bottom", fixed = TRUE)
 })
+
+test_that("context_menu() is a labelled, initially hidden menu", {
+  html <- as.character(context_menu(
+    "demo_menu",
+    context_menu_item("First", click = "first_button"),
+    context_menu_separator(),
+    context_menu_item("Second", input = "demo_action", action = "second"),
+    label = "Demo actions"
+  ))
+  expect_match(html, 'id="demo_menu"', fixed = TRUE)
+  expect_match(html, 'role="menu"', fixed = TRUE)
+  expect_match(html, 'aria-label="Demo actions"', fixed = TRUE)
+  expect_match(html, 'hidden="hidden"', fixed = TRUE)
+  expect_match(html, 'tabindex="-1"', fixed = TRUE)
+  expect_match(html, 'role="menuitem"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-click="first_button"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-input="demo_action"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-action="second"', fixed = TRUE)
+  expect_match(html, 'role="separator"', fixed = TRUE)
+})
+
+test_that("a context-menu target is focusable and names its menu", {
+  html <- as.character(context_menu_target(
+    menu = "demo_menu", payload = '{"index":3}', label = "Chart actions",
+    class = "demo-card", htmltools::tags$h6("Card")
+  ))
+  expect_match(html, 'class="rcmdr-context-target demo-card"', fixed = TRUE)
+  expect_match(html, 'tabindex="0"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-context-menu="demo_menu"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-payload="{&quot;index&quot;:3}"',
+               fixed = TRUE)
+  expect_match(html, 'aria-haspopup="menu"', fixed = TRUE)
+  expect_match(html, 'aria-expanded="false"', fixed = TRUE)
+  expect_match(html, 'aria-label="Chart actions"', fixed = TRUE)
+})
+
+test_that("tabs_strip() attaches one menu per tab", {
+  html <- as.character(tabs_strip(
+    "doc_tab", c("One" = "one"), payload = TRUE, closable = TRUE,
+    menus = list(context_menu(
+      "doc_tab_menu_one",
+      context_menu_item("Close", input = "doc_tab", action = "close")
+    ))
+  ))
+  expect_match(html, 'data-rcmdr-context-menu="doc_tab_menu_one"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-payload="{&quot;id&quot;:&quot;one&quot;}"',
+               fixed = TRUE)
+  expect_match(html, 'id="doc_tab_menu_one"', fixed = TRUE)
+  expect_error(
+    tabs_strip("doc_tab", c("One" = "one", "Two" = "two"), payload = TRUE,
+               menus = list(context_menu("only_one"))),
+    "one menu per tab"
+  )
+})

@@ -123,3 +123,11 @@ test_that("the inspector uses the token grid and the note component", {
   expect_false(grepl("col-5", html, fixed = TRUE))
   expect_false(grepl("row small", html, fixed = TRUE))
 })
+
+test_that("the Data Studio grid exposes its table actions", {
+  html <- htmltools::renderTags(data_studio_ui())$html
+  expect_match(html, 'data-rcmdr-context-menu="data_grid_menu"', fixed = TRUE)
+  expect_match(html, 'id="data_grid_menu"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-click="data_col_summary"', fixed = TRUE)
+  expect_match(html, 'data-rcmdr-menu-click="data_delete_rows"', fixed = TRUE)
+})

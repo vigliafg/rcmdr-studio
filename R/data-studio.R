@@ -1049,7 +1049,37 @@ data_studio_ui <- function() {
     ),
     split_pane(
       "data_layout",
-      htmltools::div(uiOutput("data_grid")),
+      htmltools::tagList(
+        context_menu_target(
+          class = "rcmdr-data-grid-wrap",
+          menu = "data_grid_menu",
+          label = tr("Table actions"),
+          htmltools::div(uiOutput("data_grid"))
+        ),
+        # The menu mirrors the inspector buttons and clicks them, so a column
+        # action has one implementation whether it starts from the toolbar or
+        # from a right click.
+        context_menu(
+          "data_grid_menu",
+          context_menu_item(tr("Summary"), click = "data_col_summary"),
+          context_menu_item(tr("Plot"), click = "data_col_plot"),
+          context_menu_item(tr("Label"), click = "data_col_label"),
+          context_menu_item(tr("Rename"), click = "data_col_rename"),
+          context_menu_item(tr("Type"), click = "data_col_type"),
+          context_menu_item(tr("Recode"), click = "data_col_recode"),
+          context_menu_item(tr("Delete"), click = "data_col_delete",
+                            danger = TRUE),
+          context_menu_separator(),
+          context_menu_item(tr("Add column"), click = "data_add_column"),
+          context_menu_item(tr("Duplicate"), click = "data_duplicate_column"),
+          context_menu_separator(),
+          context_menu_item(tr("Duplicate selection"),
+                            click = "data_duplicate_rows"),
+          context_menu_item(tr("Delete selection"), click = "data_delete_rows",
+                            danger = TRUE),
+          label = tr("Table actions")
+        )
+      ),
       htmltools::div(
         uiOutput("data_inspector"),
         # The action buttons live outside the dynamic inspector: re-rendering

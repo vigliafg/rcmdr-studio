@@ -94,3 +94,14 @@ test_that("the document strip is the shared tab strip", {
   expect_match(html, "action: &#39;activate&#39;", fixed = TRUE)
   expect_false(grepl("rcmdr-doc-tab ", html, fixed = TRUE))
 })
+
+test_that("every document tab carries a context menu", {
+  state <- workbench_test_state()
+  document_registry_ensure(state)
+  document_set_text(state, "x <- 1")
+  html <- htmltools::renderTags(script_document_tabs_ui(state))$html
+  expect_match(html, "data-rcmdr-context-menu=", fixed = TRUE)
+  expect_match(html, "script_tab_menu_", fixed = TRUE)
+  expect_match(html, 'role="menu"', fixed = TRUE)
+  expect_match(html, ">Activate<", fixed = TRUE)
+})
