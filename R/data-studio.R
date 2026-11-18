@@ -956,6 +956,39 @@ data_order_columns <- function(grid, order) {
   grid[, keep, drop = FALSE]
 }
 
+#' Columns the cell editor cannot round-trip safely
+#'
+#' Date-time and list columns would lose their time zone or their structure in
+#' the grid, so the editor marks them read-only instead of pretending to edit
+#' them.  The inspector still offers the targeted column actions.
+#' @keywords internal
+editor_readonly_columns <- function(df) {
+  if (is.null(df) || ncol(df) == 0L) return(character())
+  names(df)[vapply(df, function(x) {
+    inherits(x, c("POSIXct", "POSIXlt")) || is.list(x)
+  }, logical(1))]
+}
+
+#' Why an Apply click cannot use the editor
+#'
+#' A single place for the three conditions that keep a stale editor from
+#' writing cells: the view must be Edit, the editor must belong to the active
+#' data set and the stamp must be the current render.  `NULL` means the editor
+#' can be applied.
+#' @keywords internal
+editor_apply_error <- function(mode, context, stamp, token, active) {
+  if (!identical(mode, "edit")) {
+    return(tr("Apply changes is only available in Edit mode."))
+  }
+  if (is.null(context) || !identical(context$dataset, active)) {
+    return(tr("The editor belongs to another data set. Open Edit again."))
+  }
+  if (!nzchar(stamp %||% "") || !identical(stamp, token)) {
+    return(tr("The data changed since the editor opened. Open Edit again."))
+  }
+  NULL
+}
+
 #' Is a column date-like?
 #'
 #' The Data Studio swaps its text filter for the date range only on these
@@ -1089,6 +1122,7 @@ data_studio_ui <- function() {
           ),
           htmltools::div(uiOutput("data_grid"))
         ),
+        uiOutput("data_editor_note"),
         # The menu mirrors the inspector buttons and clicks them, so a column
         # action has one implementation whether it starts from the toolbar or
         # from a right click.

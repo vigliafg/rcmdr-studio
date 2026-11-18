@@ -242,6 +242,15 @@
         }
       } catch (e) {}
     });
+    // Cell editor stamp ----------------------------------------------------
+    // The server sends the token of the editor it has just rendered.  Apply
+    // compares it with the current token, so an editor left over from another
+    // data set or another view cannot write stale cells.
+    Shiny.addCustomMessageHandler('rcmdr-editor-stamp', function(message) {
+      var token = (message && message.token) || '';
+      Shiny.setInputValue('data_editor_stamp', token, {priority: 'event'});
+    });
+
     // Busy state -----------------------------------------------------------
     // The status bar badge is visual; this live region is what a screen
     // reader hears while a command runs.  `aria-busy` keeps the rest quiet.

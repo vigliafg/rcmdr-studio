@@ -118,3 +118,121 @@ test_that("cell edits are translated into reproducible commands", {
 
   expect_equal(RcmdrShiny:::cmd_edit_cells("D", env$D, env$D), character())
 })
+
+test_that("several cells in one column become one command", {
+  old <- data.frame(a = 1:5)
+  new <- old
+  new$a[c(2L, 4L)] <- c(20, 40)
+  expect_equal(
+    RcmdrShiny:::cmd_edit_cells("D", old, new),
+    'D[c(2, 4), "a"] <- c(20, 40)'
+  )
+})
+
+test_that("a new factor level is declared before the assignment", {
+  state <- AppState(env = new.env())
+  state$env$D <- data.frame(f = factor(c("a", "b", "a")))
+  active_dataset(state, "D")
+  new <- data.frame(f = factor(c("c", "b", "a"),
+                               levels = c("a", "b", "c")))
+  commands <- RcmdrShiny:::cmd_edit_cells("D", state$env$D, new)
+  expect_equal(commands, c(
+    'levels(D[["f"]]) <- c(levels(D[["f"]]), "c")',
+    'D[1, "f"] <- "c"'
+  ))
+  for (command in commands) {
+    expect_equal(run_command(state, command)$status, "ok")
+  }
+  expect_s3_class(state$env$D$f, "factor")
+  expect_false(is.ordered(state$env$D$f))
+  expect_equal(as.character(state$env$D$f), c("c", "b", "a"))
+})
+
+test_that("an ordered factor stays ordered", {
+  old <- data.frame(f = factor(c("low", "high"), levels = c("low", "high"),
+                               ordered = TRUE))
+  new <- old
+  new$f <- factor(c("mid", "high"), levels = c("low", "mid", "high"),
+                  ordered = TRUE)
+  aligned <- RcmdrShiny:::align_edited_data(old, new)
+  expect_true(is.ordered(aligned$f))
+  expect_equal(levels(aligned$f), c("low", "high", "mid"))
+})
+
+test_that("dates and missing values get type-preserving commands", {
+  old <- data.frame(d = as.Date(c("2026-11-01", "2026-11-02")),
+                    x = c(1, 2))
+  new <- old
+  new$d[2L] <- as.Date("2026-11-20")
+  new$x[1L] <- NA_real_
+  expect_equal(
+    RcmdrShiny:::cmd_edit_cells("D", old, new),
+    c('D[2, "d"] <- as.Date("2026-11-20")', 'D[1, "x"] <- NA')
+  )
+})
+
+test_that("invalid edits are refused before a command is generated", {
+  old <- data.frame(a = c(1, 2), l = c(TRUE, FALSE),
+                    d = as.Date(c("2026-11-01", "2026-11-02")))
+  expect_match(
+    RcmdrShiny:::validate_edited_data(
+      old, data.frame(a = c("1", "oops"), l = c(TRUE, FALSE), d = old$d)
+    ),
+    "Column a needs numeric values"
+  )
+  expect_match(
+    RcmdrShiny:::validate_edited_data(
+      old, data.frame(a = old$a, l = c("maybe", "FALSE"), d = old$d)
+    ),
+    "Column l needs TRUE or FALSE"
+  )
+  expect_match(
+    RcmdrShiny:::validate_edited_data(
+      old, data.frame(a = old$a, l = old$l,
+                      d = c("2026-11-01", "not a date"))
+    ),
+    "Column d needs a valid date"
+  )
+  expect_match(
+    RcmdrShiny:::validate_edited_data(old, old[1L, , drop = FALSE]),
+    "number of rows"
+  )
+})
+
+test_that("date-time and list columns are read-only in the editor", {
+  df <- data.frame(
+    a = 1:2,
+    when = as.POSIXct(c("2026-11-18 10:00:00", "2026-11-18 11:00:00"),
+                     tz = "UTC"),
+    payload = I(list(list(x = 1), list(x = 2)))
+  )
+  expect_equal(RcmdrShiny:::editor_readonly_columns(df),
+               c("when", "payload"))
+  old <- df
+  new <- df
+  new$when <- as.POSIXct(c("2026-11-19 10:00:00", "2026-11-18 11:00:00"),
+                         tz = "UTC")
+  expect_match(
+    RcmdrShiny:::validate_edited_data(old, new),
+    "Column when is read-only"
+  )
+})
+
+test_that("a stale editor cannot be applied", {
+  context <- list(dataset = "D", token = "ed-1")
+  expect_match(
+    RcmdrShiny:::editor_apply_error("view", context, "ed-1", "ed-1", "D"),
+    "only available in Edit mode"
+  )
+  expect_match(
+    RcmdrShiny:::editor_apply_error("edit", context, "ed-1", "ed-1", "Other"),
+    "another data set"
+  )
+  expect_match(
+    RcmdrShiny:::editor_apply_error("edit", context, "ed-old", "ed-new", "D"),
+    "data changed since the editor opened"
+  )
+  expect_null(
+    RcmdrShiny:::editor_apply_error("edit", context, "ed-1", "ed-1", "D")
+  )
+})

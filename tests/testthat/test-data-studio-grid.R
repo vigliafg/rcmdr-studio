@@ -142,3 +142,21 @@ test_that("the column order buttons and the drop zone are in the UI", {
   expect_match(html, 'data-rcmdr-menu-click="data_column_left"',
                fixed = TRUE)
 })
+
+test_that("the editor explains its read-only columns and the pending edit", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(
+    y = 1:4,
+    when = as.POSIXct("2026-11-18 10:00:00", tz = "UTC"),
+    g = factor(c("a", "b", "a", "b"))
+  )
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "D")
+    session$setInputs(data_mode = "edit")
+    session$flushReact()
+    html <- htmltools::renderTags(output$data_editor_note)$html
+    expect_match(html, "Read-only in the editor: when", fixed = TRUE)
+    expect_match(html, "Apply changes before leaving Edit", fixed = TRUE)
+  })
+})

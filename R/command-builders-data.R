@@ -548,11 +548,135 @@ format_cell_value <- function(x) {
   r_quote_data(as.character(x))
 }
 
+#' Align edited values with the classes of the original columns
+#'
+#' `rhandsontable` returns a data frame inferred from the grid: factors may be
+#' unordered, dates may be strings and a numeric column may have become
+#' character.  The editor must not change a column's class by accident, so the
+#' original class wins.  A factor keeps its ordered flag and gains any new
+#' level the user typed.
+#' @keywords internal
+align_edited_data <- function(old, new) {
+  if (is.null(old) || is.null(new)) return(new)
+  if (!is.data.frame(old) || !is.data.frame(new)) return(new)
+  for (column in intersect(names(old), names(new))) {
+    before <- old[[column]]
+    after <- new[[column]]
+    if (length(before) != length(after)) next
+    if (is.factor(before)) {
+      values <- as.character(after)
+      levels <- union(levels(before), unique(values[!is.na(values)]))
+      new[[column]] <- factor(
+        values, levels = levels, ordered = is.ordered(before)
+      )
+    } else if (inherits(before, "Date")) {
+      new[[column]] <- if (is.numeric(after)) {
+        as.Date(after, origin = "1970-01-01")
+      } else {
+        as.Date(as.character(after))
+      }
+    } else if (inherits(before, "POSIXct") ||
+               inherits(before, "POSIXlt")) {
+      # Read-only in the editor; no silent time-zone change.
+    } else if (is.logical(before)) {
+      new[[column]] <- as.logical(after)
+    } else if (is.numeric(before)) {
+      new[[column]] <- suppressWarnings(as.numeric(as.character(after)))
+    } else if (is.character(before)) {
+      new[[column]] <- as.character(after)
+    }
+  }
+  new
+}
+
+#' Problems in an edited data frame, before any command is generated
+#'
+#' The grid can hand back text in a numeric column, a different number of rows
+#' or an edit to a column that the editor marks read-only.  These are refused
+#' with a message instead of being written as `NA` or silently ignored.
+#' @keywords internal
+validate_edited_data <- function(old, new) {
+  problems <- character()
+  if (is.null(old) || is.null(new) ||
+      !is.data.frame(old) || !is.data.frame(new)) {
+    return(tr("The edited data are not valid."))
+  }
+  if (!identical(names(old), names(new))) {
+    return(tr("The editor changed the columns; apply the column actions instead."))
+  }
+  if (nrow(old) != nrow(new)) {
+    problems <- c(problems,
+                  tr("The editor changed the number of rows; use the row actions instead."))
+  }
+  for (column in names(old)) {
+    before <- old[[column]]
+    after <- new[[column]]
+    if (length(before) != length(after)) next
+    if (length(before) == 0L) next
+    if (inherits(before, "POSIXct") || inherits(before, "POSIXlt") ||
+        is.list(before)) {
+      same <- mapply(identical, before, after, USE.NAMES = FALSE)
+      if (any(!same)) {
+        problems <- c(problems, sprintf(
+          tr("Column %s is read-only in the editor."), column
+        ))
+      }
+      next
+    }
+    raw <- as.character(after)
+    if (is.numeric(before) && !is.factor(before)) {
+      bad <- !is.na(raw) & nzchar(trimws(raw)) &
+        is.na(suppressWarnings(as.numeric(raw)))
+      if (any(bad)) {
+        problems <- c(problems, sprintf(
+          tr("Column %s needs numeric values."), column
+        ))
+      }
+    } else if (is.logical(before)) {
+      allowed <- is.na(raw) | !nzchar(trimws(raw)) |
+        tolower(trimws(raw)) %in% c("true", "false", "t", "f", "1", "0")
+      if (any(!allowed)) {
+        problems <- c(problems, sprintf(
+          tr("Column %s needs TRUE or FALSE."), column
+        ))
+      }
+    } else if (inherits(before, "Date")) {
+      bad <- !is.na(raw) & nzchar(trimws(raw)) &
+        is.na(suppressWarnings(as.Date(raw)))
+      if (any(bad)) {
+        problems <- c(problems, sprintf(
+          tr("Column %s needs a valid date."), column
+        ))
+      }
+    }
+  }
+  unique(problems)
+}
+
+#' Rows of a command, one index or a vector
+#' @keywords internal
+command_row_index <- function(rows) {
+  if (length(rows) == 1L) as.character(rows)
+  else sprintf("c(%s)", paste(rows, collapse = ", "))
+}
+
+#' One right-hand side for one or more cells
+#' @keywords internal
+command_cell_values <- function(values) {
+  formatted <- vapply(seq_along(values), function(i) {
+    format_cell_value(values[[i]])
+  }, character(1))
+  if (length(formatted) == 1L) formatted else {
+    sprintf("c(%s)", paste(formatted, collapse = ", "))
+  }
+}
+
 #' @keywords internal
 cmd_edit_cells <- function(dataset, old, new) {
   if (is.null(old) || is.null(new)) return(character())
   if (!is.data.frame(old) || !is.data.frame(new)) return(character())
   if (!identical(names(old), names(new))) return(character())
+  new <- align_edited_data(old, new)
 
   commands <- character()
   for (column in names(old)) {
@@ -560,16 +684,31 @@ cmd_edit_cells <- function(dataset, old, new) {
     after <- new[[column]]
     if (length(before) != length(after)) next
     if (is.list(before) || is.list(after)) next
+    if (inherits(before, "POSIXct") || inherits(before, "POSIXlt")) next
     same <- (is.na(before) & is.na(after)) |
       (!is.na(before) & !is.na(after) &
          as.character(before) == as.character(after))
     changed <- which(!same)
-    for (row in changed) {
-      commands <- c(commands, sprintf(
-        "%s[%d, %s] <- %s", dataset, row, r_quote_data(column),
-        format_cell_value(after[[row]])
-      ))
+    if (length(changed) == 0L) next
+    if (is.factor(before)) {
+      new_levels <- setdiff(unique(as.character(after[changed])),
+                            levels(before))
+      new_levels <- new_levels[!is.na(new_levels)]
+      if (length(new_levels) > 0L) {
+        quoted <- vapply(new_levels, r_quote_data, character(1))
+        commands <- c(commands, sprintf(
+          "levels(%s[[%s]]) <- c(levels(%s[[%s]]), %s)",
+          dataset, r_quote_data(column),
+          dataset, r_quote_data(column),
+          paste(quoted, collapse = ", ")
+        ))
+      }
     }
+    commands <- c(commands, sprintf(
+      "%s[%s, %s] <- %s",
+      dataset, command_row_index(changed), r_quote_data(column),
+      command_cell_values(after[changed])
+    ))
   }
   commands
 }

@@ -655,6 +655,35 @@ app_server <- function(env = globalenv()) {
     data_grid_revision <- reactiveVal(0L)
     data_selection_revision <- reactiveVal(0L)
     chart_revision <- reactiveVal(0L)
+    # The cell editor is tied to one render of one data set.  The token changes
+    # when the data set, its shape or the grid revision changes; Apply refuses
+    # an editor that survived a view switch or a data change.
+    editor_context <- reactiveVal(NULL)
+    editor_token <- reactive({
+      tick()
+      data_grid_revision()
+      df <- dataset(state)
+      if (is.null(df)) return("")
+      paste(
+        "ed",
+        state$revision %||% 0L,
+        data_grid_revision(),
+        gsub("[^A-Za-z0-9_.-]", "_", active_dataset(state) %||% ""),
+        nrow(df), ncol(df),
+        sep = "-"
+      )
+    })
+    observeEvent(list(input$data_mode, editor_token()), {
+      mode <- input$data_mode %||% "view"
+      df <- dataset(state)
+      token <- if (identical(mode, "edit") && !is.null(df) &&
+                   editable_dataset(state)) {
+        editor_token()
+      } else {
+        ""
+      }
+      session$sendCustomMessage("rcmdr-editor-stamp", list(token = token))
+    }, ignoreInit = FALSE)
     # The Ace editor is rebuilt only when the palette changes, not on every
     # tick: a theme swap must not discard the undo history mid-sentence.
     ace_theme <- reactiveVal(ui_ace_theme(ui_theme(state)))
@@ -2074,9 +2103,15 @@ app_server <- function(env = globalenv()) {
       tick()
       df <- dataset(state)
       req(df, editable_dataset(state))
-      rhandsontable::rhandsontable(
+      editor_context(list(dataset = active_dataset(state),
+                          token = editor_token()))
+      widget <- rhandsontable::rhandsontable(
         df, height = 480, stretchH = "all", useTypes = TRUE
-      ) |>
+      )
+      for (column in editor_readonly_columns(df)) {
+        widget <- rhandsontable::hot_col(widget, column, readOnly = TRUE)
+      }
+      widget |>
         rhandsontable::hot_rows(
           rowHeights = ui_table_row_height(ui_density(state))
         )
@@ -2181,6 +2216,17 @@ app_server <- function(env = globalenv()) {
 
     observeEvent(input$data_apply, {
       if (!action_clicked(input$data_apply)) return()
+      problem <- editor_apply_error(
+        input$data_mode %||% "view",
+        editor_context(),
+        input$data_editor_stamp %||% "",
+        editor_token(),
+        active_dataset(state)
+      )
+      if (!is.null(problem)) {
+        showNotification(problem, type = "warning", duration = 6)
+        return()
+      }
       editor <- input$data_studio_editor %||% input$data_editor
       req(editor)
       df <- tryCatch(
@@ -2193,17 +2239,30 @@ app_server <- function(env = globalenv()) {
         return()
       }
       old <- dataset(state)
+      req(old)
+      problems <- validate_edited_data(old, df)
+      if (length(problems) > 0L) {
+        showNotification(paste(problems, collapse = " "),
+                         type = "error", duration = 8)
+        return()
+      }
+      df <- align_edited_data(old, df)
       commands <- cmd_edit_cells(active_dataset(state), old, df)
       if (length(commands) == 0L) {
         showNotification(tr("No changes to apply."), type = "message",
                          duration = 3)
         return()
       }
-      run_data_commands(
+      ok <- run_data_commands(
         commands,
         checkpoint_label = tr("Before cell editing"),
         destructive = TRUE
       )
+      if (!isTRUE(ok)) {
+        showNotification(tr("Some changes could not be applied."),
+                         type = "error", duration = 8)
+        return()
+      }
       showNotification(tr("Data set updated."), type = "message", duration = 3)
     }, ignoreInit = TRUE)
 
@@ -2397,6 +2456,20 @@ app_server <- function(env = globalenv()) {
       )
     })
 
+    output$data_editor_note <- renderUI({
+      req(identical(input$data_mode %||% "view", "edit"))
+      df <- dataset(state)
+      req(df, editable_dataset(state))
+      readonly <- editor_readonly_columns(df)
+      message <- if (length(readonly) > 0L) {
+        sprintf(tr("Read-only in the editor: %s. Apply changes before leaving Edit; unapplied edits are discarded."),
+                paste(readonly, collapse = ", "))
+      } else {
+        tr("Apply changes before leaving Edit; unapplied edits are discarded.")
+      }
+      note(message)
+    })
+
     output$data_studio_table <- DT::renderDataTable({
       tick()
       data_grid_revision()
@@ -2442,12 +2515,20 @@ app_server <- function(env = globalenv()) {
       data_grid_revision()
       df <- dataset(state)
       req(df, editable_dataset(state))
-      rhandsontable::rhandsontable(
+      editor_context(list(dataset = active_dataset(state),
+                          token = editor_token()))
+      widget <- rhandsontable::rhandsontable(
         df, height = 520, stretchH = "all", useTypes = TRUE
       ) |>
-        rhandsontable::hot_context_menu(allowRowEdit = TRUE,
+        # Row insertion/removal and column sorting have no command yet: the
+        # editor must not offer them until they can be applied.
+        rhandsontable::hot_context_menu(allowRowEdit = FALSE,
                                         allowColEdit = FALSE) |>
-        rhandsontable::hot_cols(manualColumnResize = TRUE, columnSorting = TRUE) |>
+        rhandsontable::hot_cols(manualColumnResize = TRUE)
+      for (column in editor_readonly_columns(df)) {
+        widget <- rhandsontable::hot_col(widget, column, readOnly = TRUE)
+      }
+      widget |>
         rhandsontable::hot_rows(
           rowHeights = ui_table_row_height(ui_density(state))
         )

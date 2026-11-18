@@ -214,3 +214,15 @@ The dropped file could not be stored.	Non è stato possibile salvare il file tra
 Type	Tipo
 Source	Fonte
 %d result(s)	%d risultati
+Apply changes is only available in Edit mode.	Applica modifiche è disponibile solo in modalità Modifica.
+The editor belongs to another data set. Open Edit again.	L'editor appartiene a un altro dataset. Apri di nuovo Modifica.
+The data changed since the editor opened. Open Edit again.	I dati sono cambiati da quando l'editor è stato aperto. Apri di nuovo Modifica.
+Read-only in the editor: %s. Apply changes before leaving Edit; unapplied edits are discarded.	Sola lettura nell'editor: %s. Applica le modifiche prima di lasciare Modifica; le modifiche non applicate vengono scartate.
+Apply changes before leaving Edit; unapplied edits are discarded.	Applica le modifiche prima di lasciare Modifica; le modifiche non applicate vengono scartate.
+Column %s is read-only in the editor.	La colonna %s è di sola lettura nell'editor.
+Column %s needs numeric values.	La colonna %s richiede valori numerici.
+Column %s needs TRUE or FALSE.	La colonna %s richiede TRUE o FALSE.
+Column %s needs a valid date.	La colonna %s richiede una data valida.
+The editor changed the columns; apply the column actions instead.	L'editor ha cambiato le colonne; usa le azioni sulle colonne.
+The editor changed the number of rows; use the row actions instead.	L'editor ha cambiato il numero di righe; usa le azioni sulle righe.
+Some changes could not be applied.	Alcune modifiche non sono state applicate.
