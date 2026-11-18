@@ -668,4 +668,8 @@ Usare questa sezione per decisioni, blocchi e deviazioni:
 2026-11-18 — Onda 17 chiusa (2.9.0): viste pesanti differite alla prima
              apertura, sonda browser versionata con limite Chrome documentato,
              NEWS/topic/diario/checklist aggiornati. Suite completa verde.
+2026-11-18 — T13 hardening editor: Apply legato a vista/dataset con token,
+             righe e ordinamento disattivati, fattori/date/NA preservati,
+             colonne POSIXct/lista in sola lettura, un comando per colonna.
+             Dettaglio in `EDITOR-HARDENING.md`. Suite completa verde.
 ```

@@ -42,6 +42,20 @@ No statistical command, dialog id, generated R command or existing i18n
 string changed. The browser e2e suite remains skipped where Chrome cannot
 navigate to `http(s)`; `tools/check_browser.R` records the limit.
 
+## Data editor hardening
+
+- The cell editor is bound to the data set and the view that rendered it: a
+  stale editor left over from another data set or from View mode cannot be
+  applied. Apply reports why instead of writing cells.
+- Row insertion/removal and column sorting are disabled in the grid until
+  they have a reproducible command; column resizing remains.
+- Factors keep their ordered flag and gain a declared new level, dates and
+  `NA` keep their type, and date-time/list columns are read-only in the
+  editor. Invalid numeric, logical or date edits are refused before a command
+  is generated.
+- Edits in one column become one R command (`D[c(2, 4), "a"] <- c(...)`)
+  instead of one command per cell; the checkpoint is unchanged.
+
 # RcmdrShiny Studio 2.8.0
 
 ## Parameter panels and one widget family
