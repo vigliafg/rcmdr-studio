@@ -582,3 +582,78 @@ per questi tre.
   incompatibili con la shell e i token esistenti.
 - **reactable al posto di DT**: sostituzione di un widget integrato con
   selezione, filtri e test, non un restyling.
+
+---
+
+## ADR-018 — Workspace a due slot, menu-first e undo applicativo
+
+**Stato:** proposta per l'Onda 18  
+**Data:** 2026-11-18  
+**Dipende da:** ADR-016 (widget), Onda 17 (split, menu contestuali, viste
+pigre), T13 (editor legato al dataset)
+
+### Contesto
+
+L'Onda 17 ha dato all'app il comportamento desktop: split, menu contestuali,
+drag-and-drop, palette, notifiche, viste pigre. Restano tre distanze dal
+modello desktop:
+
+1. la navigazione è ancora a tre livelli (topbar, sidebar menu, tab
+   principali);
+2. il workspace è una vista alla volta; non si possono affiancare Data e
+   Chart;
+3. manca un undo applicativo: `Ctrl+Z` vive solo negli editor di testo.
+
+Aggiungere un altro widget non risolve nessuna delle tre. Serve una decisione
+di architettura, non un restyling.
+
+### Decisione
+
+- **Menu-first in Studio.** Una menu bar `role="menubar"` è la navigazione
+  principale; la sidebar diventa un drawer opzionale. Tema, lingua e densità
+  passano in View/Options. La modalità Classica mantiene il suo `tabsetPanel`
+  e i suoi `data-value`.
+- **Workspace a due slot, non MDI.** Primario e secondario possono mostrare
+  due viste diverse; la stessa vista non può essere duplicata. Il separatore
+  usa `split_pane()` e la geometria è versionata. Non si adotta un framework
+  di docking né si promettono finestre flottanti libere.
+- **Undo applicativo limitato a dati e galleria.** Lo stack salva snapshot
+  prima/dopo con un tetto di voci e byte. Navigazione, tema, lingua, dialoghi e
+  testo restano fuori: il testo è di Ace, i dialoghi non sono stato del lavoro.
+  L'undo non riesegue comandi; rimette lo snapshot e invalida le viste.
+- **La selezione a intervallo è un modo esplicito.** La griglia DT passa da
+  “Rows” a “Cells” con un controllo; in Cells si copia TSV. La selezione riga
+  resta il default per non rompere l'inspector.
+- **La densità desktop è chrome, non una terza densità.** Cambiano topbar,
+  menu, toolbar, raggi e superfici in Studio; la matrice resta 8 temi × 2
+  densità. Classica non è toccata.
+- **Nessuna dipendenza nuova.** Workspace, undo, selezione e geometria si
+  costruiscono con CSS/JS nostri e con gli helper esistenti. Un motore di
+  tabelle diverso resta un gate separato (T7/T13).
+
+### Conseguenze
+
+- La shell cambia in modo visibile, ma comandi, ID, `dialog_spec()` e i18n
+  restano invariati.
+- Gli output Shiny hanno un solo id: due slot richiedono un registro delle
+  viste e il divieto di duplicarle.
+- Lo stack di undo consuma memoria: va limitato e svuotato al caricamento di
+  un progetto.
+- La menu bar deve gestire `Alt`, `F10`, frecce, `Esc` e focus return; non è
+  solo markup.
+- La verifica visiva resta condizionata dal browser: senza Chrome funzionante
+  il gate S11 scrive il limite, non finge una copertura.
+
+### Alternative scartate
+
+- **Electron/Tauri subito**: aggiunge file dialog e finestre native, ma non
+  risolve menu, workspace, undo o densità; è un'onda separata.
+- **Docking libero tipo VS Code**: richiede pannelli flottanti, focus
+  manager, serializzazione e test che non abbiamo; due slot coprono il caso
+  reale.
+- **Undo a inversione di comandi**: non tutti i comandi R sono invertibili;
+  lo snapshot è più onesto e più semplice.
+- **Terza densità “desktop”**: triplica la matrice e confonde la scelta;
+  la chrome si corregge una volta per Studio.
+- **`reactable`/`rtabulator` per il workspace**: il problema è la shell, non
+  la tabella.

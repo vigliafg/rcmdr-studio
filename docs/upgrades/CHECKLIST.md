@@ -536,6 +536,28 @@ rinvii dell'Onda 16 (§ 8 di [`16-bslib-widgets.md`](16-bslib-widgets.md)).
 
 ---
 
+## Onda 18 — Spazio di lavoro desktop
+
+Documento di settore: [`18-desktop-workspace.md`](18-desktop-workspace.md).
+Stato: pianificata — 12 step in 4 lotti da 3; ADR-018.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| S1 | Shell menu-first | [ ] | menubar, Alt/F10, topbar 40 px |
+| S2 | Workspace a due slot | [ ] | layout salvati, viste uniche |
+| S3 | Pannelli nascondibili e split tra viste | [ ] | View > Panels, persistenza |
+| S4 | Undo/redo applicativo | [ ] | dati e galleria, menu Edit |
+| S5 | Selezione a intervallo e appunti | [ ] | Rows/Cells, TSV |
+| S6 | Dialoghi ridimensionabili e pannelli modeless | [ ] | geometria, Help/Console |
+| S7 | Densità e chrome desktop | [ ] | Studio-only, 8 × 2 |
+| S8 | Geometria persistente | [ ] | ultima vista, larghezze, dialoghi |
+| S9 | Status bar e navigazione da tastiera | [ ] | F6, contesto, annunci |
+| S10 | Dati grandi | [ ] | misure e soglie, nessun motore nuovo |
+| S11 | Accessibilità desktop ed e2e | [ ] | tastiera, zoom, screenshot |
+| S12 | Chiusura | [ ] | NEWS 3.0.0, topic, diario, push |
+
+---
+
 ## Test e verifica continua
 
 - [x] `testthat::test_local()` verde (3330 pass).
