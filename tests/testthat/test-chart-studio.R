@@ -210,3 +210,45 @@ test_that("the gallery and model cards use the shared components", {
   expect_match(html, "rcmdr-actions-tight", fixed = TRUE)
   expect_false(grepl("d-flex", html, fixed = TRUE))
 })
+
+test_that("the builder keeps its identity card and four settings panels", {
+  html <- htmltools::renderTags(chart_builder_ui())$html
+
+  expect_match(html, "rcmdr-chart-identity", fixed = TRUE)
+  expect_match(html, 'id="chart_settings"', fixed = TRUE)
+  expect_match(html, 'class="accordion-item"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(html, gregexpr('class="accordion-item"', html))), 4L
+  )
+  for (panel in c("Options", "Theme and labels", "ggplot2 options",
+                  "Output")) {
+    expect_match(html, sprintf('data-value="%s"', panel), fixed = TRUE)
+  }
+  # Only Options starts open: the identity card carries the required choices.
+  expect_equal(
+    lengths(regmatches(
+      html, gregexpr('class="accordion-collapse collapse show"', html)
+    )), 1L
+  )
+
+  # No static control was lost or duplicated in the move.
+  ids <- c(
+    "chart_type", "chart_palette", "chart_base_size", "chart_legend",
+    "chart_background", "chart_grid", "chart_title", "chart_caption",
+    "chart_xlab", "chart_ylab", "chart_gg_theme", "chart_gg_position",
+    "chart_gg_alpha", "chart_gg_binwidth", "chart_gg_smooth",
+    "chart_gg_jitter", "chart_gg_shape", "chart_gg_se", "chart_gg_flip",
+    "chart_gg_facet_scales", "chart_gg_facet_ncol", "chart_gg_subtitle",
+    "chart_gg_tag", "chart_gg_x_format", "chart_gg_y_format",
+    "chart_gg_polar", "chart_gg_polar_theta", "chart_width", "chart_height"
+  )
+  for (id in ids) {
+    hits <- lengths(regmatches(
+      html, gregexpr(sprintf('id="%s"', id), html, fixed = TRUE)
+    ))
+    expect_equal(hits, 1L, label = id)
+  }
+
+  # The dynamic per-type options and the arbitrary help keep their slots.
+  expect_match(html, "chart_options_ui", fixed = TRUE)
+})

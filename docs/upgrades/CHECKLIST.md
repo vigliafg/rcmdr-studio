@@ -474,7 +474,7 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 | S3 | Dropdown, listbox, picker | [x] | virtual select scelto, mapping migrato; questo commit |
 | S4 | `settings_accordion()`, `settings_panel()`, `settings_group()` | [x] | heading semantics, densità; questo commit |
 | S5 | *Options* su accordion + apertura su errore | [ ] | prima vetrina del lotto 2 |
-| S6 | Chart Builder: scheda fissa + accordion | [ ] | stessi ID, stesso comando |
+| S6 | Chart Builder: scheda fissa + accordion | [x] | stessi ID, stesso comando; questo commit |
 | S7 | Sottopannelli ggplot2 (*Style*, *Axes*, *Text*, *Theme*, *Output*) | [ ] | nessuna opzione persa |
 | S8 | Gruppi di opzioni per tipo e stato dei pannelli | [ ] | `option_groups`, `isolate()` |
 | S9 | `slider_input()` e `color_input()` | [ ] | valori e comandi invariati |

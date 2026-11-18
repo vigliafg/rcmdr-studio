@@ -510,8 +510,10 @@ chart_builder_ui <- function() {
     class = "rcmdr-chart-layout",
     htmltools::div(
       class = "rcmdr-chart-builder",
+      # The identity of the chart stays in view: type, data set, mapping and
+      # composition are the four answers a chart cannot do without.
       htmltools::div(
-        class = "rcmdr-section-card",
+        class = "rcmdr-section-card rcmdr-chart-identity",
         htmltools::tags$h6(tr("Chart")),
         selectInput(
           "chart_type", tr("Chart type"),
@@ -525,19 +527,18 @@ chart_builder_ui <- function() {
           "The mapping fields change with the chart type. The last button opens the matching classic Rcmdr dialog."
         ))
       ),
-      htmltools::div(
-        class = "rcmdr-section-card",
-        htmltools::tags$h6(tr("Options")),
-        htmltools::div(
-          class = "rcmdr-field-grid",
-          uiOutput("chart_options_ui")
-        )
-      ),
-      htmltools::div(
-        class = "rcmdr-section-card",
-        htmltools::tags$h6(tr("Theme and labels")),
-        htmltools::div(
-          class = "rcmdr-field-grid",
+      # Everything else is one line away.  Values are stable English keys so
+      # the open state survives a language change and a re-render.
+      settings_accordion(
+        id = "chart_settings",
+        open = "Options",
+        settings_panel(
+          tr("Options"),
+          uiOutput("chart_options_ui"),
+          value = "Options"
+        ),
+        settings_panel(
+          tr("Theme and labels"),
           selectInput("chart_palette", tr("Palette"),
                       choices = chart_palette_choices(),
                       selected = "default"),
@@ -554,12 +555,21 @@ chart_builder_ui <- function() {
           ),
           textInput("chart_background", tr("Background"),
                     value = "white"),
-          checkboxInput("chart_grid", tr("Grid"), value = TRUE)
+          checkboxInput("chart_grid", tr("Grid"), value = TRUE),
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_title", tr("Title"), "")
+          ),
+          htmltools::div(
+            class = "rcmdr-field-wide",
+            textInput("chart_caption", tr("Caption"), "")
+          ),
+          textInput("chart_xlab", tr("X label"), ""),
+          textInput("chart_ylab", tr("Y label"), ""),
+          value = "Theme and labels"
         ),
-        htmltools::tags$hr(),
-        htmltools::tags$h6(tr("ggplot2 options")),
-        htmltools::div(
-          class = "rcmdr-field-grid",
+        settings_panel(
+          tr("ggplot2 options"),
           selectInput(
             "chart_gg_theme", tr("ggplot2 theme"),
             choices = chart_gg_theme_choices(),
@@ -616,31 +626,22 @@ chart_builder_ui <- function() {
             "chart_gg_polar_theta", tr("Polar angle"),
             choices = stats::setNames(c("x", "y"), c("X", "Y")),
             selected = "x"
-          )
+          ),
+          value = "ggplot2 options"
         ),
-        htmltools::tags$hr(),
-        htmltools::div(
-          class = "rcmdr-field-grid",
-          htmltools::div(
-            class = "rcmdr-field-wide",
-            textInput("chart_title", tr("Title"), "")
-          ),
-          htmltools::div(
-            class = "rcmdr-field-wide",
-            textInput("chart_caption", tr("Caption"), "")
-          ),
-          textInput("chart_xlab", tr("X label"), ""),
-          textInput("chart_ylab", tr("Y label"), ""),
+        settings_panel(
+          tr("Output"),
           number_input("chart_width", tr("Width (px)"), 800,
                        min = 200, max = 4000, step = 50),
           number_input("chart_height", tr("Height (px)"), 600,
-                       min = 150, max = 4000, step = 50)
-        ),
-        if (!requireNamespace("ggplot2", quietly = TRUE)) {
-          help_text(tr(
-            "Install ggplot2 to enable the Chart Studio."
-          ))
-        }
+                       min = 150, max = 4000, step = 50),
+          if (!requireNamespace("ggplot2", quietly = TRUE)) {
+            help_text(tr(
+              "Install ggplot2 to enable the Chart Studio."
+            ))
+          },
+          value = "Output"
+        )
       )
     ),
     htmltools::div(

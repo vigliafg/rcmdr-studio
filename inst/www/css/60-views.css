@@ -207,6 +207,9 @@
     }
     .rcmdr-chart-builder,
     .rcmdr-chart-preview-column { min-width: 0; }
+    /* The settings accordion closes the builder column: the card margin
+       already separates it from the preview column. */
+    .rcmdr-chart-builder > .rcmdr-accordion { margin-bottom: 0; }
     .rcmdr-section-subhead { margin-top: var(--rcmdr-space-3); }
     .rcmdr-chart-detail-title h5 { margin: 0; }
     .rcmdr-pre {
