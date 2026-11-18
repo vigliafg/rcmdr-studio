@@ -349,6 +349,13 @@ groups:
   order: 60
   module: core
   legacy_ids: []
+- id: menu.view
+  parent: ''
+  label: View
+  order: 70
+  module: core
+  legacy_ids:
+  - viewMenu
 - id: menu.reports.author
   parent: menu.reports
   label: Author
@@ -392,6 +399,36 @@ groups:
   module: core
   legacy_ids: []
 items:
+- id: item.core.menu_view.help_panel
+  parent: menu.view
+  label: Help panel
+  command: openHelpPanel
+  activation: ''
+  install: ''
+  order: 10
+  module: core
+  legacy_ids:
+  - openHelpPanel
+- id: item.core.menu_view.console_panel
+  parent: menu.view
+  label: Console panel
+  command: openConsolePanel
+  activation: ''
+  install: ''
+  order: 20
+  module: core
+  legacy_ids:
+  - openConsolePanel
+- id: item.core.menu_view.output_panel
+  parent: menu.view
+  label: Output panel
+  command: openOutputPanel
+  activation: ''
+  install: ''
+  order: 30
+  module: core
+  legacy_ids:
+  - openOutputPanel
 - id: item.core.menu_file.setwd
   parent: menu.file
   label: Change working directory...

@@ -198,7 +198,9 @@ preferences_snapshot <- function(state) {
     column_order = state$options$column_order %||% list(),
     workspace_secondary = state$options$workspace_secondary %||% NULL,
     workspace_panels = state$options$workspace_panels %||% list(),
-    workspace_focus = state$options$workspace_focus %||% "split"
+    workspace_focus = state$options$workspace_focus %||% "split",
+    geometry = state$options$geometry %||%
+      list(version = 1L, dialogs = list())
   )
 }
 
@@ -283,6 +285,22 @@ preferences_load <- function(state, path = preferences_file(state)) {
   if (is.character(focus) && length(focus) == 1L &&
       focus %in% c("split", "primary", "secondary")) {
     state$options$workspace_focus <- focus
+  }
+  geometry <- value$geometry
+  if (is.list(geometry) && is.list(geometry$dialogs)) {
+    cleaned <- list()
+    for (id in names(geometry$dialogs)) {
+      entry <- geometry$dialogs[[id]]
+      if (!is.list(entry) || !nzchar(id)) next
+      width <- suppressWarnings(as.numeric(entry$width %||% NA_real_))
+      height <- suppressWarnings(as.numeric(entry$height %||% NA_real_))
+      if (is.na(width) && is.na(height)) next
+      cleaned[[id]] <- list(
+        width = if (is.na(width)) NULL else width,
+        height = if (is.na(height)) NULL else height
+      )
+    }
+    state$options$geometry <- list(version = 1L, dialogs = cleaned)
   }
   columns <- value$column_order
   if (is.list(columns) && length(columns) > 0L) {

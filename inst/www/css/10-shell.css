@@ -233,3 +233,39 @@
     }
     .rcmdr-workspace-focus .form-group,
     .rcmdr-workspace-focus .rcmdr-segmented { margin-bottom: 0; }
+
+    /* Modeless dock --------------------------------------------------------
+       Help, Console and Output can live outside the tab strip without
+       becoming a free-floating window.  The dock is fixed to the workspace
+       edge so it never hides the menu bar or the status bar. */
+    .rcmdr-modeless-panel {
+      position: fixed; right: 1rem; top: 150px; bottom: 3.2rem;
+      width: min(520px, calc(100vw - 2rem));
+      display: flex; flex-direction: column;
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-lg);
+      box-shadow: var(--rcmdr-shadow);
+      z-index: 1030; overflow: hidden;
+    }
+    .rcmdr-modeless-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--rcmdr-space-2);
+      padding: var(--rcmdr-space-2) var(--rcmdr-space);
+      border-bottom: 1px solid var(--rcmdr-border);
+      background: var(--rcmdr-surface-muted);
+    }
+    .rcmdr-modeless-header h3 {
+      margin: 0; font-size: var(--rcmdr-text-md);
+      color: var(--rcmdr-heading);
+    }
+    .rcmdr-modeless-body {
+      flex: 1 1 auto; min-height: 0; overflow: auto;
+      padding: var(--rcmdr-space);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-modeless-panel {
+        left: .5rem; right: .5rem; top: 100px; bottom: 3.2rem;
+        width: auto;
+      }
+    }

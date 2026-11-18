@@ -266,3 +266,8 @@ Select one or more cells first.	Seleziona prima una o più celle.
 Copied %d row(s) and %d column(s) as TSV.	Copiate %d righe e %d colonne come TSV.
 %d non-empty cell(s)	%d celle non vuote
 This action is not available right now.	Questa azione non è disponibile al momento.
+Resize dialog	Ridimensiona la finestra
+Help panel	Pannello della guida
+Console panel	Pannello della console
+Output panel	Pannello dell'output
+That view is already open in the workspace.	Quella vista è già aperta nello spazio di lavoro.

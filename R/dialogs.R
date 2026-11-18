@@ -186,6 +186,24 @@ base_direct_commands <- function() {
       if (is.function(state$copy_selection)) return(state$copy_selection())
       invisible(NULL)
     },
+    openHelpPanel = function(state) {
+      if (is.function(state$open_modeless)) {
+        return(state$open_modeless("help"))
+      }
+      invisible(NULL)
+    },
+    openConsolePanel = function(state) {
+      if (is.function(state$open_modeless)) {
+        return(state$open_modeless("console"))
+      }
+      invisible(NULL)
+    },
+    openOutputPanel = function(state) {
+      if (is.function(state$open_modeless)) {
+        return(state$open_modeless("output"))
+      }
+      invisible(NULL)
+    },
     summarizeDataSet = function(state) {
       ds <- active_dataset(state)
       if (is.null(ds)) return(NULL)
@@ -582,7 +600,47 @@ dialog_icon_name <- function(spec) {
 
 #' Modal for a dialog specification
 #' @keywords internal
-dialog_modal <- function(spec) {
+#' Remembered size of a dialog
+#'
+#' The size is keyed by the stable dialog id and lives in
+#' `state$options$geometry$dialogs`.  A missing entry leaves the Bootstrap
+#' size class in charge.
+#' @keywords internal
+dialog_size <- function(state, id) {
+  empty <- list(width = NULL, height = NULL)
+  if (is.null(state) || is.null(id) || !nzchar(id)) return(empty)
+  geometry <- state$options$geometry %||% list()
+  entry <- (geometry$dialogs %||% list())[[id]]
+  if (!is.list(entry)) return(empty)
+  width <- suppressWarnings(as.numeric(entry$width %||% NA_real_))
+  height <- suppressWarnings(as.numeric(entry$height %||% NA_real_))
+  list(
+    width = if (is.na(width)) NULL else width,
+    height = if (is.na(height)) NULL else height
+  )
+}
+
+#' Store the remembered size of a dialog
+#' @keywords internal
+dialog_size_store <- function(state, id, width = NULL, height = NULL) {
+  if (is.null(state) || is.null(id) || !nzchar(id)) return(invisible(FALSE))
+  width <- suppressWarnings(as.numeric(width %||% NA_real_))
+  height <- suppressWarnings(as.numeric(height %||% NA_real_))
+  if (!is.na(width)) width <- min(max(width, 360), 4000)
+  if (!is.na(height)) height <- min(max(height, 240), 3000)
+  geometry <- state$options$geometry %||% list(version = 1L, dialogs = list())
+  entry <- geometry$dialogs[[id]] %||% list(width = NULL, height = NULL)
+  entry$width <- if (is.na(width)) entry$width else width
+  entry$height <- if (is.na(height)) entry$height else height
+  geometry$dialogs[[id]] <- entry
+  geometry$version <- 1L
+  state$options$geometry <- geometry
+  invisible(TRUE)
+}
+
+#' Modal for a dialog specification
+#' @keywords internal
+dialog_modal <- function(spec, state = NULL) {
   has_help <- !is.null(spec$help) ||
     !is.null(help_topic_for_dialog(spec))
   body <- htmltools::tagList(
@@ -634,11 +692,37 @@ dialog_modal <- function(spec) {
   shell <- htmltools::tagAppendAttributes(
     shell, `aria-labelledby` = "rcmdr-dialog-title"
   )
-  htmltools::tagQuery(shell)$
-    find(".modal-content")$
-    prepend(header)$
-    append(footer)$
-    allTags()
+  size <- dialog_size(state, spec$id)
+  query <- htmltools::tagQuery(shell)$find(".modal-dialog")
+  query <- query$addAttrs(`data-rcmdr-dialog-id` = spec$id)
+  style <- character()
+  if (!is.null(size$width)) {
+    query <- query$addAttrs(
+      `data-rcmdr-dialog-width` = as.character(round(size$width))
+    )
+    style <- c(style, sprintf("width:%dpx;max-width:%dpx;",
+                              round(size$width), round(size$width)))
+  }
+  if (!is.null(size$height)) {
+    query <- query$addAttrs(
+      `data-rcmdr-dialog-height` = as.character(round(size$height))
+    )
+    style <- c(style, sprintf("--rcmdr-dialog-height:%dpx;",
+                              round(size$height)))
+  }
+  if (length(style) > 0L) {
+    query <- query$addAttrs(style = paste(style, collapse = ""))
+  }
+  query <- query$find(".modal-content")$prepend(header)$append(footer)
+  query <- query$append(htmltools::tags$div(
+    class = "rcmdr-dialog-resize",
+    role = "separator",
+    tabindex = "0",
+    `data-rcmdr-dialog-resize` = "1",
+    `aria-label` = tr("Resize dialog"),
+    `aria-orientation` = "horizontal"
+  ))
+  query$allTags()
 }
 
 #' Run the commands returned by a dialog

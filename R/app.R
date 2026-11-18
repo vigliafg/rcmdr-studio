@@ -62,6 +62,7 @@ app_js_files <- function() {
     "50-menubar.js",
     "60-help.js",
     "65-data-selection.js",
+    "66-modeless.js",
     "70-keyboard.js"
   )
 }
@@ -573,7 +574,8 @@ app_ui <- function() {
           class = "rcmdr-main",
           id = "main-content", role = "main", tabindex = "-1",
           uiOutput("result_hint"),
-          uiOutput("main_tabs_ui")
+          uiOutput("main_tabs_ui"),
+          uiOutput("modeless_panel")
         )
       )
     ),
@@ -589,6 +591,7 @@ app_ui <- function() {
       actionButton("undo_shortcut", tr("Undo")),
       actionButton("redo_shortcut", tr("Redo")),
       actionButton("copy_selection_shortcut", tr("Copy selection")),
+      shiny::textInput("modeless_view", NULL, value = ""),
       actionButton("help_shortcut", tr("Help")),
       downloadButton("download_report_rmd", tr("Download report (.Rmd)")),
       downloadButton("download_report_html", tr("Download report (.html)"))
@@ -605,8 +608,11 @@ app_ui <- function() {
 view_ready <- function(input, view) {
   primary <- input$main_tabs %||% ""
   secondary <- input$workspace_secondary_view %||% ""
-  if (!nzchar(primary) && !nzchar(secondary)) return(TRUE)
-  identical(primary, view) || identical(secondary, view)
+  modeless <- input$modeless_view %||% ""
+  if (!nzchar(primary) && !nzchar(secondary) && !nzchar(modeless)) return(TRUE)
+  identical(primary, view) || identical(secondary, view) ||
+    identical(modeless, view) ||
+    (identical(modeless, "output") && identical(view, "console"))
 }
 
 #' Is a sub-view the active one?
@@ -1204,13 +1210,92 @@ app_server <- function(env = globalenv()) {
       workspace_focus("split")
     }, ignoreInit = TRUE)
 
+    modeless_view <- reactiveVal("")
+    modeless_group <- function(view) {
+      if (view %in% c("console", "output", "messages", "history")) "console" else view
+    }
+    close_modeless <- function(notify = TRUE) {
+      modeless_view("")
+      updateTextInput(session, "modeless_view", value = "")
+      session$sendCustomMessage("rcmdr-modeless", list(open = FALSE))
+      if (isTRUE(notify)) {
+        menu_revision(menu_revision() + 1L)
+      }
+      invisible(NULL)
+    }
+    open_modeless <- function(view) {
+      view <- as.character(view %||% "")
+      if (!view %in% c("help", "console", "output")) return(invisible(FALSE))
+      primary <- input$main_tabs %||% "home"
+      secondary <- input$workspace_secondary_view %||% workspace_secondary()
+      visible <- c(primary, secondary)
+      if (modeless_group(view) %in% vapply(visible, modeless_group, character(1))) {
+        showNotification(
+          tr("That view is already open in the workspace."),
+          type = "message", duration = 4
+        )
+        return(invisible(FALSE))
+      }
+      modeless_view(view)
+      updateTextInput(session, "modeless_view", value = view)
+      session$sendCustomMessage("rcmdr-modeless", list(open = TRUE))
+      menu_revision(menu_revision() + 1L)
+      invisible(TRUE)
+    }
+    state$open_modeless <- open_modeless
+
+    output$modeless_panel <- renderUI({
+      language_revision()
+      view <- modeless_view()
+      if (!nzchar(view)) view <- input$modeless_view %||% ""
+      if (!nzchar(view)) return(NULL)
+      labels <- main_tab_labels("studio")
+      label <- if (identical(view, "output")) tr("Output") else
+        labels[[view]] %||% view
+      htmltools::div(
+        class = "rcmdr-modeless-panel",
+        role = "complementary",
+        `aria-label` = label,
+        htmltools::div(
+          class = "rcmdr-modeless-header",
+          htmltools::tags$h3(label),
+          actionButton("modeless_close", tr("Close"),
+                       class = "btn-sm btn-outline-secondary")
+        ),
+        htmltools::div(
+          class = "rcmdr-modeless-body",
+          switch(
+            view,
+            help = help_center_ui(),
+            console = console_studio_ui(),
+            output = output_studio_ui(),
+            NULL
+          )
+        )
+      )
+    })
+
+    observeEvent(input$modeless_close, {
+      if (!action_clicked(input$modeless_close)) return()
+      close_modeless()
+    }, ignoreInit = TRUE)
+
+    observeEvent(c(input$main_tabs, input$workspace_secondary_view), {
+      view <- modeless_view()
+      if (!nzchar(view)) return()
+      primary <- input$main_tabs %||% "home"
+      secondary <- input$workspace_secondary_view %||% workspace_secondary()
+      visible <- vapply(c(primary, secondary), modeless_group, character(1))
+      if (modeless_group(view) %in% visible) close_modeless()
+    }, ignoreInit = TRUE)
+
     open_dialog <- function(spec) {
       if (!is.null(spec$on_open)) spec$on_open(state)
       state$dialog_errors <- list()
       state$current_dialog <- spec$id
       if (!is.null(state$help_reset_dialog)) state$help_reset_dialog()
       dialog_revision(dialog_revision() + 1L)
-      showModal(dialog_modal(spec))
+      showModal(dialog_modal(spec, state))
     }
 
     state$open_dialog <- function(id) {
@@ -1218,6 +1303,21 @@ app_server <- function(env = globalenv()) {
       if (!is.null(spec)) open_dialog(spec)
       invisible(NULL)
     }
+
+    # The resize grip sends the final size of the dialog it belongs to.  The
+    # geometry is session state and is written to preferences so the next open
+    # of the same dialog id returns at the same size.
+    observeEvent(input$dialog_geometry, {
+      geometry <- input$dialog_geometry
+      if (!is.list(geometry)) return()
+      dialog_size_store(
+        state,
+        geometry$id %||% "",
+        geometry$width %||% NULL,
+        geometry$height %||% NULL
+      )
+      persist_preferences()
+    }, ignoreInit = TRUE)
 
     output$script_editor_ui <- renderUI({
       mode <- editor_mode()
@@ -1617,7 +1717,7 @@ app_server <- function(env = globalenv()) {
       if (!is.null(state$help_reset_dialog)) state$help_reset_dialog()
       if (!is.null(spec$on_open)) spec$on_open(state)
       dialog_revision(dialog_revision() + 1L)
-      showModal(dialog_modal(spec))
+      showModal(dialog_modal(spec, state))
     })
 
     observeEvent(input$dialog_retry, {
@@ -1633,7 +1733,7 @@ app_server <- function(env = globalenv()) {
       }
       if (!is.null(spec$on_open)) spec$on_open(state)
       dialog_revision(dialog_revision() + 1L)
-      showModal(dialog_modal(spec))
+      showModal(dialog_modal(spec, state))
     })
 
     for (spec in dialog_catalog()) {

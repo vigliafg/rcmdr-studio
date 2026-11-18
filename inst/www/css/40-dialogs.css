@@ -83,8 +83,34 @@
     }
     .rcmdr-variable-suggestions h6 { font-size: var(--rcmdr-text-sm); }
     .modal-dialog { max-height: 94vh; }
-    .modal-content { border-radius: var(--rcmdr-radius-lg); overflow: hidden; }
+    .modal-content {
+      border-radius: var(--rcmdr-radius-lg); overflow: hidden;
+      position: relative;
+    }
     .modal-body { overflow-y: auto; max-height: 72vh; }
+    /* A remembered height turns the dialog into a fixed-height column; the
+       body takes the remaining space and keeps its own scrollbar. */
+    .modal-dialog[data-rcmdr-dialog-height] .modal-content {
+      height: var(--rcmdr-dialog-height); max-height: 94vh;
+      display: flex; flex-direction: column;
+    }
+    .modal-dialog[data-rcmdr-dialog-height] .modal-body {
+      max-height: none; flex: 1 1 auto; min-height: 0;
+    }
+    .rcmdr-dialog-resize {
+      position: absolute; right: 2px; bottom: 2px;
+      width: 18px; height: 18px; z-index: 3;
+      cursor: nwse-resize; touch-action: none;
+      background:
+        linear-gradient(135deg, transparent 0 42%,
+          var(--rcmdr-border-strong) 42% 50%, transparent 50% 62%,
+          var(--rcmdr-border-strong) 62% 70%, transparent 70%);
+    }
+    .rcmdr-dialog-resize:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: 2px;
+    }
+    body.rcmdr-resizing { user-select: none; }
     .modal-footer { flex-wrap: wrap; gap: var(--rcmdr-space-1); }
     /* Dialogs are draggable by their header (see app_js()). */
     .modal-header { cursor: grab; touch-action: none; }

@@ -133,3 +133,102 @@
         );
       });
     })();
+    // Resizable dialogs: the grip at the bottom-right changes width and
+    // height, keyboard arrows do the same, and the result is sent to the
+    // server so the same dialog id opens at the same size next time.
+    (function () {
+      var resize = null;
+
+      function apply(dialog, width, height) {
+        width = Math.max(360, Math.min(width, window.innerWidth - 24));
+        height = Math.max(240, Math.min(height, window.innerHeight - 24));
+        dialog.style.width = Math.round(width) + 'px';
+        dialog.style.maxWidth = Math.round(width) + 'px';
+        dialog.setAttribute('data-rcmdr-dialog-width', Math.round(width));
+        dialog.style.setProperty('--rcmdr-dialog-height',
+                                 Math.round(height) + 'px');
+        dialog.setAttribute('data-rcmdr-dialog-height', Math.round(height));
+        return {width: Math.round(width), height: Math.round(height)};
+      }
+
+      function current(dialog) {
+        var content = dialog.querySelector('.modal-content');
+        return {
+          width: dialog.offsetWidth,
+          height: content ? content.offsetHeight : dialog.offsetHeight
+        };
+      }
+
+      function publish(dialog, size) {
+        Shiny.setInputValue('dialog_geometry', {
+          id: dialog.getAttribute('data-rcmdr-dialog-id') || '',
+          width: size.width,
+          height: size.height
+        }, {priority: 'event'});
+      }
+
+      document.addEventListener('pointerdown', function (event) {
+        var grip = event.target.closest &&
+          event.target.closest('[data-rcmdr-dialog-resize]');
+        if (!grip || event.button !== 0) return;
+        var dialog = grip.closest('.modal-dialog');
+        if (!dialog) return;
+        var size = current(dialog);
+        resize = {
+          dialog: dialog,
+          grip: grip,
+          id: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          width: size.width,
+          height: size.height
+        };
+        if (grip.setPointerCapture) {
+          try { grip.setPointerCapture(event.pointerId); } catch (e) {}
+        }
+        document.body.classList.add('rcmdr-resizing');
+        event.preventDefault();
+      });
+
+      document.addEventListener('pointermove', function (event) {
+        if (!resize || event.pointerId !== resize.id) return;
+        apply(
+          resize.dialog,
+          resize.width + (event.clientX - resize.startX),
+          resize.height + (event.clientY - resize.startY)
+        );
+        event.preventDefault();
+      });
+
+      function stop(event) {
+        if (!resize) return;
+        if (event && event.pointerId !== undefined &&
+            event.pointerId !== resize.id) return;
+        var dialog = resize.dialog;
+        resize = null;
+        document.body.classList.remove('rcmdr-resizing');
+        publish(dialog, current(dialog));
+      }
+
+      document.addEventListener('pointerup', stop);
+      document.addEventListener('pointercancel', stop);
+
+      document.addEventListener('keydown', function (event) {
+        var grip = event.target.closest &&
+          event.target.closest('[data-rcmdr-dialog-resize]');
+        if (!grip) return;
+        var dialog = grip.closest('.modal-dialog');
+        if (!dialog) return;
+        var size = current(dialog);
+        var step = event.shiftKey ? 60 : 20;
+        var handled = true;
+        if (event.key === 'ArrowRight') size.width += step;
+        else if (event.key === 'ArrowLeft') size.width -= step;
+        else if (event.key === 'ArrowDown') size.height += step;
+        else if (event.key === 'ArrowUp') size.height -= step;
+        else handled = false;
+        if (!handled) return;
+        event.preventDefault();
+        publish(dialog, apply(dialog, size.width, size.height));
+      });
+    })();
