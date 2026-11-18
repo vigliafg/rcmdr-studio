@@ -575,11 +575,21 @@ chart_builder_ui <- function() {
             ),
             selected = "identity"
           ),
-          slider_input("chart_gg_alpha", tr("Alpha"), 0, 1, 0.7, 0.05),
+          field(
+            slider_input("chart_gg_alpha", tr("Alpha"), 0, 1, 0.7, 0.05),
+            help = help_tip(tr(
+              "Alpha sets how transparent the marks are: 0 is invisible, 1 is solid."
+            ))
+          ),
           number_input("chart_gg_binwidth", tr("Bin width (0 = auto)"), 0,
                        min = 0, step = 0.1),
-          slider_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0, 0.5,
-                       0, 0.05),
+          field(
+            slider_input("chart_gg_jitter", tr("Jitter (0 = off)"), 0, 0.5,
+                         0, 0.05),
+            help = help_tip(tr(
+              "Jitter spreads overlapping points; it does not change the data."
+            ))
+          ),
           number_input("chart_gg_shape", tr("Point shape"), 19,
                        min = 0, max = 25, step = 1),
           selectInput(
@@ -604,13 +614,18 @@ chart_builder_ui <- function() {
             "chart_gg_y_format", tr("Y axis format"),
             choices = chart_axis_format_choices(), selected = "auto"
           ),
-          selectInput(
-            "chart_gg_facet_scales", tr("Facet scales"),
-            choices = stats::setNames(
-              c("fixed", "free", "free_x", "free_y"),
-              c("Fixed", "Free", "Free X", "Free Y")
+          field(
+            selectInput(
+              "chart_gg_facet_scales", tr("Facet scales"),
+              choices = stats::setNames(
+                c("fixed", "free", "free_x", "free_y"),
+                c("Fixed", "Free", "Free X", "Free Y")
+              ),
+              selected = "fixed"
             ),
-            selected = "fixed"
+            help = help_tip(tr(
+              "Facet scales let each panel keep its own axis range."
+            ))
           ),
           number_input("chart_gg_facet_ncol", tr("Facet columns (0 = auto)"),
                        0, min = 0, step = 1),

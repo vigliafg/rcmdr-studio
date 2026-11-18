@@ -333,3 +333,15 @@ test_that("settings_group() is a titled, non-collapsible group", {
   expect_match(html, "Both axes", fixed = TRUE)
   expect_false(grepl("accordion", html, fixed = TRUE))
 })
+
+test_that("help_tip() is a focusable trigger with a named bubble", {
+  html <- as.character(help_tip("Short explanation", label = "About alpha"))
+  expect_match(html, 'type="button"', fixed = TRUE)
+  expect_match(html, "rcmdr-help-tip-trigger", fixed = TRUE)
+  expect_match(html, 'aria-label="About alpha"', fixed = TRUE)
+  expect_match(html, "bslib-tooltip", fixed = TRUE)
+  expect_match(html, "Short explanation", fixed = TRUE)
+  # The icon is decorative: the button name carries the meaning.
+  expect_match(html, 'aria-hidden="true"', fixed = TRUE)
+  expect_match(html, "rcmdr-help-tip", fixed = TRUE)
+})

@@ -134,6 +134,22 @@
       event.preventDefault();
       replacer.click();
     });
+    // bslib shows a tooltip on focus but leaves Esc to the page: in a dialog
+    // that would close the dialog.  Capture the key first, hide the bubble and
+    // keep the focus on its trigger.
+    document.addEventListener('keydown', function(event) {
+      if (event.key !== 'Escape') return;
+      var trigger = event.target.closest &&
+        event.target.closest('.rcmdr-help-tip-trigger');
+      if (!trigger) return;
+      var tipId = trigger.getAttribute('aria-describedby');
+      if (!tipId) return;
+      var Tooltip = window.bootstrap && window.bootstrap.Tooltip;
+      var instance = Tooltip && Tooltip.getInstance(trigger);
+      if (instance) instance.hide();
+      event.preventDefault();
+      event.stopPropagation();
+    }, true);
     // Focus only a field the user can actually see.  An invalid control can
     // live in a conditionalPanel that is still hidden, or in a panel whose
     // collapse has not finished: focusing it would do nothing and would move

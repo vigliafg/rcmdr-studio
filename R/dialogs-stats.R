@@ -170,9 +170,14 @@ frequency_distribution_dialog <- function() {
         ),
         settings_panel(
           tr("Tests"),
-          checkbox_input(ns("goodness"),
-                         tr("Chi-square goodness-of-fit test (for one variable only)"),
-                         m$goodness),
+          field(
+            checkbox_input(ns("goodness"),
+                           tr("Chi-square goodness-of-fit test (for one variable only)"),
+                           m$goodness),
+            help = help_tip(tr(
+              "The goodness-of-fit test applies to a single variable."
+            ))
+          ),
           entry_input(ns("probs"), tr("Hypothesized probabilities (comma separated, optional):"),
                       m$probs),
           value = "Tests"

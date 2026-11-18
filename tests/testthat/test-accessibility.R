@@ -194,3 +194,19 @@ test_that("validation never focuses a field with no box", {
   expect_match(js, "rcmdrFocusFirst([el])", fixed = TRUE)
   expect_match(js, "rcmdrFocusFirst(candidates)", fixed = TRUE)
 })
+
+test_that("a parameter tip opens on focus and closes with Esc", {
+  js <- as.character(app_js())
+  expect_match(js, "rcmdr-help-tip-trigger", fixed = TRUE)
+  expect_match(js, "aria-describedby", fixed = TRUE)
+  expect_match(js, "Tooltip.getInstance(trigger)", fixed = TRUE)
+  # The capture listener stops the modal from closing with the tip.
+  expect_match(js, "}, true);", fixed = TRUE)
+  expect_match(js, "event.stopPropagation()", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".rcmdr-help-tip-trigger:focus-visible", fixed = TRUE)
+  expect_match(css, "--bs-tooltip-bg: var(--rcmdr-surface);", fixed = TRUE)
+  expect_match(css, "--bs-tooltip-color: var(--rcmdr-text);", fixed = TRUE)
+})
+

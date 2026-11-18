@@ -405,3 +405,15 @@ test_that("Reset moves the sliders and keeps the default command", {
     expect_false(grepl("plot.background", command, fixed = TRUE))
   }))
 })
+
+test_that("dense chart parameters carry a tip without losing the help text", {
+  html <- htmltools::renderTags(chart_builder_ui())$html
+  expect_match(html, "rcmdr-help-tip-trigger", fixed = TRUE)
+  expect_match(html, "bslib-tooltip", fixed = TRUE)
+  expect_match(html, "Alpha sets how transparent", fixed = TRUE)
+  expect_match(html, "Jitter spreads overlapping points", fixed = TRUE)
+  expect_match(html, "Facet scales let each panel", fixed = TRUE)
+  # The tip complements the permanent mapping help.
+  expect_match(html, "The mapping fields change with the chart type",
+               fixed = TRUE)
+})

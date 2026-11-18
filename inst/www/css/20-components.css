@@ -280,6 +280,41 @@
     .rcmdr-note-inline { display: inline; margin: 0; }
     .rcmdr-note-error { color: var(--rcmdr-danger); }
 
+    /* A parameter tip is a button first: it must be reachable with Tab and
+       show the same ring as every other control.  Bootstrap draws the bubble;
+       these variables move it onto the Studio surface. */
+    .rcmdr-help-tip { display: inline-flex; vertical-align: middle; }
+    .rcmdr-help-tip-trigger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.25rem; height: 1.25rem; padding: 0;
+      border: 1px solid transparent; border-radius: var(--rcmdr-radius-pill);
+      background: transparent; color: var(--rcmdr-muted);
+      cursor: help;
+    }
+    .rcmdr-help-tip-trigger:hover {
+      color: var(--rcmdr-heading); background: var(--rcmdr-hover);
+      border-color: var(--rcmdr-border);
+    }
+    .rcmdr-help-tip-trigger:focus-visible {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: var(--rcmdr-focus-offset);
+    }
+    .tooltip {
+      --bs-tooltip-bg: var(--rcmdr-surface);
+      --bs-tooltip-color: var(--rcmdr-text);
+      --bs-tooltip-opacity: 1;
+      --bs-tooltip-max-width: 18rem;
+      --bs-tooltip-padding-x: var(--rcmdr-space-2);
+      --bs-tooltip-padding-y: var(--rcmdr-space-1);
+      --bs-tooltip-font-size: var(--rcmdr-text-sm);
+    }
+    .tooltip-inner {
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-sm);
+      text-align: start;
+      box-shadow: var(--rcmdr-shadow-sm);
+    }
+
     /* Tables in a view carry the small step and no trailing margin. */
     .rcmdr-table {
       font-size: var(--rcmdr-text-sm); margin-bottom: 0;

@@ -185,3 +185,15 @@ Density	Densità
 Compact	Compatta
 Comfortable	Comoda
 Compact keeps more fields on the screen; Comfortable restores the wider spacing. Studio mode adds the Home, Charts and Console workspaces; Classic mode keeps the original tabs.	Compatta mostra più campi sullo schermo; Comoda ripristina la spaziatura più ampia. La modalità Studio aggiunge gli spazi di lavoro Home, Grafici e Console; la modalità Classica mantiene le schede originali.
+More information	Altre informazioni
+Alpha sets how transparent the marks are: 0 is invisible, 1 is solid.	Alpha imposta la trasparenza dei segni: 0 è invisibile, 1 è pieno.
+Jitter spreads overlapping points; it does not change the data.	Il jitter distribuisce i punti sovrapposti; non cambia i dati.
+Facet scales let each panel keep its own axis range.	Le scale dei pannelli lasciano a ciascun pannello il proprio intervallo degli assi.
+Decimal separator used by read.table().	Separatore decimale usato da read.table().
+The goodness-of-fit test applies to a single variable.	Il test di bontà di adattamento si applica a una sola variabile.
+Date range	Intervallo di date
+Any date	Qualsiasi data
+The date filter only changes the view, not the data or the command.	Il filtro per data cambia solo la vista, non i dati o il comando.
+Applying the command...	Applicazione del comando...
+Running the command...	Esecuzione del comando...
+Running the script...	Esecuzione dello script...

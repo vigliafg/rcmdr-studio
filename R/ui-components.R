@@ -268,6 +268,38 @@ note <- function(..., inline = FALSE) {
   )
 }
 
+#' A short parameter tip
+#'
+#' A small question-mark button with a tooltip.  The trigger is a real
+#' `<button>`, so it is reachable with `Tab` and the tip opens on focus as well
+#' as on hover; `40-interactions.js` closes it with `Esc` without closing the
+#' surrounding dialog.  It complements [help_text()]: use a tip for a parameter
+#' that has no room for a permanent line of help, not for text that must always
+#' be visible.
+#'
+#' @param text Explanation, already translated.
+#' @param label Accessible name of the trigger.
+#' @param placement One of `"top"`, `"right"`, `"bottom"`, `"left"`, `"auto"`.
+#' @return A `<span>` wrapping a `bslib-tooltip` element.
+#' @keywords internal
+help_tip <- function(text, label = tr("More information"),
+                     placement = c("top", "right", "bottom", "left", "auto")) {
+  placement <- match.arg(placement)
+  htmltools::tags$span(
+    class = "rcmdr-help-tip",
+    bslib::tooltip(
+      htmltools::tags$button(
+        type = "button",
+        class = "rcmdr-help-tip-trigger",
+        `aria-label` = label,
+        rcmdr_icon("help", 14)
+      ),
+      text,
+      placement = placement
+    )
+  )
+}
+
 #' A status badge
 #'
 #' A short label with a semantic colour.  The colour is never the only signal:

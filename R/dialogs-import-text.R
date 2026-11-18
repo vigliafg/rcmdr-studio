@@ -74,10 +74,15 @@ import_text_dialog <- function() {
             sprintf("input['%s'] == 'other'", ns("delimiter")),
             entry_input(ns("other"), tr("Specify:"), m$other)
           ),
-          segmented_input(
-            ns("decimal"), tr("Decimal-Point Character"),
-            c("Period [.]" = "period", "Comma [,]" = "comma"),
-            m$decimal
+          field(
+            segmented_input(
+              ns("decimal"), tr("Decimal-Point Character"),
+              c("Period [.]" = "period", "Comma [,]" = "comma"),
+              m$decimal
+            ),
+            help = help_tip(tr(
+              "Decimal separator used by read.table()."
+            ))
           ),
           entry_input(ns("missing"), tr("Missing data indicator:"), m$missing),
           value = "Parsing"
