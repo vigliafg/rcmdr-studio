@@ -80,7 +80,11 @@ workspace_shell_ui <- function(view = "home") {
       class = "rcmdr-view-state",
       shiny::textInput("main_tabs", NULL, value = view)
     ),
-    workspace_view_switcher(view),
+    htmltools::div(
+      class = "rcmdr-view-bar",
+      uiOutput("workspace_switcher_ui", inline = TRUE),
+      uiOutput("workspace_secondary_ui", inline = TRUE)
+    ),
     uiOutput("workspace_layout")
   )
 }

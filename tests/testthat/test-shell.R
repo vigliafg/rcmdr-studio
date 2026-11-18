@@ -102,8 +102,12 @@ test_that("classic keeps its tabs and studio uses the workspace switcher", {
   expect_false(grepl("rcmdr-tabs", classic, fixed = TRUE))
 
   studio <- as.character(main_tabs_ui("studio"))
-  expect_match(studio, "rcmdr-view-switcher", fixed = TRUE)
-  expect_match(studio, 'data-rcmdr-view="data"', fixed = TRUE)
+  expect_match(studio, "workspace_switcher_ui", fixed = TRUE)
+  expect_match(studio, "workspace_layout", fixed = TRUE)
   expect_match(studio, 'id="main_tabs"', fixed = TRUE)
   expect_false(grepl("nav nav-tabs shiny-tab-input", studio, fixed = TRUE))
+
+  switcher <- as.character(workspace_view_switcher("home"))
+  expect_match(switcher, "rcmdr-view-switcher", fixed = TRUE)
+  expect_match(switcher, 'data-rcmdr-view="data"', fixed = TRUE)
 })

@@ -153,7 +153,7 @@ test_that("the app server exposes Studio tabs and history output", {
 
   shiny::testServer(app_server(env), {
     session$setInputs(menu_search = "")
-    tabs <- htmltools::renderTags(output$main_tabs_ui)$html
+    tabs <- htmltools::renderTags(output$workspace_switcher_ui)$html
     expect_match(tabs, "Home")
     expect_match(tabs, "Chart Studio")
     expect_match(tabs, "Console")

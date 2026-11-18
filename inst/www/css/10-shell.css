@@ -215,3 +215,11 @@
     @media (max-width: 991.98px) {
       .rcmdr-shell-body.rcmdr-sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
     }
+    .rcmdr-view-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--rcmdr-space-2); flex-wrap: wrap;
+      margin-bottom: var(--rcmdr-space-2);
+    }
+    .rcmdr-view-bar .rcmdr-view-switcher { margin-bottom: 0; }
+    .rcmdr-view-bar .form-group { margin-bottom: 0; }
+    .rcmdr-workspace-split { align-items: start; }

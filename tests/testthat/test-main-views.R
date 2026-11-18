@@ -47,7 +47,7 @@ test_that("the tab titles are windows, not menu verbs", {
 })
 
 test_that("the main tabs carry the stable view values", {
-  html <- htmltools::renderTags(main_tabs_ui("studio"))$html
+  html <- htmltools::renderTags(workspace_view_switcher("home"))$html
   expect_match(html, 'data-value="data"', fixed = TRUE)
   expect_match(html, 'data-value="charts"', fixed = TRUE)
   expect_match(html, 'data-value="report"', fixed = TRUE)

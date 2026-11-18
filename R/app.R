@@ -599,9 +599,10 @@ app_ui <- function() {
 #' the historical behaviour: the output is built.
 #' @keywords internal
 view_ready <- function(input, view) {
-  current <- input$main_tabs %||% ""
-  if (!nzchar(current)) return(TRUE)
-  identical(current, view)
+  primary <- input$main_tabs %||% ""
+  secondary <- input$workspace_secondary_view %||% ""
+  if (!nzchar(primary) && !nzchar(secondary)) return(TRUE)
+  identical(primary, view) || identical(secondary, view)
 }
 
 #' Is a sub-view the active one?
@@ -637,6 +638,7 @@ app_server <- function(env = globalenv()) {
     for (split_id in split_pane_ids()) {
       split_pane_server(split_id, input, state, persist_preferences)
     }
+    split_pane_server("workspace_split", input, state, persist_preferences)
     document_registry_ensure(state)
     tick <- reactiveVal(0L)
     menu_revision <- reactiveVal(0L)
@@ -648,6 +650,7 @@ app_server <- function(env = globalenv()) {
     plot_selected <- reactiveVal(NULL)
     last_plot_count <- reactiveVal(0L)
     main_tabs_mode <- reactiveVal(ui_mode(state))
+    workspace_secondary <- reactiveVal(state$options$workspace_secondary %||% "")
     history_revision <- reactiveVal(0L)
     data_grid_revision <- reactiveVal(0L)
     data_selection_revision <- reactiveVal(0L)
@@ -1018,11 +1021,80 @@ app_server <- function(env = globalenv()) {
                    view = isolate(input$main_tabs) %||% "home")
     })
 
+    output$workspace_switcher_ui <- renderUI({
+      language_revision()
+      workspace_view_switcher(input$main_tabs %||% "home")
+    })
+
+    output$workspace_secondary_ui <- renderUI({
+      language_revision()
+      primary <- input$main_tabs %||% "home"
+      ids <- setdiff(workspace_view_ids(), primary)
+      labels <- main_tab_labels("studio")
+      choices <- stats::setNames(
+        c("", ids),
+        c(tr("Single view"), vapply(ids, function(id) labels[[id]] %||% id,
+                                    character(1)))
+      )
+      selected <- input$workspace_secondary_view %||% workspace_secondary()
+      if (!selected %in% ids) selected <- ""
+      selectInput(
+        "workspace_secondary_view",
+        htmltools::tags$span(class = "visually-hidden", tr("Second view")),
+        choices = choices,
+        selected = selected,
+        width = "190px"
+      )
+    })
+
     output$workspace_layout <- renderUI({
       language_revision()
-      view <- input$main_tabs %||% "home"
+      primary <- input$main_tabs %||% "home"
+      secondary <- input$workspace_secondary_view %||% workspace_secondary()
+      if (!nzchar(secondary) || identical(secondary, primary)) {
+        return(workspace_view_ui(primary, "studio"))
+      }
+      split_pane(
+        "workspace_split",
+        uiOutput("workspace_primary"),
+        uiOutput("workspace_secondary"),
+        class = "rcmdr-workspace-split",
+        initial = 0.62,
+        min = 360,
+        min_second = 320,
+        label = tr("Resize workspace")
+      )
+    })
+
+    output$workspace_primary <- renderUI({
+      language_revision()
+      workspace_view_ui(input$main_tabs %||% "home", "studio")
+    })
+
+    output$workspace_secondary <- renderUI({
+      language_revision()
+      view <- input$workspace_secondary_view %||% workspace_secondary()
+      req(nzchar(view), !identical(view, input$main_tabs %||% "home"))
       workspace_view_ui(view, "studio")
     })
+
+    observeEvent(input$workspace_secondary_view, {
+      value <- input$workspace_secondary_view %||% ""
+      primary <- input$main_tabs %||% "home"
+      if (identical(value, primary)) value <- ""
+      workspace_secondary(value)
+      state$options$workspace_secondary <- if (nzchar(value)) value else NULL
+      persist_preferences()
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$main_tabs, {
+      primary <- input$main_tabs %||% "home"
+      if (identical(workspace_secondary(), primary)) {
+        workspace_secondary("")
+        state$options$workspace_secondary <- NULL
+        persist_preferences()
+      }
+    }, ignoreInit = TRUE)
 
     open_dialog <- function(spec) {
       if (!is.null(spec$on_open)) spec$on_open(state)

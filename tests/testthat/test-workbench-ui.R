@@ -96,7 +96,7 @@ test_that("the Workbench server drives Script, Console, Output and Environment",
 })
 
 test_that("the Workbench UI renders inside the Studio workspace", {
-  switcher <- htmltools::renderTags(main_tabs_ui("studio"))$html
+  switcher <- htmltools::renderTags(workspace_view_switcher("home"))$html
   expect_match(switcher, "Script")
   expect_match(switcher, "Console")
   expect_match(switcher, "Environment")

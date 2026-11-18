@@ -194,6 +194,7 @@ AppState <- function(env = globalenv()) {
     workflow_step_limit = 50L,
     layouts = list(),
     column_order = list(),
+    workspace_secondary = NULL,
     features = default_features(),
     capabilities = rcmdr_capabilities()
   )

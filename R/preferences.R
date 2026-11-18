@@ -195,7 +195,8 @@ preferences_snapshot <- function(state) {
     density = state$options$density %||% "compact",
     auto_switch_result = isTRUE(state$options$auto_switch_result),
     layouts = state$options$layouts %||% list(),
-    column_order = state$options$column_order %||% list()
+    column_order = state$options$column_order %||% list(),
+    workspace_secondary = state$options$workspace_secondary %||% NULL
   )
 }
 
@@ -258,6 +259,11 @@ preferences_load <- function(state, path = preferences_file(state)) {
     }
     state$options$layouts <- cleaned
   }
+  secondary <- value$workspace_secondary %||% NULL
+  if (is.character(secondary) && length(secondary) == 1L &&
+      secondary %in% workspace_view_ids()) {
+    state$options$workspace_secondary <- secondary
+  }
   columns <- value$column_order
   if (is.list(columns) && length(columns) > 0L) {
     cleaned <- list()
@@ -317,6 +323,7 @@ preferences_clear <- function(state, remove = FALSE,
   state$options$plugins <- character()
   layout_clear(state)
   state$options$column_order <- list()
+  state$options$workspace_secondary <- NULL
   if (isTRUE(remove) && !is.null(path) && nzchar(path) && file.exists(path)) {
     unlink(path)
   }
