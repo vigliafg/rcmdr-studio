@@ -460,6 +460,37 @@ Stato: completata (U0–U5); conferma visiva ed e2e rimandate a un ambiente con 
 - [x] Test unit, contract e dialoghi verdi; i 26 e2e restano da eseguire su un browser funzionante.
 - [x] Help topic, NEWS e diario aggiornati; screenshot rimandati (limite dell'ambiente).
 
+## Onda 16 — bslib, shinyWidgets e accordion
+
+Documento di settore: [`16-bslib-widgets.md`](16-bslib-widgets.md).
+Stato: pianificata — 12 step in 4 lotti da 3.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| S1 | shinyWidgets, inventario e bridge dei temi | [ ] | `15-bootstrap.css`, `55-shinywidgets.css` |
+| S2 | `settings_accordion()`, `settings_panel()`, `settings_group()` | [ ] | heading semantics, densità |
+| S3 | *Options* su accordion + apertura su errore | [ ] | prima vetrina, gate del lotto 1 |
+| S4 | Chart Builder: scheda fissa + accordion | [ ] | stessi ID, stesso comando |
+| S5 | Sottopannelli ggplot2 (*Style*, *Axes*, *Text*, *Theme*, *Output*) | [ ] | nessuna opzione persa |
+| S6 | Gruppi di opzioni per tipo e stato dei pannelli | [ ] | `option_groups`, `isolate()` |
+| S7 | `picker_input()` per variabili | [ ] | Chart mapping, filtro Data |
+| S8 | `slider_input()` e `color_input()` | [ ] | valori e comandi invariati |
+| S9 | Dialoghi dati e distribuzioni | [ ] | Import, Frequency |
+| S10 | Dialoghi modelli e test | [ ] | contract verde |
+| S11 | Accessibilità, errori e matrice 8 × 2 | [ ] | nuovi componenti inclusi |
+| S12 | NEWS, topic, token, diario, QA | [ ] | chiusura e push |
+
+### Chiusura Onda 16
+
+- [ ] 12 step verdi, 4 handoff (S3, S6, S9, S12).
+- [ ] Nessun ID, valore, comando o stringa i18n cambiato.
+- [ ] Chart Builder con “Chart and data” fisso e 6 pannelli.
+- [ ] *Options*, *Import*, *Frequency*, modelli e test raggruppati.
+- [ ] picker, slider e color picker solo dove aggiungono valore.
+- [ ] 8 temi × 2 densità verdi, nuovi componenti inclusi.
+- [ ] Errore in pannello chiuso → apertura e focus.
+- [ ] Documentazione e diario aggiornati; e2e/screenshot dove il browser funziona.
+
 ---
 
 ## Test e verifica continua

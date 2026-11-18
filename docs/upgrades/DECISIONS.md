@@ -509,3 +509,70 @@ non li installava.
   riproducibile.
 - Meta-pacchetto: garantisce l'installazione ma aggiunge un artefatto da
   mantenere.
+
+---
+
+## ADR-016 — bslib e shinyWidgets nel vocabolario UI
+
+**Stato:** accettata  
+**Data:** 2026-11-18  
+**Sostituisce in parte:** ADR-005 (dipendenze), limitatamente al rifiuto di
+`shinyWidgets`. L'elenco di ADR-005 riflette il 2026-11-13 e non va letto come
+stato corrente di `DESCRIPTION`.
+
+### Contesto
+
+L'Onda 15 ha costruito un CSS e un set di componenti propri. Il prezzo è che
+ogni comportamento nuovo (pannelli richiudibili, switch, picker) andrebbe
+scritto e mantenuto a mano, compresi ARIA, stato e tastiera. Il Chart Builder
+e i dialoghi densi mostrano il limite: decine di controlli in una colonna,
+senza una gerarchia richiudibile. `bslib` è già un `Imports` e fornisce
+Bootstrap 5; `shinyWidgets` colma tre lacune reali (picker ricercabile, slider,
+color picker). ADR-005 lo escludeva in blocco come “duplicato di ciò che già
+esiste”: la valutazione resta valida per la maggior parte dei suoi widget, non
+per questi tre.
+
+### Decisione
+
+- **bslib** si usa per i componenti strutturali che non vogliamo mantenere:
+  `accordion()`/`accordion_panel()` e, solo se ID e test restano identici,
+  `input_switch()`. Non si adottano `card()`, `navset_*()` o
+  `layout_columns()`: duplicherebbero la shell e le griglie esistenti.
+- **shinyWidgets** entra in `Imports` con una versione minima verificata.
+  Si adottano **solo**:
+  - `pickerInput()` per la selezione variabile con ricerca;
+  - `noUiSliderInput()` per i numeri limitati;
+  - `spectrumInput()` per i colori.
+  Gli altri widget (switch, radio/checkbox decorati, dropdown, date picker)
+  restano fuori finché non c'è un caso d'uso e un test.
+- Ogni widget esterno passa da un wrapper in `R/widgets.R`
+  (`picker_input()`, `slider_input()`, `color_input()`): i dialoghi non
+  chiamano la libreria.
+- Un solo punto di tematizzazione: `15-bootstrap.css` per le variabili
+  `--bs-*` e `55-shinywidgets.css` per le classi dei widget. Nessun colore
+  letterale; si usano i token dell'Onda 15.
+- La matrice 8 temi × 2 densità e i test di accessibilità si estendono ai
+  nuovi componenti: senza questo, la dipendenza non è accettata.
+
+### Conseguenze
+
+- Meno codice nostro da mantenere per accordion e switch.
+- Una dipendenza in più da installare, con peso CSS/JS da misurare.
+- I widget esterni possono divergere da Bootstrap 5: l'inventario del primo
+  step è un gate, non una formalità.
+- I dialoghi sono condivisi tra Studio e Classica: l'accordion cambia anche
+  l'aspetto dei dialoghi in modalità Classica, mentre le tab e i `data-value`
+  restano identici.
+- La documentazione dei token deve dire chi possiede ogni componente.
+
+### Alternative scartate
+
+- **Scrivere l'accordion in casa**: sarebbe un secondo sistema di collapse,
+  con ARIA, stato e animazioni da mantenere; bslib è già installato.
+- **Adottare shinyWidgets in blocco**: introdurrebbe switch, segmented e
+  checkbox decorati in concorrenza con i nostri helper, cioè tre linguaggi
+  visivi.
+- **shiny.fluent / shiny.semantic / shinydashboard**: framework UI completi,
+  incompatibili con la shell e i token esistenti.
+- **reactable al posto di DT**: sostituzione di un widget integrato con
+  selezione, filtri e test, non un restyling.
