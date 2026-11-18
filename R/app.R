@@ -224,38 +224,52 @@ plots_pane_ui <- function(mode = "studio", show_preview = TRUE) {
 home_pane_ui <- function() {
   htmltools::tagList(
     htmltools::div(
-      class = "rcmdr-home-hero",
-      htmltools::tags$h2(tr("RcmdrShiny Studio")),
-      htmltools::tags$p(tr(
-        "A browser-native statistical workbench inspired by the R Commander. Every action still produces reproducible R code."
-      )),
-      action_row(
-        actionButton("home_import", tr("Import data"), class = "btn-light btn-sm"),
-        actionButton("home_report", tr("New report"), class = "btn-light btn-sm"),
-        actionButton("home_workflows", tr("Guided workflows"),
-                     class = "btn-light btn-sm"),
-        actionButton("home_palette", tr("Command palette"), class = "btn-light btn-sm"),
-        actionButton("home_help", tr("Getting started"), class = "btn-light btn-sm")
+      class = "rcmdr-home-start",
+      htmltools::div(
+        class = "rcmdr-home-column",
+        htmltools::div(
+          class = "rcmdr-home-card",
+          card_head(htmltools::tags$h2(tr("Start"), class = "rcmdr-home-title")),
+          htmltools::tags$p(
+            class = "rcmdr-note rcmdr-home-lede",
+            tr("A browser-native statistical workbench inspired by the R Commander. Every action still produces reproducible R code.")
+          ),
+          action_row(
+            actionButton("home_import", tr("Import data"),
+                         class = "btn-sm btn-primary"),
+            actionButton("home_report", tr("New report"),
+                         class = "btn-sm btn-outline-primary"),
+            actionButton("home_workflows", tr("Guided workflows"),
+                         class = "btn-sm btn-outline-primary"),
+            actionButton("home_palette", tr("Command palette"),
+                         class = "btn-sm btn-outline-secondary"),
+            actionButton("home_help", tr("Getting started"),
+                         class = "btn-sm btn-outline-secondary")
+          )
+        ),
+        htmltools::div(
+          class = "rcmdr-home-card",
+          card_head(htmltools::tags$h5(tr("Keyboard"))),
+          note(tr("Ctrl+K opens the command palette.")),
+          note(tr("Ctrl+Enter runs the selection or the current chunk.")),
+          note(tr("Ctrl+S saves the current document.")),
+          action_row(
+            actionButton("home_shortcuts", tr("All keyboard shortcuts"),
+                         class = "btn-sm btn-outline-secondary")
+          )
+        )
+      ),
+      htmltools::div(
+        class = "rcmdr-home-column",
+        uiOutput("home_continue"),
+        uiOutput("home_recent"),
+        uiOutput("home_projects")
       )
     ),
     htmltools::div(
-      class = "rcmdr-home-grid",
-      uiOutput("home_continue"),
-      uiOutput("home_projects"),
+      class = "rcmdr-home-status",
       uiOutput("home_checklist"),
-      uiOutput("home_recent"),
-      uiOutput("home_health"),
-      htmltools::div(
-        class = "rcmdr-home-card",
-        card_head(htmltools::tags$h5(tr("Keyboard"))),
-        note(tr("Ctrl+K opens the command palette.")),
-        note(tr("Ctrl+Enter runs the selection or the current chunk.")),
-        note(tr("Ctrl+S saves the current document.")),
-        action_row(
-          actionButton("home_shortcuts", tr("All keyboard shortcuts"),
-                       class = "btn-sm btn-outline-secondary")
-        )
-      )
+      uiOutput("home_health")
     )
   )
 }
@@ -471,10 +485,7 @@ result_hint_ui <- function(info, mode = "studio", auto = FALSE) {
   )
 }
 
-app_topbar_ui <- function(theme = "system") {
-  languages <- available_languages()
-  current <- current_language()
-  if (!current %in% languages) languages <- c(current, languages)
+app_topbar_ui <- function() {
   htmltools::div(
     class = "rcmdr-topbar",
     role = "banner",
@@ -505,22 +516,9 @@ app_topbar_ui <- function(theme = "system") {
       ),
       uiOutput("dataset_badge", inline = TRUE),
       uiOutput("model_badge", inline = TRUE),
-      # The two selects carry no visible label: the bar is dense and the
-      # current value is the label.  A visually hidden one keeps the control
-      # named for a screen reader.
-      selectInput(
-        "language",
-        htmltools::tags$span(class = "visually-hidden", tr("Language")),
-        choices = stats::setNames(languages, toupper(languages)),
-        selected = current, width = "90px"
-      ),
-      selectInput(
-        "theme",
-        htmltools::tags$span(class = "visually-hidden", tr("Theme")),
-        choices = theme_choices(),
-        selected = theme,
-        width = "160px"
-      ),
+      # Theme, language and density live in View > Preferences (the Options
+      # dialog): the topbar keeps only the facts of the session.
+      actionLink("topbar_help", tr("Help"), class = "rcmdr-topbar-link"),
       uiOutput("ui_mode_toggle_ui", inline = TRUE),
       actionLink("about_open", tr("About"), class = "rcmdr-topbar-link")
     )
@@ -772,7 +770,7 @@ app_server <- function(env = globalenv()) {
 
     output$app_topbar <- renderUI({
       language_revision()
-      app_topbar_ui(ui_theme(state))
+      app_topbar_ui()
     })
 
     tour_index <- reactiveVal(1L)
@@ -794,6 +792,7 @@ app_server <- function(env = globalenv()) {
         theme = ui_theme(state),
         density = ui_density(state)
       ))
+      session$sendCustomMessage("rcmdr-ui-mode", ui_mode(state))
     }, once = TRUE)
 
     open_palette <- function() {
@@ -1011,10 +1010,12 @@ app_server <- function(env = globalenv()) {
       finish_tour(dismiss = TRUE)
     })
 
-    observeEvent(input$help_shortcut, {
+    open_help_view <- function() {
       if (is.function(state$help_show)) state$help_show("getting-started")
       state$show_tab(tr("Help"))
-    }, ignoreInit = TRUE)
+    }
+    observeEvent(input$help_shortcut, open_help_view(), ignoreInit = TRUE)
+    observeEvent(input$topbar_help, open_help_view(), ignoreInit = TRUE)
 
     observeEvent(input$home_workflows, {
       state$show_tab(tr("Workflows"))
@@ -1025,6 +1026,12 @@ app_server <- function(env = globalenv()) {
       if (!identical(mode, isolate(main_tabs_mode()))) {
         main_tabs_mode(mode)
       }
+    }, ignoreInit = TRUE)
+
+    # The body class decides which chrome rules apply: Studio gets the
+    # desktop density, Classic keeps its original spacing.
+    observeEvent(main_tabs_mode(), {
+      session$sendCustomMessage("rcmdr-ui-mode", main_tabs_mode())
     }, ignoreInit = TRUE)
 
     output$main_tabs_ui <- renderUI({

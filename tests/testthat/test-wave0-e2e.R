@@ -52,7 +52,7 @@ test_that("the Studio foundation flow works in a browser", {
   # Home is the default Studio landing tab.
   app$wait_for_js("document.querySelector('#home_import') !== null",
                   timeout = 60000)
-  expect_match(app$get_text(".rcmdr-home-hero"), "RcmdrShiny Studio")
+  expect_match(app$get_text(".rcmdr-home-title"), "Start")
 
   # Command palette: Ctrl+K opens it, a query finds the summary dialog.
   app$run_js(

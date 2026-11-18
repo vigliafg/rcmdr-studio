@@ -15,11 +15,6 @@
     body.rcmdr-dark .rcmdr-status-warning { background: var(--rcmdr-warn-bg); color: var(--rcmdr-warn-fg); }
     body.rcmdr-dark .rcmdr-status-error { background: var(--rcmdr-err-bg); color: var(--rcmdr-err-fg); }
     body.rcmdr-dark .rcmdr-status-muted { background: var(--rcmdr-surface-muted); color: var(--rcmdr-muted); }
-    .rcmdr-home-hero {
-      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%, var(--rcmdr-hero-to) 100%);
-      color: var(--rcmdr-on-primary);
-    }
-    .rcmdr-home-hero p { color: var(--rcmdr-on-primary-muted); }
     .rcmdr-code-preview,
     .rcmdr-report-source { background: var(--rcmdr-surface-sunken); }
     .rcmdr-cell-output pre,

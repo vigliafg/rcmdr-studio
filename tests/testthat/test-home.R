@@ -1,9 +1,12 @@
 # Home pane -------------------------------------------------------------------
 
-test_that("the Home pane is a hero over a grid of cards", {
+test_that("the Home pane is a two-column start page", {
   html <- as.character(home_pane_ui())
-  expect_match(html, 'class="rcmdr-home-hero"', fixed = TRUE)
-  expect_match(html, "rcmdr-home-grid", fixed = TRUE)
+  expect_match(html, 'class="rcmdr-home-start"', fixed = TRUE)
+  expect_match(html, "rcmdr-home-column", fixed = TRUE)
+  expect_match(html, "rcmdr-home-status", fixed = TRUE)
+  expect_false(grepl("rcmdr-home-hero", html, fixed = TRUE))
+  expect_match(html, "rcmdr-home-title", fixed = TRUE)
   expect_match(html, 'class="rcmdr-actions"', fixed = TRUE)
   expect_match(html, "rcmdr-card-head", fixed = TRUE)
   expect_match(html, "rcmdr-note", fixed = TRUE)
@@ -11,7 +14,7 @@ test_that("the Home pane is a hero over a grid of cards", {
                "home_palette", "home_help", "home_shortcuts")) {
     expect_match(html, sprintf('id="%s"', id), fixed = TRUE)
   }
-  # The hero and its cards carry only named classes.
+  # The start page and its cards carry only named classes.
   for (utility in c("d-flex", "gap-2", "flex-wrap", "mb-1", "mb-2",
                     "small text-muted")) {
     expect_false(grepl(utility, html, fixed = TRUE),
@@ -41,7 +44,8 @@ test_that("the home and workflow styles live with the views", {
   views <- app_asset_text("css", "60-views.css")
   expect_false(any(grepl("rcmdr-home-", dialogs, fixed = TRUE)))
   expect_false(any(grepl("rcmdr-workflow-", dialogs, fixed = TRUE)))
-  for (rule in c(".rcmdr-home-hero", ".rcmdr-home-grid", ".rcmdr-home-card",
+  for (rule in c(".rcmdr-home-start", ".rcmdr-home-column",
+                 ".rcmdr-home-status", ".rcmdr-home-card",
                  ".rcmdr-workflow-grid", ".rcmdr-workflow-step")) {
     expect_true(any(grepl(rule, views, fixed = TRUE)),
                 label = sprintf("%s is in the views stylesheet", rule))

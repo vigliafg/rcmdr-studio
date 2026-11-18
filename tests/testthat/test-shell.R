@@ -1,6 +1,6 @@
 # Studio shell ----------------------------------------------------------------
 
-test_that("the topbar brands the application and names its selects", {
+test_that("the topbar brands the application and keeps only session facts", {
   html <- as.character(app_topbar_ui())
   expect_match(html, 'class="rcmdr-topbar"', fixed = TRUE)
   expect_match(html, "role=\"banner\"", fixed = TRUE)
@@ -11,10 +11,19 @@ test_that("the topbar brands the application and names its selects", {
   # The controls are one flex list, not a row of Bootstrap utilities.
   expect_match(html, 'class="rcmdr-topbar-controls"', fixed = TRUE)
   expect_match(html, "rcmdr-topbar-link", fixed = TRUE)
-  # The selects show their value, not a label; the accessible name is hidden.
-  expect_match(html, 'class="visually-hidden">Language', fixed = TRUE)
-  expect_match(html, 'class="visually-hidden">Theme', fixed = TRUE)
+  expect_match(html, 'id="topbar_help"', fixed = TRUE)
   expect_match(html, "btn-sm btn-outline-light", fixed = TRUE)
+  # Theme, language and density moved to View > Preferences (Options).
+  expect_false(grepl('id="theme"', html, fixed = TRUE))
+  expect_false(grepl('id="language"', html, fixed = TRUE))
+  expect_false(grepl('id="density"', html, fixed = TRUE))
+})
+
+test_that("View > Preferences opens the Options dialog", {
+  leaves <- menu_leaves(menu_tree())
+  entry <- leaves[leaves$command == "preferencesOpen", , drop = FALSE]
+  expect_equal(nrow(entry), 1L)
+  expect_equal(entry$path[[1L]], "View > Preferences...")
 })
 
 test_that("the shell carries no hand-written Bootstrap layout classes", {

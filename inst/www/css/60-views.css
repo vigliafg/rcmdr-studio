@@ -183,32 +183,36 @@
       .rcmdr-data-layout { grid-template-columns: minmax(0, 1fr); }
     }
 
-    /* Home: a hero over a grid of cards.  The cards are the same surface,
-       border and padding as the section cards, so the Home reads as a view
-       and not as a second design. */
-    .rcmdr-home-hero {
-      background: linear-gradient(135deg, var(--rcmdr-hero-from) 0%,
-                                  var(--rcmdr-hero-to) 100%);
-      color: var(--rcmdr-on-primary);
-      border-radius: var(--rcmdr-radius-lg);
-      padding: var(--rcmdr-space-5);
-      margin-bottom: var(--rcmdr-space-4);
+    /* Home: a start page, not a landing brochure.  Two columns (actions on
+       the left, recents on the right), flat cards with a 1 px border, and the
+       status cards below.  No hero and no gradient: the workspace is a tool. */
+    .rcmdr-home-start {
+      display: grid;
+      grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+      gap: var(--rcmdr-space-3);
+      align-items: start;
     }
-    .rcmdr-home-hero h2 {
-      font-size: var(--rcmdr-text-2xl);
-      line-height: var(--rcmdr-leading-tight);
-      margin: 0 0 var(--rcmdr-space-1);
+    .rcmdr-home-column {
+      display: flex; flex-direction: column; min-width: 0;
+      gap: var(--rcmdr-space-3);
     }
-    .rcmdr-home-hero p {
-      color: var(--rcmdr-on-primary-muted);
-      max-width: 60ch;
-      margin: 0 0 var(--rcmdr-space-4);
-    }
-    .rcmdr-home-grid {
+    .rcmdr-home-status {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-      gap: var(--rcmdr-space-4);
+      gap: var(--rcmdr-space-3);
+      margin-top: var(--rcmdr-space-3);
       align-items: start;
+    }
+    .rcmdr-home-title {
+      margin: 0; font-size: var(--rcmdr-text-lg);
+      line-height: var(--rcmdr-leading-tight);
+      color: var(--rcmdr-heading);
+    }
+    .rcmdr-home-lede {
+      max-width: 60ch; margin: 0 0 var(--rcmdr-space-2);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-home-start { grid-template-columns: minmax(0, 1fr); }
     }
     .rcmdr-home-card {
       min-width: 0;

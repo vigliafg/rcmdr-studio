@@ -65,30 +65,13 @@ test_that("control boundaries and focus rings reach 3:1", {
   }
 })
 
-test_that("the home hero paints its own tokens and stays readable", {
-  css <- token_css()
-  hero <- regmatches(
-    css,
-    regexpr("\\.rcmdr-home-hero \\{\\s*background:[^}]*\\}", css,
-            perl = TRUE)
-  )
-  expect_match(hero, "linear-gradient(135deg, var(--rcmdr-hero-from)", fixed = TRUE)
-  expect_match(hero, "var(--rcmdr-hero-to) 100%", fixed = TRUE)
-  # The accent is light in the dark palettes: it is not a hero surface.
-  expect_false(grepl("var(--rcmdr-accent)", hero, fixed = TRUE))
-
-  palettes <- palette_tokens()
-  for (name in names(palettes)) {
-    palette <- palettes[[name]]
-    for (stop in c("--rcmdr-hero-from", "--rcmdr-hero-to")) {
-      for (text in c("--rcmdr-on-primary", "--rcmdr-on-primary-muted")) {
-        ratio <- contrast_ratio(palette[[text]], palette[[stop]])
-        expect_gte(
-          ratio, aa_text,
-          label = sprintf("%s: %s on %s = %.2f", name, text, stop, ratio)
-        )
-      }
-    }
+test_that("the Studio home has no gradient and needs no hero palette", {
+  tokens <- token_css()
+  expect_false(grepl("--rcmdr-hero-", tokens, fixed = TRUE))
+  for (file in c("60-views.css", "10-shell.css")) {
+    sheet <- app_asset_text("css", file)
+    expect_false(grepl("linear-gradient", sheet, fixed = TRUE),
+                 label = sprintf("%s paints no gradient surface", file))
   }
 })
 
@@ -125,7 +108,7 @@ test_that("the measured minimum does not regress below the documented floor", {
   expect_gte(floor_of("--rcmdr-text", "--rcmdr-surface"), 13)
   expect_gte(floor_of("--rcmdr-muted", "--rcmdr-surface-muted"), 6.3)
   expect_gte(floor_of("--rcmdr-on-primary", "--rcmdr-primary"), 9.4)
-  expect_gte(floor_of("--rcmdr-on-primary-muted", "--rcmdr-hero-to"), 5)
+  expect_gte(floor_of("--rcmdr-on-primary-muted", "--rcmdr-primary"), 5)
   expect_gte(floor_of("--rcmdr-border-strong", "--rcmdr-surface-muted"), 3)
 })
 

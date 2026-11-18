@@ -433,6 +433,8 @@
     item    toolsMenu       command         "Install auxiliary software..."                 installSoftware             ""          "any(!unlist(getRcmdr('capabilities')))"
     item    topMenu         cascade         "Tools"                                         toolsMenu                   ""          ""
     menu    viewMenu        topMenu         ""                                              ""                          ""          ""
+    item    viewMenu        command         "Preferences..."                                preferencesOpen             ""          ""
+    item    viewMenu        separator       ""                                              ""                          ""          ""
     item    viewMenu        command         "Help panel"                                    openHelpPanel               ""          ""
     item    viewMenu        command         "Console panel"                                 openConsolePanel            ""          ""
     item    viewMenu        command         "Output panel"                                  openOutputPanel             ""          ""

@@ -399,6 +399,20 @@ groups:
   module: core
   legacy_ids: []
 items:
+- id: item.core.menu_view.preferences
+  parent: menu.view
+  label: Preferences...
+  command: preferencesOpen
+  activation: ''
+  install: ''
+  order: 5
+  module: core
+  legacy_ids:
+  - preferencesOpen
+- kind: separator
+  parent: menu.view
+  order: 6
+  module: core
 - id: item.core.menu_view.help_panel
   parent: menu.view
   label: Help panel

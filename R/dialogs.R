@@ -186,6 +186,12 @@ base_direct_commands <- function() {
       if (is.function(state$copy_selection)) return(state$copy_selection())
       invisible(NULL)
     },
+    preferencesOpen = function(state) {
+      if (is.function(state$open_dialog)) {
+        return(state$open_dialog("Options"))
+      }
+      invisible(NULL)
+    },
     openHelpPanel = function(state) {
       if (is.function(state$open_modeless)) {
         return(state$open_modeless("help"))

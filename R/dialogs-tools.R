@@ -15,7 +15,8 @@ options_dialog <- function() {
     use_knitr = FALSE,
     ui_mode = "studio",
     theme = "system",
-    density = "compact"
+    density = "compact",
+    language = current_language()
   )
 
   dialog_spec(
@@ -40,6 +41,15 @@ options_dialog <- function() {
             ns("theme"), tr("Theme"),
             choices = theme_choices(),
             selected = m$theme %||% "system",
+            width = "100%"
+          ),
+          selectInput(
+            ns("language"), tr("Language"),
+            choices = stats::setNames(
+              available_languages(),
+              toupper(available_languages())
+            ),
+            selected = m$language %||% current_language(),
             width = "100%"
           ),
           segmented_input(
@@ -128,6 +138,17 @@ options_dialog <- function() {
       state$options$density <- set_ui_density(
         state, input[[ns("density")]] %||% ui_density(state)
       )
+      language <- i18n_normalize(
+        input[[ns("language")]] %||% current_language()
+      )
+      if (!identical(language, current_language())) {
+        state$options$language <- language
+        i18n_set_language(language)
+        state$palette_cache <- NULL
+        if (is.function(state$language_revision)) {
+          state$language_revision(state$language_revision() + 1L)
+        }
+      }
       base::options(digits = digits, width = width)
       state_touch(state)
 
@@ -146,7 +167,8 @@ options_dialog <- function() {
           edit_threshold = threshold,
           ui_mode = state$options$ui_mode,
           theme = state$options$theme,
-          density = ui_density(state)
+          density = ui_density(state),
+          language = language
         )
       )
     }

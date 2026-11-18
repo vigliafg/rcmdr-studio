@@ -269,3 +269,103 @@
         width: auto;
       }
     }
+
+    /* Desktop chrome (Studio only) -----------------------------------------
+       The Studio shell is a tool, not a dashboard: a 40 px topbar, a 28 px
+       menubar and a 40 px toolbar, all measured with the same tokens.  Every
+       rule here is scoped to `body.rcmdr-mode-studio`, so Classic keeps its
+       original spacing and its tabsetPanel. */
+    body.rcmdr-mode-studio .rcmdr-topbar {
+      min-height: var(--rcmdr-topbar-h);
+      padding: 0 var(--rcmdr-space-2);
+      gap: var(--rcmdr-space-2);
+    }
+    body.rcmdr-mode-studio .rcmdr-brand-title {
+      font-size: var(--rcmdr-text-md);
+    }
+    body.rcmdr-mode-studio .rcmdr-brand-sub {
+      font-size: var(--rcmdr-text-xs);
+    }
+    body.rcmdr-mode-studio .rcmdr-brand-mark {
+      width: 1.5rem; height: 1.5rem;
+    }
+    /* The topbar controls follow the 40 px bar: the selects are one control
+       tall and the badges keep their pill. */
+    body.rcmdr-mode-studio .rcmdr-topbar-controls {
+      gap: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      font-size: var(--rcmdr-text-sm);
+    }
+    body.rcmdr-mode-studio .rcmdr-topbar .form-control,
+    body.rcmdr-mode-studio .rcmdr-topbar .form-select,
+    body.rcmdr-mode-studio .rcmdr-topbar .selectize-control .selectize-input {
+      min-height: 1.75rem;
+      padding: .15rem 1.7rem .15rem .45rem;
+      font-size: var(--rcmdr-text-sm);
+    }
+    body.rcmdr-mode-studio .rcmdr-topbar .btn-sm {
+      min-height: 1.75rem;
+      padding: .15rem .5rem;
+    }
+    body.rcmdr-mode-studio .rcmdr-topbar-icon {
+      width: 1.75rem; height: 1.75rem;
+    }
+
+    body.rcmdr-mode-studio .rcmdr-menubar {
+      min-height: var(--rcmdr-menubar-h);
+      padding: 0 var(--rcmdr-space-2);
+      gap: 0;
+    }
+    body.rcmdr-mode-studio .rcmdr-menubar-group > summary {
+      padding: .15rem .55rem;
+      font-size: var(--rcmdr-text-sm);
+      line-height: var(--rcmdr-leading-ui);
+    }
+    body.rcmdr-mode-studio .rcmdr-sidebar {
+      padding: var(--rcmdr-space-2);
+      max-height: calc(100vh - var(--rcmdr-topbar-h) - var(--rcmdr-menubar-h) - 1.9rem);
+    }
+    body.rcmdr-mode-studio .rcmdr-main {
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+    }
+
+    /* The view bar is the workspace toolbar: switcher, secondary view and
+       panel toggles share one 40 px row. */
+    body.rcmdr-mode-studio .rcmdr-view-bar {
+      min-height: var(--rcmdr-toolbar-h);
+      padding: 0 var(--rcmdr-space-1);
+      margin-bottom: var(--rcmdr-space-2);
+      gap: var(--rcmdr-space-1) var(--rcmdr-space-2);
+    }
+    body.rcmdr-mode-studio .rcmdr-view-switcher {
+      padding: 0; border: 0; background: transparent; gap: 1px;
+    }
+    body.rcmdr-mode-studio .rcmdr-view-tab {
+      border-radius: var(--rcmdr-radius-sm);
+      padding: .15rem .55rem;
+    }
+    body.rcmdr-mode-studio .rcmdr-toolbar {
+      min-height: var(--rcmdr-toolbar-h);
+      padding: var(--rcmdr-space-1) var(--rcmdr-space-2);
+      border-radius: var(--rcmdr-radius-sm);
+      box-shadow: none;
+    }
+
+    /* Flat cards: a 1 px border and the 6 px radius, no drop shadow.  Only
+       menus, dialogs and drop-downs float above the page. */
+    body.rcmdr-mode-studio .rcmdr-home-card,
+    body.rcmdr-mode-studio .rcmdr-workflow-card,
+    body.rcmdr-mode-studio .rcmdr-workflow-step,
+    body.rcmdr-mode-studio .rcmdr-help-topic,
+    body.rcmdr-mode-studio .rcmdr-help-example,
+    body.rcmdr-mode-studio .card {
+      border-width: 1px;
+      border-radius: var(--rcmdr-radius-sm);
+      box-shadow: none;
+    }
+    body.rcmdr-mode-studio .rcmdr-home-card {
+      padding: var(--rcmdr-space-2) var(--rcmdr-space-3);
+    }
+    body.rcmdr-mode-studio .rcmdr-statusbar {
+      min-height: 1.75rem;
+      padding: .15rem var(--rcmdr-space-2);
+    }

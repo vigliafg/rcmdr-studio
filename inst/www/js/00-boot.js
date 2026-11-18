@@ -1,4 +1,22 @@
-Shiny.addCustomMessageHandler('rcmdr-click', function(id) {
+window.rcmdrApplyMode = function(mode) {
+      var body = document.body;
+      if (!body) return;
+      var studio = mode !== 'classic';
+      body.classList.toggle('rcmdr-mode-studio', studio);
+      body.classList.toggle('rcmdr-mode-classic', !studio);
+      body.setAttribute('data-rcmdr-mode', studio ? 'studio' : 'classic');
+    };
+    Shiny.addCustomMessageHandler('rcmdr-ui-mode', function(mode) {
+      window.rcmdrApplyMode(mode);
+    });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        window.rcmdrApplyMode('studio');
+      });
+    } else {
+      window.rcmdrApplyMode('studio');
+    }
+    Shiny.addCustomMessageHandler('rcmdr-click', function(id) {
       var el = document.getElementById(id);
       if (el) el.click();
     });

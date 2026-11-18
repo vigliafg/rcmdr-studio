@@ -26,8 +26,6 @@
       --rcmdr-selection: #d6e6fa;
       --rcmdr-mark-bg: #ffe9a8;
       --rcmdr-mark-text: #3a2a00;
-      --rcmdr-hero-from: #1f3a5f;
-      --rcmdr-hero-to: #2f5d8a;
       --rcmdr-ok-bg: #dcfae6;
       --rcmdr-ok-fg: #05603a;
       --rcmdr-warn-bg: #fef0c7;
@@ -67,12 +65,20 @@
       --rcmdr-space: var(--rcmdr-space-3);
 
       /* Radii.  --rcmdr-radius stays as the alias used by older rules. */
+      /* Radii: 4, 6 and 8 px.  The Studio chrome never needs a larger
+         curve; dialogs and cards share the same three steps. */
       --rcmdr-radius-xs: .25rem;
       --rcmdr-radius-sm: .375rem;
       --rcmdr-radius-md: .5rem;
-      --rcmdr-radius-lg: .75rem;
+      --rcmdr-radius-lg: .5rem;
       --rcmdr-radius-pill: 999px;
       --rcmdr-radius: var(--rcmdr-radius-md);
+
+      /* Desktop chrome: the topbar, menubar and toolbar share one height
+         vocabulary, so the shell does not drift from rem to rem. */
+      --rcmdr-topbar-h: 2.5rem;
+      --rcmdr-menubar-h: 1.75rem;
+      --rcmdr-toolbar-h: 2.5rem;
 
       /* One focus ring, described once. */
       --rcmdr-focus-width: 2px;
@@ -100,8 +106,6 @@
       --rcmdr-selection: #f2e0ba;
       --rcmdr-mark-bg: #ffe08a;
       --rcmdr-mark-text: #3a2a00;
-      --rcmdr-hero-from: #4a3a1f;
-      --rcmdr-hero-to: #745423;
       --rcmdr-ok-bg: #e3f3d9;
       --rcmdr-ok-fg: #2c5a10;
       --rcmdr-warn-bg: #fbeac2;
@@ -137,8 +141,6 @@
       --rcmdr-selection: #c9ddf6;
       --rcmdr-mark-bg: #ffe9a8;
       --rcmdr-mark-text: #3a2a00;
-      --rcmdr-hero-from: #123a5e;
-      --rcmdr-hero-to: #22608d;
       --rcmdr-ok-bg: #d8f2e6;
       --rcmdr-ok-fg: #05563a;
       --rcmdr-warn-bg: #fdeec6;
@@ -174,8 +176,6 @@
       --rcmdr-selection: #2f4a68;
       --rcmdr-mark-bg: #f7d774;
       --rcmdr-mark-text: #241b00;
-      --rcmdr-hero-from: #17293f;
-      --rcmdr-hero-to: #23486f;
       --rcmdr-ok-bg: #0b3d2c;
       --rcmdr-ok-fg: #a7f3d0;
       --rcmdr-warn-bg: #40290a;
@@ -211,8 +211,6 @@
       --rcmdr-selection: #3b4a5c;
       --rcmdr-mark-bg: #f2d17a;
       --rcmdr-mark-text: #241b00;
-      --rcmdr-hero-from: #262c33;
-      --rcmdr-hero-to: #38424d;
       --rcmdr-ok-bg: #1d3b2c;
       --rcmdr-ok-fg: #b3f0d2;
       --rcmdr-warn-bg: #3d2e12;
@@ -248,8 +246,6 @@
       --rcmdr-selection: #35474a;
       --rcmdr-mark-bg: #f0d47a;
       --rcmdr-mark-text: #241b00;
-      --rcmdr-hero-from: #222a2c;
-      --rcmdr-hero-to: #33474a;
       --rcmdr-ok-bg: #1b3a32;
       --rcmdr-ok-fg: #b0efdd;
       --rcmdr-warn-bg: #3a2d12;
@@ -285,8 +281,6 @@
       --rcmdr-selection: #cfe0ff;
       --rcmdr-mark-bg: #ffe066;
       --rcmdr-mark-text: #000000;
-      --rcmdr-hero-from: #000000;
-      --rcmdr-hero-to: #000000;
       --rcmdr-ok-bg: #d6f5e3;
       --rcmdr-ok-fg: #003d23;
       --rcmdr-warn-bg: #ffeec2;
@@ -304,6 +298,5 @@
       background: var(--rcmdr-bg);
       color: var(--rcmdr-text);
     }
-    body.rcmdr-dark .rcmdr-topbar,
-    body.rcmdr-dark .rcmdr-home-hero { border-bottom: 1px solid var(--rcmdr-border); }
+    body.rcmdr-dark .rcmdr-topbar { border-bottom: 1px solid var(--rcmdr-border); }
 
