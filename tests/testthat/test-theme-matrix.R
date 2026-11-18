@@ -104,7 +104,12 @@ test_that("text and controls keep AA contrast at every theme and density", {
     c("--rcmdr-text", "--rcmdr-surface"),
     c("--rcmdr-muted", "--rcmdr-surface"),
     c("--rcmdr-muted", "--rcmdr-surface-muted"),
-    c("--rcmdr-on-primary", "--rcmdr-primary")
+    c("--rcmdr-on-primary", "--rcmdr-primary"),
+    # Wave 16: the accordion header and the picker paint chips in their
+    # own selection surface.
+    c("--rcmdr-heading", "--rcmdr-selection"),
+    c("--rcmdr-text", "--rcmdr-selection"),
+    c("--rcmdr-muted", "--rcmdr-selection")
   )
   for (theme in ui_themes()) {
     for (density in ui_densities()) {
@@ -124,6 +129,15 @@ test_that("text and controls keep AA contrast at every theme and density", {
           expect_gte(
             ratio, 3,
             label = sprintf("%s + %s: border on %s = %.2f", theme, density,
+                            surface, ratio)
+          )
+          # The focus ring is a UI boundary too: it must stay visible on
+          # both the page and a muted panel.
+          ratio <- contrast_ratio(palette[["--rcmdr-focus"]],
+                                  palette[[surface]])
+          expect_gte(
+            ratio, 3,
+            label = sprintf("%s + %s: focus on %s = %.2f", theme, density,
                             surface, ratio)
           )
         }

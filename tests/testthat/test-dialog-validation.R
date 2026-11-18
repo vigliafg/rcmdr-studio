@@ -83,8 +83,11 @@ test_that("validation opens the closed panels before focusing", {
   expect_match(js, "rcmdrShowAccordions", fixed = TRUE)
   expect_match(js, "Collapse.getOrCreateInstance", fixed = TRUE)
   expect_match(js, "aria-expanded", fixed = TRUE)
-  # Focus waits for the collapse transition.
+  # Focus waits for the collapse transition, then lands on the first field
+  # that actually has a box: a hidden conditional field is skipped.
   expect_match(js, "setTimeout", fixed = TRUE)
+  expect_match(js, "candidates.push(el)", fixed = TRUE)
+  expect_match(js, "el.getClientRects().length > 0", fixed = TRUE)
 
   css <- as.character(app_css())
   expect_match(css, ".rcmdr-dialog-grid > .accordion { grid-column: 1 / -1; }",

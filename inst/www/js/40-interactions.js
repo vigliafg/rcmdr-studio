@@ -63,6 +63,97 @@
       if (!el || !el.noUiSlider) return;
       el.noUiSlider.set(message.value);
     });
+    // Accessible names for the widgets the libraries build without one ------
+    // The visible <label> is not associated with the focusable element the
+    // library creates inside the container, so point aria-labelledby at it.
+    // The same pass adds the roles noUiSlider and Spectrum leave out.
+    function rcmdrWidgetLabel(el) {
+      var group = el.closest &&
+        el.closest('.form-group, .shiny-input-container');
+      var label = group && group.querySelector('label.control-label');
+      return label && label.id ? label.id : null;
+    }
+    function rcmdrEnhanceWidgets(root) {
+      if (!root || !root.querySelectorAll) return;
+      Array.prototype.forEach.call(
+        root.querySelectorAll(
+          '.virtual-select .vscomp-ele-wrapper[role="combobox"]'
+        ),
+        function(el) {
+          var id = rcmdrWidgetLabel(el);
+          if (id && !el.getAttribute('aria-labelledby')) {
+            el.setAttribute('aria-labelledby', id);
+          }
+        }
+      );
+      Array.prototype.forEach.call(
+        root.querySelectorAll('.sw-no-ui-slider .noUi-handle'),
+        function(el) {
+          if (!el.getAttribute('role')) el.setAttribute('role', 'slider');
+          el.setAttribute('aria-orientation', 'horizontal');
+          var id = rcmdrWidgetLabel(el);
+          if (id && !el.getAttribute('aria-labelledby')) {
+            el.setAttribute('aria-labelledby', id);
+          }
+        }
+      );
+      Array.prototype.forEach.call(
+        root.querySelectorAll('.sp-replacer'),
+        function(el) {
+          if (!el.getAttribute('role')) el.setAttribute('role', 'button');
+          if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+          var id = rcmdrWidgetLabel(el);
+          if (id && !el.getAttribute('aria-labelledby')) {
+            el.setAttribute('aria-labelledby', id);
+          }
+        }
+      );
+    }
+    window.rcmdrEnhanceWidgets = rcmdrEnhanceWidgets;
+    function rcmdrEnhanceBound(event) {
+      var target = event.target;
+      var root = target && target.closest
+        ? (target.closest('.form-group, .shiny-input-container') || target)
+        : null;
+      rcmdrEnhanceWidgets(root);
+    }
+    document.addEventListener('shiny:bound', rcmdrEnhanceBound);
+    document.addEventListener('shiny:value', rcmdrEnhanceBound);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        rcmdrEnhanceWidgets(document);
+      });
+    } else {
+      rcmdrEnhanceWidgets(document);
+    }
+    // The Spectrum replacer is a click target: give it the button keys.
+    document.addEventListener('keydown', function(event) {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      var replacer = event.target.closest && event.target.closest('.sp-replacer');
+      if (!replacer) return;
+      event.preventDefault();
+      replacer.click();
+    });
+    // Focus only a field the user can actually see.  An invalid control can
+    // live in a conditionalPanel that is still hidden, or in a panel whose
+    // collapse has not finished: focusing it would do nothing and would move
+    // the caret to an element with no box.  The candidates are checked after
+    // the collapse transition, when the panel is really open.
+    function rcmdrFocusFirst(candidates) {
+      setTimeout(function() {
+        var target = null;
+        for (var i = 0; i < candidates.length; i += 1) {
+          var el = candidates[i];
+          if (el && el.getClientRects && el.getClientRects().length > 0) {
+            target = el;
+            break;
+          }
+        }
+        if (!target) return;
+        if (target.focus) target.focus();
+        if (target.scrollIntoView) target.scrollIntoView({block: 'center'});
+      }, 200);
+    }
     window.rcmdrFocusField = function(id) {
       var el = document.getElementById(id);
       if (!el) el = document.querySelector('[id$="_' + id + '"]');
@@ -71,10 +162,7 @@
       el.setAttribute('aria-invalid', 'true');
       rcmdrShowAccordions(el.closest('.modal') || document);
       // The collapse transition needs a frame before the field is focusable.
-      setTimeout(function() {
-        if (el.focus) el.focus();
-        if (el.scrollIntoView) el.scrollIntoView({block: 'center'});
-      }, 200);
+      rcmdrFocusFirst([el]);
       return false;
     };
     Shiny.addCustomMessageHandler('rcmdr-field-errors', function(message) {
@@ -83,21 +171,18 @@
         el.removeAttribute('aria-invalid');
       });
       var errors = (message && message.errors) || {};
-      var first = null;
+      var candidates = [];
       Object.keys(errors).forEach(function(id) {
         var el = document.getElementById(id) ||
           document.querySelector('[id$="_' + id + '"]');
         if (!el) return;
         el.classList.add('is-invalid');
         el.setAttribute('aria-invalid', 'true');
-        if (!first) first = el;
+        candidates.push(el);
       });
-      if (!first) return;
-      rcmdrShowAccordions(first.closest('.modal') || document);
-      setTimeout(function() {
-        if (first.focus) first.focus();
-        if (first.scrollIntoView) first.scrollIntoView({block: 'center'});
-      }, 200);
+      if (candidates.length === 0) return;
+      rcmdrShowAccordions(candidates[0].closest('.modal') || document);
+      rcmdrFocusFirst(candidates);
     });
     var rcmdrTourStarted = false;
     function rcmdrTourCheck() {

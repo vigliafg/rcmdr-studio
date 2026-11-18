@@ -62,3 +62,10 @@
     .accordion .accordion-button:not(.collapsed)::after {
       transform: rotate(-135deg);
     }
+    /* Validation focuses a field inside a panel: leave room above it so the
+       sticky chrome does not cover the focus ring after scrollIntoView(). */
+    .rcmdr-accordion .accordion-button,
+    .rcmdr-accordion .accordion-body :is(input, select, textarea, button,
+                                        [tabindex]) {
+      scroll-margin-block: var(--rcmdr-space-6);
+    }

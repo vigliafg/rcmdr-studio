@@ -397,19 +397,24 @@
     .rcmdr-accordion .accordion-button:hover {
       background: var(--rcmdr-hover);
     }
-    .rcmdr-accordion .accordion-icon {
+    .rcmdr-accordion .rcmdr-accordion-icon {
       display: inline-flex;
       align-items: center;
+      flex: 0 0 auto;
       color: var(--rcmdr-muted);
     }
-    .rcmdr-accordion .accordion-title {
+    .rcmdr-accordion .rcmdr-accordion-title {
       display: flex;
       align-items: center;
       gap: var(--rcmdr-space-2);
       flex: 1 1 auto;
       min-width: 0;
+      overflow-wrap: anywhere;
     }
-    .rcmdr-accordion .accordion-title .rcmdr-badge { margin-left: auto; }
+    .rcmdr-accordion .rcmdr-accordion-title .rcmdr-badge {
+      margin-left: auto;
+      flex: 0 0 auto;
+    }
     .rcmdr-accordion .accordion-body { gap: var(--rcmdr-space-2); }
     /* The per-type options live inside the Options panel: the one nested
        accordion in the app.  Flatten it, so the two levels read as a

@@ -299,6 +299,10 @@ picker_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
     showValueAsTags = isTRUE(multiple),
     disableSelectAll = !isTRUE(multiple),
     disableOptionGroupCheckbox = !isTRUE(multiple),
+    # The visible label has `for=<id>`, but the combobox is a div built by
+    # the library: name it explicitly so the focusable role="combobox"
+    # inherits the label in every screen reader.
+    ariaLabelledby = paste0(id, "-label"),
     width = width
   )
 }

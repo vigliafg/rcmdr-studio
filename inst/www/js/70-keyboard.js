@@ -104,4 +104,38 @@
         results[current].click();
       }
     });
+    // Accordion headers: Bootstrap leaves the arrow keys to the page, so
+    // Up/Down move inside the same accordion and Home/End jump to the edges.
+    // Nested accordions only see their own headers; Esc stays with the modal.
+    document.addEventListener('keydown', function(event) {
+      var target = event.target;
+      var button = target && target.closest &&
+        target.closest('.accordion-button');
+      if (!button) return;
+      var accordion = button.closest('.accordion');
+      if (!accordion || !accordion.classList.contains('rcmdr-accordion')) return;
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      var headers = Array.prototype.filter.call(
+        accordion.querySelectorAll('.accordion-button'),
+        function(el) {
+          return el.closest('.accordion') === accordion &&
+            el.getClientRects().length > 0;
+        }
+      );
+      var index = headers.indexOf(button);
+      if (index < 0) return;
+      var next = null;
+      if (event.key === 'ArrowDown') {
+        next = headers[Math.min(headers.length - 1, index + 1)];
+      } else if (event.key === 'ArrowUp') {
+        next = headers[Math.max(0, index - 1)];
+      } else if (event.key === 'Home') {
+        next = headers[0];
+      } else if (event.key === 'End') {
+        next = headers[headers.length - 1];
+      }
+      if (!next) return;
+      event.preventDefault();
+      next.focus();
+    });
     

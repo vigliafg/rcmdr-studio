@@ -135,3 +135,62 @@ test_that("the settings accordion exposes heading and state semantics", {
                fixed = TRUE)
   expect_match(css, ".rcmdr-accordion .accordion-button:hover", fixed = TRUE)
 })
+
+test_that("a nested accordion keeps its own heading depth", {
+  html <- as.character(settings_accordion(
+    level = 4L, open = "Inner",
+    settings_panel("Inner", htmltools::tags$input(id = "inner"))
+  ))
+  expect_match(html, 'aria-level="4"', fixed = TRUE)
+  expect_equal(
+    lengths(regmatches(html, gregexpr('role="heading"', html))), 1L
+  )
+  # The icon is decorative: the title carries the name.
+  html <- as.character(settings_accordion(
+    settings_panel("Theme", htmltools::tags$input(id = "t"), icon = "sliders")
+  ))
+  expect_match(html, 'aria-hidden="true"', fixed = TRUE)
+})
+
+test_that("accordion headers move with the arrow keys inside their group", {
+  js <- as.character(app_js())
+  # Up/Down move between headers; Home/End jump to the edges.
+  expect_match(js, "target.closest('.accordion-button')", fixed = TRUE)
+  expect_match(js, "accordion.classList.contains('rcmdr-accordion')",
+               fixed = TRUE)
+  # A nested accordion only navigates its own headers.
+  expect_match(js, "el.closest('.accordion') === accordion", fixed = TRUE)
+  for (key in c("ArrowDown", "ArrowUp", "Home", "End")) {
+    expect_match(js, sprintf("event.key === '%s'", key), fixed = TRUE,
+                 label = key)
+  }
+  # Only headers with a box take focus.
+  expect_match(js, "el.getClientRects().length > 0", fixed = TRUE)
+  # Esc remains Bootstrap's modal contract.
+  expect_false(grepl("event.key === 'Escape'", js, fixed = TRUE))
+})
+
+test_that("the searchable picker is named by its visible label", {
+  html <- as.character(picker_input("pick", "Pick a variable", c(a = "A")))
+  expect_match(html, 'id="pick-label"', fixed = TRUE)
+  expect_match(html, '"ariaLabelledby":"pick-label"', fixed = TRUE)
+})
+
+test_that("the external widgets get a role, a name and the button keys", {
+  js <- as.character(app_js())
+  expect_match(js, '.vscomp-ele-wrapper[role="combobox"]', fixed = TRUE)
+  expect_match(js, "setAttribute('role', 'slider')", fixed = TRUE)
+  expect_match(js, "aria-orientation", fixed = TRUE)
+  expect_match(js, "setAttribute('tabindex', '0')", fixed = TRUE)
+  expect_match(js, "event.key !== ' '", fixed = TRUE)
+  expect_match(js, "replacer.click()", fixed = TRUE)
+})
+
+test_that("validation never focuses a field with no box", {
+  js <- as.character(app_js())
+  expect_match(js, "function rcmdrFocusFirst(candidates)", fixed = TRUE)
+  expect_match(js, "el.getClientRects().length > 0", fixed = TRUE)
+  # The summary link and the field-error payload share the same guard.
+  expect_match(js, "rcmdrFocusFirst([el])", fixed = TRUE)
+  expect_match(js, "rcmdrFocusFirst(candidates)", fixed = TRUE)
+})
