@@ -384,6 +384,16 @@ nessun CDN. Il peso va misurato a ogni aggiornamento della dipendenza.
 listbox sempre visibile è la `<select multiple>` nativa: righe, Ctrl/Shift e
 nessun JavaScript.
 
+**Scelta di S10:** `var_input()` usa la listbox nativa per una lista multipla
+fino a 12 voci, il `<select>` nativo per una scelta singola corta e il picker
+ricercabile oltre le 12 voci. La soglia è una sola, in
+`var_input_picker_threshold()`; un elenco più lungo si cerca invece di
+scorrerlo. La scelta singola conserva una prima voce vuota, così “nessuna
+variabile” resta un valore che il dialogo può rifiutare. Il `<select>` nativo
+riceve la classe `form-select` sul tag: è la classe che Bootstrap e le nostre
+regole di listbox già conoscono, quindi la listbox multipla usa davvero lo
+stile desktop.
+
 ### 12.2 Famiglie e stato
 
 | Famiglia | Implementazione | Stato |

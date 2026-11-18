@@ -203,3 +203,60 @@ test_that("the list controls explain an empty choice list", {
   html <- as.character(listbox_input("list", "List", character()))
   expect_match(html, "No variables available", fixed = TRUE)
 })
+
+test_that("var_input() picks the control from the length of the list", {
+  short <- as.character(var_input(
+    "v", "Variables", c("y", "x"), selected = "x", multiple = TRUE
+  ))
+  expect_match(short, '<select id="v"', fixed = TRUE)
+  expect_match(short, 'multiple="multiple"', fixed = TRUE)
+  expect_match(short, 'class="shiny-input-select form-control form-select"',
+               fixed = TRUE)
+  # The value is the variable, not its description.
+  expect_match(short, '<option value="x" selected>x</option>', fixed = TRUE)
+
+  long <- as.character(var_input(
+    "v", "Variables", letters[1:13], selected = c("a", "c"), multiple = TRUE
+  ))
+  expect_match(long, 'class="virtual-select"', fixed = TRUE)
+  expect_match(long, '"multiple":true', fixed = TRUE)
+  expect_match(long, '"selectedValue":["a","c"]', fixed = TRUE)
+  expect_equal(var_input_picker_threshold(), 12L)
+})
+
+test_that("a single variable selector keeps an empty choice", {
+  html <- as.character(var_input(
+    "v", "Variable", c("y", "x"), selected = "",
+    descriptions = c(y = "numeric", x = "numeric")
+  ))
+  # Native select, so the field is dressed by Bootstrap and by our tokens.
+  expect_match(html, '<select id="v" class="shiny-input-select form-control form-select"',
+               fixed = TRUE)
+  expect_false(grepl('multiple="multiple"', html, fixed = TRUE))
+  # Nothing selected stays a value the dialog can reject.
+  expect_match(html, '<option value="" selected></option>', fixed = TRUE)
+  expect_match(html, '<option value="y">y \u2014 numeric</option>', fixed = TRUE)
+  expect_match(html, '<option value="x">x \u2014 numeric</option>', fixed = TRUE)
+
+  selected <- as.character(var_input("v", "Variable", c("y", "x"),
+                                     selected = "x"))
+  expect_match(selected, '<option value="x" selected>x</option>',
+               fixed = TRUE)
+  # A long single list switches to the searchable picker.
+  picker <- as.character(var_input("v", "Variable", letters[1:13],
+                                   selected = "b"))
+  expect_match(picker, 'class="virtual-select"', fixed = TRUE)
+  expect_match(picker, '"multiple":false', fixed = TRUE)
+})
+
+test_that("the native select is the class the listbox CSS expects", {
+  html <- as.character(native_select_input(
+    "list", "List", c("mpg", "cyl"), selected = "cyl", multiple = TRUE
+  ))
+  expect_match(html, 'class="shiny-input-select form-control form-select"',
+               fixed = TRUE)
+  # The rule that turns a multiple select into a desktop listbox now matches
+  # the markup Shiny actually emits.
+  css <- as.character(app_css())
+  expect_match(css, "body select\\[multiple\\]\\.form-select", perl = TRUE)
+})

@@ -478,7 +478,7 @@ Stato: pianificata — 15 step in 5 lotti da 3.
 | S7 | Sottopannelli ggplot2 (*Style*, *Axes*, *Text*, *Theme*, *Output*) | [x] | nessuna opzione persa; questo commit |
 | S8 | Gruppi di opzioni per tipo e stato dei pannelli | [x] | `option_groups`, `isolate()`; questo commit |
 | S9 | `slider_input()` e `color_input()` | [x] | valori e comandi invariati; questo commit |
-| S10 | `var_input()` sulla famiglia scelta | [ ] | 106 punti, passo reversibile |
+| S10 | `var_input()` sulla famiglia scelta | [x] | 106 punti, passo reversibile; questo commit |
 | S11 | Dialoghi dati e distribuzioni | [ ] | Import, Frequency |
 | S12 | Dialoghi modelli e test | [ ] | contract verde |
 | S13 | Accessibilità ed errori | [ ] | ARIA, tastiera, focus |

@@ -62,9 +62,51 @@ field_grid <- function(..., class = NULL) {
   htmltools::div(class = c("rcmdr-field-grid", class), ...)
 }
 
+#' Where a long list stops being scannable
+#'
+#' Twelve rows fit in a listbox without scrolling.  Beyond that, typing in a
+#' searchable picker is faster than scanning, so the variable selectors switch
+#' control rather than growing a taller box.
+#' @keywords internal
+var_input_picker_threshold <- function() 12L
+
+#' Native select, styled as the Studio's own
+#'
+#' `selectInput()` builds a `<select class="shiny-input-select form-control">`,
+#' which Bootstrap does not dress as a select and our listbox rule does not
+#' recognise.  Adding `form-select` on the tag itself keeps the Bootstrap
+#' behaviour, the caret drawn in `currentColor` and the token styling without
+#' touching Shiny's markup.
+#' @keywords internal
+native_select_input <- function(id, label, choices, selected = NULL,
+                                multiple = FALSE, size = NULL,
+                                width = "100%") {
+  if (length(choices) == 0L) {
+    return(form_group(
+      label,
+      htmltools::tags$div(class = "text-muted", tr("No variables available"))
+    ))
+  }
+  if (is.null(selected)) selected <- if (isTRUE(multiple)) character() else ""
+  control <- selectInput(
+    id, label,
+    choices = choices,
+    selected = selected,
+    multiple = isTRUE(multiple),
+    selectize = FALSE,
+    width = width,
+    size = if (isTRUE(multiple)) size %||% 8L else NULL
+  )
+  htmltools::tagQuery(control)$find("select")$addClass("form-select")$allTags()
+}
+
 #' Variable selector
 #'
-#' Shiny equivalent of Rcmdr's `variableListBox()`.
+#' Shiny equivalent of Rcmdr's `variableListBox()`.  The id, the values, the
+#' selection and the option labels are the same whichever control is chosen:
+#' a short list stays a native listbox or drop-down, a long one opens the
+#' searchable picker.  A single choice keeps a blank first option, so "no
+#' variable selected" is still a value the dialog can reject.
 #' @export
 var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
                       size = NULL, placeholder = NULL, descriptions = NULL) {
@@ -74,8 +116,6 @@ var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
       htmltools::tags$div(class = "text-muted", tr("No variables available"))
     ))
   }
-  options <- list()
-  if (!is.null(placeholder)) options$placeholder <- placeholder
   if (is.null(selected) || (length(selected) == 1L && !nzchar(selected))) {
     selected <- character()
   }
@@ -89,13 +129,34 @@ var_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
   } else {
     labels <- stats::setNames(choices, choices)
   }
-  selectizeInput(
-    id, label,
-    choices = labels,
-    selected = selected,
-    multiple = multiple,
-    width = "100%",
-    options = options
+
+  if (length(choices) > var_input_picker_threshold()) {
+    return(picker_input(
+      id, label, labels,
+      selected = selected,
+      multiple = isTRUE(multiple),
+      width = "100%"
+    ))
+  }
+
+  if (isTRUE(multiple)) {
+    return(listbox_input(
+      id, label, labels,
+      selected = selected,
+      size = size %||% 8L,
+      width = "100%"
+    ))
+  }
+
+  # A native single select always shows a first option.  The blank row keeps
+  # the old selectize behaviour where nothing was selected until the user
+  # picked, so required-field validation still has something to catch.
+  labels <- c(stats::setNames("", ""), labels)
+  native_select_input(
+    id, label, labels,
+    selected = if (length(selected) == 0L) "" else selected[[1L]],
+    multiple = FALSE,
+    width = "100%"
   )
 }
 
@@ -247,18 +308,10 @@ picker_input <- function(id, label, choices, selected = NULL, multiple = FALSE,
 #' @export
 listbox_input <- function(id, label, choices, selected = NULL, size = 8L,
                           width = "100%") {
-  if (length(choices) == 0L) {
-    return(form_group(
-      label,
-      htmltools::tags$div(class = "text-muted", tr("No variables available"))
-    ))
-  }
-  selectInput(
-    id, label,
-    choices = choices,
+  native_select_input(
+    id, label, choices,
     selected = selected,
     multiple = TRUE,
-    selectize = FALSE,
     size = size,
     width = width
   )
