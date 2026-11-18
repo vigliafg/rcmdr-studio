@@ -22,6 +22,13 @@ un controllo con browser reale e lettore di schermo prima della release.
 - [x] La command palette si apre con `Ctrl+K`/`Cmd+K`.
 - [x] Frecce su/giù navigano i risultati della palette.
 - [x] `Ctrl+Enter` esegue selezione/cella.
+- [x] `F6` / `Shift+F6` passano tra vista primaria, secondaria, pannello
+      interno (Inspector/Preview), pannello modeless e status bar.
+- [x] La griglia dati è un tab stop: le frecce muovono la riga attiva,
+      `Invio`/`Spazio` selezionano, `Shift`+frecce estendono la selezione a
+      celle, `Esc` pulisce.
+- [x] Il grip di larghezza delle colonne è un `separator` focalizzabile:
+      frecce sinistra/destra cambiano la larghezza, `Home` torna al default.
 - [x] Non ci sono trappole di focus.
 
 ## 2. Focus visibile
@@ -35,7 +42,9 @@ un controllo con browser reale e lettore di schermo prima della release.
 
 - [x] La sidebar ha `role="navigation"` e un'etichetta.
 - [x] L'area principale ha `role="main"`.
-- [x] La status bar ha `aria-live="polite"`.
+- [x] La status bar ha `aria-live="polite"`, nome e `tabindex="-1"`.
+- [x] Le regioni del workspace hanno `role="region"` e un nome
+      (“Primary view”, “Secondary view”, pannello, modeless).
 - [x] I risultati di ricerca e le notifiche sono annunciati.
 - [x] Le tab usano il comportamento Bootstrap (`aria-selected`).
 - [x] I dialoghi hanno un titolo associato.
@@ -59,7 +68,9 @@ un controllo con browser reale e lettore di schermo prima della release.
 - [x] Le animazioni rispettano `prefers-reduced-motion`.
 - [x] Non ci sono lampeggi o transizioni aggressive.
 - [x] La dimensione del testo segue lo zoom del browser.
-- [ ] Il layout non si rompe a 200% di zoom. **Manuale**
+- [x] A 200% di zoom il guscio collassa a una colonna sotto 991.98 px CSS e
+      la sidebar impilata resta entro 40vh (verifica CSS automatica).
+- [ ] Resa reale a 200% di zoom nel browser. **Manuale**
 - [x] Le tabelle hanno scroll orizzontale accessibile.
 
 ## 6. Form e dialoghi
@@ -74,9 +85,10 @@ un controllo con browser reale e lettore di schermo prima della release.
 
 ## 7. Data Studio
 
-- [x] La griglia è navigabile da tastiera (DT).
+- [x] La griglia è navigabile da tastiera (DT) e ha un cursore di riga.
 - [x] Le intestazioni sono annunciate.
-- [x] La selezione righe è comprensibile.
+- [x] La selezione righe è comprensibile e si avvia senza mouse.
+- [x] Le larghezze delle colonne si cambiano anche da tastiera.
 - [x] L'inspector è raggiungibile.
 - [x] Le azioni di colonna hanno label.
 - [x] Il filtro è annunciato.
@@ -102,13 +114,16 @@ un controllo con browser reale e lettore di schermo prima della release.
 
 ## 10. Test
 
+- [x] Audit statico delle nuove superfici desktop (Onda 18, S11):
+      regioni, status bar, griglia, grip, zoom, reduced motion.
 - [x] Flusso import → summary → plot completabile da tastiera (E2E core).
 - [x] Flusso palette → dialogo → OK completabile da tastiera (E2E navigation).
 - [x] Flusso Report Studio → knit completabile da tastiera (E2E core).
-- [ ] Test con zoom 200%. **Manuale**
+- [ ] Test con zoom 200% su browser reale. **Manuale** (bloccato: Chrome non
+      naviga `http(s)` in questo ambiente, vedi `QA-WIDGETS.md` § 9)
 - [x] Test con tema scuro (CSS e E2E).
 - [x] Test con tema alto contrasto (CSS).
-- [ ] Test con lettore di schermo (NVDA/VoiceOver) sulle schermate principali. **Manuale**
+- [ ] Test con lettore di schermo (NVDA/VoiceOver) sulle schermate principali. **Manuale** (bloccato come sopra)
 - [ ] Nessun errore grave con axe-core (opzionale). **Manuale**
 
 ---

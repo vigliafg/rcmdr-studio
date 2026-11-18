@@ -1256,11 +1256,18 @@ date_range_keep <- function(x, range) {
 #' Cells selects a rectangular range and publishes it as TSV-ready coordinates.
 #' @param mode `"rows"` or `"cells"`.
 #' @keywords internal
-grid_selection_callback <- function(mode = "rows", dataset = NULL) {
+grid_selection_callback <- function(mode = "rows", dataset = NULL,
+                                    grid_label = NULL, resize_label = NULL) {
   mode <- if (identical(mode, "cells")) "cells" else "rows"
-  dataset <- gsub("'", "\\\\'", as.character(dataset %||% ""))
-  DT::JS(sprintf("window.rcmdrGridSelection(table, '%s', '%s');",
-                 mode, dataset))
+  escape <- function(value) {
+    gsub("'", "\\\\'", as.character(value %||% ""))
+  }
+  DT::JS(sprintf(
+    "window.rcmdrGridSelection(table, '%s', '%s', '%s', '%s');",
+    mode, escape(dataset),
+    escape(grid_label %||% tr("Data grid")),
+    escape(resize_label %||% tr("Resize column"))
+  ))
 }
 
 #' Open a dialog with prefilled memory

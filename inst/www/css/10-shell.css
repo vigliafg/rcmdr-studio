@@ -378,3 +378,19 @@
       outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
       outline-offset: calc(-1 * var(--rcmdr-focus-width));
     }
+
+    /* Narrow Studio shell ---------------------------------------------------
+       At 200% zoom a 1280 px window is 640 CSS px wide.  The shell already
+       falls back to one column below 991.98 px; this rule keeps the stacked
+       sidebar short, so the view stays on screen instead of being pushed
+       below a full-height menu. */
+    @media (max-width: 991.98px) {
+      body.rcmdr-mode-studio .rcmdr-sidebar {
+        max-height: 40vh;
+        border-right: 0;
+        border-bottom: 1px solid var(--rcmdr-border);
+      }
+      body.rcmdr-mode-studio .rcmdr-main {
+        padding: var(--rcmdr-space-2);
+      }
+    }

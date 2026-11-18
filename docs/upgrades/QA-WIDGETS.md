@@ -266,3 +266,38 @@ local http         FAILED (10.0s): Chromote: timed out waiting for response to c
 La suite non finge una copertura che non ha: il limite è nel diario, nella
 checklist e in questa pagina. Le verifiche di markup, CSS, ARIA e contrasto
 restano automatiche e verdi.
+
+---
+
+## 10. Verifica desktop (Onda 18, S11)
+
+**Stato:** audit statico completato; verifica visiva ancora bloccata dallo
+stesso limite di Chrome.
+
+Cosa è stato verificato in automatico:
+
+| Controllo | Evidenza |
+|---|---|
+| Matrice 8 temi × 2 densità | `test-theme-matrix.R`, `test-contrast.R` verdi |
+| Regioni di focus | primaria, secondaria, pannello, modeless, status: `role`, nome, `tabindex` |
+| Status bar | `aria-live`, `aria-atomic="false"`, annunci per selezione e undo |
+| Griglia da tastiera | tab stop sulla tabella, cursore di riga, `Invio`/`Spazio`, `Esc` |
+| Larghezza colonne | grip `role="separator"`, frecce ±16 px, `Home` al default |
+| Zoom 200% | sotto 991.98 px il guscio va a una colonna e la sidebar resta ≤ 40vh |
+| Reduced motion | `animation`/`transition` azzerati dal foglio `70-refine.css` |
+| Classic | regole desktop solo su `body.rcmdr-mode-studio`; `tabsetPanel` intatto |
+
+Cosa **non** è stato possibile verificare, e perché:
+
+- `Rscript tools/check_browser.R` rieseguito il 2026-11-18: `about:blank` e
+  `data:` ok, `local http` in timeout su `Page.navigate`. Chrome 157 è
+  installato ma non naviga `http(s)` in questo ambiente.
+- Di conseguenza i 26 e2e restano saltati, `tools/help_screenshots.R` non può
+  rigenerare le immagini e la resa reale a zoom 200%, con lettore di schermo o
+  con `prefers-reduced-motion` resta manuale.
+- Non è stato introdotto nessun test che finga una copertura browser assente:
+  le asserzioni sopra leggono CSS, JS e markup veri.
+
+Differenze accettate: la chrome desktop (40/28/40 px, raggi 4/6/8) è
+verificata a token, non a pixel; l'allineamento esatto del testo con un font
+di sistema diverso resta una verifica manuale.

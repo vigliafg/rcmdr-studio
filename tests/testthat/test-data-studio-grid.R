@@ -295,3 +295,13 @@ test_that("small data keeps the client grid and no notice", {
     expect_false(grepl("Rows are paged", grid, fixed = TRUE))
   })
 })
+
+test_that("the grid callback carries the translated keyboard labels", {
+  callback <- as.character(grid_selection_callback("rows", "D"))
+  expect_match(callback, "rcmdrGridSelection(table, 'rows', 'D',", fixed = TRUE)
+  expect_match(callback, "'Data grid'", fixed = TRUE)
+  expect_match(callback, "'Resize column'", fixed = TRUE)
+  # An apostrophe in a data set name must not break the JS string.
+  callback <- as.character(grid_selection_callback("cells", "O'Brien"))
+  expect_match(callback, "'O\\'Brien'", fixed = TRUE)
+})

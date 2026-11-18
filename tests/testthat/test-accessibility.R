@@ -341,3 +341,62 @@ test_that("the palette moves the active option without losing the query focus", 
   expect_match(html, "rcmdr-palette-count", fixed = TRUE)
   expect_match(html, "2 result(s)", fixed = TRUE)
 })
+
+# Desktop surfaces (Wave 18, S11) --------------------------------------------
+
+test_that("the data grid is a keyboard tab stop with a row cursor", {
+  js <- paste(as.character(app_js()), collapse = "\n")
+  expect_match(js, "rcmdrGridKeys", fixed = TRUE)
+  expect_match(js, "rcmdr-row-active", fixed = TRUE)
+  expect_match(js, "node.setAttribute('tabindex', '0')", fixed = TRUE)
+  expect_match(js, "event.key === 'ArrowDown'", fixed = TRUE)
+  expect_match(js, "event.key === 'ArrowUp'", fixed = TRUE)
+  expect_match(js, "emitRowSelection", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, "table.dataTable:focus", fixed = TRUE)
+  expect_match(css, "tr.rcmdr-row-active > td", fixed = TRUE)
+})
+
+test_that("the column grip is a separator with a keyboard path", {
+  js <- paste(as.character(app_js()), collapse = "\n")
+  expect_match(js, "setAttribute('role', 'separator')", fixed = TRUE)
+  expect_match(js, "setAttribute('aria-valuenow'", fixed = TRUE)
+  expect_match(js, "ArrowRight' ? 16 : -16", fixed = TRUE)
+  expect_match(js, "data-rcmdr-default-width", fixed = TRUE)
+
+  css <- as.character(app_css())
+  expect_match(css, ".rcmdr-col-resizer:focus", fixed = TRUE)
+})
+
+test_that("the Studio sidebar collapses above 200% zoom", {
+  shell <- app_asset_text("css", "10-shell.css")
+  # 200% zoom halves the CSS viewport: a 1280 px window becomes 640 px,
+  # below the 991.98 px breakpoint, so the shell must fall back to one
+  # column and cap the stacked sidebar.
+  expect_match(shell, "@media (max-width: 991.98px)", fixed = TRUE)
+  narrow <- regmatches(
+    shell,
+    regexpr(paste0("@media \\(max-width: 991.98px\\) \\{\\s*",
+                   "body\\.rcmdr-mode-studio \\.rcmdr-sidebar \\{[^}]*\\}"),
+            shell, perl = TRUE)
+  )
+  expect_match(narrow, "max-height: 40vh", fixed = TRUE)
+  expect_match(narrow, "border-bottom: 1px solid var(--rcmdr-border)",
+               fixed = TRUE)
+
+  # The fixed workspace and data layouts collapse at the same breakpoint.
+  views <- app_asset_text("css", "60-views.css")
+  expect_match(views, "grid-template-columns: minmax(0, 1fr);", fixed = TRUE)
+  expect_match(views, "@media (max-width: 991.98px)", fixed = TRUE)
+})
+
+test_that("reduced motion zeroes the desktop transitions", {
+  refine <- app_asset_text("css", "70-refine.css")
+  expect_match(refine, "@media (prefers-reduced-motion: reduce)",
+               fixed = TRUE)
+  expect_match(refine, "transition-duration: .01ms !important",
+               fixed = TRUE)
+  expect_match(refine, "animation-duration: .01ms !important",
+               fixed = TRUE)
+})

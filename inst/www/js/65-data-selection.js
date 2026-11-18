@@ -119,6 +119,8 @@
         if (target) {
           $(target.table().body()).find('tr.rcmdr-row-selected')
             .removeClass('rcmdr-row-selected');
+          $(target.table().body()).find('tr.rcmdr-row-active')
+            .removeClass('rcmdr-row-active');
         }
         Shiny.setInputValue('data_grid_selection', [], {priority: 'event'});
         Shiny.setInputValue('data_cell_selection', null, {priority: 'event'});
@@ -148,21 +150,56 @@
         }, {priority: 'event'});
       }
 
-      function setupColumnResize(table, dataset) {
+      function setupColumnResize(table, dataset, resizeLabel) {
         var header = table.table().header();
         if (!header) return;
         $(header).find('.rcmdr-col-resizer').remove();
         $(header).find('th').each(function() {
           if (!$(this).is(':visible')) return;
+          var name = $(this).text().trim();
+          var width = Math.round(this.getBoundingClientRect().width);
           var handle = document.createElement('span');
           handle.className = 'rcmdr-col-resizer';
-          handle.setAttribute('aria-hidden', 'true');
+          // The grip is a real control: a pointer drag and the arrow keys do
+          // the same thing, and the width is exposed as a range value.
+          handle.setAttribute('role', 'separator');
+          handle.setAttribute('tabindex', '0');
+          handle.setAttribute('aria-orientation', 'vertical');
+          handle.setAttribute('aria-label',
+            (resizeLabel || 'Resize column') + (name ? ' ' + name : ''));
+          handle.setAttribute('aria-valuemin', '40');
+          handle.setAttribute('aria-valuemax', '1200');
+          handle.setAttribute('aria-valuenow', String(width));
+          handle.setAttribute('aria-valuetext', width + ' px');
+          handle.setAttribute('data-rcmdr-default-width', String(width));
           this.appendChild(handle);
         });
         $(header).off('.rcmdrResize');
         $(header).on('click.rcmdrResize', '.rcmdr-col-resizer', function(event) {
           event.preventDefault();
           event.stopPropagation();
+        });
+        $(header).on('keydown.rcmdrResize', '.rcmdr-col-resizer',
+          function(event) {
+            var key = event.key;
+            if (key !== 'ArrowLeft' && key !== 'ArrowRight' &&
+                key !== 'Home') return;
+            event.preventDefault();
+            event.stopPropagation();
+            var th = this.parentNode;
+            var current = th.getBoundingClientRect().width;
+            var width = key === 'Home'
+              ? parseFloat(this.getAttribute('data-rcmdr-default-width')) || current
+              : Math.max(40, Math.min(1200,
+                  current + (key === 'ArrowRight' ? 16 : -16)));
+            table.table().node().style.tableLayout = 'fixed';
+            th.style.width = width + 'px';
+            th.style.minWidth = width + 'px';
+            this.setAttribute('aria-valuenow', String(Math.round(width)));
+            this.setAttribute('aria-valuetext', Math.round(width) + ' px');
+          });
+        $(header).on('keyup.rcmdrResize', '.rcmdr-col-resizer', function() {
+          publishWidths(table, dataset);
         });
         $(header).on('pointerdown.rcmdrResize', '.rcmdr-col-resizer',
           function(event) {
@@ -194,11 +231,108 @@
           });
       }
 
-      window.rcmdrGridSelection = function(table, mode, dataset) {
+      function renderedRows(table) {
+        return $(table.table().body()).find('tr').filter(function() {
+          return !$(this).hasClass('dataTables_empty');
+        }).toArray();
+      }
+
+      function paintActiveRow(table, row) {
+        $(table.table().body()).find('tr.rcmdr-row-active')
+          .removeClass('rcmdr-row-active');
+        if (!row) return;
+        $(row).addClass('rcmdr-row-active');
+        if (row.scrollIntoView) row.scrollIntoView({block: 'nearest'});
+      }
+
+      function emitRowSelection(table, $tr, additive) {
+        if (!additive) {
+          $(table.table().body()).find('tr.rcmdr-row-selected')
+            .removeClass('rcmdr-row-selected');
+        }
+        if (additive && $tr.hasClass('rcmdr-row-selected')) {
+          $tr.removeClass('rcmdr-row-selected');
+        } else {
+          $tr.addClass('rcmdr-row-selected');
+        }
+        var ids = [];
+        table.rows('.rcmdr-row-selected').every(function() {
+          var data = this.data() || [];
+          ids.push(data[data.length - 1]);
+        });
+        Shiny.setInputValue('data_grid_selection', ids, {priority: 'event'});
+      }
+
+      function setupGridKeyboard(table, gridLabel) {
+        var node = table.table().node();
+        if (!node) return;
+        // DT renders a plain table.  One tab stop on the table is enough to
+        // move a row cursor and to start a selection without a mouse; the
+        // server announces the result like a click does.
+        node.setAttribute('tabindex', '0');
+        node.setAttribute('aria-label', gridLabel || 'Data grid');
+        $(node).off('.rcmdrGridKeys');
+        $(node).on('keydown.rcmdrGridKeys', function(event) {
+          if (document.querySelector('.modal.show')) return;
+          var key = event.key;
+          var rows = renderedRows(table);
+          if (!rows.length) return;
+          var active = $(node).find('tr.rcmdr-row-active')[0] || null;
+          var index = active ? rows.indexOf(active) : -1;
+
+          if (!event.shiftKey &&
+              (key === 'ArrowDown' || key === 'ArrowUp')) {
+            event.preventDefault();
+            var step = key === 'ArrowDown' ? 1 : -1;
+            index = index < 0
+              ? 0
+              : Math.max(0, Math.min(rows.length - 1, index + step));
+            paintActiveRow(table, rows[index]);
+            if (gridState.mode === 'cells') {
+              var cell = $(rows[index]).find('td').get(0);
+              var cellIndexValue = cell ? cellIndex(table, cell) : null;
+              if (cellIndexValue) {
+                var column = gridState.end
+                  ? gridState.end.column
+                  : cellIndexValue.column;
+                gridState.anchor = {row: cellIndexValue.row, column: column};
+                gridState.end = {row: cellIndexValue.row, column: column};
+                paintRange(table, gridState.anchor, gridState.end);
+                publishCells(table);
+              }
+            }
+            return;
+          }
+
+          if ((key === 'Enter' || key === ' ' || key === 'Spacebar') &&
+              active) {
+            event.preventDefault();
+            if (gridState.mode === 'cells') {
+              var first = $(active).find('td').get(0);
+              var firstIndex = first ? cellIndex(table, first) : null;
+              if (firstIndex) {
+                gridState.anchor = {row: firstIndex.row,
+                                    column: firstIndex.column};
+                gridState.end = {row: firstIndex.row,
+                                 column: firstIndex.column};
+                paintRange(table, gridState.anchor, gridState.end);
+                publishCells(table);
+              }
+            } else {
+              emitRowSelection(table, $(active),
+                               event.ctrlKey || event.metaKey);
+            }
+          }
+        });
+      }
+
+      window.rcmdrGridSelection = function(table, mode, dataset, gridLabel,
+                                           resizeLabel) {
         gridState.table = table;
         gridState.mode = mode === 'cells' ? 'cells' : 'rows';
         gridState.dataset = dataset || '';
-        setupColumnResize(table, gridState.dataset);
+        setupColumnResize(table, gridState.dataset, resizeLabel);
+        setupGridKeyboard(table, gridLabel);
         gridState.anchor = null;
         gridState.end = null;
         gridState.dragging = false;
@@ -238,18 +372,8 @@
         $body.on('click.rcmdrGrid', 'tr', function(event) {
           var $tr = $(this);
           if ($tr.hasClass('dataTables_empty')) return;
-          if (event.ctrlKey || event.metaKey) {
-            $tr.toggleClass('rcmdr-row-selected');
-          } else {
-            $body.find('tr.rcmdr-row-selected').removeClass('rcmdr-row-selected');
-            $tr.addClass('rcmdr-row-selected');
-          }
-          var ids = [];
-          table.rows('.rcmdr-row-selected').every(function() {
-            var data = this.data() || [];
-            ids.push(data[data.length - 1]);
-          });
-          Shiny.setInputValue('data_grid_selection', ids, {priority: 'event'});
+          paintActiveRow(table, this);
+          emitRowSelection(table, $tr, event.ctrlKey || event.metaKey);
         });
       };
 

@@ -437,3 +437,19 @@
     /* A view with its second panel hidden is a normal block, not a grid with
        an empty track. */
     .rcmdr-splitter-single { display: block; min-width: 0; }
+
+    /* Keyboard data grid ----------------------------------------------------
+       The table itself is the tab stop.  The cursor row is painted with the
+       same focus token as every control, and the resize grip is a real
+       separator: it shows a ring when it takes focus. */
+    table.dataTable:focus {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: calc(-1 * var(--rcmdr-focus-width));
+    }
+    table.dataTable tbody tr.rcmdr-row-active > td {
+      box-shadow: inset 0 0 0 1px var(--rcmdr-focus);
+    }
+    table.dataTable thead th .rcmdr-col-resizer:focus {
+      outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
+      outline-offset: -2px;
+    }
