@@ -791,6 +791,7 @@ studio_breadcrumb <- function(parts) {
 #' @keywords internal
 rcmdr_icon_paths <- function() {
   list(
+    menu = '<path d="M4 7h16M4 12h16M4 17h16"/>',
     sliders = paste0(
       '<line x1="4" y1="7" x2="20" y2="7"/>',
       '<line x1="4" y1="12" x2="20" y2="12"/>',

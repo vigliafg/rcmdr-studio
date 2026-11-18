@@ -95,12 +95,15 @@ test_that("the main tab strip uses the primary pair for the active view", {
   expect_match(strip, "border-radius: var(--rcmdr-radius-pill);", fixed = TRUE)
 })
 
-test_that("classic mode keeps its own tab markup", {
+test_that("classic keeps its tabs and studio uses the workspace switcher", {
   classic <- as.character(main_tabs_ui("classic"))
+  expect_match(classic, "nav nav-tabs shiny-tab-input", fixed = TRUE)
+  expect_match(classic, 'data-value=', fixed = TRUE)
+  expect_false(grepl("rcmdr-tabs", classic, fixed = TRUE))
+
   studio <- as.character(main_tabs_ui("studio"))
-  for (html in list(classic, studio)) {
-    expect_match(html, "nav nav-tabs shiny-tab-input", fixed = TRUE)
-    expect_match(html, 'data-value=', fixed = TRUE)
-    expect_false(grepl("rcmdr-tabs", html, fixed = TRUE))
-  }
+  expect_match(studio, "rcmdr-view-switcher", fixed = TRUE)
+  expect_match(studio, 'data-rcmdr-view="data"', fixed = TRUE)
+  expect_match(studio, 'id="main_tabs"', fixed = TRUE)
+  expect_false(grepl("nav nav-tabs shiny-tab-input", studio, fixed = TRUE))
 })

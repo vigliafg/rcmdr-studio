@@ -75,6 +75,8 @@
       if (!target || !target.matches) return;
       if (target.matches('.rcmdr-menubar-group')) {
         var groupId = target.getAttribute('data-menu-group');
+        var summary = target.querySelector('summary');
+        if (summary) summary.setAttribute('aria-expanded', target.open ? 'true' : 'false');
         if (target.open) {
           rcmdrOpenMenubarGroup = groupId;
           document.querySelectorAll('.rcmdr-menubar-group[open]').forEach(function(el) {
@@ -93,6 +95,63 @@
         open: target.open
       }, {priority: 'event'});
     }, true);
+    // Menubar keyboard: F10 enters, Alt+letter opens a group, arrows move.
+    document.addEventListener('keydown', function(event) {
+      var bar = document.querySelector('.rcmdr-menubar');
+      if (!bar) return;
+      var groups = Array.prototype.slice.call(
+        bar.querySelectorAll('.rcmdr-menubar-group')
+      );
+      if (!groups.length) return;
+      var summaries = groups.map(function(group) {
+        return group.querySelector('summary');
+      });
+      var current = summaries.indexOf(document.activeElement);
+      var altLetter = event.altKey && !event.ctrlKey && !event.metaKey &&
+        /^[a-zA-Z]$/.test(event.key || '');
+      if (event.key === 'F10' || altLetter) {
+        event.preventDefault();
+        var target = groups[0];
+        if (altLetter) {
+          var letter = (event.key || '').toLowerCase();
+          target = groups.find(function(group) {
+            var summary = group.querySelector('summary');
+            return summary && summary.textContent.trim().toLowerCase()
+              .charAt(0) === letter;
+          }) || groups[0];
+        }
+        current = groups.indexOf(target);
+        if (current < 0) current = 0;
+        if (!target.open) target.open = true;
+        if (summaries[current]) summaries[current].focus();
+        window.rcmdrAlignDropdown(target);
+        return;
+      }
+      if (current < 0) return;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        var step = event.key === 'ArrowRight' ? 1 : -1;
+        current = (current + step + groups.length) % groups.length;
+        if (summaries[current]) summaries[current].focus();
+        return;
+      }
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        var group = groups[current];
+        if (!group.open) group.open = true;
+        window.rcmdrAlignDropdown(group);
+        var first = group.querySelector('.rcmdr-menu-item');
+        if (first) first.focus();
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        groups.forEach(function(group) { group.open = false; });
+        var summary = groups[current] && groups[current].querySelector('summary');
+        if (summary) summary.focus();
+      }
+    }, true);
+
     window.rcmdrHistoryClick = function(el, action) {
       if (!el) return false;
       if (action === 'copy') {

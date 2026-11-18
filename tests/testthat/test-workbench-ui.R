@@ -95,12 +95,16 @@ test_that("the Workbench server drives Script, Console, Output and Environment",
   })
 })
 
-test_that("the Workbench UI renders inside the Studio shell", {
-  html <- htmltools::renderTags(main_tabs_ui("studio"))$html
-  expect_match(html, "Script")
-  expect_match(html, "Console")
-  expect_match(html, "Environment")
-  expect_match(html, "script_editor_ui")
-  expect_match(html, "console_input")
-  expect_match(html, "environment_tabs")
+test_that("the Workbench UI renders inside the Studio workspace", {
+  switcher <- htmltools::renderTags(main_tabs_ui("studio"))$html
+  expect_match(switcher, "Script")
+  expect_match(switcher, "Console")
+  expect_match(switcher, "Environment")
+
+  expect_match(htmltools::renderTags(workspace_view_ui("script"))$html,
+               "script_editor_ui", fixed = TRUE)
+  expect_match(htmltools::renderTags(workspace_view_ui("console"))$html,
+               "console_input", fixed = TRUE)
+  expect_match(htmltools::renderTags(workspace_view_ui("environment"))$html,
+               "environment_tabs", fixed = TRUE)
 })

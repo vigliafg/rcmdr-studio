@@ -268,7 +268,7 @@ console_workspace_ui <- function() {
   )
 }
 
-main_tabs_ui <- function(mode = "studio") {
+main_tabs_ui <- function(mode = "studio", view = "home") {
   if (identical(mode, "classic")) {
     return(tabsetPanel(
       id = "main_tabs",
@@ -283,21 +283,9 @@ main_tabs_ui <- function(mode = "studio") {
       tabPanel(tr("Help"), help_center_ui(), value = "help")
     ))
   }
-  tabsetPanel(
-    id = "main_tabs",
-    tabPanel(tr("Home"), home_pane_ui(), value = "home"),
-    tabPanel(tr("Workflows"), uiOutput("workflow_panel"),
-             value = "workflows"),
-    tabPanel(tr("Data Studio"), data_pane_ui("studio"), value = "data"),
-    tabPanel(tr("Chart Studio"), plots_pane_ui("studio"), value = "charts"),
-    tabPanel(tr("Report Studio"), report_pane_ui("studio"), value = "report"),
-    tabPanel(tr("Script"), script_studio_ui(), value = "script"),
-    tabPanel(tr("Output (Console)"), console_workspace_ui(),
-             value = "console"),
-    tabPanel(tr("Environment"), environment_workspace_ui(),
-             value = "environment"),
-    tabPanel(tr("Help centre"), help_center_ui(), value = "help")
-  )
+  # Studio renders one view at a time.  `input$main_tabs` stays the contract,
+  # but there is no tabsetPanel holding every view in the DOM.
+  workspace_shell_ui(view)
 }
 
 #' Stable identifiers for the main views
@@ -499,6 +487,15 @@ app_topbar_ui <- function(theme = "system") {
     ),
     htmltools::div(
       class = "rcmdr-topbar-controls",
+      htmltools::tags$button(
+        type = "button",
+        class = "rcmdr-topbar-icon",
+        `data-rcmdr-sidebar-toggle` = "1",
+        `aria-expanded` = "true",
+        `aria-label` = tr("Menus"),
+        onclick = "return rcmdrToggleSidebar(this);",
+        rcmdr_icon("menu", 18)
+      ),
       actionButton(
         "palette_open", tr("Search"),
         class = "btn-sm btn-outline-light",
@@ -1017,7 +1014,14 @@ app_server <- function(env = globalenv()) {
 
     output$main_tabs_ui <- renderUI({
       language_revision()
-      main_tabs_ui(main_tabs_mode())
+      main_tabs_ui(main_tabs_mode(),
+                   view = isolate(input$main_tabs) %||% "home")
+    })
+
+    output$workspace_layout <- renderUI({
+      language_revision()
+      view <- input$main_tabs %||% "home"
+      workspace_view_ui(view, "studio")
     })
 
     open_dialog <- function(spec) {

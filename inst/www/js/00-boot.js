@@ -2,10 +2,47 @@ Shiny.addCustomMessageHandler('rcmdr-click', function(id) {
       var el = document.getElementById(id);
       if (el) el.click();
     });
+    window.rcmdrSetView = function(view) {
+      if (!view) return false;
+      Shiny.setInputValue('main_tabs', view, {priority: 'event'});
+      return false;
+    };
+    window.rcmdrClickSubTab = function(barId, value, tries) {
+      var bar = document.getElementById(barId);
+      var link = bar && value
+        ? bar.querySelector('.nav-link[data-value="' + value + '"]')
+        : null;
+      if (link) {
+        link.click();
+        return;
+      }
+      if ((tries || 0) < 20) {
+        window.setTimeout(function() {
+          window.rcmdrClickSubTab(barId, value, (tries || 0) + 1);
+        }, 50);
+      }
+    };
+    window.rcmdrToggleSidebar = function(button) {
+      var body = document.querySelector('.rcmdr-shell-body');
+      if (!body) return false;
+      var collapsed = body.classList.toggle('rcmdr-sidebar-collapsed');
+      if (button) {
+        button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      }
+      return false;
+    };
     Shiny.addCustomMessageHandler('rcmdr-tab', function(message) {
       // The server sends {tab, sub} with stable view ids; a plain string is
       // still accepted for older callers.
       var target = (typeof message === 'string') ? { tab: message } : (message || {});
+      var workspace = document.getElementById('workspace_layout');
+      if (workspace) {
+        window.rcmdrSetView(target.tab);
+        if (target.sub) {
+          window.rcmdrClickSubTab('console_tabs', target.sub, 0);
+        }
+        return;
+      }
       var bar = document.getElementById('main_tabs');
       if (!bar) return;
       var link = target.tab

@@ -173,3 +173,45 @@
       background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
       font-weight: var(--rcmdr-weight-strong);
     }
+
+    /* Studio workspace ------------------------------------------------------
+       One view at a time: the switcher is the visible navigation, the hidden
+       input keeps `main_tabs` as the server contract.  Classic keeps its
+       shiny tabset above. */
+    .rcmdr-view-state { display: none; }
+    .rcmdr-view-switcher {
+      display: inline-flex; flex-wrap: wrap; gap: 2px;
+      padding: 2px; margin-bottom: var(--rcmdr-space-2);
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border-strong);
+      border-radius: var(--rcmdr-radius-pill);
+    }
+    .rcmdr-view-tab {
+      border: 0; background: transparent; color: var(--rcmdr-text);
+      border-radius: var(--rcmdr-radius-pill);
+      padding: .2rem .7rem; font-size: var(--rcmdr-text-sm);
+      line-height: var(--rcmdr-leading-ui); cursor: pointer;
+    }
+    .rcmdr-view-tab:hover { background: var(--rcmdr-hover); }
+    .rcmdr-view-tab.active {
+      background: var(--rcmdr-primary); color: var(--rcmdr-on-primary);
+      font-weight: var(--rcmdr-weight-strong);
+    }
+    .rcmdr-shell-body.rcmdr-sidebar-collapsed {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .rcmdr-shell-body.rcmdr-sidebar-collapsed .rcmdr-sidebar { display: none; }
+    .rcmdr-topbar-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2rem; height: 2rem; padding: 0;
+      border: 1px solid transparent; border-radius: var(--rcmdr-radius-sm);
+      background: transparent; color: var(--rcmdr-on-primary);
+    }
+    .rcmdr-topbar-icon:hover,
+    .rcmdr-topbar-icon:focus-visible {
+      background: var(--rcmdr-on-primary-muted);
+      color: var(--rcmdr-primary);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-shell-body.rcmdr-sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
+    }

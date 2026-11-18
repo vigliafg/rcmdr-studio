@@ -323,7 +323,7 @@ menubar_ui <- function(tree, status = function(node) "enabled",
                        query = "") {
   htmltools::tags$nav(
     class = "rcmdr-menubar",
-    role = "navigation",
+    role = "menubar",
     `aria-label` = tr("Application menus"),
     lapply(tree, menubar_top_ui, status = status, favorites = favorites,
            expanded = expanded, query = query)
@@ -341,7 +341,13 @@ menubar_top_ui <- function(node, status = function(node) "enabled",
   htmltools::tags$details(
     class = "rcmdr-menubar-group",
     `data-menu-group` = node$id,
-    htmltools::tags$summary(menu_label(node$label)),
+    htmltools::tags$summary(
+      menu_label(node$label),
+      role = "menuitem",
+      tabindex = "0",
+      `aria-haspopup` = "true",
+      `aria-expanded` = "false"
+    ),
     htmltools::tags$div(
       class = "rcmdr-menubar-dropdown",
       lapply(node$children, menu_node_ui, status = status,
