@@ -81,6 +81,21 @@
         }
       }
     });
+    function rcmdrPaletteActivate(results, index) {
+      results.forEach(function(el) {
+        el.classList.remove('active');
+        el.setAttribute('aria-selected', 'false');
+      });
+      var active = results[index];
+      if (!active) return;
+      active.classList.add('active');
+      active.setAttribute('aria-selected', 'true');
+      var query = document.getElementById('palette_query');
+      if (query && active.id) {
+        query.setAttribute('aria-activedescendant', active.id);
+      }
+      active.scrollIntoView({block: 'nearest'});
+    }
     document.addEventListener('keydown', function(event) {
       if (event.target.id !== 'palette_query') return;
       var results = Array.from(document.querySelectorAll('#palette_results .rcmdr-palette-result:not(.disabled)'));
@@ -88,21 +103,29 @@
       var current = results.findIndex(function(el) { return el.classList.contains('active'); });
       if (event.key === 'ArrowDown') {
         event.preventDefault();
-        current = Math.min(results.length - 1, current + 1);
-        results.forEach(function(el) { el.classList.remove('active'); });
-        results[current].classList.add('active');
-        results[current].scrollIntoView({block: 'nearest'});
+        rcmdrPaletteActivate(results,
+          Math.min(results.length - 1, current + 1));
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        current = Math.max(0, current <= 0 ? 0 : current - 1);
-        results.forEach(function(el) { el.classList.remove('active'); });
-        results[current].classList.add('active');
-        results[current].scrollIntoView({block: 'nearest'});
+        rcmdrPaletteActivate(results,
+          Math.max(0, current <= 0 ? 0 : current - 1));
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        rcmdrPaletteActivate(results, 0);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        rcmdrPaletteActivate(results, results.length - 1);
       } else if (event.key === 'Enter') {
         event.preventDefault();
         if (current < 0) current = 0;
         results[current].click();
       }
+    });
+    // A new query rebuilds the list: drop the stale active descendant so the
+    // screen reader does not announce an option that no longer exists.
+    document.addEventListener('input', function(event) {
+      if (event.target.id !== 'palette_query') return;
+      event.target.removeAttribute('aria-activedescendant');
     });
     // Accordion headers: Bootstrap leaves the arrow keys to the page, so
     // Up/Down move inside the same accordion and Home/End jump to the edges.

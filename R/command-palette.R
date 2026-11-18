@@ -360,14 +360,21 @@ palette_results_ui <- function(results) {
   }
   htmltools::tags$div(
     class = "rcmdr-palette-results", role = "listbox",
+    id = "palette_listbox",
     `aria-label` = tr("Command palette results"),
+    htmltools::tags$p(
+      class = "rcmdr-palette-count", role = "status", `aria-live` = "polite",
+      sprintf(tr("%d result(s)"), nrow(results))
+    ),
     lapply(seq_len(nrow(results)), function(i) {
       row <- results[i, , drop = FALSE]
       enabled <- isTRUE(row$enabled)
       htmltools::tags$div(
         class = paste("rcmdr-palette-result", if (!enabled) "disabled"),
+        id = paste0("palette_option_", i),
         role = "option",
         tabindex = "0",
+        `aria-selected` = "false",
         `aria-disabled` = if (enabled) NULL else "true",
         `data-palette-type` = row$type,
         `data-palette-id` = row$id,

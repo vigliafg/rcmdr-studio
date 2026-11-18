@@ -27,12 +27,14 @@ help_center_ui <- function(filter_choices = NULL) {
       htmltools::div(
         class = "rcmdr-help-filters",
         shiny::selectInput(
-          "help_type", NULL, choices = filter_choices$types,
+          "help_type", tr("Type"), choices = filter_choices$types,
           width = "170px"
         ),
-        shiny::selectInput(
-          "help_package", NULL, choices = filter_choices$packages,
-          width = "190px"
+        # The package list grows with every plugin, so it is a searchable
+        # picker; the type list stays a native select because it is short.
+        picker_input(
+          "help_package", tr("Source"), filter_choices$packages,
+          selected = "all", width = "190px"
         ),
         shiny::actionButton("help_clear_filters", tr("Clear filters"),
                             class = "btn-sm btn-outline-secondary")
@@ -131,8 +133,20 @@ help_welcome_ui <- function(state = NULL) {
   )
 }
 
-help_result_ui <- function(result) {
-  id <- help_escape_id(result$id)
+#' Count line above the Help results
+#'
+#' It is a live region of its own so a new search announces how many topics it
+#' found without repeating the whole list.
+#' @keywords internal
+help_result_count <- function(n) {
+  htmltools::tags$p(
+    class = "text-muted small rcmdr-help-count",
+    role = "status", `aria-live` = "polite",
+    sprintf(tr("%d topic(s) found"), as.integer(n))
+  )
+}
+
+help_result_ui <- function(result) {  id <- help_escape_id(result$id)
   package <- result$package %||% NA_character_
   type <- result$type %||% "task"
   snippet <- result$snippet_html %||% htmltools::htmlEscape(result$snippet %||% "")

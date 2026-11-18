@@ -211,3 +211,6 @@ Drag a column header to change the view order; the data is not changed.	Trascina
 Drop a text data file (CSV, TSV or TXT) up to 2 MB.	Trascina un file di testo (CSV, TSV o TXT) fino a 2 MB.
 Only text data files (CSV, TSV or TXT) up to 2 MB can be dropped.	Si possono trascinare solo file di testo (CSV, TSV o TXT) fino a 2 MB.
 The dropped file could not be stored.	Non è stato possibile salvare il file trascinato.
+Type	Tipo
+Source	Fonte
+%d result(s)	%d risultati

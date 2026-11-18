@@ -89,3 +89,22 @@ test_that("the Help layout uses the shared grid and card head", {
   expect_false(grepl("col-lg-3", html, fixed = TRUE))
   expect_false(grepl("col-lg-9", html, fixed = TRUE))
 })
+
+test_that("the package filter is a searchable picker with a name", {
+  html <- htmltools::renderTags(help_center_ui())$html
+  expect_match(html, "virtual-select", fixed = TRUE)
+  expect_match(html, "help_package", fixed = TRUE)
+  expect_match(html, "help_package-label", fixed = TRUE)
+  # The type list stays a native select: it is short.
+  expect_match(html, 'id="help_type"', fixed = TRUE)
+  expect_match(html, ">Type</label>", fixed = TRUE)
+  expect_match(html, ">Source</label>", fixed = TRUE)
+})
+
+test_that("the Help result count is announced", {
+  count <- as.character(help_result_count(7L))
+  expect_match(count, 'role="status"', fixed = TRUE)
+  expect_match(count, 'aria-live="polite"', fixed = TRUE)
+  expect_match(count, "7 topic(s) found", fixed = TRUE)
+  expect_match(count, "rcmdr-help-count", fixed = TRUE)
+})

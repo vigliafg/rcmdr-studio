@@ -540,3 +540,12 @@
       outline: var(--rcmdr-focus-width) solid var(--rcmdr-focus);
       outline-offset: var(--rcmdr-focus-offset);
     }
+
+    /* Count lines above a result list: a muted step, no extra rhythm. */
+    .rcmdr-help-count,
+    .rcmdr-palette-count {
+      margin: 0 0 var(--rcmdr-space-1);
+      color: var(--rcmdr-muted);
+      font-size: var(--rcmdr-text-sm);
+    }
+    .rcmdr-palette-count { margin-bottom: var(--rcmdr-space-1); }

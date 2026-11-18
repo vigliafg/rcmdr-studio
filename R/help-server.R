@@ -135,10 +135,7 @@ help_server <- function(input, output, session, state) {
         ))
       }
       return(htmltools::tagList(
-        htmltools::tags$p(
-          class = "text-muted small",
-          sprintf(tr("%d topic(s) found"), nrow(results))
-        ),
+        help_result_count(nrow(results)),
         lapply(seq_len(nrow(results)), function(i) {
           help_result_ui(results[i, , drop = FALSE])
         })
@@ -167,6 +164,7 @@ help_server <- function(input, output, session, state) {
       }
       return(htmltools::tagList(
         htmltools::tags$h5(title),
+        help_result_count(nrow(catalog)),
         htmltools::tags$ul(
           class = "rcmdr-help-list",
           lapply(seq_len(nrow(catalog)), function(i) {
@@ -202,7 +200,9 @@ help_server <- function(input, output, session, state) {
     filter(NULL)
     shiny::updateTextInput(session, "help_query", value = "")
     shiny::updateSelectInput(session, "help_type", selected = "all")
-    shiny::updateSelectInput(session, "help_package", selected = "all")
+    shinyWidgets::updateVirtualSelect(
+      "help_package", selected = "all", session = session
+    )
   })
 
   shiny::observeEvent(input$help_current_dialog, {

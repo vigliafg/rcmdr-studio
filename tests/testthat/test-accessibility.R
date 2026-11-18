@@ -316,3 +316,26 @@ test_that("drag and drop has a keyboard alternative", {
   chart <- readLines(test_path("..", "..", "R", "chart-studio.R"))
   expect_true(any(grepl("plot_move(state, index", chart, fixed = TRUE)))
 })
+
+test_that("the palette moves the active option without losing the query focus", {
+  js <- as.character(app_js())
+  expect_match(js, "rcmdrPaletteActivate", fixed = TRUE)
+  expect_match(js, "aria-activedescendant", fixed = TRUE)
+  expect_match(js, "event.key === 'Home'", fixed = TRUE)
+  expect_match(js, "event.key === 'End'", fixed = TRUE)
+  expect_match(js, "aria-selected", fixed = TRUE)
+
+  html <- as.character(palette_results_ui(data.frame(
+    id = c("one", "two"), type = c("menu", "help"),
+    label = c("One", "Two"), path = c("Menu", "Help"),
+    keywords = c("one", "two"), enabled = c(TRUE, TRUE),
+    reason = c("", ""), command = c("cmd1", ""),
+    group = c("menu", "help"), favorite = c(FALSE, FALSE),
+    recent = c(FALSE, FALSE), stringsAsFactors = FALSE
+  )))
+  expect_match(html, 'id="palette_listbox"', fixed = TRUE)
+  expect_match(html, 'id="palette_option_1"', fixed = TRUE)
+  expect_match(html, 'aria-selected="false"', fixed = TRUE)
+  expect_match(html, "rcmdr-palette-count", fixed = TRUE)
+  expect_match(html, "2 result(s)", fixed = TRUE)
+})
