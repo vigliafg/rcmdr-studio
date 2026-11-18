@@ -166,6 +166,22 @@ is_implemented_command <- function(command) {
 # "porting registry": each one is a function of the application state.
 base_direct_commands <- function() {
   list(
+    onUndo = function(state) {
+      ok <- undo_apply(state)
+      if (!isTRUE(ok) && !is.null(state$session)) {
+        showNotification(state$undo_message %||% tr("Nothing to undo."),
+                         type = "message", duration = 3)
+      }
+      invisible(ok)
+    },
+    onRedo = function(state) {
+      ok <- undo_redo(state)
+      if (!isTRUE(ok) && !is.null(state$session)) {
+        showNotification(state$undo_message %||% tr("Nothing to redo."),
+                         type = "message", duration = 3)
+      }
+      invisible(ok)
+    },
     summarizeDataSet = function(state) {
       ds <- active_dataset(state)
       if (is.null(ds)) return(NULL)

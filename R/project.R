@@ -538,6 +538,9 @@ project_read_dataset <- function(path) {
 project_apply <- function(state, project, path = NULL) {
   project <- project_migrate(project)
   project_validate_or_stop(project)
+  # Undo snapshots belong to the previous session; a project load starts a
+  # fresh history rather than restoring data that is no longer in the project.
+  if (is.function(undo_clear)) undo_clear(state)
   path <- path %||% project$path %||% state$project_path
   root <- if (is.null(path)) getwd() else dirname(path)
   warnings <- character()

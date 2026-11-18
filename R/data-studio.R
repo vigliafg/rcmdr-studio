@@ -199,6 +199,7 @@ set_variable_label <- function(state, dataset_name = active_dataset(state),
   }
 
   entry <- dictionary_entry(state, dataset_name, variable)
+  before <- undo_data_snapshot(state, dataset_name)
   if (!is.null(label)) entry$label <- label
   if (!is.null(units)) entry$units <- units
   if (!is.null(description)) entry$description <- description
@@ -212,6 +213,8 @@ set_variable_label <- function(state, dataset_name = active_dataset(state),
   assign(dataset_name, df, envir = state$env)
   dataset_register(state, dataset_name)
   state_touch(state)
+  undo_record(state, "data", tr("Edit variable metadata"), before,
+              undo_data_snapshot(state, dataset_name))
   invisible(entry)
 }
 

@@ -12,11 +12,12 @@ shortcut_definitions <- function() {
   data.frame(
     keys = c(
       "Ctrl+K", "Ctrl+Shift+P", "Ctrl+S", "Ctrl+Shift+S", "Ctrl+Enter",
-      "Ctrl+Shift+Enter", "Alt+1 ... Alt+9", "F1", "Ctrl+/", "Esc"
+      "Ctrl+Shift+Enter", "Ctrl+Z", "Ctrl+Shift+Z", "Alt+1 ... Alt+9",
+      "F1", "Ctrl+/", "Esc"
     ),
     action = c(
       "palette", "palette", "save", "save_as", "run_selection", "run_all",
-      "tab", "help", "shortcuts", "close"
+      "undo", "redo", "tab", "help", "shortcuts", "close"
     ),
     description = c(
       tr("Open the command palette"),
@@ -25,6 +26,8 @@ shortcut_definitions <- function() {
       tr("Save the current document as"),
       tr("Run the selection or the current chunk"),
       tr("Run the whole script"),
+      tr("Undo the last data or gallery change"),
+      tr("Redo the last undone change"),
       tr("Switch to the nth Studio tab"),
       tr("Open Help"),
       tr("Show this shortcut list"),

@@ -237,3 +237,25 @@ Split	Affiancati
 Primary	Primario
 Secondary	Secondario
 Menus	Menu
+Undo: %s	Annulla: %s
+Redo: %s	Ripeti: %s
+Undone: %s	Annullato: %s
+Redone: %s	Ripetuto: %s
+Nothing to undo.	Nulla da annullare.
+Nothing to redo.	Nulla da ripetere.
+Nothing to restore.	Nulla da ripristinare.
+Add chart	Aggiungi grafico
+Pin chart	Fissa il grafico
+Unpin chart	Libera il grafico
+Rename chart	Rinomina il grafico
+Edit chart tags	Modifica le etichette del grafico
+Update chart	Aggiorna il grafico
+Delete chart	Elimina il grafico
+Reorder charts	Riordina i grafici
+Edit variable metadata	Modifica i metadati della variabile
+Data change	Modifica dei dati
+Data Studio change	Modifica nello Studio dati
+Change	Modifica
+The change is larger than the undo memory cap.	La modifica supera il limite di memoria per l'annullamento.
+Undo the last data or gallery change	Annulla l'ultima modifica ai dati o alla galleria
+Redo the last undone change	Ripeti l'ultima modifica annullata

@@ -33,6 +33,15 @@ AppState <- function(env = globalenv()) {
   state$data_grid_revision <- 0L
   state$last_checkpoint_skip <- NULL
 
+  # Application undo/redo: bounded snapshots of the active data set and the
+  # gallery metadata.  See `R/undo.R`; navigation and text stay out.
+  state$undo_stack <- list()
+  state$redo_stack <- list()
+  state$undo_suspended <- 0L
+  state$undo_message <- NULL
+  state$undo_last_label <- NULL
+  state$undo_skip <- NULL
+
   state$log <- character()
   state$output <- character()
   state$output_stack <- list()
@@ -173,6 +182,8 @@ AppState <- function(env = globalenv()) {
     checkpoint_max = 20L,
     checkpoint_max_bytes = 50 * 1024^2,
     session_checkpoint_max = 10L,
+    undo_max = 20L,
+    undo_max_bytes = 50 * 1024^2,
     import_preview_rows = 20L,
     use_markdown = FALSE,
     use_knitr = FALSE,

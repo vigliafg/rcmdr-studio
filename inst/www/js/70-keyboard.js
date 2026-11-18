@@ -1,6 +1,24 @@
     document.addEventListener('keydown', function(event) {
       var mod = event.ctrlKey || event.metaKey;
       var key = (event.key || '').toLowerCase();
+      // Ctrl+Z is Ace's undo inside the editor and the browser's undo inside
+      // a field; the application stack only takes it outside text entry.
+      if (mod && key === 'z' && !event.altKey) {
+        var target = event.target;
+        var tag = target && target.tagName ? target.tagName.toLowerCase() : '';
+        var inText = tag === 'input' || tag === 'textarea' || tag === 'select' ||
+          (target && target.isContentEditable) ||
+          (target && target.closest && target.closest('.ace_editor'));
+        if (!inText) {
+          var undoButton = document.getElementById(
+            event.shiftKey ? 'redo_shortcut' : 'undo_shortcut'
+          );
+          if (undoButton) {
+            event.preventDefault();
+            undoButton.click();
+          }
+        }
+      }
       if (mod && !event.shiftKey && !event.altKey && key === 'k') {
         var paletteButton = document.getElementById('palette_open');
         if (paletteButton) {

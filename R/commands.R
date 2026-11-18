@@ -87,6 +87,7 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
 
   if (isTRUE(log)) state$log <- c(state$log, code)
 
+  undo_before <- undo_command_start(state, code)
   packages <- required_packages(code)
   if (length(packages) > 0L) attach_packages(packages)
 
@@ -124,6 +125,7 @@ run_command <- function(state, code, log = TRUE, echo = TRUE, plot = "auto",
     history_add(state, entry)
   }
 
+  undo_command_finish(state, undo_before, code)
   invisible(result)
 }
 

@@ -585,6 +585,8 @@ app_ui <- function() {
     htmltools::div(
       class = "visually-hidden",
       actionButton("shortcuts_open", tr("Keyboard shortcuts")),
+      actionButton("undo_shortcut", tr("Undo")),
+      actionButton("redo_shortcut", tr("Redo")),
       actionButton("help_shortcut", tr("Help")),
       downloadButton("download_report_rmd", tr("Download report (.Rmd)")),
       downloadButton("download_report_html", tr("Download report (.html)"))
@@ -881,7 +883,7 @@ app_server <- function(env = globalenv()) {
       language_revision()
       tick()
       menubar_ui(
-        tree,
+        undo_menu_tree(tree, state),
         function(node) {
           command_status(state, node$command, node$activation, node$install)
         },
@@ -1250,6 +1252,12 @@ app_server <- function(env = globalenv()) {
         state$execution_source <- "menu"
         on.exit(state$execution_source <- old_source, add = TRUE)
         action(state)
+        if (command %in% c("onUndo", "onRedo")) {
+          data_grid_revision(data_grid_revision() + 1L)
+          data_selection_revision(data_selection_revision() + 1L)
+          chart_revision(chart_revision() + 1L)
+          workspace_revision(workspace_revision() + 1L)
+        }
         tick(tick() + 1L)
         menu_revision(menu_revision() + 1L)
         history_revision(history_revision() + 1L)
@@ -1274,6 +1282,11 @@ app_server <- function(env = globalenv()) {
       if (is.null(command) || !nzchar(command)) return()
       launch(command)
     }, ignoreInit = TRUE)
+
+    # Ctrl+Z / Ctrl+Shift+Z click these hidden buttons from 70-keyboard.js.
+    # They go through launch(), so availability and the Edit menu agree.
+    observeEvent(input$undo_shortcut, launch("onUndo"), ignoreInit = TRUE)
+    observeEvent(input$redo_shortcut, launch("onRedo"), ignoreInit = TRUE)
 
     # -- dialogs ------------------------------------------------------------
 
@@ -2385,11 +2398,20 @@ app_server <- function(env = globalenv()) {
       if (isTRUE(destructive)) {
         checkpoint_create(state, checkpoint_label %||% tr("Before Data Studio change"))
       }
+      before <- undo_data_snapshot(state)
       ok <- TRUE
-      for (command in commands) {
-        outcome <- run_command(state, command, source = "data")
-        if (!identical(outcome$status, "ok")) ok <- FALSE
+      undo_suspended(state, {
+        for (command in commands) {
+          outcome <- run_command(state, command, source = "data")
+          if (!identical(outcome$status, "ok")) ok <- FALSE
+        }
+      })
+      label <- trimws(sub("^Before ", "", checkpoint_label %||%
+                            tr("Data Studio change")))
+      if (nzchar(label)) {
+        label <- paste0(toupper(substr(label, 1L, 1L)), substring(label, 2L))
       }
+      undo_record(state, "data", label, before, undo_data_snapshot(state))
       refresh_data_ui()
       invisible(ok)
     }
@@ -3463,6 +3485,12 @@ app_server <- function(env = globalenv()) {
           class = "rcmdr-status-item",
           sprintf(tr("%d plot(s)"), length(state$plots))
         ),
+        if (!is.null(state$undo_message) && nzchar(state$undo_message)) {
+          htmltools::tags$span(
+            class = "rcmdr-status-item rcmdr-status-undo",
+            state$undo_message
+          )
+        },
         if (isTRUE(state$busy)) {
           htmltools::tags$span(class = "rcmdr-status-item",
                                badge(tr("busy"), "warning"))

@@ -80,6 +80,7 @@ plot_entry <- function(state, key) {
 #' @keywords internal
 plot_register <- function(state, plot) {
   if (is.null(plot)) return(invisible(NA_integer_))
+  before <- undo_gallery_snapshot(state)
   if (is.null(plot$id)) {
     state$plot_counter <- as.integer(state$plot_counter %||% 0L) + 1L
     plot$id <- sprintf("plot-%04d", state$plot_counter)
@@ -94,6 +95,8 @@ plot_register <- function(state, plot) {
   index <- length(state$plots)
   state$plots[[index]]$index <- index
   state_touch(state)
+  undo_record(state, "gallery", tr("Add chart"), before,
+              undo_gallery_snapshot(state))
   invisible(index)
 }
 
@@ -126,6 +129,7 @@ plot_reorder <- function(state, from, to) {
   start <- match(from, pinned)
   end <- match(to, pinned)
   if (is.na(start) || is.na(end)) return(invisible(FALSE))
+  before <- undo_gallery_snapshot(state)
   moved <- pinned[start]
   rest <- pinned[-start]
   at <- end
@@ -138,6 +142,8 @@ plot_reorder <- function(state, from, to) {
     state$plots[[index]]$index <- index
   }
   state_touch(state)
+  undo_record(state, "gallery", tr("Reorder charts"), before,
+              undo_gallery_snapshot(state))
   invisible(TRUE)
 }
 
@@ -226,12 +232,23 @@ plot_update <- function(state, key, title = NULL, tags = NULL,
                         pinned = NULL) {
   index <- plot_locate(state, key)
   if (is.na(index)) return(invisible(FALSE))
+  before <- undo_gallery_snapshot(state)
   plot <- state$plots[[index]]
   if (!is.null(title)) plot$title <- title
   if (!is.null(tags)) plot$tags <- tags
   if (!is.null(pinned)) plot$pinned <- isTRUE(pinned)
   state$plots[[index]] <- plot
   state_touch(state)
+  label <- if (!is.null(pinned)) {
+    if (isTRUE(pinned)) tr("Pin chart") else tr("Unpin chart")
+  } else if (!is.null(title)) {
+    tr("Rename chart")
+  } else if (!is.null(tags)) {
+    tr("Edit chart tags")
+  } else {
+    tr("Update chart")
+  }
+  undo_record(state, "gallery", label, before, undo_gallery_snapshot(state))
   invisible(TRUE)
 }
 
@@ -240,6 +257,7 @@ plot_update <- function(state, key, title = NULL, tags = NULL,
 plot_delete <- function(state, key) {
   index <- plot_locate(state, key)
   if (is.na(index)) return(invisible(FALSE))
+  before <- undo_gallery_snapshot(state)
   plot <- state$plots[[index]]
   if (!is.null(plot$file) && file.exists(plot$file)) unlink(plot$file)
   if (!is.null(plot$url) && !is.null(state$plot_dir) && !is.null(state$plot_prefix)) {
@@ -249,6 +267,8 @@ plot_delete <- function(state, key) {
   }
   state$plots <- state$plots[-index]
   state_touch(state)
+  undo_record(state, "gallery", tr("Delete chart"), before,
+              undo_gallery_snapshot(state))
   invisible(TRUE)
 }
 
