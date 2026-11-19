@@ -292,3 +292,7 @@ filter: %s	filtro: %s
 editing disabled: threshold exceeded	modifica disattivata: soglia superata
 server-side paging	paginazione lato server
 filter: %s · %d of %d rows	filtro: %s · %d di %d righe
+Primary	Primaria
+Secondary	Secondaria
+Primary view: %s	Vista primaria: %s
+Secondary view: %s	Vista secondaria: %s

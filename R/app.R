@@ -1196,14 +1196,24 @@ app_server <- function(env = globalenv()) {
       }
       focus <- input$workspace_focus %||% workspace_focus()
       if (identical(focus, "primary")) {
-        return(focus_region("workspace-primary", tr("Primary view"),
-                            render_workspace_view(primary, primary = TRUE),
-                            "primary"))
+        return(focus_region(
+          "workspace-primary", workspace_slot_label("primary", primary),
+          htmltools::tagList(
+            workspace_slot_header("primary", primary),
+            render_workspace_view(primary, primary = TRUE)
+          ),
+          "primary"
+        ))
       }
       if (identical(focus, "secondary")) {
-        return(focus_region("workspace-secondary", tr("Secondary view"),
-                            render_workspace_view(secondary, primary = FALSE),
-                            "secondary"))
+        return(focus_region(
+          "workspace-secondary", workspace_slot_label("secondary", secondary),
+          htmltools::tagList(
+            workspace_slot_header("secondary", secondary),
+            render_workspace_view(secondary, primary = FALSE)
+          ),
+          "secondary"
+        ))
       }
       split_pane(
         "workspace_split",
@@ -1220,10 +1230,15 @@ app_server <- function(env = globalenv()) {
     output$workspace_primary <- renderUI({
       language_revision()
       workspace_revision()
-      focus_region("workspace-primary", tr("Primary view"),
-                   render_workspace_view(input$main_tabs %||% "home",
-                                         primary = TRUE),
-                   "primary")
+      view <- input$main_tabs %||% "home"
+      focus_region(
+        "workspace-primary", workspace_slot_label("primary", view),
+        htmltools::tagList(
+          workspace_slot_header("primary", view),
+          render_workspace_view(view, primary = TRUE)
+        ),
+        "primary"
+      )
     })
 
     output$workspace_secondary <- renderUI({
@@ -1231,9 +1246,14 @@ app_server <- function(env = globalenv()) {
       workspace_revision()
       view <- input$workspace_secondary_view %||% workspace_secondary()
       req(nzchar(view), !identical(view, input$main_tabs %||% "home"))
-      focus_region("workspace-secondary", tr("Secondary view"),
-                   render_workspace_view(view, primary = FALSE),
-                   "secondary")
+      focus_region(
+        "workspace-secondary", workspace_slot_label("secondary", view),
+        htmltools::tagList(
+          workspace_slot_header("secondary", view),
+          render_workspace_view(view, primary = FALSE)
+        ),
+        "secondary"
+      )
     })
 
     observeEvent(input$workspace_secondary_view, {

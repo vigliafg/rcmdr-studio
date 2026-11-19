@@ -1,3 +1,25 @@
+    /* Workspace slots ------------------------------------------------------
+       With two views on screen, each carries its role and its view name.  The
+       left edge uses the accent for the primary slot and the strong border
+       for the secondary one: colour plus the word, never colour alone. */
+    .rcmdr-slot-header {
+      display: flex; align-items: center; gap: var(--rcmdr-space-2);
+      padding: .1rem .6rem; margin-bottom: var(--rcmdr-space-1);
+      font-size: var(--rcmdr-text-xs); color: var(--rcmdr-muted);
+      border-left: .3rem solid var(--rcmdr-border);
+    }
+    .rcmdr-slot-header-primary { border-left-color: var(--rcmdr-accent); }
+    .rcmdr-slot-header-secondary {
+      border-left-color: var(--rcmdr-border-strong);
+    }
+    .rcmdr-slot-role {
+      font-weight: var(--rcmdr-weight-strong); color: var(--rcmdr-text);
+      white-space: nowrap;
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-slot-role, .rcmdr-slot-sep { display: none; }
+    }
+
     .rcmdr-result-hint {
       display: flex; align-items: center; justify-content: space-between;
       gap: .75rem; flex-wrap: wrap;

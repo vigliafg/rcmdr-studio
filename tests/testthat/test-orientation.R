@@ -197,3 +197,64 @@ test_that("the compact status bar hides the shape, which stays in data info", {
   expect_match(css, ".rcmdr-status-group + .rcmdr-status-group", fixed = TRUE)
   expect_match(css, ".rcmdr-view-count", fixed = TRUE)
 })
+
+# O5 — workspace slot headers -------------------------------------------------
+
+test_that("a split names both slots and their views", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:3, b = 1:3)
+
+  shiny::testServer(app_server(env), {
+    session$setInputs(main_tabs = "data", menu_search = "",
+                      workspace_secondary_view = "help",
+                      workspace_focus = "split")
+    session$flushReact()
+
+    primary <- htmltools::renderTags(output$workspace_primary)$html
+    expect_match(primary, "rcmdr-slot-header-primary", fixed = TRUE)
+    expect_match(primary, "Primary", fixed = TRUE)
+    expect_match(primary, "Data Studio", fixed = TRUE)
+    expect_match(primary, 'aria-label="Primary view: Data Studio"',
+                 fixed = TRUE)
+    # The slot stays the F6 target: role, tabindex and the same name.
+    expect_match(primary, 'data-rcmdr-focus-region="primary"', fixed = TRUE)
+    expect_match(primary, 'tabindex="-1"', fixed = TRUE)
+
+    secondary <- htmltools::renderTags(output$workspace_secondary)$html
+    expect_match(secondary, "rcmdr-slot-header-secondary", fixed = TRUE)
+    expect_match(secondary, "Secondary", fixed = TRUE)
+    expect_match(secondary, "Help centre", fixed = TRUE)
+    expect_match(secondary, 'aria-label="Secondary view: Help centre"',
+                 fixed = TRUE)
+    expect_match(secondary, 'data-rcmdr-focus-region="secondary"',
+                 fixed = TRUE)
+  })
+})
+
+test_that("a single slot has no redundant header", {
+  skip_if_not_installed("shiny")
+  shiny::testServer(app_server(new.env(parent = globalenv())), {
+    session$setInputs(main_tabs = "home", menu_search = "",
+                      workspace_secondary_view = "")
+    session$flushReact()
+    html <- htmltools::renderTags(output$workspace_layout)$html
+    expect_false(grepl("rcmdr-slot-header", html, fixed = TRUE))
+    expect_match(html, 'aria-label="Primary view"', fixed = TRUE)
+  })
+})
+
+test_that("the slot header uses the accent and keeps the view name when narrow", {
+  css <- app_asset_text("css", "60-views.css")
+  expect_match(css, ".rcmdr-slot-header-primary { border-left-color: var(--rcmdr-accent); }",
+               fixed = TRUE)
+  expect_match(css, ".rcmdr-slot-header-secondary", fixed = TRUE)
+  compact <- regmatches(
+    css,
+    regexpr("@media \\(max-width: 991\\.98px\\) \\{[^@]*rcmdr-slot-role[^@]*\\}",
+            css, perl = TRUE)
+  )
+  expect_match(compact, ".rcmdr-slot-role, .rcmdr-slot-sep { display: none; }",
+               fixed = TRUE)
+  expect_false(grepl(".rcmdr-slot-view { display: none", compact, fixed = TRUE))
+})

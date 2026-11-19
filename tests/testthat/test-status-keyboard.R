@@ -51,7 +51,8 @@ test_that("the workspace renders primary and secondary focus regions", {
     session$flushReact()
     secondary <- htmltools::renderTags(output$workspace_secondary)$html
     expect_match(secondary, 'data-rcmdr-focus-region="secondary"', fixed = TRUE)
-    expect_match(secondary, 'aria-label="Secondary view"', fixed = TRUE)
+    expect_match(secondary, 'aria-label="Secondary view: Help centre"',
+                 fixed = TRUE)
   })
 })
 

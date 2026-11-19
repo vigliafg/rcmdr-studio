@@ -78,6 +78,39 @@ workspace_view_switcher <- function(view = "home") {
   )
 }
 
+#' Header of one workspace slot
+#'
+#' With two slots on screen, a title bar in each says which role the slot has
+#' and which view it shows.  It is a label, not a control: the view switcher
+#' remains the only navigation.
+#'
+#' @param role `"primary"` or `"secondary"`.
+#' @param view View id shown in the slot.
+#' @return A `<div>` with the role, a separator and the view name.
+#' @keywords internal
+workspace_slot_header <- function(role = c("primary", "secondary"), view) {
+  role <- match.arg(role)
+  role_label <- if (identical(role, "primary")) tr("Primary") else tr("Secondary")
+  htmltools::div(
+    class = paste("rcmdr-slot-header", paste0("rcmdr-slot-header-", role)),
+    htmltools::tags$span(class = "rcmdr-slot-role", role_label),
+    htmltools::tags$span(class = "rcmdr-slot-sep", "\u00b7",
+                         `aria-hidden` = "true"),
+    htmltools::tags$span(class = "rcmdr-slot-view", main_tab_label(view))
+  )
+}
+
+#' Accessible name of a workspace slot
+#' @keywords internal
+workspace_slot_label <- function(role = c("primary", "secondary"), view) {
+  role <- match.arg(role)
+  if (identical(role, "primary")) {
+    sprintf(tr("Primary view: %s"), main_tab_label(view))
+  } else {
+    sprintf(tr("Secondary view: %s"), main_tab_label(view))
+  }
+}
+
 #' The Studio workspace shell
 #'
 #' `workspace_layout` is rendered on the server because it may become a split
