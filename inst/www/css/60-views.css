@@ -250,6 +250,37 @@
     @media (max-width: 991.98px) {
       .rcmdr-home-start { grid-template-columns: minmax(0, 1fr); }
     }
+    /* Start page: four doors, not a brochure.  A single readable column,
+       with the primary door marked by weight and the accent token. */
+    .rcmdr-home-launch {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 58rem;
+    }
+    .rcmdr-home-doors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: var(--rcmdr-space-2) var(--rcmdr-space-3);
+    }
+    .rcmdr-home-door {
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: var(--rcmdr-space-1);
+      padding: var(--rcmdr-space-2);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      background: var(--rcmdr-surface-muted);
+      min-width: 0;
+    }
+    .rcmdr-home-door-primary {
+      border-color: var(--rcmdr-accent);
+      background: var(--rcmdr-surface);
+    }
+    .rcmdr-home-door-text {
+      margin: 0; font-size: var(--rcmdr-text-sm);
+      color: var(--rcmdr-muted);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-home-doors { grid-template-columns: minmax(0, 1fr); }
+    }
     .rcmdr-home-card {
       min-width: 0;
       background: var(--rcmdr-surface);

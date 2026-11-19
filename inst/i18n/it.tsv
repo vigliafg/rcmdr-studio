@@ -296,3 +296,19 @@ Primary	Primaria
 Secondary	Secondaria
 Primary view: %s	Vista primaria: %s
 Secondary view: %s	Vista secondaria: %s
+Import a file	Importa un file
+New data set	Nuovo data set
+Open a project	Apri un progetto
+Continue without data	Continua senza dati
+CSV, Excel, SPSS, Stata, SAS or Minitab.	CSV, Excel, SPSS, Stata, SAS o Minitab.
+Create an empty data set and fill it in the grid.	Crea un data set vuoto e compilalo nella griglia.
+Pick up a saved project with its data, history and report.	Riprendi un progetto salvato con dati, cronologia e report.
+Write and run R commands without importing anything.	Scrivi ed esegui comandi R senza importare nulla.
+Choose how to begin. You can also work without a data set: scripts and the console are always available.	Scegli come iniziare. Puoi anche lavorare senza data set: script e console sono sempre disponibili.
+You can work without data.	Puoi lavorare senza dati.
+New document	Nuovo documento
+Clear search	Cancella ricerca
+Run command	Esegui comando
+Import...	Importa...
+Filter applied: %s (%s)	Filtro applicato: %s (%s)
+Filter cleared (%d x %d)	Filtro rimosso (%d x %d)

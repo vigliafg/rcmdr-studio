@@ -37,7 +37,7 @@ workspace_view_ui <- function(view, mode = "studio", state = NULL,
   }
   switch(
     view,
-    home = home_pane_ui(),
+    home = home_pane_ui(state),
     workflows = uiOutput("workflow_panel"),
     data = data_pane_ui("studio", show_inspector = inspector),
     charts = plots_pane_ui("studio", show_preview = preview),

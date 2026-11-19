@@ -221,7 +221,82 @@ plots_pane_ui <- function(mode = "studio", show_preview = TRUE) {
   }
 }
 
-home_pane_ui <- function() {
+#' Is this the first run, with nothing to continue?
+#'
+#' The start page is a *state of Home*, never a modal: it appears only when
+#' there is no active data set, no open project and no recent project.  As soon
+#' as the session has something to continue, Home keeps its normal layout.
+#' @keywords internal
+home_start_state <- function(state) {
+  if (is.null(state)) return(FALSE)
+  if (!is.null(active_dataset(state))) return(FALSE)
+  path <- state$project_path %||% ""
+  if (nzchar(path)) return(FALSE)
+  recent <- tryCatch(
+    project_recent(limit = 1L, file = state$project_recent_file),
+    error = function(e) NULL
+  )
+  is.null(recent) || nrow(recent) == 0L
+}
+
+#' The four ways to begin, when there is nothing to continue
+#'
+#' Four doors, one of them primary: import a file, create an empty data set,
+#' open a project, or continue without data.  "Continue without data" is a
+#' first-class choice: scripts and the console work without a data set, and
+#' saying so is the point of the page.
+#' @keywords internal
+home_start_ui <- function() {
+  door <- function(button, text, primary = FALSE) {
+    htmltools::div(
+      class = c("rcmdr-home-door", if (isTRUE(primary)) "rcmdr-home-door-primary"),
+      button,
+      htmltools::tags$p(class = "rcmdr-home-door-text", text)
+    )
+  }
+  htmltools::div(
+    class = "rcmdr-home-start rcmdr-home-launch",
+    htmltools::div(
+      class = "rcmdr-home-column",
+      htmltools::div(
+        class = "rcmdr-home-card",
+        card_head(htmltools::tags$h1(tr("Start"),
+                                     class = "rcmdr-home-title")),
+        htmltools::tags$p(
+          class = "rcmdr-note rcmdr-home-lede",
+          tr("Choose how to begin. You can also work without a data set: scripts and the console are always available.")
+        ),
+        htmltools::div(
+          class = "rcmdr-home-doors",
+          door(
+            actionButton("home_start_import", tr("Import a file"),
+                         class = "btn-sm btn-outline-primary"),
+            tr("CSV, Excel, SPSS, Stata, SAS or Minitab.")
+          ),
+          door(
+            actionButton("home_start_new", tr("New data set"),
+                         class = "btn-sm btn-primary"),
+            tr("Create an empty data set and fill it in the grid."),
+            primary = TRUE
+          ),
+          door(
+            actionButton("home_start_project", tr("Open a project"),
+                         class = "btn-sm btn-outline-primary"),
+            tr("Pick up a saved project with its data, history and report.")
+          ),
+          door(
+            actionButton("home_start_continue", tr("Continue without data"),
+                         class = "btn-sm btn-outline-secondary"),
+            tr("Write and run R commands without importing anything.")
+          )
+        )
+      )
+    )
+  )
+}
+
+home_pane_ui <- function(state = NULL) {
+  if (home_start_state(state)) return(home_start_ui())
   htmltools::tagList(
     htmltools::div(
       class = "rcmdr-home-start",
@@ -1231,6 +1306,9 @@ app_server <- function(env = globalenv()) {
       language_revision()
       workspace_revision()
       view <- input$main_tabs %||% "home"
+      # The start page depends on the data set and the recent projects; only
+      # Home pays for the extra dependency.
+      if (identical(view, "home")) tick()
       focus_region(
         "workspace-primary", workspace_slot_label("primary", view),
         htmltools::tagList(
@@ -2309,6 +2387,24 @@ app_server <- function(env = globalenv()) {
 
     observeEvent(input$home_import, {
       state$open_dialog("readDataSet")
+    }, ignoreInit = TRUE)
+
+    # Start page doors: each one is the existing dialog, no new command.
+    observeEvent(input$home_start_import, {
+      state$open_dialog("dataImportWizard")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_start_new, {
+      state$open_dialog("newDataSet")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_start_project, {
+      state$open_dialog("projectOpen")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$home_start_continue, {
+      state$show_tab(tr("Script"))
+      announce(tr("You can work without data."))
     }, ignoreInit = TRUE)
 
     observeEvent(input$home_report, {
