@@ -305,3 +305,62 @@ test_that("the grid callback carries the translated keyboard labels", {
   callback <- as.character(grid_selection_callback("cells", "O'Brien"))
   expect_match(callback, "'O\\'Brien'", fixed = TRUE)
 })
+
+# Visible view (Wave 19, O1) --------------------------------------------------
+
+test_that("the view shape follows the filter, not the data set", {
+  state <- AppState(env = new.env())
+  state$env$D <- data.frame(a = 1:4, b = letters[1:4])
+  dataset_register(state, "D")
+  active_dataset(state, "D")
+  frame <- data_grid_frame(state$env$D)
+
+  expect_equal(data_view_shape(state, frame), "4 x 2")
+  expect_equal(data_view_shape(state, frame, long = TRUE),
+               "4 rows x 2 columns, 8 cells")
+
+  filtered <- frame[frame$a == 2, , drop = FALSE]
+  filter <- list(column = "a", value = "2")
+  expect_equal(data_filter_label("a", "2"), "a 2")
+  expect_equal(data_view_shape(state, filtered, filter), "1 of 4 x 2")
+  expect_equal(data_view_shape(state, filtered, filter, long = TRUE),
+               "1 of 4 rows x 2 columns, 2 cells")
+
+  # A filter that keeps every row is still a filter, but the count does not
+  # repeat itself.
+  expect_true(data_view_state(state, frame, list(column = "a", value = ""))$filtered
+              == FALSE)
+  same <- data_view_state(state, frame, list(column = "a", value = "1"))
+  expect_true(same$filtered)
+  expect_equal(data_view_shape(state, frame, list(column = "a", value = "1")),
+               "4 x 2")
+
+  expect_equal(data_filter_label("when", NULL,
+                                 c("2026-01-01", "2026-01-31")),
+               "when 2026-01-01..2026-01-31")
+  expect_equal(data_filter_label("when", NULL, "2026-01-01"),
+               "when 2026-01-01")
+  expect_equal(data_filter_label("", "2"), "")
+  expect_null(data_view_state(AppState(env = new.env()), NULL, NULL))
+})
+
+test_that("the status bar reports the filtered shape", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:4, b = letters[1:4])
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "D")
+    session$setInputs(menu_search = "", data_mode = "view",
+                      data_filter_column = "a", data_filter_value = "2")
+    session$elapse(500)
+    session$flushReact()
+
+    info <- htmltools::renderTags(output$data_info)$html
+    expect_match(info, "1 of 4 rows x 2 columns, 2 cells", fixed = TRUE)
+
+    status <- htmltools::renderTags(output$statusbar)$html
+    expect_match(status, "1 of 4 x 2", fixed = TRUE)
+    expect_match(status, "filter: a 2", fixed = TRUE)
+  })
+})

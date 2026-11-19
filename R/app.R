@@ -2441,10 +2441,16 @@ app_server <- function(env = globalenv()) {
       tick()
       plan <- data_grid_plan(state)
       if (is.null(plan)) return(NULL)
+      # The shape follows the visible frame, not the data set: a filter that
+      # leaves 12 rows must not read "5000 x 5".
+      filter <- list(
+        column = input$data_filter_column %||% "",
+        value = data_filter_value_d() %||% "",
+        dates = input$data_filter_dates %||% NULL
+      )
       htmltools::tags$span(
         class = "text-muted",
-        sprintf(tr("%d rows x %d columns, %d cells"),
-                plan$rows, plan$columns, plan$cells),
+        data_view_shape(state, data_view_frame(), filter, long = TRUE),
         if (!isTRUE(plan$editable)) {
           htmltools::tags$span(
             class = "text-warning",
@@ -3763,12 +3769,17 @@ app_server <- function(env = globalenv()) {
         error = function(e) "0.1.0"
       )
       df <- dataset(state)
-      dimensions <- if (is.null(df)) {
-        tr("no data")
-      } else {
-        sprintf("%d x %d", nrow(df), ncol(df))
-      }
-      selection_text <- selection_status_text(state, data_view_frame())
+      frame <- data_view_frame()
+      filter <- list(
+        column = input$data_filter_column %||% "",
+        value = data_filter_value_d() %||% "",
+        dates = input$data_filter_dates %||% NULL
+      )
+      dimensions <- data_view_shape(state, frame, filter)
+      filter_label <- data_filter_label(
+        filter$column, filter$value, filter$dates
+      )
+      selection_text <- selection_status_text(state, frame)
       data_name <- active_dataset(state)
       model_name <- active_model(state)
       undo_text <- state$undo_message %||% ""
@@ -3787,6 +3798,12 @@ app_server <- function(env = globalenv()) {
           badge(toupper(ui_mode(state)), "neutral")
         ),
         htmltools::tags$span(class = "rcmdr-status-item", dimensions),
+        if (nzchar(filter_label)) {
+          htmltools::tags$span(
+            class = "rcmdr-status-item rcmdr-status-filter",
+            sprintf(tr("filter: %s"), filter_label)
+          )
+        },
         htmltools::tags$span(
           class = "rcmdr-status-item rcmdr-status-dataset",
           sprintf(tr("Data: %s"), data_name %||% tr("none"))

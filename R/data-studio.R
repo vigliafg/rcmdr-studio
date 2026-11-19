@@ -1095,6 +1095,103 @@ data_grid_notice <- function(plan, mode = "view") {
   note(text)
 }
 
+# Visible view ---------------------------------------------------------------
+
+#' Describe the filter currently applied to the view
+#'
+#' The toolbar keeps the filter as three inputs; this helper turns them into
+#' the label shown next to the numbers.  No filter means an empty string, so
+#' callers can test it with `nzchar()`.
+#'
+#' @param column Filtered column, or `NULL`.
+#' @param value Text value, or `NULL`.
+#' @param dates Inclusive date range, or `NULL`.
+#' @return A label, or `""` when no filter applies.
+#' @keywords internal
+data_filter_label <- function(column = NULL, value = NULL, dates = NULL) {
+  column <- trimws(as.character(column %||% ""))
+  if (!nzchar(column)) return("")
+  value <- trimws(as.character(value %||% ""))
+  if (nzchar(value)) return(sprintf("%s %s", column, value))
+  dates <- as.character(dates %||% character())
+  dates <- dates[nzchar(dates)]
+  if (length(dates) == 0L) return("")
+  if (length(dates) == 1L) return(sprintf("%s %s", column, dates[[1L]]))
+  sprintf("%s %s..%s", column, dates[[1L]], dates[[length(dates)]])
+}
+
+#' Describe the visible view of a data set
+#'
+#' `data_grid_plan()` decides *how* the grid is rendered and always reads the
+#' whole data set.  This helper describes *what the user is looking at*: the
+#' frame after filtering, the total behind it and the filter label.  Keeping
+#' the two apart is what stops the status bar from saying "5,000 x 5" while
+#' the grid shows twelve rows.
+#'
+#' @param state Application state.
+#' @param frame Visible frame (with `.row_id`), or `NULL`.
+#' @param filter A list with `column`, `value` and `dates`, or `NULL`.
+#' @return A list, or `NULL` when there is no data set.
+#' @keywords internal
+data_view_state <- function(state, frame = NULL, filter = NULL) {
+  df <- dataset(state)
+  if (is.null(df)) return(NULL)
+  filter <- filter %||% list()
+  label <- data_filter_label(
+    filter$column %||% NULL,
+    filter$value %||% NULL,
+    filter$dates %||% NULL
+  )
+  list(
+    visible_rows = if (is.null(frame)) 0L else as.integer(nrow(frame)),
+    total_rows = as.integer(nrow(df)),
+    columns = as.integer(ncol(df)),
+    filtered = nzchar(label),
+    filter_label = label
+  )
+}
+
+#' Shape of the visible view
+#'
+#' Short form for the status bar ("12 of 5000 x 5"), long form for the data
+#' info line ("12 of 5000 rows x 5 columns, 60 cells").  When the filter does
+#' not change the row count, the total is enough; the filter label still says
+#' that a filter is on.
+#'
+#' @param state Application state.
+#' @param frame Visible frame, or `NULL`.
+#' @param filter A list with `column`, `value` and `dates`, or `NULL`.
+#' @param long Use the words "rows"/"columns" and the cell count.
+#' @return A string.
+#' @keywords internal
+data_view_shape <- function(state, frame = NULL, filter = NULL, long = FALSE) {
+  view <- data_view_state(state, frame, filter)
+  if (is.null(view)) return(tr("no data"))
+  reduced <- isTRUE(view$filtered) &&
+    view$visible_rows != view$total_rows
+  if (isTRUE(long)) {
+    if (reduced) {
+      return(sprintf(
+        tr("%d of %d rows x %d columns, %d cells"),
+        view$visible_rows, view$total_rows, view$columns,
+        view$visible_rows * view$columns
+      ))
+    }
+    return(sprintf(
+      tr("%d rows x %d columns, %d cells"),
+      view$total_rows, view$columns,
+      view$total_rows * view$columns
+    ))
+  }
+  if (reduced) {
+    return(sprintf(
+      tr("%d of %d x %d"),
+      view$visible_rows, view$total_rows, view$columns
+    ))
+  }
+  sprintf("%d x %d", view$total_rows, view$columns)
+}
+
 #' Saved column widths for a data set
 #' @keywords internal
 data_widths_saved <- function(state, dataset_name = active_dataset(state)) {
