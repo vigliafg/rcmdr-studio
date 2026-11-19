@@ -161,16 +161,25 @@
     .rcmdr-menu-item:hover { color: var(--rcmdr-accent); text-decoration: underline; }
     .rcmdr-menu-item.disabled { color: var(--rcmdr-disabled); cursor: not-allowed; }
     .rcmdr-statusbar {
-      display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .6rem;
+      display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .7rem;
       background: var(--rcmdr-surface-muted);
       border-top: 1px solid var(--rcmdr-border);
       padding: .25rem .75rem; font-size: var(--rcmdr-text-sm);
       color: var(--rcmdr-muted);
     }
-    /* A separator is decoration, so it is a border and not a "|" the screen
+    /* Identity, selection, last action: three groups, not twelve peers.  A
+       separator is decoration, so it is a border and not a "|" the screen
        reader would read as content. */
-    .rcmdr-status-item + .rcmdr-status-item {
-      padding-left: .6rem; border-left: 1px solid var(--rcmdr-border);
+    .rcmdr-status-group {
+      display: inline-flex; flex-wrap: wrap; align-items: center;
+      gap: .1rem .5rem; min-width: 0;
+    }
+    .rcmdr-status-group + .rcmdr-status-group {
+      padding-left: .7rem; border-left: 1px solid var(--rcmdr-border);
+    }
+    .rcmdr-view-count {
+      align-self: center; font-size: var(--rcmdr-text-xs);
+      color: var(--rcmdr-muted); white-space: nowrap;
     }
 
     /* Main views ------------------------------------------------------------
@@ -391,6 +400,16 @@
     body.rcmdr-mode-studio .rcmdr-statusbar {
       min-height: 1.75rem;
       padding: .15rem var(--rcmdr-space-2);
+    }
+    /* At 200% zoom the window is 640 CSS px: the shape is still in the data
+       info line, so the compact bar drops it and the group rules instead of
+       pushing the last action off screen. */
+    @media (max-width: 991.98px) {
+      .rcmdr-statusbar { gap: .05rem .4rem; }
+      .rcmdr-status-group + .rcmdr-status-group {
+        padding-left: .4rem; border-left: 0;
+      }
+      .rcmdr-status-optional { display: none; }
     }
 
     /* Focus regions ---------------------------------------------------------

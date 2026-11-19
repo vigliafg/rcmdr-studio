@@ -77,14 +77,14 @@ test_that("the status bar is a row of facts, not of pipes", {
   css <- as.character(app_css())
   expect_match(css, ".rcmdr-statusbar {\n      display: flex;", fixed = TRUE)
   expect_match(css,
-               ".rcmdr-status-item + .rcmdr-status-item {\n      padding-left: .6rem; border-left: 1px solid var(--rcmdr-border);",
+               ".rcmdr-status-group + .rcmdr-status-group {\n      padding-left: .7rem; border-left: 1px solid var(--rcmdr-border);",
                fixed = TRUE)
 
   skip_if_not_installed("shiny")
   shiny::testServer(app_server(new.env(parent = globalenv())), {
     html <- htmltools::renderTags(output$statusbar)$html
     expect_match(html, "rcmdr-status-item", fixed = TRUE)
-    expect_match(html, "rcmdr-badge", fixed = TRUE)
+    expect_match(html, "rcmdr-status-group", fixed = TRUE)
     # The separator is a border: no pipe character in the live region.
     expect_false(grepl("|", html, fixed = TRUE))
   })

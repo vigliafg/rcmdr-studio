@@ -14,9 +14,11 @@ test_that("the status bar names the data set, the model and the last action", {
     html <- htmltools::renderTags(output$statusbar)$html
     expect_match(html, "Data: D", fixed = TRUE)
     expect_match(html, "3 x 2", fixed = TRUE)
-    expect_match(html, "Model: fit", fixed = TRUE)
     expect_match(html, "Last action: Rename column", fixed = TRUE)
-    expect_match(html, "RcmdrShiny Studio", fixed = TRUE)
+    # The model and the version are not status facts any more: the topbar
+    # badge and Help > About carry them.
+    expect_false(grepl("Model:", html, fixed = TRUE))
+    expect_false(grepl("RcmdrShiny Studio", html, fixed = TRUE))
   })
 })
 

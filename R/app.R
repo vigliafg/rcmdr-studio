@@ -3778,79 +3778,71 @@ app_server <- function(env = globalenv()) {
     output$statusbar <- renderUI({
       tick()
       data_selection_revision()
-      version <- tryCatch(
-        as.character(utils::packageVersion("RcmdrShiny")),
-        error = function(e) "0.1.0"
-      )
-      df <- dataset(state)
       frame <- data_view_frame()
       filter <- list(
         column = input$data_filter_column %||% "",
         value = data_filter_value_d() %||% "",
         dates = input$data_filter_dates %||% NULL
       )
-      dimensions <- data_view_shape(state, frame, filter)
+      shape <- data_view_shape(state, frame, filter)
       filter_label <- data_filter_label(
         filter$column, filter$value, filter$dates
       )
       selection_text <- selection_status_text(state, frame)
       data_name <- active_dataset(state)
-      model_name <- active_model(state)
       undo_text <- state$undo_message %||% ""
       if (!nzchar(undo_text) && nzchar(state$undo_last_label %||% "")) {
         undo_text <- sprintf(tr("Last action: %s"), state$undo_last_label)
       }
-      # One item per fact: the separators are CSS borders, so a screen reader
-      # reads the facts, not a row of pipes.
-      htmltools::tagList(
+
+      # Three priority tiers instead of a row of equivalent facts.  Identity
+      # (which data, how much of it, which filter), selection, last action.
+      # The version lives in Help > About; the counts live in the views that
+      # own them (Console, History, Chart Studio), so nothing is lost.
+      group <- function(class, label, ...) {
+        items <- list(...)
+        items <- Filter(Negate(is.null), items)
+        if (length(items) == 0L) return(NULL)
+        htmltools::div(
+          class = paste("rcmdr-status-group", class),
+          role = "group", `aria-label` = label,
+          items
+        )
+      }
+      identity <- group(
+        "rcmdr-status-identity", tr("Identity"),
         htmltools::tags$span(
-          class = "rcmdr-status-item",
-          sprintf(tr("RcmdrShiny Studio %s"), version)
+          class = "rcmdr-status-item rcmdr-status-dataset",
+          sprintf(tr("Data: %s"), data_name %||% tr("none"))
         ),
         htmltools::tags$span(
-          class = "rcmdr-status-item",
-          badge(toupper(ui_mode(state)), "neutral")
+          class = "rcmdr-status-item rcmdr-status-shape rcmdr-status-optional",
+          shape
         ),
-        htmltools::tags$span(class = "rcmdr-status-item", dimensions),
         if (nzchar(filter_label)) {
           htmltools::tags$span(
             class = "rcmdr-status-item rcmdr-status-filter",
             context_chip(sprintf(tr("filter: %s"), filter_label),
                          icon = "funnel")
           )
-        },
-        htmltools::tags$span(
-          class = "rcmdr-status-item rcmdr-status-dataset",
-          sprintf(tr("Data: %s"), data_name %||% tr("none"))
-        ),
-        htmltools::tags$span(
-          class = "rcmdr-status-item",
-          sprintf(tr("%d command(s)"), length(state$log))
-        ),
-        htmltools::tags$span(
-          class = "rcmdr-status-item",
-          sprintf(tr("%d history step(s)"), length(state$history %||% list()))
-        ),
-        htmltools::tags$span(
-          class = "rcmdr-status-item rcmdr-status-model",
-          sprintf(tr("Model: %s"), model_name %||% tr("none"))
-        ),
-        htmltools::tags$span(
-          class = "rcmdr-status-item",
-          sprintf(tr("%d plot(s)"), length(state$plots))
-        ),
+        }
+      )
+      selection <- group(
+        "rcmdr-status-selection", tr("Selection"),
         if (nzchar(selection_text)) {
-          htmltools::tags$span(
-            class = "rcmdr-status-item rcmdr-status-selection",
-            selection_text
-          )
-        },
+          htmltools::tags$span(class = "rcmdr-status-item", selection_text)
+        }
+      )
+      action <- group(
+        "rcmdr-status-action", tr("Last action"),
         if (nzchar(undo_text)) {
           htmltools::tags$span(
-            class = "rcmdr-status-item rcmdr-status-undo",
-            undo_text
+            class = "rcmdr-status-item rcmdr-status-undo", undo_text
           )
-        },
+        }
+      )
+      state_group <- group(
+        "rcmdr-status-state", tr("State"),
         if (isTRUE(state$busy)) {
           htmltools::tags$span(class = "rcmdr-status-item",
                                badge(tr("busy"), "warning"))
@@ -3861,6 +3853,33 @@ app_server <- function(env = globalenv()) {
             sprintf(tr("last error: %s"), state$last_error)
           )
         }
+      )
+      htmltools::tagList(identity, selection, action, state_group)
+    })
+
+    # The counts leave the status bar and sit in the view that owns them.
+    output$console_count_ui <- renderUI({
+      tick()
+      htmltools::tags$span(
+        class = "rcmdr-view-count",
+        sprintf(tr("%d command(s)"), length(state$log))
+      )
+    })
+
+    output$history_count_ui <- renderUI({
+      tick()
+      history_revision()
+      htmltools::tags$span(
+        class = "rcmdr-view-count",
+        sprintf(tr("%d history step(s)"), length(state$history %||% list()))
+      )
+    })
+
+    output$chart_gallery_count_ui <- renderUI({
+      tick()
+      htmltools::tags$span(
+        class = "rcmdr-view-count",
+        sprintf(tr("%d plot(s)"), length(state$plots))
       )
     })
 

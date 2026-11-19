@@ -171,7 +171,8 @@ history_pane_ui <- function() {
                     width = "160px")
       ),
       actionButton("history_clear", tr("Clear history"),
-                   class = "btn-sm btn-outline-secondary")
+                   class = "btn-sm btn-outline-secondary"),
+      right = uiOutput("history_count_ui", inline = TRUE)
     ),
     uiOutput("history_cards")
   )

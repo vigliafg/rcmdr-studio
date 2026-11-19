@@ -117,3 +117,83 @@ test_that("the server renders the context line", {
     expect_match(context, "Rows", fixed = TRUE)
   })
 })
+
+# O4 — status bar hierarchy ---------------------------------------------------
+
+test_that("the status bar has three groups and at most six facts", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:4, b = letters[1:4])
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "D")
+    state$active_model <- "fit"
+    state$undo_last_label <- "Rename column"
+    session$setInputs(main_tabs = "data", menu_search = "",
+                      data_mode = "view")
+    session$flushReact()
+    session$setInputs(data_selection_mode = "cells")
+    session$flushReact()
+    session$setInputs(data_filter_column = "a", data_filter_value = "2")
+    session$elapse(500)
+    session$flushReact()
+    session$setInputs(data_cell_selection = list(
+      row_ids = 2L, columns = "a", r1 = 2L, c1 = 1L, r2 = 2L, c2 = 1L
+    ))
+    session$flushReact()
+
+    html <- htmltools::renderTags(output$statusbar)$html
+    expect_match(html, "rcmdr-status-identity", fixed = TRUE)
+    expect_match(html, "rcmdr-status-selection", fixed = TRUE)
+    expect_match(html, "rcmdr-status-action", fixed = TRUE)
+
+    # <= 6 visible facts: data, shape, filter, selection, last action.
+    facts <- lengths(regmatches(html, gregexpr("rcmdr-status-item", html)))
+    expect_lte(facts, 6L)
+
+    # Nothing disappears: it moves to the view that owns it.
+    expect_false(grepl("RcmdrShiny Studio", html, fixed = TRUE))
+    expect_false(grepl("history step", html, fixed = TRUE))
+    expect_false(grepl("[0-9]+ plot", html))
+    expect_false(grepl("Model:", html, fixed = TRUE))
+
+    # The live region wrapper is untouched.
+    page <- as.character(app_ui())
+    expect_match(page, 'aria-live="polite"', fixed = TRUE)
+    expect_match(page, 'aria-atomic="false"', fixed = TRUE)
+  })
+})
+
+test_that("the counts live in Console, History and Chart Studio", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:4, b = letters[1:4])
+
+  shiny::testServer(app_server(env), {
+    state$log <- c("summary(D)", "plot(D)")
+    state$history <- list(list(id = "1"), list(id = "2"), list(id = "3"))
+    state$plots <- list(list(id = "p1"), list(id = "p2"))
+    session$setInputs(menu_search = "")
+    session$flushReact()
+
+    expect_match(htmltools::renderTags(output$console_count_ui)$html,
+                 "2 command(s)", fixed = TRUE)
+    expect_match(htmltools::renderTags(output$history_count_ui)$html,
+                 "3 history step(s)", fixed = TRUE)
+    expect_match(htmltools::renderTags(output$chart_gallery_count_ui)$html,
+                 "2 plot(s)", fixed = TRUE)
+  })
+})
+
+test_that("the compact status bar hides the shape, which stays in data info", {
+  css <- app_asset_text("css", "10-shell.css")
+  compact <- regmatches(
+    css,
+    regexpr("@media \\(max-width: 991\\.98px\\) \\{[^@]*rcmdr-status-optional[^@]*\\}",
+            css, perl = TRUE)
+  )
+  expect_match(compact, ".rcmdr-status-optional { display: none; }",
+               fixed = TRUE)
+  expect_match(css, ".rcmdr-status-group + .rcmdr-status-group", fixed = TRUE)
+  expect_match(css, ".rcmdr-view-count", fixed = TRUE)
+})

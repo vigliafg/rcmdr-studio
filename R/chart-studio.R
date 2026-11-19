@@ -850,13 +850,16 @@ chart_gallery_ui <- function() {
                         tr("Pinned only"), value = FALSE)
         )
       ),
-      right = action_row(
-        tight = TRUE,
-        actionButton("chart_gallery_refresh", tr("Refresh"),
-                     class = "btn-sm btn-outline-secondary"),
-        actionButton("chart_selection_subset",
-                     tr("Subset selected points"),
-                     class = "btn-sm btn-outline-primary")
+      right = htmltools::tagList(
+        uiOutput("chart_gallery_count_ui", inline = TRUE),
+        action_row(
+          tight = TRUE,
+          actionButton("chart_gallery_refresh", tr("Refresh"),
+                       class = "btn-sm btn-outline-secondary"),
+          actionButton("chart_selection_subset",
+                       tr("Subset selected points"),
+                       class = "btn-sm btn-outline-primary")
+        )
       ),
       label = tr("Gallery")
     ),

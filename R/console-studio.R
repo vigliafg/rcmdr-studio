@@ -114,7 +114,8 @@ console_studio_ui <- function() {
         selectInput("console_status", NULL, choices = console_status_labels(),
                     width = "150px"),
         actionButton("console_clear", tr("Clear"),
-                     class = "btn-sm btn-outline-secondary")
+                     class = "btn-sm btn-outline-secondary"),
+        uiOutput("console_count_ui", inline = TRUE)
       ),
       uiOutput("console_status_ui"),
       htmltools::div(class = "rcmdr-console-log", uiOutput("console_log")),
