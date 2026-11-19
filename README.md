@@ -92,7 +92,7 @@ RcmdrShiny::run(env = env)
 | Targeted mode for data sets above the editing threshold | done |
 | Chart builder with per-type mappings and options | done |
 | Isolated live preview with debounce and cache | done |
-| Typed chart specification and seventeen chart types | done |
+| Typed chart specification and thirty-one chart types | done |
 | Theme/palette panel and single ggplot2 engine | done |
 | Gallery with search, type filter, pin, rename, detail and compare | done |
 | Round-trip: reopen a chart in the builder | done |
