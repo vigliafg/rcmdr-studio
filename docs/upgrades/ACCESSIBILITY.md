@@ -16,9 +16,14 @@ un controllo con browser reale e lettore di schermo prima della release.
 - [x] Tutti i controlli interattivi sono raggiungibili con `Tab`.
 - [x] L'ordine di focus segue l'ordine visivo.
 - [x] `Enter`/`Space` attivano pulsanti e link.
-- [x] `Esc` chiude le modali che lo consentono (Bootstrap).
+- [x] `Esc` chiude un livello per volta: tooltip, menu, selezione
+      celle, pannello modeless, poi la modale (Bootstrap). Un livello che
+      prende il tasto ferma gli altri.
 - [x] Il focus è intrappolato nelle modali (Bootstrap).
 - [x] Alla chiusura della modale il focus torna all'elemento di origine (Bootstrap).
+- [x] Alla chiusura del pannello modeless (pulsante o `Esc`) il focus torna
+      al comando che lo ha aperto; **Reset layout** lo chiude e lascia il
+      focus sulla vista primaria.
 - [x] La command palette si apre con `Ctrl+K`/`Cmd+K`.
 - [x] Frecce su/giù navigano i risultati della palette.
 - [x] `Ctrl+Enter` esegue selezione/cella.
@@ -44,7 +49,7 @@ un controllo con browser reale e lettore di schermo prima della release.
 - [x] L'area principale ha `role="main"`.
 - [x] La status bar ha `aria-live="polite"`, nome e `tabindex="-1"`.
 - [x] Le regioni del workspace hanno `role="region"` e un nome
-      (“Primary view”, “Secondary view”, pannello, modeless).
+      (“Primary view: <vista>”, “Secondary view: <vista>”, pannello, modeless).
 - [x] I risultati di ricerca e le notifiche sono annunciati.
 - [x] Le tab usano il comportamento Bootstrap (`aria-selected`).
 - [x] I dialoghi hanno un titolo associato.

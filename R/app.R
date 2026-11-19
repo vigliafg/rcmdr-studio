@@ -1352,6 +1352,9 @@ app_server <- function(env = globalenv()) {
     # updated here because the direct command only sees `state`.
     state$reset_layout <- function() {
       geometry_reset_layout(state)
+      # Reset is a layout gesture, not a data one: the modeless panel closes
+      # with it, while data, selection, undo and history stay untouched.
+      if (nzchar(modeless_view())) close_modeless(notify = FALSE)
       workspace_secondary("")
       workspace_focus("split")
       workspace_revision(workspace_revision() + 1L)
@@ -1360,6 +1363,9 @@ app_server <- function(env = globalenv()) {
       updateTextInput(session, "main_tabs", value = geometry_last_view(state))
       updateSelectInput(session, "workspace_secondary_view", selected = "")
       session$sendCustomMessage("rcmdr-sidebar", list(collapsed = FALSE))
+      # The menu item that fired Reset is gone with the menu; the workspace is
+      # the predictable place to leave the focus.
+      session$sendCustomMessage("rcmdr-focus", "workspace-primary")
       menu_revision(menu_revision() + 1L)
       tick(tick() + 1L)
       persist_preferences()

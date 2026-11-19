@@ -258,3 +258,51 @@ test_that("the slot header uses the accent and keeps the view name when narrow",
                fixed = TRUE)
   expect_false(grepl(".rcmdr-slot-view { display: none", compact, fixed = TRUE))
 })
+
+# O6 — predictable return -----------------------------------------------------
+
+test_that("Escape closes one layer and lets the inner one claim the key", {
+  js <- paste(as.character(app_js()), collapse = "\n")
+  expect_match(js, "closeAndReturn", fixed = TRUE)
+  expect_match(js, "event.defaultPrevented", fixed = TRUE)
+  expect_match(js, "document.querySelector('.modal.show')", fixed = TRUE)
+  expect_match(js, "document.getElementById('modeless_close')",
+               fixed = TRUE)
+  # The close button and Escape share one path back to the trigger.
+  expect_match(js, "window.setTimeout(function () { previous.focus(); }",
+               fixed = TRUE)
+})
+
+test_that("Reset layout closes the modeless panel without touching the data", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:3, b = 1:3)
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "D")
+    state$history <- list(list(id = "1"), list(id = "2"))
+    state$log <- c("summary(D)")
+    state$undo_last_label <- "Rename column"
+    state$data_selection <- list(dataset = "D", rows = 1L,
+                                 columns = "a", expression = "", cells = NULL)
+
+    session$setInputs(main_tabs = "home", menu_search = "",
+                      modeless_view = "help")
+    session$flushReact()
+    panel <- htmltools::renderTags(output$modeless_panel)$html
+    expect_match(panel, "rcmdr-modeless-panel", fixed = TRUE)
+
+    state$reset_layout()
+    session$setInputs(modeless_view = "")
+    session$flushReact()
+    expect_false(grepl("rcmdr-modeless-panel",
+                       htmltools::renderTags(output$modeless_panel)$html,
+                       fixed = TRUE))
+
+    # Layout only: data, undo and history are untouched.
+    expect_equal(active_dataset(state), "D")
+    expect_length(state$history, 2L)
+    expect_equal(state$log, "summary(D)")
+    expect_equal(state$undo_last_label, "Rename column")
+  })
+})
