@@ -556,8 +556,8 @@ chart_studio_ui <- function(show_preview = TRUE) {
       segmented_input(
         "chart_mode", NULL,
         stats::setNames(
-          c("build", "models", "gallery"),
-          c(tr("Build"), tr("Models"), tr("Gallery"))
+          c("build", "models", "examples", "gallery"),
+          c(tr("Build"), tr("Models"), tr("Examples"), tr("Gallery"))
         ),
         selected = "build"
       ),
@@ -573,6 +573,10 @@ chart_studio_ui <- function(show_preview = TRUE) {
     conditionalPanel(
       "input.chart_mode === 'models'",
       chart_models_ui()
+    ),
+    conditionalPanel(
+      "input.chart_mode === 'examples'",
+      chart_examples_ui()
     ),
     conditionalPanel(
       "input.chart_mode === 'gallery'",
@@ -1466,6 +1470,62 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     chart_models_cards(table)
   })
 
+  # One loader for Models and Examples.  A recipe fills the builder; it never
+  # runs a command and never changes the data set.
+  apply_recipe <- function(spec, label, message = NULL) {
+    if (is.null(spec)) return(invisible(FALSE))
+    chart_env$pending <- spec
+    state$chart_recipe_pending <- spec
+    updateRadioButtons(session, "chart_mode", selected = "build")
+    updateSelectInput(session, "chart_type",
+                      choices = chart_type_choices_by_analysis(),
+                      selected = spec$type)
+    if (!is.null(spec$dataset) && nzchar(spec$dataset)) {
+      updateSelectInput(session, "chart_dataset", selected = spec$dataset)
+    }
+    theme <- spec$theme %||% list()
+    updateSelectInput(session, "chart_gg_theme",
+                      choices = chart_gg_theme_choices(),
+                      selected = theme$ggplot_theme %||% "minimal")
+    updateSelectInput(session, "chart_palette",
+                      selected = theme$palette %||% "default")
+    update_number_input(session, "chart_base_size",
+                        theme$base_size %||% 12)
+    updateCheckboxInput(session, "chart_grid",
+                        value = isTRUE(theme$grid %||% TRUE))
+    updateSelectInput(session, "chart_legend",
+                      selected = theme$legend %||% "right")
+    shinyWidgets::updateSpectrumInput(
+      session, "chart_background",
+      selected = theme$background %||% "#ffffff"
+    )
+    for (name in names(spec$options %||% list())) {
+      input_id <- chart_option_input_id(name)
+      value <- spec$options[[name]]
+      if (is.logical(value)) {
+        updateCheckboxInput(session, input_id, value = value)
+      } else if (is.numeric(value)) {
+        update_number_input(session, input_id, value)
+      } else {
+        updateSelectInput(session, input_id, selected = as.character(value))
+      }
+    }
+    labels <- spec$labels %||% list()
+    updateTextInput(session, "chart_title", value = labels$title %||% "")
+    updateTextInput(session, "chart_xlab", value = labels$x %||% "")
+    updateTextInput(session, "chart_ylab", value = labels$y %||% "")
+    updateTextInput(session, "chart_caption", value = labels$caption %||% "")
+    updateTextInput(session, "chart_gg_subtitle",
+                    value = labels$subtitle %||% "")
+    updateTextInput(session, "chart_gg_tag", value = labels$tag %||% "")
+    chart_preview_cache_clear()
+    chart_revision(chart_revision() + 1L)
+    if (!is.null(message) && nzchar(message)) {
+      showNotification(message, type = "message", duration = 5)
+    }
+    invisible(TRUE)
+  }
+
   observeEvent(input$chart_model_action, {
     id <- input$chart_model_action$id %||% ""
     model <- chart_model(id)
@@ -1481,34 +1541,12 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
       )
       return()
     }
-    chart_env$pending <- chart_model_spec(model,
-                                          input$chart_dataset %||%
-                                            active_dataset(state))
-    updateRadioButtons(session, "chart_mode", selected = "build")
-    updateSelectInput(session, "chart_type",
-                      choices = chart_type_choices_by_analysis(),
-                      selected = model$type)
-    theme <- model$theme %||% list()
-    if (!is.null(theme$ggplot_theme)) {
-      updateSelectInput(session, "chart_gg_theme",
-                        choices = chart_gg_theme_choices(),
-                        selected = theme$ggplot_theme)
-    }
-    for (name in names(model$options %||% list())) {
-      input_id <- chart_option_input_id(name)
-      value <- model$options[[name]]
-      if (is.logical(value)) {
-        updateCheckboxInput(session, input_id, value = value)
-      } else if (is.numeric(value)) {
-        update_number_input(session, input_id, value)
-      } else {
-        updateSelectInput(session, input_id, selected = as.character(value))
-      }
-    }
-    chart_preview_cache_clear()
-    chart_revision(chart_revision() + 1L)
-    showNotification(sprintf(tr("Model loaded: %s"), model$label),
-                     type = "message", duration = 4)
+    apply_recipe(
+      chart_model_spec(model,
+                       input$chart_dataset %||% active_dataset(state)),
+      label = model$label,
+      message = sprintf(tr("Model loaded: %s"), model$label)
+    )
   }, ignoreInit = TRUE)
 
   chart_options_spec <- function() {
@@ -2011,6 +2049,13 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
                              result$name, result$rows),
                      type = "message", duration = 5)
   }, ignoreInit = TRUE)
+
+  chart_examples_server(
+    input, output, session, state, chart_env,
+    apply_recipe = apply_recipe,
+    chart_revision = chart_revision,
+    chart_preview_cache_clear = chart_preview_cache_clear
+  )
 
   # -- downloads -----------------------------------------------------------
 

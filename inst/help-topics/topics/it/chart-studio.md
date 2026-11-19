@@ -15,8 +15,8 @@ status: documented
 
 # Chart Studio
 
-La scheda **Charts** costruisce grafici da una specifica visuale e produce il
-comando R corrispondente. L'anteprima è isolata: non registra comandi e non
+La scheda **Charts** costruisce grafici da una specifica visuale e produce un
+comando ggplot2 riproducibile. L'anteprima è isolata: non registra comandi e non
 modifica la galleria finché non si preme **Applica**.
 
 ## Costruire un grafico
@@ -27,8 +27,18 @@ modifica la galleria finché non si preme **Applica**.
 4. Premere **Applica** per registrare il comando e aggiungere il grafico alla
    galleria.
 
-Il comando prodotto è esattamente quello che comparirebbe nello script; il
-pulsante **Allo script** lo inserisce senza eseguirlo.
+Il comando prodotto è un'espressione `print(ggplot(...))`, quella che
+comparirebbe nello script; il pulsante **Allo script** la inserisce senza
+eseguirla. La modalità **Advanced...** apre il dialogo Rcmdr classico quando
+esiste.
+
+## Modelli, esempi e galleria
+
+- **Models** apre una ricetta pronta per famiglia di analisi.
+- **Examples** è una galleria offline di ricette curate e adattate dalla R Graph
+  Gallery. **Apri nel builder** imposta tipo, opzioni e tema; non carica dati
+  nella sessione e non esegue comandi.
+- **Gallery** raccoglie i grafici applicati nella sessione.
 
 ## Galleria
 
@@ -46,8 +56,15 @@ ripristina tipo, variabili, temi e opzioni senza rieseguire il comando.
 ## Temi e palette
 
 Il pannello delle opzioni cambia palette, sfondo, dimensione del testo e tema
-ggplot2. Le stesse scelte sono incluse nel comando, quindi il grafico è
-riproducibile fuori dall'applicazione.
+ggplot2. Le stesse scelte sono incluse nel comando tramite `scale_*_manual()`,
+`theme()` e `labs()`, quindi il grafico è riproducibile fuori dall'applicazione.
+
+## Tipi estesi
+
+Oltre ai tipi classici, il builder offre violino, ECDF, densità 2D, heatmap,
+lollipop, dumbbell, doughnut, area impilata, ridgeline (se `ggridges` è
+installato) e beeswarm (se `ggbeeswarm` è installato). I tipi `stat_*` usano
+ggstatsplot; la composizione usa patchwork. Il motore è unico: ggplot2.
 
 ## Vedi anche
 

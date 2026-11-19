@@ -88,6 +88,8 @@ Suggests:
     htmlwidgets,
     jsonlite,
     svglite,
+    ggridges,
+    ggbeeswarm,
     styler
 Config/testthat/edition: 3
 VignetteBuilder: knitr

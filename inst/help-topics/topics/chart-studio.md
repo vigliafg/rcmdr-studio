@@ -15,15 +15,21 @@ status: documented
 
 # Chart Studio
 
-The **Charts** tab in Studio mode is a builder, a live preview and a gallery on
-top of the same plotting engine used by the Rcmdr dialogs. It never introduces a
-new statistical procedure: every applied chart is a command produced by the
-matching dialog builder.
+The **Charts** tab in Studio mode is a builder, a live preview, a gallery and an
+offline example catalogue. It uses a single ggplot2 engine: every applied chart
+is a reproducible `print(ggplot(...))` command. The classic Rcmdr dialogs remain
+available through **Advanced...** for the types that have one.
 
-## Build and Gallery
+## Build, Models, Examples and Gallery
 
 - **Build** creates a chart: choose a type, a data set, the mappings and the
   options. The preview and the generated command update as you change them.
+- **Models** opens a ready-made recipe by analysis family; the mapping stays
+  with the user.
+- **Examples** is a curated, offline gallery adapted from the R Graph Gallery.
+  Choose a card, inspect the description and the code, then **Open in builder**.
+  The example fills the recipe; it does not load data into the session and it
+  does not run a command.
 - **Gallery** lists every plot of the session, including plots created by a
   dialog or by a script.
 
@@ -53,26 +59,24 @@ variables, factor slots list factors and characters, and optional slots include
 
 ## Boxplot options
 
-For both engines the boxplot exposes notched boxes, notch width, variable box
-width and box width. **Horizontal** works in both: the base engine switches to
-`boxplot(..., horizontal = TRUE)` because `car::Boxplot()` rejects it, while
-ggplot2 uses `coord_flip()`. Outliers can be hidden. In ggplot2 the common
+The boxplot exposes notched boxes, notch width, variable box width and box
+width. **Horizontal** uses `coord_flip()`; outliers can be hidden and the common
 jitter control overlays the points.
 
 ## Histogram and scatter options
 
-The histogram scale selector (frequency, density, percent) is honoured by both
-engines; ggplot2 maps it to `after_stat()`.
+The histogram scale selector (frequency, density, percent) is mapped to
+`after_stat()`; the number of bins and an optional bin width control the
+histogram.
 
 The scatterplot exposes a regression line, a confidence ellipse, a grid and
-jitter in both engines. In ggplot2 the “Smooth” choice and the “Confidence
-band” option produce `geom_smooth(method = "lm" | "loess", se = TRUE/FALSE)`;
-the ellipse is `stat_ellipse()`.
+jitter. The “Smooth” choice and the “Confidence band” option produce
+`geom_smooth(method = "lm" | "loess", se = TRUE/FALSE)`; the ellipse is
+`stat_ellipse()`.
 
-## ggplot-only types
+## Extended types
 
-Four statistical types exist only with the ggplot2 engine and appear in the
-chart type selector only after switching engine:
+The builder also exposes types without a classic Rcmdr dialog:
 
 | Type | Mapping | Main options |
 |---|---|---|
@@ -80,23 +84,30 @@ chart type selector only after switching engine:
 | Empirical CDF | numeric, group? | padding, line style |
 | 2D density | two numerics | contour bins, bandwidth, points |
 | Heatmap | x, y, numeric value | low/high gradient, value labels |
+| Lollipop | category, value | point size, stem width |
+| Dumbbell | category, start, end | point size, segment width |
+| Doughnut | category, value | hole and ring width |
+| Stacked area | x, value, series | alpha, stacked position |
+| Ridgeline | numeric, group | overlap scale, alpha (needs `ggridges`) |
+| Beeswarm | group, numeric | point size, alpha (needs `ggbeeswarm`) |
 
-With the base engine these types are rejected with an explicit message; the
-round-trip keeps the engine and the type.
+The statistical types (`stat_*`) use ggstatsplot and the composition type uses
+patchwork. Optional types appear only when their package is installed; the
+round-trip keeps the type and its mapping.
 
 ## Other chart options
 
-- **Density**: kernel, adjust, rug and grid in the base engine; ggplot2 uses
-  adjust.
+- **Density**: bandwidth, adjust and rug; the kernel is not exposed because
+  `geom_density()` uses a Gaussian kernel.
 - **Line graph**: line/step/area, line style and width; an optional grouping
   variable colours the line in ggplot2.
 - **Bar graph**: bar width and count/percent statistic in ggplot2.
-- **Dot plot**: binned dots in base; bin axis, stack direction, dot size and
-  bin width in ggplot2.
+- **Dot plot**: binned dots with bin axis, stack direction, dot size and bin
+  width.
 - **Strip chart**: stack or jitter, with jitter width/height and point shape in
   ggplot2.
-- **QQ plot**: normal, uniform or exponential distribution, reference line,
-  confidence envelope and grid.
+- **QQ plot**: normal, uniform or exponential distribution, reference line and
+  grid.
 - **Plot of means**: connect the means, error-bar width and point size.
 - **XY conditioning plot**: points, lines or both, optional layout and smooth.
 
@@ -126,27 +137,27 @@ failing.
 - the plot is captured in the gallery;
 - the specification is attached to the plot so it can be reopened.
 
-With the default theme and empty labels, the applied command is exactly the
-command of the equivalent dialog.
+With the default theme and empty labels, the applied command is a single
+`print(ggplot(...))` expression and does not mix base `par()` or `title()`.
 
 ## Theme and labels
 
 The theme panel controls the palette, the base size, the background, the grid
-and the legend position. Palette and device settings are emitted before the
-plot; the title, axis labels and caption are emitted after it. With the default
-theme and no labels, no extra command is added.
+and the legend position. Palette, theme and labels are part of the same ggplot
+command: `scale_*_manual()`, `theme()` and `labs()`. With the default theme and
+no labels, no extra layer is added.
 
 Palettes include the R default, a colour-blind-safe palette, Tableau, Viridis
 and greys.
 
-## ggplot2 engine
+## Single ggplot2 engine
 
-`ggplot2` is a hard dependency, so the engine selector always offers the
-ggplot2 engine for **every chart type**. The applied command is a single
-`print(ggplot(...))` expression; the base palette, `par()` and `title()` are not
-mixed in.
+`ggplot2` is a hard dependency and the Chart Studio has a **single engine**:
+every type produces a `print(ggplot(...))` expression. The legacy base engine
+selector was removed in 2.8.0; the classic Rcmdr commands remain available only
+through the Classic mode and the **Advanced...** dialog.
 
-Extra mappings appear only with this engine:
+Extra mappings:
 
 - **Facet**: one conditioning variable, with fixed/free/free-x/free-y scales and
   an optional column count.
@@ -165,7 +176,7 @@ installed plotly and ggplot2 versions can convert ggplot objects, the gallery
 also offers the interactive version and the HTML export; otherwise those
 actions are hidden.
 
-The base engine remains the default and its commands are unchanged.
+
 
 ## Gallery
 
@@ -205,6 +216,7 @@ reproducible R command and the new data set becomes active.
 | Export | No, file only |
 | Rename, pin, delete | No, session metadata |
 | Reopen | No |
+| Open an example in the builder | No |
 | Subset selected points | Yes |
 
 ## See also

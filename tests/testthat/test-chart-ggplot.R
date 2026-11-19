@@ -17,7 +17,13 @@ chart_gg_spec <- function(type, mapping = NULL, options = list(),
     violin = list(x = "y", group = "g"),
     ecdf = list(x = "y", group = "g"),
     density_2d = list(x = "x", y = "y"),
-    heatmap = list(x = "g", y = "g2", fill = "y")
+    heatmap = list(x = "g", y = "g2", fill = "y"),
+    lollipop = list(x = "g", y = "y"),
+    dumbbell = list(x = "g", y = "y", y2 = "x"),
+    doughnut = list(x = "g", y = "y"),
+    stacked_area = list(x = "x", y = "y", group = "g"),
+    ridgeline = list(x = "y", y = "g"),
+    beeswarm = list(x = "g", y = "y")
   )
   chart_spec(
     type, "D", mapping %||% defaults[[type]] %||% list(),
@@ -33,7 +39,9 @@ test_that("all chart types produce a ggplot2 command", {
     if (identical(type, "compose") || chart_stat_type(type)) next
     command <- chart_spec_command(chart_gg_spec(type))
     expect_match(command, "^print\\(ggplot2::ggplot\\(D", info = type)
-    expect_match(command, "ggplot2::geom_|ggplot2::stat_", info = type)
+    expect_match(command,
+                 "ggplot2::geom_|ggplot2::stat_|ggridges::geom_|ggbeeswarm::geom_",
+                 info = type)
     expect_false(grepl("palette(", command, fixed = TRUE), info = type)
     expect_false(grepl("par(", command, fixed = TRUE), info = type)
     expect_false(grepl("title(", command, fixed = TRUE), info = type)

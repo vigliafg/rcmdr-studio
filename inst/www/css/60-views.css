@@ -467,6 +467,78 @@
       .rcmdr-splitter > .rcmdr-splitter-divider { display: none; }
     }
 
+    /* Example gallery ------------------------------------------------------
+       A visual index of recipes.  The card is a button, the thumbnail is the
+       target, and the selected card uses an accent border plus aria-pressed,
+       never colour alone. */
+    .rcmdr-example-grid-wrap,
+    .rcmdr-example-detail-wrap { min-width: 0; }
+    .rcmdr-example-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      gap: var(--rcmdr-space-2);
+      align-items: start;
+    }
+    .rcmdr-example-card {
+      display: flex; flex-direction: column; align-items: stretch;
+      width: 100%; padding: 0; overflow: hidden;
+      text-align: left; color: var(--rcmdr-text);
+      background: var(--rcmdr-surface);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      cursor: pointer;
+    }
+    .rcmdr-example-card:hover { border-color: var(--rcmdr-border-strong); }
+    .rcmdr-example-card:focus-visible {
+      outline: 2px solid var(--rcmdr-accent);
+      outline-offset: 2px;
+    }
+    .rcmdr-example-card.active {
+      border-color: var(--rcmdr-accent);
+      box-shadow: inset 0 0 0 1px var(--rcmdr-accent);
+    }
+    .rcmdr-example-thumb {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 16 / 10; object-fit: cover;
+      background: var(--rcmdr-surface-muted);
+      border-bottom: 1px solid var(--rcmdr-border);
+    }
+    .rcmdr-example-card-body {
+      display: flex; flex-direction: column; gap: var(--rcmdr-space-1);
+      padding: var(--rcmdr-space-2);
+      min-width: 0;
+    }
+    .rcmdr-example-title { font-weight: var(--rcmdr-weight-strong); }
+    .rcmdr-example-meta {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: var(--rcmdr-space-1);
+      font-size: var(--rcmdr-text-sm); color: var(--rcmdr-muted);
+    }
+    .rcmdr-example-sep { color: var(--rcmdr-muted); }
+    .rcmdr-example-detail { min-width: 0; }
+    .rcmdr-example-detail-title { margin: 0; }
+    .rcmdr-example-detail-image {
+      display: block; width: 100%; height: auto;
+      margin-bottom: var(--rcmdr-space-2);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius);
+      background: var(--rcmdr-surface-muted);
+    }
+    .rcmdr-example-description { margin-bottom: var(--rcmdr-space-1); }
+    .rcmdr-example-source { margin: var(--rcmdr-space-2) 0 0; }
+    .rcmdr-example-code { margin-top: var(--rcmdr-space-2); }
+    .rcmdr-example-code pre {
+      max-height: 18rem; overflow: auto;
+      font-size: var(--rcmdr-text-sm);
+      background: var(--rcmdr-surface-muted);
+      border: 1px solid var(--rcmdr-border);
+      border-radius: var(--rcmdr-radius-sm);
+      padding: var(--rcmdr-space-2);
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-example-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
     /* Drag and drop --------------------------------------------------------
        The card, the column header and the drop zone share one accent and one
        motion-free indicator.  A drop target is an outline, never a colour

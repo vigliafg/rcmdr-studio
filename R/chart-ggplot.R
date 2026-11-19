@@ -392,6 +392,32 @@ chart_ggplot_object <- function(spec) {
     if (nzchar(fill_by)) {
       aes_items <- c(aes_items, sprintf("fill = %s", fill_by))
     }
+  } else if (identical(type, "lollipop")) {
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y))
+  } else if (identical(type, "dumbbell")) {
+    y2 <- chart_gg_optional(mapping$y2)
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y),
+                   sprintf("y2 = %s", y2))
+  } else if (identical(type, "doughnut")) {
+    aes_items <- c("x = 2", sprintf("y = %s", first_y),
+                   sprintf("fill = %s", x))
+    use_fill <- TRUE
+  } else if (identical(type, "stacked_area")) {
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y))
+    if (nzchar(group)) {
+      aes_items <- c(aes_items, sprintf("fill = %s", group))
+      use_fill <- TRUE
+    }
+  } else if (identical(type, "ridgeline")) {
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y),
+                   sprintf("fill = %s", first_y))
+    use_fill <- TRUE
+  } else if (identical(type, "beeswarm")) {
+    aes_items <- c(sprintf("x = %s", x), sprintf("y = %s", first_y))
+    if (nzchar(group)) {
+      aes_items <- c(aes_items, sprintf("colour = %s", group))
+      use_colour <- TRUE
+    }
   }
 
   if (identical(type, "histogram")) {
@@ -695,6 +721,72 @@ chart_ggplot_object <- function(spec) {
         fill_by
       ))
     }
+  } else if (identical(type, "lollipop")) {
+    point_size <- chart_gg_number(options$point_size %||% 3,
+                                  default = 3, min = 0.5)
+    line_width <- chart_gg_number(options$line_width %||% 1,
+                                  default = 1, min = 0.1)
+    colour <- (palette %||% "#4E79A7")[[1L]] %||% "#4E79A7"
+    layers <- c(
+      sprintf(
+        "ggplot2::geom_segment(ggplot2::aes(x = %s, xend = %s, y = 0, yend = %s), linewidth = %s, colour = %s)",
+        x, x, first_y, format(line_width, digits = 3),
+        chart_quote(colour)
+      ),
+      sprintf("ggplot2::geom_point(size = %s, colour = %s)",
+              format(point_size, digits = 3), chart_quote(colour))
+    )
+  } else if (identical(type, "dumbbell")) {
+    point_size <- chart_gg_number(options$point_size %||% 3,
+                                  default = 3, min = 0.5)
+    line_width <- chart_gg_number(options$line_width %||% 1,
+                                  default = 1, min = 0.1)
+    y2 <- chart_gg_optional(mapping$y2)
+    colours <- palette %||% c("#4E79A7", "#E15759")
+    colours <- rep_len(colours, 2L)
+    layers <- c(
+      sprintf(
+        "ggplot2::geom_segment(ggplot2::aes(x = %s, xend = %s, y = %s, yend = %s), linewidth = %s, colour = \"#B0B7C3\")",
+        x, x, first_y, y2, format(line_width, digits = 3)
+      ),
+      sprintf("ggplot2::geom_point(ggplot2::aes(y = %s), size = %s, colour = %s)",
+              first_y, format(point_size, digits = 3),
+              chart_quote(colours[[1L]])),
+      sprintf("ggplot2::geom_point(ggplot2::aes(y = %s), size = %s, colour = %s)",
+              y2, format(point_size, digits = 3),
+              chart_quote(colours[[2L]]))
+    )
+  } else if (identical(type, "doughnut")) {
+    hole <- chart_gg_number(options$inner_radius %||% 0.5,
+                            default = 0.5, min = 0, max = 0.9)
+    width <- chart_gg_number(options$width %||% 1, default = 1, min = 0.1)
+    layers <- c(
+      sprintf("ggplot2::geom_col(width = %s, %s)",
+              format(width, digits = 3), alpha),
+      paste0(
+        "ggplot2::theme(axis.title = ggplot2::element_blank(), ",
+        "axis.text.y = ggplot2::element_blank(), ",
+        "axis.ticks.y = ggplot2::element_blank())"
+      )
+    )
+    scales <- c(scales, sprintf("ggplot2::xlim(%s, 2.5)",
+                                format(hole, digits = 3)))
+    options$polar <- TRUE
+    options$polar_theta <- "y"
+  } else if (identical(type, "stacked_area")) {
+    layers <- sprintf("ggplot2::geom_area(position = \"stack\", %s)", alpha)
+  } else if (identical(type, "ridgeline")) {
+    scale <- chart_gg_number(options$scale %||% 1.5,
+                             default = 1.5, min = 0.2)
+    layers <- sprintf(
+      "ggridges::geom_density_ridges(scale = %s, %s)",
+      format(scale, digits = 3), alpha
+    )
+  } else if (identical(type, "beeswarm")) {
+    point_size <- chart_gg_number(options$point_size %||% 2,
+                                  default = 2, min = 0.2)
+    layers <- sprintf("ggbeeswarm::geom_beeswarm(size = %s, %s)",
+                      format(point_size, digits = 3), alpha)
   }
 
   if (use_fill) {
@@ -815,5 +907,5 @@ chart_option_input_id <- function(name) {
     polar = "chart_gg_polar",
     polar_theta = "chart_gg_polar_theta"
   )
-  gg[[name]] %||% paste0("chart_opt_", name)
+  if (name %in% names(gg)) gg[[name]] else paste0("chart_opt_", name)
 }

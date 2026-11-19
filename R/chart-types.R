@@ -12,7 +12,9 @@
 chart_type_ids <- function() {
   c("histogram", "density", "boxplot", "scatter", "line", "bar", "dot",
     "strip", "qq", "means", "xyplot", "violin", "ecdf", "density_2d",
-    "heatmap", names(chart_compose_types()), chart_stat_type_ids())
+    "heatmap", "lollipop", "dumbbell", "doughnut", "stacked_area",
+    "ridgeline", "beeswarm", names(chart_compose_types()),
+    chart_stat_type_ids())
 }
 
 #' Engines supported by a chart type
@@ -119,7 +121,7 @@ chart_types_builtin <- function() {
     info$code <- chart_compose_command
     info
   })
-  c(core, stat, compose)
+  c(core, chart_types_extra(), stat, compose)
 }
 
 #' Core chart types (built-in ggplot2 charts)

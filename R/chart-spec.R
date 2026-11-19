@@ -431,6 +431,12 @@ chart_spec_title <- function(spec) {
                          paste(y, collapse = ", ")),
     heatmap = sprintf(tr("Heatmap of %s"),
                       paste(mapping$fill %||% "", collapse = ", ")),
+    lollipop = sprintf(tr("Lollipop chart of %s"), x),
+    dumbbell = sprintf(tr("Dumbbell chart of %s"), x),
+    doughnut = sprintf(tr("Doughnut chart of %s"), x),
+    stacked_area = sprintf(tr("%s over %s"), paste(y, collapse = ", "), x),
+    ridgeline = sprintf(tr("Ridgeline of %s by %s"), x, y),
+    beeswarm = sprintf(tr("Beeswarm of %s by %s"), y, x),
     compose = chart_compose_title(spec),
     NULL
   )

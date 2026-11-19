@@ -312,3 +312,23 @@ Run command	Esegui comando
 Import...	Importa...
 Filter applied: %s (%s)	Filtro applicato: %s (%s)
 Filter cleared (%d x %d)	Filtro rimosso (%d x %d)
+Examples	Esempi
+Search examples...	Cerca esempi...
+All families	Tutte le famiglie
+All levels	Tutti i livelli
+Basic	Base
+Customised	Personalizzato
+No examples match the filters	Nessun esempio corrisponde ai filtri
+Try a different family or clear the search.	Prova un'altra famiglia o cancella la ricerca.
+Clear filters	Cancella filtri
+Example: %s, %s, %s	Esempio: %s, %s, %s
+Preview of %s	Anteprima di %s
+Select an example	Seleziona un esempio
+Choose a card to see its preview, description and code.	Scegli una scheda per vedere anteprima, descrizione e codice.
+Open in builder	Apri nel builder
+Source: R Graph Gallery	Fonte: R Graph Gallery
+Code	Codice
+%d example(s)	%d esempio/i
+Examples are curated recipes adapted from the R Graph Gallery. Open one in the builder, then choose the variables for your data.	Gli esempi sono ricette curate e adattate dalla R Graph Gallery. Aprine uno nel builder, poi scegli le variabili per i tuoi dati.
+Example loaded: choose the variables for your data.	Esempio caricato: scegli le variabili per i tuoi dati.
+Example loaded: import a data set to preview it.	Esempio caricato: importa un data set per vederne l'anteprima.
