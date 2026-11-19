@@ -286,8 +286,17 @@ environment_object_actions <- function(name) {
 environment_objects_ui <- function(state, query = "") {
   table <- object_list(state)
   if (nrow(table) == 0L) {
-    return(empty_state(tr("The environment is empty"),
-                       tr("Import a data set or run a command.")))
+    return(empty_state(
+      tr("The environment is empty"),
+      tr("Import a data set or run a command."),
+      action = action_row(
+        tight = TRUE,
+        actionButton("environment_empty_import", tr("Import data"),
+                     class = "btn-sm btn-primary"),
+        actionButton("environment_empty_script", tr("Open script"),
+                     class = "btn-sm btn-outline-primary")
+      )
+    ))
   }
   query <- tolower(trimws(query %||% ""))
   if (nzchar(query)) {

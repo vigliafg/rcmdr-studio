@@ -306,3 +306,113 @@ test_that("Reset layout closes the modeless panel without touching the data", {
     expect_equal(state$undo_last_label, "Rename column")
   })
 })
+
+# O7 — Home in the start state -------------------------------------------------
+
+test_that("Home starts with four doors only when there is nothing to continue", {
+  skip_if_not_installed("shiny")
+  shiny::testServer(app_server(new.env(parent = globalenv())), {
+    state$project_recent_file <- tempfile(fileext = ".rds")
+    session$setInputs(main_tabs = "home", menu_search = "")
+    session$flushReact()
+
+    html <- htmltools::renderTags(output$workspace_primary)$html
+    expect_match(html, "rcmdr-home-launch", fixed = TRUE)
+    for (id in c("home_start_import", "home_start_new",
+                 "home_start_project", "home_start_continue")) {
+      expect_match(html, sprintf('id="%s"', id), fixed = TRUE)
+    }
+    # Four doors, one of them the primary action.
+    expect_match(html, "rcmdr-home-door-primary", fixed = TRUE)
+    expect_match(html, "btn-primary", fixed = TRUE)
+    # The normal Home cards wait until there is something to continue.
+    expect_false(grepl("home_continue", html, fixed = TRUE))
+  })
+})
+
+test_that("a data set or a recent project restores the normal Home", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:3, b = 1:3)
+  shiny::testServer(app_server(env), {
+    state$project_recent_file <- tempfile(fileext = ".rds")
+    session$setInputs(main_tabs = "home", menu_search = "")
+
+    active_dataset(state, "D")
+    session$flushReact()
+    html <- htmltools::renderTags(output$workspace_primary)$html
+    expect_false(grepl("rcmdr-home-launch", html, fixed = TRUE))
+    expect_match(html, "home_continue", fixed = TRUE)
+
+    # Without a data set, a recent project is enough to keep the normal Home.
+    clear_data_selection(state)
+    state$env$D <- NULL
+    project_recent_add(file.path(tempdir(), "recent.Rproj"),
+                       "Recent", file = state$project_recent_file)
+    session$setInputs(main_tabs = "data")
+    session$flushReact()
+    session$setInputs(main_tabs = "home")
+    session$flushReact()
+    html <- htmltools::renderTags(output$workspace_primary)$html
+    expect_false(grepl("rcmdr-home-launch", html, fixed = TRUE))
+    expect_match(html, "home_continue", fixed = TRUE)
+  })
+})
+
+test_that("the start page names what works without data", {
+  html <- as.character(home_start_ui())
+  expect_match(html, "Continue without data", fixed = TRUE)
+  expect_match(html, "Write and run R commands without importing anything.",
+               fixed = TRUE)
+  expect_match(html, "rcmdr-home-doors", fixed = TRUE)
+  expect_match(html, "rcmdr-home-door-text", fixed = TRUE)
+})
+
+# O8 — actionable empty states ------------------------------------------------
+
+test_that("the empty states point at the next action", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:3, b = 1:3)
+
+  shiny::testServer(app_server(env), {
+    state$project_recent_file <- tempfile(fileext = ".rds")
+    session$setInputs(main_tabs = "data", menu_search = "")
+    session$flushReact()
+    expect_match(htmltools::renderTags(output$data_grid)$html,
+                 'id="data_empty_import"', fixed = TRUE)
+    expect_match(htmltools::renderTags(output$data_grid)$html,
+                 'id="data_empty_new"', fixed = TRUE)
+
+    session$setInputs(main_tabs = "console")
+    session$flushReact()
+    expect_match(htmltools::renderTags(output$console_log)$html,
+                 'id="console_empty_script"', fixed = TRUE)
+
+    session$setInputs(main_tabs = "report")
+    session$flushReact()
+    expect_match(htmltools::renderTags(output$report_preview)$html,
+                 'id="report_empty_new"', fixed = TRUE)
+
+    session$setInputs(main_tabs = "help", help_query = "zzzznomatch")
+    session$flushReact()
+    expect_match(htmltools::renderTags(output$help_results)$html,
+                 'id="help_empty_clear"', fixed = TRUE)
+  })
+})
+
+test_that("Environment and Chart Studio empty states stay actionable", {
+  state <- AppState(new.env())
+  expect_match(as.character(environment_objects_ui(state)),
+               'id="environment_empty_import"', fixed = TRUE)
+  expect_match(as.character(chart_gallery_ui_cards(NULL)),
+               'id="chart_empty_build"', fixed = TRUE)
+})
+
+test_that("the filter announces the visible shape when applied and cleared", {
+  js <- as.character(app_ui())
+  expect_match(js, 'id="rcmdr-live-status"', fixed = TRUE)
+  app <- paste(deparse(body(app_server)), collapse = "\n")
+  expect_match(app, "Filter applied", fixed = TRUE)
+  expect_match(app, "Filter cleared", fixed = TRUE)
+})

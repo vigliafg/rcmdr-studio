@@ -898,7 +898,12 @@ chart_gallery_ui_cards <- function(table) {
   if (is.null(table) || nrow(table) == 0L) {
     return(empty_state(
       tr("No charts yet"),
-      tr("Build a chart and press Apply to add it to the gallery.")
+      tr("Build a chart and press Apply to add it to the gallery."),
+      action = action_row(
+        tight = TRUE,
+        actionButton("chart_empty_build", tr("Build a chart"),
+                     class = "btn-sm btn-primary")
+      )
     ))
   }
   htmltools::div(
@@ -1794,7 +1799,12 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
     if (is.null(current)) {
       return(empty_state(
         tr("No charts yet"),
-        tr("Build a chart and press Apply to add it to the gallery.")
+        tr("Build a chart and press Apply to add it to the gallery."),
+        action = action_row(
+          tight = TRUE,
+          actionButton("chart_detail_empty_build", tr("Build a chart"),
+                       class = "btn-sm btn-primary")
+        )
       ))
     }
     chart_detail_ui(current$plot, current$index)
@@ -1973,6 +1983,14 @@ chart_studio_server <- function(input, output, session, state, chart_revision,
 
   observeEvent(input$chart_gallery_refresh, {
     chart_revision(chart_revision() + 1L)
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$chart_empty_build, {
+    updateRadioButtons(session, "chart_mode", selected = "build")
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$chart_detail_empty_build, {
+    updateRadioButtons(session, "chart_mode", selected = "build")
   }, ignoreInit = TRUE)
 
   observeEvent(input$chart_selection_subset, {

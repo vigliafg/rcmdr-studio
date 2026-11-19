@@ -133,9 +133,14 @@ help_server <- function(input, output, session, state) {
         category = category, type = type, package = package
       )
       if (nrow(results) == 0L) {
-        return(htmltools::tags$p(
-          class = "text-muted",
-          tr("No help topic matches the search.")
+        return(empty_state(
+          tr("No help topic matches the search."),
+          tr("Try a shorter query or clear the filters."),
+          action = action_row(
+            tight = TRUE,
+            actionButton("help_empty_clear", tr("Clear search"),
+                         class = "btn-sm btn-outline-secondary")
+          )
         ))
       }
       return(htmltools::tagList(
@@ -152,9 +157,14 @@ help_server <- function(input, output, session, state) {
         type = type, package = package
       )
       if (nrow(catalog) == 0L) {
-        return(htmltools::tags$p(
-          class = "text-muted",
-          tr("No help topic matches the filters.")
+        return(empty_state(
+          tr("No help topic matches the filters."),
+          tr("Clear the filters to see the whole catalogue."),
+          action = action_row(
+            tight = TRUE,
+            actionButton("help_empty_clear", tr("Clear search"),
+                         class = "btn-sm btn-outline-secondary")
+          )
         ))
       }
       title <- if (is.null(category)) {
@@ -201,13 +211,21 @@ help_server <- function(input, output, session, state) {
     current_topic(NULL)
   })
 
-  shiny::observeEvent(input$help_clear_filters, {
+  clear_help_filters <- function() {
     filter(NULL)
     shiny::updateTextInput(session, "help_query", value = "")
     shiny::updateSelectInput(session, "help_type", selected = "all")
     shinyWidgets::updateVirtualSelect(
       "help_package", selected = "all", session = session
     )
+  }
+
+  shiny::observeEvent(input$help_clear_filters, {
+    clear_help_filters()
+  })
+
+  shiny::observeEvent(input$help_empty_clear, {
+    clear_help_filters()
   })
 
   shiny::observeEvent(input$help_current_dialog, {

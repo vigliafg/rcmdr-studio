@@ -993,6 +993,19 @@ report_studio_server <- function(input, output, session, state, refresh,
     req(view_ready(input, "report"))
     report_revision()
     tick_reactive()
+    if (!nzchar(trimws(document_text(state)))) {
+      return(empty_state(
+        tr("The document is empty."),
+        tr("Start a document or open an existing one."),
+        action = action_row(
+          tight = TRUE,
+          actionButton("report_empty_new", tr("New document"),
+                       class = "btn-sm btn-primary"),
+          actionButton("report_empty_open", tr("Open"),
+                       class = "btn-sm btn-outline-primary")
+        )
+      ))
+    }
     mode <- input$report_preview_mode %||% "markdown"
     if (identical(mode, "html")) {
       result <- state$knit_result
@@ -1164,6 +1177,15 @@ report_studio_server <- function(input, output, session, state, refresh,
 
   observeEvent(input$report_new, {
     state$open_dialog("newRmd")
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$report_empty_new, {
+    state$open_dialog("newRmd")
+  }, ignoreInit = TRUE)
+
+  observeEvent(input$report_empty_open, {
+    mode <- document_mode(state)
+    state$open_dialog(if (identical(mode, "rnw")) "loadRnw" else "loadRmd")
   }, ignoreInit = TRUE)
 
   observeEvent(input$report_template, {

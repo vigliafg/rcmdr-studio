@@ -2122,11 +2122,20 @@ app_server <- function(env = globalenv()) {
       if (length(entries) == 0L) {
         return(empty_state(
           tr("Console ready"),
-          tr("Type an R command above. Commands are logged and added to the history.")
+          tr("Type an R command above. Commands are logged and added to the history."),
+          action = action_row(
+            tight = TRUE,
+            actionButton("console_empty_script", tr("Open script"),
+                         class = "btn-sm btn-outline-primary")
+          )
         ))
       }
       history_cards_ui(entries, pinned = history_pinned_ids(state))
     })
+
+    observeEvent(input$console_empty_script, {
+      state$show_tab(tr("Script"))
+    }, ignoreInit = TRUE)
 
     output$console_status_ui <- renderUI({
       tick()
@@ -2927,7 +2936,33 @@ app_server <- function(env = globalenv()) {
       updateTextInput(session, "data_filter_value", value = "")
       updateAirDateInput(session, "data_filter_dates", clear = TRUE)
       data_grid_revision(data_grid_revision() + 1L)
+      df <- dataset(state)
+      if (!is.null(df)) {
+        announce(sprintf(tr("Filter cleared (%d x %d)"), nrow(df), ncol(df)))
+      }
     }, ignoreInit = TRUE)
+
+    # A filter is a view change: say the new shape, not just "filter on".
+    # `data_filter_value_d()` is debounced, so typing does not announce on
+    # every keystroke.
+    observeEvent(
+      list(input$data_filter_column, data_filter_value_d(),
+           input$data_filter_dates),
+      {
+        filter <- list(
+          column = input$data_filter_column %||% "",
+          value = data_filter_value_d() %||% "",
+          dates = input$data_filter_dates %||% NULL
+        )
+        label <- data_filter_label(filter$column, filter$value, filter$dates)
+        if (!nzchar(label)) return()
+        announce(sprintf(
+          tr("Filter applied: %s (%s)"), label,
+          data_view_shape(state, data_view_frame(), filter, long = TRUE)
+        ))
+      },
+      ignoreInit = TRUE
+    )
 
     # Column order: the header drag sends the names in the new order, the two
     # buttons move the selected column.  Both land in the same preference.
@@ -2993,7 +3028,14 @@ app_server <- function(env = globalenv()) {
       if (is.null(df)) {
         return(empty_state(
           tr("No active data set"),
-          tr("Import a file or load a data set from a package to start.")
+          tr("Import a file or load a data set from a package to start."),
+          action = action_row(
+            tight = TRUE,
+            actionButton("data_empty_import", tr("Import..."),
+                         class = "btn-sm btn-primary"),
+            actionButton("data_empty_new", tr("New data set"),
+                         class = "btn-sm btn-outline-primary")
+          )
         ))
       }
       mode <- input$data_mode %||% "view"
@@ -3324,6 +3366,15 @@ app_server <- function(env = globalenv()) {
       state$open_dialog("dataImportWizard")
     }, ignoreInit = TRUE)
 
+    # Empty states point at the existing doors, never at a new command.
+    observeEvent(input$data_empty_import, {
+      state$open_dialog("dataImportWizard")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$data_empty_new, {
+      state$open_dialog("newDataSet")
+    }, ignoreInit = TRUE)
+
     # A dropped text file is stored and handed to the normal Read Text Data
     # dialog, prefilled.  The dialog is the confirmation step: no command runs
     # until the user presses OK.
@@ -3520,6 +3571,14 @@ app_server <- function(env = globalenv()) {
       tick()
       environment_objects_ui(state, input$environment_filter %||% "")
     })
+
+    observeEvent(input$environment_empty_import, {
+      state$open_dialog("readDataSet")
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$environment_empty_script, {
+      state$show_tab(tr("Script"))
+    }, ignoreInit = TRUE)
 
     output$environment_preview <- renderUI({
       req(view_ready(input, "environment"))
@@ -3970,9 +4029,16 @@ app_server <- function(env = globalenv()) {
                                badge(tr("busy"), "warning"))
         },
         if (!is.null(state$last_error)) {
+          first_line <- strsplit(state$last_error, "\n", fixed = TRUE)[[1L]][[1L]]
+          short <- if (nchar(first_line) > 120L) {
+            paste0(substr(first_line, 1L, 119L), "\u2026")
+          } else {
+            first_line
+          }
           htmltools::tags$span(
             class = "rcmdr-status-item text-danger",
-            sprintf(tr("last error: %s"), state$last_error)
+            title = state$last_error,
+            sprintf(tr("last error: %s"), short)
           )
         }
       )
