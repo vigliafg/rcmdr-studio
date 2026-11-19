@@ -35,6 +35,30 @@ test_that("doughnut draws a hole and hides the polar axis", {
   expect_match(command, "axis.text.y = ggplot2::element_blank\\(\\)")
 })
 
+test_that("radar closes its profile and parallel uses GGally", {
+  skip_if_not_installed("ggplot2")
+  state <- chart_test_state()
+  radar <- chart_spec("radar", "D",
+                      list(x = "g", y = "y", group = "g2"),
+                      options = list(alpha = 0.2))
+  expect_equal(chart_spec_validate(radar, state), character())
+  command <- chart_spec_command(radar)
+  expect_match(command, "geom_polygon")
+  expect_match(command, "coord_polar")
+  expect_match(command, "close$.position <- max(z$.position) + 1",
+               fixed = TRUE)
+  expect_null(chart_spec_interactive(radar))
+
+  skip_if_not_installed("GGally")
+  parallel <- chart_spec("parallel", "D",
+                         list(vars = c("x", "y"), group = "g"))
+  expect_equal(chart_spec_validate(parallel, state), character())
+  command <- chart_spec_command(parallel)
+  expect_match(command, "GGally::ggparcoord")
+  expect_match(command, 'columns = match(c("x", "y")', fixed = TRUE)
+  expect_null(chart_spec_interactive(parallel))
+})
+
 test_that("optional extra types are gated by their package", {
   skip_if_not_installed("ggplot2")
   state <- chart_test_state()

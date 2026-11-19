@@ -90,6 +90,7 @@ Suggests:
     svglite,
     ggridges,
     ggbeeswarm,
+    GGally,
     styler
 Config/testthat/edition: 3
 VignetteBuilder: knitr

@@ -584,13 +584,13 @@ Stato: chiusa — 8 step in 3 lotti (E1–E8), versione 3.2.0; ADR-020.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| E1 | Registro esempi | [x] | `9935d48`; 26 metadati, filtri, spec, codice |
-| E2 | Anteprime locali | [x] | `tools/build_chart_examples.R`, 26 PNG, manifest, NOTICE |
+| E1 | Registro esempi | [x] | `9935d48`; 28 metadati, filtri, spec, codice |
+| E2 | Anteprime locali | [x] | `tools/build_chart_examples.R`, 28 PNG, manifest, NOTICE |
 | E3 | Modalità Examples | [x] | quarta modalità, griglia, card, stato vuoto |
 | E4 | Dettaglio e filtri | [x] | famiglia, livello, ricerca, fonte, copia codice |
 | E5 | Apri nel builder | [x] | loader condiviso, mapping condizionale, no side effect |
-| E6 | Tipi nuovi | [x] | lollipop, dumbbell, doughnut, area, ridgeline, beeswarm |
-| E7 | Contenuto curated | [x] | 26 esempi, 6 famiglie, fonti, livelli |
+| E6 | Tipi nuovi | [x] | lollipop, dumbbell, doughnut, area, ridgeline, beeswarm, radar, parallel |
+| E7 | Contenuto curated | [x] | 28 esempi, 6 famiglie, fonti, livelli |
 | E8 | Chiusura | [x] | 3.2.0; NEWS, README, help, ADR-020, diario, push |
 
 ---

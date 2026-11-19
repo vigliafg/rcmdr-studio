@@ -2,7 +2,7 @@
 
 ## Chart examples and new ggplot2 types
 
-- **Examples gallery.** The Chart Studio has a fourth mode, **Examples**: 26
+- **Examples gallery.** The Chart Studio has a fourth mode, **Examples**: 28
   curated recipes adapted from the R Graph Gallery, with local previews,
   family and level filters, search, source links and a detail panel. **Open in
   builder** fills type, options, theme and labels; it never loads data into the
@@ -12,8 +12,9 @@
   `datasets` with `tools/build_chart_examples.R`; no image or code is fetched
   at runtime. `inst/www/chart-examples/NOTICE` records the inspiration and the
   MIT licence of the R Graph Gallery repository.
-- **Six new types.** Lollipop, dumbbell, doughnut, stacked area, ridgeline
-  (`ggridges`) and beeswarm (`ggbeeswarm`) join the builder. The optional
+- **Eight new types.** Lollipop, dumbbell, doughnut, stacked area, ridgeline
+  (`ggridges`), beeswarm (`ggbeeswarm`), radar and parallel coordinates
+  (`GGally`) join the builder. The optional
   packages are in `Suggests`; the types appear only when installed. No new
   mandatory dependency.
 - **One recipe loader.** Models and Examples share the same loading path. A

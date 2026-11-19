@@ -33,7 +33,7 @@ test_that("example specs validate on their sample data", {
                  info = example$id)
     code <- chart_example_code(example)
     expect_true(nzchar(code), info = example$id)
-    expect_match(code, "^(print\\(ggplot2::|print\\(ggstatsplot::|print\\(ggridges::)",
+    expect_match(code, "ggplot2::ggplot|GGally::ggparcoord|ggstatsplot::",
                  info = example$id)
   }
 })

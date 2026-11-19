@@ -369,6 +369,7 @@ chart_spec_command <- function(spec) {
 #' @keywords internal
 chart_spec_interactive <- function(spec) {
   if (identical(spec$type, "compose")) return(NULL)
+  if (spec$type %in% c("radar", "parallel")) return(NULL)
   if (chart_stat_type(spec$type)) return(NULL)
   code <- tryCatch(chart_ggplot_interactive(spec), error = function(e) NULL)
   if (is.null(code) || !nzchar(code)) NULL else code
@@ -437,6 +438,9 @@ chart_spec_title <- function(spec) {
     stacked_area = sprintf(tr("%s over %s"), paste(y, collapse = ", "), x),
     ridgeline = sprintf(tr("Ridgeline of %s by %s"), x, y),
     beeswarm = sprintf(tr("Beeswarm of %s by %s"), y, x),
+    radar = sprintf(tr("Radar of %s"), y),
+    parallel = sprintf(tr("Parallel coordinates of %s"),
+                        paste(mapping$vars %||% "", collapse = ", ")),
     compose = chart_compose_title(spec),
     NULL
   )

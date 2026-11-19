@@ -20,11 +20,11 @@ o per un plugin.
 
 ## 1. Risultato
 
-- Il Chart Studio ha una quarta modalità **Examples** con 26 ricette curate,
+- Il Chart Studio ha una quarta modalità **Examples** con 28 ricette curate,
   anteprime locali e link alla R Graph Gallery.
 - Il dettaglio mostra descrizione, fonte, codice e **Apri nel builder**.
 - Il loader è condiviso con **Models**: una sola strada per una ricetta.
-- Sei tipi nuovi: lollipop, dumbbell, doughnut, area impilata, ridgeline e
+- Otto tipi nuovi: lollipop, dumbbell, doughnut, area impilata, ridgeline e
   beeswarm.
 - `ggridges` e `ggbeeswarm` sono in `Suggests`; i tipi compaiono solo se
   installati. Nessuna dipendenza obbligatoria nuova.
@@ -55,7 +55,7 @@ o per un plugin.
 |---|---|---|
 | Catalogo | 20 esempi | 26: 20 sui tipi esistenti + 6 sui tipi nuovi |
 | Tipi | P1 e P2 | P1 senza dipendenze + ridgeline/beeswarm (package installati) |
-| Radar | previsto P1 | rinviato: il poligono chiuso richiede una trasformazione dati dedicata |
+| Radar | previsto P1 | aggiunto con un generatore di codice che chiude il poligono |
 | Altri P2 | treemap, waffle, parallel, dendrogram | rinviati: package non installati o modello dati dedicato |
 | Manifest | checksum | la verifica controlla id e presenza dei file: il PNG non è deterministico per metadati |
 
@@ -68,7 +68,7 @@ o per un plugin.
 | `testthat::test_local()` | `EXIT=0`; 0 failure; 29 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w20-pre.log`) |
 | `node --check` | verde (`/tmp/opencode/app-w20.js`) |
 | App HTTP | 200 su `http://127.0.0.1:3841/` |
-| Anteprime | 26/26; manifest coerente; 720 KB |
+| Anteprime | 28/28; manifest coerente; 850 KB |
 | Mapping | solo colonne compatibili; nessun side effect |
 | Classic | invariata; nessun test Classic modificato |
 
@@ -81,8 +81,8 @@ o per un plugin.
   `QA-WIDGETS.md` e `ACCESSIBILITY.md`.
 - I tipi con package opzionale non hanno anteprima se il package manca; la
   galleria li esclude e il builder non li offre.
-- Radar, parallel, treemap, waffle, dendrogramma, mappe, network/flow, 3D e
-  animazione restano fuori: richiedono un modello dati o un plugin.
+- Treemap, waffle, dendrogramma, mappe, network/flow, 3D e animazione
+  restano fuori: richiedono un modello dati o un plugin.
 - Il manifest usa id + presenza file, non il checksum: la generazione PNG non
   è byte-identica tra esecuzioni.
 

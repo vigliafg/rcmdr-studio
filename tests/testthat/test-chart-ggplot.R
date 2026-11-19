@@ -23,7 +23,9 @@ chart_gg_spec <- function(type, mapping = NULL, options = list(),
     doughnut = list(x = "g", y = "y"),
     stacked_area = list(x = "x", y = "y", group = "g"),
     ridgeline = list(x = "y", y = "g"),
-    beeswarm = list(x = "g", y = "y")
+    beeswarm = list(x = "g", y = "y"),
+    radar = list(x = "g", y = "y", group = "g2"),
+    parallel = list(vars = c("x", "y"), group = "g")
   )
   chart_spec(
     type, "D", mapping %||% defaults[[type]] %||% list(),
@@ -38,6 +40,16 @@ test_that("all chart types produce a ggplot2 command", {
     if (!chart_type_available(type, "ggplot2")) next
     if (identical(type, "compose") || chart_stat_type(type)) next
     command <- chart_spec_command(chart_gg_spec(type))
+    if (identical(type, "radar")) {
+      expect_match(command, "^local\\(\\{ d <- D", info = type)
+      next
+    }
+    if (identical(type, "parallel")) {
+      expect_match(command,
+                   "^local\\(\\{ d <- D; print\\(GGally::ggparcoord\\(d",
+                   info = type)
+      next
+    }
     expect_match(command, "^print\\(ggplot2::ggplot\\(D", info = type)
     expect_match(command,
                  "ggplot2::geom_|ggplot2::stat_|ggridges::geom_|ggbeeswarm::geom_",

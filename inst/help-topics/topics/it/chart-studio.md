@@ -63,7 +63,8 @@ ggplot2. Le stesse scelte sono incluse nel comando tramite `scale_*_manual()`,
 
 Oltre ai tipi classici, il builder offre violino, ECDF, densità 2D, heatmap,
 lollipop, dumbbell, doughnut, area impilata, ridgeline (se `ggridges` è
-installato) e beeswarm (se `ggbeeswarm` è installato). I tipi `stat_*` usano
+installato), beeswarm (se `ggbeeswarm` è installato), radar e parallel
+coordinates (se `GGally` è installato). I tipi `stat_*` usano
 ggstatsplot; la composizione usa patchwork. Il motore è unico: ggplot2.
 
 ## Vedi anche

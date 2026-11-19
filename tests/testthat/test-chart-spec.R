@@ -29,7 +29,15 @@ test_that("every chart type produces a ggplot2 command", {
     mapping <- Filter(Negate(is.null), mapping)
     spec <- chart_spec(type, "D", mapping)
     command <- chart_spec_command(spec)
-    expect_match(command, "^print\\(ggplot2::", info = type)
+    if (identical(type, "radar")) {
+      expect_match(command, "^local\\(\\{ d <- D", info = type)
+    } else if (identical(type, "parallel")) {
+      expect_match(command,
+                   "^local\\(\\{ d <- D; print\\(GGally::ggparcoord",
+                   info = type)
+    } else {
+      expect_match(command, "^print\\(ggplot2::", info = type)
+    }
   }
 })
 
@@ -137,8 +145,16 @@ test_that("every chart type has a ggplot2 engine", {
     names(mapping) <- names(info$mapping)
     spec <- chart_spec(id, "D", mapping, theme = list(engine = "ggplot2"))
     expect_true(chart_spec_ready(spec, state), info = id)
-    expect_match(chart_spec_command(spec), "print\\(ggplot2::ggplot",
-                 info = id)
+    command <- chart_spec_command(spec)
+    if (identical(id, "radar")) {
+      expect_match(command, "^local\\(\\{ d <- D", info = id)
+    } else if (identical(id, "parallel")) {
+      expect_match(command,
+                   "^local\\(\\{ d <- D; print\\(GGally::ggparcoord\\(d",
+                   info = id)
+    } else {
+      expect_match(command, "print\\(ggplot2::ggplot", info = id)
+    }
   }
 })
 

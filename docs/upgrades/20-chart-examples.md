@@ -37,7 +37,7 @@ senza eseguire comandi.
 ### 3.1 Galleria Examples
 
 - Quarta modalità del Chart Studio: **Build | Models | Examples | Gallery**.
-- 26 esempi, con anteprima locale 640×400.
+- 28 esempi, con anteprima locale 640×400.
 - Filtri per famiglia e livello, ricerca testuale, conteggio.
 - Card come `<button>`, `aria-pressed`, nome accessibile, immagine con `alt`.
 - Dettaglio con descrizione, fonte, **Apri nel builder**, **Copia codice** e
@@ -56,6 +56,8 @@ senza eseguire comandi.
 | Stacked area | x, valore, serie | `geom_area(position = "stack")` |
 | Ridgeline | numerico, gruppo | richiede `ggridges` |
 | Beeswarm | gruppo, numerico | richiede `ggbeeswarm` |
+| Radar | categoria, valore, profilo | poligono chiuso con `coord_polar()` |
+| Parallel coordinates | più numeriche, gruppo | richiede `GGally` |
 
 I tipi con package opzionale compaiono solo se il package è installato e sono
 dichiarati in `Suggests`. Nessun package nuovo obbligatorio.
@@ -69,14 +71,14 @@ dichiarati in `Suggests`. Nessun package nuovo obbligatorio.
 - `inst/www/chart-examples/NOTICE` attribuisce l'ispirazione all'R Graph
   Gallery (repository MIT) e dichiara che nessuna immagine del sito viene
   ridistribuita.
-- Budget: 26 PNG, circa 720 KB.
+- Budget: 28 PNG, circa 850 KB.
 
 ---
 
 ## 4. Esperienza utente
 
 ```text
-[ Famiglia ▾ ] [ Livello ▾ ] [ Cerca esempi... ]        [ 26 esempio/i ]
+[ Famiglia ▾ ] [ Livello ▾ ] [ Cerca esempi... ]        [ 28 esempio/i ]
 ┌──────────────────────────────┬─────────────────────────────────────────┐
 │ card  card  card             │ anteprima grande                        │
 │ card  card  card             │ titolo, famiglia, livello               │
@@ -104,7 +106,7 @@ R/chart-examples.R          registro, dati, spec, codice, filtri
 R/chart-examples-ui.R       UI e server della modalità Examples
 R/chart-types-extra.R       lollipop, dumbbell, doughnut, area, ridgeline, beeswarm
 tools/build_chart_examples.R generazione e verifica delle anteprime
-inst/www/chart-examples/    26 PNG + manifest.tsv + NOTICE
+inst/www/chart-examples/    28 PNG + manifest.tsv + NOTICE
 tests/testthat/test-chart-examples.R
 tests/testthat/test-chart-types-extra.R
 ```
@@ -135,6 +137,7 @@ tests/testthat/test-chart-types-extra.R
 | Composizione | pie con test, doughnut |
 | Evoluzione | linea, area, serie multiple, area impilata |
 | Ranking | lollipop, dumbbell |
+| Profili | radar, parallel coordinates |
 
 Le sorgenti sono pagine tematiche di `https://r-graph-gallery.com/`; le
 descrizioni sono originali.
@@ -147,7 +150,7 @@ descrizioni sono originali.
 
 - `test-chart-examples.R`: registro, spec, codice, filtri, mapping, markup,
   apertura nel builder senza side effect.
-- `test-chart-types-extra.R`: layer e validazione dei sei tipi; gating dei
+- `test-chart-types-extra.R`: layer e validazione degli otto tipi; gating dei
   package opzionali.
 - `test-chart-ggplot.R`: mapping di default dei nuovi tipi.
 - `test-chart-spec.R` / `test-chart-types.R`: copertura automatica dei tipi
@@ -160,7 +163,7 @@ descrizioni sono originali.
 | Suite completa | `EXIT=0`; 29 e2e saltati; 3 warning noti |
 | `node --check` | verde |
 | App HTTP | 200 su `http://127.0.0.1:3841/` |
-| Anteprime | 26/26, manifest coerente, 720 KB |
+| Anteprime | 28/28, manifest coerente, 850 KB |
 | Classic | invariata |
 
 ---
@@ -171,13 +174,13 @@ descrizioni sono originali.
 |---|---|
 | Duplicare Models | loader condiviso, un solo percorso |
 | Aspettativa delle 400 pagine | catalogo curato, link esterni, NOTICE |
-| Peso immagini | 26 PNG, lazy loading, budget |
+| Peso immagini | 28 PNG, lazy loading, budget |
 | Licenza | anteprime generate localmente, nessuna immagine del sito |
 | Mapping sbagliato | solo nomi/tipi compatibili |
 | Package opzionale mancante | `requires` + gating, esempio e tipo nascosti |
 
-Restano fuori dall'onda, come concordato: radar, parallel coordinates,
-treemap, waffle, dendrogramma, mappe, network/flow, 3D e animazione. Sono
+Restano fuori dall'onda, come concordato: treemap, waffle, dendrogramma,
+mappe, network/flow, 3D e animazione. Sono
 tipi da plugin o da onda successiva; l'architettura della galleria li accoglie
 senza cambiamenti.
 
@@ -186,9 +189,9 @@ senza cambiamenti.
 ## 9. Criteri di chiusura
 
 - [x] Modalità Examples con griglia, filtri, dettaglio e stato vuoto.
-- [x] 26 esempi con anteprima locale, fonte e codice.
+- [x] 28 esempi con anteprima locale, fonte e codice.
 - [x] Apri nel builder senza side effect.
-- [x] Sei nuovi tipi, con gating per i package opzionali.
+- [x] Otto nuovi tipi, con gating per i package opzionali.
 - [x] Nessuna richiesta di rete nella vista Examples.
 - [x] 3 colonne a 1280 px, 1 a 640 px, token e focus.
 - [x] Suite completa, app HTTP 200, help aggiornato.

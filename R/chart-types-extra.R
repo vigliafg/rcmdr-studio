@@ -200,6 +200,88 @@ chart_type_beeswarm <- function() {
   )
 }
 
+#' Radar chart
+#' @keywords internal
+chart_type_radar <- function() {
+  list(
+    label = tr("Radar chart"),
+    icon = "line",
+    group = "comparison",
+    analysis = "comparison",
+    description = tr(
+      "A closed profile across categories, optionally one profile per group."
+    ),
+    engines = "ggplot2",
+    mapping = list(
+      x = list(label = tr("Category (pick one)"), kind = "factor"),
+      y = list(label = tr("Value (pick one)"), kind = "numeric"),
+      group = list(label = tr("Profile (optional)"), kind = "factor",
+                   optional = TRUE)
+    ),
+    defaults = list(point_size = 2, line_width = 1, alpha = 0.25),
+    option_groups = list(
+      Points = c("point_size"),
+      Lines = c("line_width"),
+      Area = c("alpha")
+    ),
+    controls = function(spec) {
+      options <- spec$options %||% list()
+      htmltools::tagList(
+        number_input("chart_opt_point_size", tr("Point size"),
+                     options$point_size %||% 2, min = 0.2, step = 0.2),
+        number_input("chart_opt_line_width", tr("Line width"),
+                     options$line_width %||% 1, min = 0.1, step = 0.1),
+        slider_input("chart_opt_alpha", tr("Area alpha"), 0, 1,
+                     options$alpha %||% 0.25, 0.05)
+      )
+    },
+    code = function(spec) chart_radar_command(spec)
+  )
+}
+
+#' Parallel coordinates chart
+#' @keywords internal
+chart_type_parallel <- function() {
+  list(
+    label = tr("Parallel coordinates"),
+    icon = "line",
+    group = "relationship",
+    analysis = "relationship",
+    description = tr(
+      "Several numeric variables compared across rows (GGally)."
+    ),
+    engines = "ggplot2",
+    requires = "GGally",
+    mapping = list(
+      vars = list(label = tr("Variables (numeric)"), kind = "numeric",
+                  multiple = TRUE, min = 2L),
+      group = list(label = tr("Colour by (optional)"), kind = "factor",
+                   optional = TRUE)
+    ),
+    defaults = list(alpha = 0.5, scale = "std"),
+    option_groups = list(
+      Lines = c("alpha", "scale")
+    ),
+    controls = function(spec) {
+      options <- spec$options %||% list()
+      htmltools::tagList(
+        slider_input("chart_opt_alpha", tr("Line alpha"), 0, 1,
+                     options$alpha %||% 0.5, 0.05),
+        selectInput(
+          "chart_opt_scale", tr("Scale"),
+          choices = stats::setNames(
+            c("std", "center", "scale", "uniminmax", "globalminmax"),
+            c("Standardise", "Center", "Scale", "Unit interval",
+              "Global min-max")
+          ),
+          selected = options$scale %||% "std"
+        )
+      )
+    },
+    code = function(spec) chart_parallel_command(spec)
+  )
+}
+
 #' Registry of extra chart types
 #' @keywords internal
 chart_types_extra <- function() {
@@ -209,6 +291,104 @@ chart_types_extra <- function() {
     doughnut = chart_type_doughnut(),
     stacked_area = chart_type_stacked_area(),
     ridgeline = chart_type_ridgeline(),
-    beeswarm = chart_type_beeswarm()
+    beeswarm = chart_type_beeswarm(),
+    radar = chart_type_radar(),
+    parallel = chart_type_parallel()
+  )
+}
+
+
+#' Code of a radar chart
+#'
+#' The categories are ordered and the first row is repeated per group, so the
+#' polygon closes.  The code stays a single ggplot expression inside `local()`,
+#' which makes it reproducible outside the app.
+#' @keywords internal
+chart_radar_command <- function(spec) {
+  mapping <- spec$mapping %||% list()
+  x <- chart_gg_optional(mapping$x)
+  y <- chart_gg_optional(mapping$y)
+  group <- chart_gg_optional(mapping$group)
+  options <- utils::modifyList(chart_ggplot_option_defaults(),
+                               spec$options %||% list())
+  alpha <- chart_gg_number(options$alpha %||% 0.25, default = 0.25,
+                           min = 0, max = 1)
+  point_size <- chart_gg_number(options$point_size %||% 2,
+                                default = 2, min = 0.2)
+  line_width <- chart_gg_number(options$line_width %||% 1,
+                                default = 1, min = 0.1)
+  palette <- chart_gg_palette(spec)
+  group_code <- if (nzchar(group)) {
+    sprintf("factor(d[[%s]])", chart_quote(group))
+  } else {
+    "factor(\"All\")"
+  }
+  scales <- character()
+  if (!is.null(palette)) {
+    fill_scale <- chart_gg_manual_scale("fill", palette)
+    colour_scale <- chart_gg_manual_scale("colour", palette)
+    if (!is.null(fill_scale)) scales <- c(scales, fill_scale)
+    if (!is.null(colour_scale)) scales <- c(scales, colour_scale)
+  }
+  pieces <- c(
+    sprintf("ggplot2::geom_polygon(alpha = %s)", format(alpha, digits = 3)),
+    sprintf("ggplot2::geom_path(linewidth = %s)",
+            format(line_width, digits = 3)),
+    sprintf("ggplot2::geom_point(size = %s)",
+            format(point_size, digits = 3)),
+    "ggplot2::scale_x_continuous(limits = c(1, length(levels(d$.category)) + 1), breaks = seq_along(levels(d$.category)), labels = levels(d$.category))",
+    "ggplot2::coord_polar()",
+    scales,
+    chart_gg_theme(spec),
+    "ggplot2::theme(axis.title = ggplot2::element_blank(), axis.text.y = ggplot2::element_blank(), axis.ticks.y = ggplot2::element_blank())",
+    chart_gg_labs(spec)
+  )
+  pieces <- pieces[nzchar(pieces)]
+  sprintf(
+    paste0(
+      "local({ d <- %s; d$.category <- factor(d[[%s]]); ",
+      "d$.group <- %s; d$.position <- as.numeric(d$.category); ",
+      "d <- d[order(d$.group, d$.position), , drop = FALSE]; ",
+      "d <- do.call(rbind, lapply(split(d, d$.group), function(z) ",
+      "{ close <- z[1, , drop = FALSE]; ",
+      "close$.position <- max(z$.position) + 1; rbind(z, close) })); ",
+      "print(ggplot2::ggplot(d, ggplot2::aes(x = .position, y = %s, ",
+      "group = .group, fill = .group, colour = .group)) + %s) })"
+    ),
+    spec$dataset %||% "", chart_quote(x), group_code, y,
+    paste(pieces, collapse = " + ")
+  )
+}
+
+#' Code of a parallel coordinates chart
+#' @keywords internal
+chart_parallel_command <- function(spec) {
+  mapping <- spec$mapping %||% list()
+  vars <- as.character(mapping$vars %||% character())
+  vars <- vars[nzchar(vars)]
+  group <- chart_gg_optional(mapping$group)
+  options <- utils::modifyList(chart_ggplot_option_defaults(),
+                               spec$options %||% list())
+  alpha <- chart_gg_number(options$alpha %||% 0.5, default = 0.5,
+                           min = 0, max = 1)
+  scale <- options$scale %||% "std"
+  if (!scale %in% c("std", "center", "scale", "uniminmax",
+                    "globalminmax")) {
+    scale <- "std"
+  }
+  columns <- paste(chart_quote(vars), collapse = ", ")
+  group_arg <- if (nzchar(group)) {
+    sprintf(", groupColumn = %s", chart_quote(group))
+  } else {
+    ""
+  }
+  sprintf(
+    paste0(
+      "local({ d <- %s; print(GGally::ggparcoord(d, ",
+      "columns = match(c(%s), names(d))%s, alphaLines = %s, ",
+      "scale = %s)) })"
+    ),
+    spec$dataset %||% "", columns, group_arg,
+    format(alpha, digits = 3), chart_quote(scale)
   )
 }

@@ -13,7 +13,8 @@ chart_type_ids <- function() {
   c("histogram", "density", "boxplot", "scatter", "line", "bar", "dot",
     "strip", "qq", "means", "xyplot", "violin", "ecdf", "density_2d",
     "heatmap", "lollipop", "dumbbell", "doughnut", "stacked_area",
-    "ridgeline", "beeswarm", names(chart_compose_types()),
+    "ridgeline", "beeswarm", "radar", "parallel",
+    names(chart_compose_types()),
     chart_stat_type_ids())
 }
 

@@ -73,6 +73,17 @@ chart_example_data_eu_stocks <- function() {
   )
 }
 
+#' A small profile table, for the radar example
+#' @keywords internal
+chart_example_data_radar <- function() {
+  data.frame(
+    category = rep(c("Speed", "Power", "Economy", "Comfort", "Safety"), 2),
+    team = rep(c("Alpha", "Beta"), each = 5),
+    score = c(8, 7, 5, 6, 7, 6, 9, 7, 8, 6),
+    stringsAsFactors = FALSE
+  )
+}
+
 #' Means by cylinder count, for the lollipop example
 #' @keywords internal
 chart_example_data_means <- function() {
@@ -453,6 +464,41 @@ chart_examples <- function() {
       source_url = "https://r-graph-gallery.com/beeswarm.html",
       requires = "ggbeeswarm",
       tags = c("distribution", "beeswarm", "points")
+    ),
+    chart_example_entry(
+      "radar_profile", tr("Profile radar"), "comparison", "custom",
+      "radar",
+      tr("Two closed profiles compared across five categories."),
+      data = chart_example_data_radar,
+      data_name = "example_radar_profile",
+      data_code = paste0(
+        "data.frame(category = rep(c(\"Speed\", \"Power\", \"Economy\", ",
+        "\"Comfort\", \"Safety\"), 2), ",
+        "team = rep(c(\"Alpha\", \"Beta\"), each = 5), ",
+        "score = c(8, 7, 5, 6, 7, 6, 9, 7, 8, 6))"
+      ),
+      mapping = list(x = "category", y = "score", group = "team"),
+      options = list(point_size = 2.5, line_width = 1.1, alpha = 0.2),
+      theme = list(palette = "tableau"),
+      source_url = "https://r-graph-gallery.com/spider-or-radar-chart.html",
+      tags = c("comparison", "radar", "profile")
+    ),
+    chart_example_entry(
+      "parallel_iris", tr("Parallel coordinates"), "relationship", "custom",
+      "parallel",
+      tr("Four measurements compared across species."),
+      data = chart_example_data_iris,
+      data_name = "example_parallel_iris", data_code = "datasets::iris",
+      mapping = list(
+        vars = c("Sepal.Length", "Sepal.Width", "Petal.Length",
+                 "Petal.Width"),
+        group = "Species"
+      ),
+      options = list(alpha = 0.5, scale = "std"),
+      theme = list(palette = "tableau"),
+      source_url = "https://r-graph-gallery.com/parallel-plot.html",
+      requires = "GGally",
+      tags = c("relationship", "parallel", "multivariate")
     )
   )
   stats::setNames(examples, vapply(examples, function(example) example$id,

@@ -90,6 +90,8 @@ The builder also exposes types without a classic Rcmdr dialog:
 | Stacked area | x, value, series | alpha, stacked position |
 | Ridgeline | numeric, group | overlap scale, alpha (needs `ggridges`) |
 | Beeswarm | group, numeric | point size, alpha (needs `ggbeeswarm`) |
+| Radar | category, value, profile? | closed profile, point/line size, fill alpha |
+| Parallel coordinates | two or more numerics, group? | line alpha, scale (needs `GGally`) |
 
 The statistical types (`stat_*`) use ggstatsplot and the composition type uses
 patchwork. Optional types appear only when their package is installed; the

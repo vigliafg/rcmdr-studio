@@ -18,9 +18,10 @@ report workspaces, and a Classic mode for compatibility.
 > time with an optional second slot, hideable Inspector/Preview panels,
 > application undo and redo, row and cell-range selection with TSV copy,
 > resizable dialogs and modeless Help/Console/Output. The Chart Studio has a
-> single ggplot2 engine and an offline **Examples** gallery of 26 recipes
-> adapted from the R Graph Gallery; six additional types — lollipop, dumbbell,
-> doughnut, stacked area, ridgeline and beeswarm — extend the builder.
+> single ggplot2 engine and an offline **Examples** gallery of 28 recipes
+> adapted from the R Graph Gallery; eight additional types — lollipop,
+> dumbbell, doughnut, stacked area, ridgeline, beeswarm, radar and parallel
+> coordinates — extend the builder.
 > Orientation remains the through-line: every Studio view carries a context
 > line, the status bar has three priority groups, split slots name their role
 > and view, and the filter describes the visible frame rather than the total.
@@ -45,7 +46,8 @@ report workspaces, and a Classic mode for compatibility.
 - Optional: `rgl` for the 3D plot pane, `svglite` for SVG export, `rmarkdown`,
   `knitr` and Pandoc for report previews and knits, `commonmark` for the fast
   Markdown preview, `yaml` for front matter parsing, `styler` for script
-  formatting, `ggridges` for ridgelines and `ggbeeswarm` for beeswarms
+  formatting, `ggridges` for ridgelines, `ggbeeswarm` for beeswarms and
+  `GGally` for parallel coordinates
 
 ## Install
 
@@ -92,7 +94,7 @@ RcmdrShiny::run(env = env)
 | Targeted mode for data sets above the editing threshold | done |
 | Chart builder with per-type mappings and options | done |
 | Isolated live preview with debounce and cache | done |
-| Typed chart specification and thirty-one chart types | done |
+| Typed chart specification and thirty-three chart types | done |
 | Theme/palette panel and single ggplot2 engine | done |
 | Gallery with search, type filter, pin, rename, detail and compare | done |
 | Round-trip: reopen a chart in the builder | done |
