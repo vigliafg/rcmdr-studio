@@ -52,3 +52,68 @@ test_that("the chip tones are token pairs, not literal colours", {
   expect_false(grepl("#", accent, fixed = TRUE))
   expect_false(grepl("rgb(", accent, fixed = TRUE))
 })
+
+# O3 — context line -----------------------------------------------------------
+
+test_that("the context line names the place, the data and the filter", {
+  state <- AppState(env = new.env())
+  state$env$D <- data.frame(a = 1:4, b = letters[1:4])
+  dataset_register(state, "D")
+  active_dataset(state, "D")
+  frame <- data_grid_frame(state$env$D)
+  filtered <- frame[frame$a == 2, , drop = FALSE]
+
+  html <- htmltools::renderTags(workspace_context_line(
+    state, "data", filtered,
+    filter = list(column = "a", value = "2"), selection_mode = "cells"
+  ))$html
+
+  expect_match(html, "rcmdr-context-line", fixed = TRUE)
+  expect_match(html, "Studio \u00b7 Data Studio", fixed = TRUE)
+  expect_match(html, "filter: a 2 \u00b7 1 of 4 rows", fixed = TRUE)
+  expect_match(html, "Cells", fixed = TRUE)
+  expect_match(html, "rcmdr-badge-accent", fixed = TRUE)
+})
+
+test_that("every workspace view has a place in the context line", {
+  state <- AppState(env = new.env())
+  labels <- main_tab_labels("studio")
+  for (id in workspace_view_ids()) {
+    html <- htmltools::renderTags(
+      workspace_context_line(state, id)
+    )$html
+    expect_match(html, "Studio", fixed = TRUE, info = id)
+    expect_match(html, labels[[id]] %||% id, fixed = TRUE, info = id)
+  }
+})
+
+test_that("the context line is text, not a control", {
+  state <- AppState(env = new.env())
+  html <- htmltools::renderTags(workspace_context_line(state, "home"))$html
+  # Nothing focusable: no button, input or link in the line itself.
+  expect_false(grepl("<button", html, fixed = TRUE))
+  expect_false(grepl("<input", html, fixed = TRUE))
+  expect_false(grepl("<a ", html, fixed = TRUE))
+
+  css <- app_asset_text("css", "10-shell.css")
+  expect_match(css, ".rcmdr-context-line", fixed = TRUE)
+  expect_match(css, ".rcmdr-context-place", fixed = TRUE)
+  expect_match(css, "overflow-x: auto", fixed = TRUE)
+})
+
+test_that("the server renders the context line", {
+  skip_if_not_installed("shiny")
+  env <- new.env(parent = globalenv())
+  env$D <- data.frame(a = 1:4, b = letters[1:4])
+
+  shiny::testServer(app_server(env), {
+    active_dataset(state, "D")
+    session$setInputs(menu_search = "", data_mode = "view",
+                      main_tabs = "data", data_selection_mode = "rows")
+    session$flushReact()
+
+    context <- htmltools::renderTags(output$workspace_context_ui)$html
+    expect_match(context, "Studio \u00b7 Data Studio", fixed = TRUE)
+    expect_match(context, "Rows", fixed = TRUE)
+  })
+})

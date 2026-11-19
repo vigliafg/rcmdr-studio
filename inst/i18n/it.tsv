@@ -291,3 +291,4 @@ Resize column	Ridimensiona colonna
 filter: %s	filtro: %s
 editing disabled: threshold exceeded	modifica disattivata: soglia superata
 server-side paging	paginazione lato server
+filter: %s · %d of %d rows	filtro: %s · %d di %d righe

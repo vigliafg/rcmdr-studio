@@ -1111,6 +1111,23 @@ app_server <- function(env = globalenv()) {
       workspace_view_switcher(input$main_tabs %||% "home")
     })
 
+    output$workspace_context_ui <- renderUI({
+      language_revision()
+      tick()
+      data_selection_revision()
+      workspace_context_line(
+        state,
+        input$main_tabs %||% "home",
+        data_view_frame(),
+        filter = list(
+          column = input$data_filter_column %||% "",
+          value = data_filter_value_d() %||% "",
+          dates = input$data_filter_dates %||% NULL
+        ),
+        selection_mode = input$data_selection_mode %||% "rows"
+      )
+    })
+
     output$workspace_secondary_ui <- renderUI({
       language_revision()
       primary <- input$main_tabs %||% "home"

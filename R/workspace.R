@@ -98,7 +98,66 @@ workspace_shell_ui <- function(view = "home") {
       uiOutput("workspace_panel_toggles_ui", inline = TRUE),
       uiOutput("workspace_focus_ui", inline = TRUE)
     ),
+    htmltools::div(
+      class = "rcmdr-context-bar",
+      uiOutput("workspace_context_ui")
+    ),
     uiOutput("workspace_layout")
+  )
+}
+
+#' The context line of a Studio view
+#'
+#' "Dove sono" and "su cosa sto lavorando" in one line: the place, the data
+#' set, the filter and the selection mode.  It is text, not a control: the
+#' only interactive parts stay where they already are (the toolbar).
+#'
+#' @param state Application state.
+#' @param view View id ("home", "data", "charts", ...).
+#' @param frame Visible data frame, or `NULL`.
+#' @param filter A list with `column`, `value` and `dates`, or `NULL`.
+#' @param selection_mode `"rows"`, `"cells"` or `NULL`.
+#' @return A `<div>` with the place and its chips.
+#' @keywords internal
+workspace_context_line <- function(state, view, frame = NULL,
+                                  filter = NULL, selection_mode = NULL) {
+  view <- main_view_id(view) %||% "home"
+  labels <- main_tab_labels("studio")
+  place <- paste(tr("Studio"), labels[[view]] %||% view, sep = " \u00b7 ")
+  chips <- list()
+
+  data_name <- active_dataset(state)
+  if (!is.null(data_name) && nzchar(data_name)) {
+    chips <- c(chips, list(context_chip(data_name, icon = "table")))
+  }
+
+  if (identical(view, "data")) {
+    filter <- filter %||% list()
+    view_state <- data_view_state(state, frame, filter)
+    if (!is.null(view_state) && isTRUE(view_state$filtered)) {
+      chips <- c(chips, list(context_chip(
+        sprintf(
+          tr("filter: %s \u00b7 %d of %d rows"),
+          view_state$filter_label,
+          view_state$visible_rows,
+          view_state$total_rows
+        ),
+        icon = "funnel"
+      )))
+    }
+    mode <- as.character(selection_mode %||% "")
+    if (mode %in% c("rows", "cells")) {
+      chips <- c(chips, list(context_chip(
+        if (identical(mode, "cells")) tr("Cells") else tr("Rows"),
+        tone = "accent"
+      )))
+    }
+  }
+
+  htmltools::div(
+    class = "rcmdr-context-line",
+    htmltools::tags$span(class = "rcmdr-context-place", place),
+    chips
   )
 }
 

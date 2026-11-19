@@ -72,6 +72,29 @@
        them.  Keep every select list above those bars. */
     .selectize-control .selectize-dropdown { z-index: 1050; }
 
+    /* Context line: where you are, on what.  It is one 28 px row of text and
+       chips, not a second toolbar. */
+    .rcmdr-context-bar {
+      min-height: 1.75rem;
+      padding: 0 var(--rcmdr-space-3);
+      border-bottom: 1px solid var(--rcmdr-border);
+      background: var(--rcmdr-surface);
+    }
+    .rcmdr-context-line {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: var(--rcmdr-space-2);
+      min-height: 1.75rem;
+      font-size: var(--rcmdr-text-xs);
+      color: var(--rcmdr-muted);
+    }
+    .rcmdr-context-place {
+      color: var(--rcmdr-text); font-weight: var(--rcmdr-weight-strong);
+      white-space: nowrap;
+    }
+    @media (max-width: 991.98px) {
+      .rcmdr-context-line { flex-wrap: nowrap; overflow-x: auto; }
+    }
+
     /* Sidebar --------------------------------------------------------------- */
     .rcmdr-sidebar {
       background: var(--rcmdr-surface); border-right: 1px solid var(--rcmdr-border);
