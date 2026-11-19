@@ -385,6 +385,12 @@
     .rcmdr-badge-error {
       background: var(--rcmdr-err-bg); color: var(--rcmdr-err-fg);
     }
+    /* "You are here": the accent is a border, not a fill, so the text keeps
+       the body contrast in every palette. */
+    .rcmdr-badge-accent {
+      background: var(--rcmdr-surface); color: var(--rcmdr-text);
+      border-color: var(--rcmdr-accent);
+    }
     .rcmdr-tabs {
       display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px;
       background: var(--rcmdr-surface-muted);

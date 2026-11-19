@@ -289,3 +289,5 @@ Resize column	Ridimensiona colonna
 %d of %d x %d	%d di %d x %d
 %d of %d rows x %d columns, %d cells	%d di %d righe x %d colonne, %d celle
 filter: %s	filtro: %s
+editing disabled: threshold exceeded	modifica disattivata: soglia superata
+server-side paging	paginazione lato server

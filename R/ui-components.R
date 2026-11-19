@@ -446,15 +446,41 @@ table_scroll <- function(..., label = NULL, class = NULL) {
 #' @param title Optional tooltip.
 #' @return A `<span>` tag.
 #' @keywords internal
-badge <- function(label, status = c("neutral", "ok", "warning", "error", "info"),
-                  icon = NULL, title = NULL) {
+badge <- function(label, status = c("neutral", "ok", "warning", "error",
+                                    "info", "accent"),
+                  icon = NULL, title = NULL, icon_size = 12L) {
   status <- match.arg(status)
   htmltools::tags$span(
     class = paste0("rcmdr-badge rcmdr-badge-", status),
     title = title,
-    if (!is.null(icon)) rcmdr_icon(icon, size = 12),
+    if (!is.null(icon)) rcmdr_icon(icon, size = icon_size),
     label
   )
+}
+
+#' A chip that states one fact
+#'
+#' The orientation grammar: a fact is colour + icon + text, and the text
+#' carries the meaning on its own.  This is a thin wrapper over [badge()], so
+#' there is one badge system, not two.
+#'
+#' @param text The fact, always present.
+#' @param icon Optional icon name from [rcmdr_icon()].
+#' @param tone One of `neutral`, `accent`, `warning`, `danger`.
+#' @return A `<span>` with the badge classes.
+#' @keywords internal
+context_chip <- function(text, icon = NULL,
+                         tone = c("neutral", "accent", "warning",
+                                  "danger")) {
+  tone <- match.arg(tone)
+  status <- switch(
+    tone,
+    neutral = "neutral",
+    accent = "accent",
+    warning = "warning",
+    danger = "error"
+  )
+  badge(text, status = status, icon = icon, icon_size = 14L)
 }
 
 #' Dialog header
@@ -843,6 +869,25 @@ rcmdr_icon_paths <- function() {
       '<path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>'
     ),
     refresh = '<path d="M20 11a8 8 0 1 0-.6 4"/><path d="M20 4.5V11h-6"/>',
+    file = paste0(
+      '<path d="M7 3.5h6.5L18 8v12.5H7z"/>',
+      '<path d="M13.5 3.5V8H18"/>'
+    ),
+    folder = paste0(
+      '<path d="M3.5 7.5h6l1.5 2h9.5v9h-17z"/>'
+    ),
+    arrow = '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    funnel = '<path d="M4 5h16l-6 7v6l-4 2v-8z"/>',
+    lock = paste0(
+      '<rect x="5" y="10" width="14" height="10" rx="2"/>',
+      '<path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2"/>'
+    ),
+    server = paste0(
+      '<rect x="4" y="4" width="16" height="6" rx="2"/>',
+      '<rect x="4" y="14" width="16" height="6" rx="2"/>',
+      '<path d="M8 7h.01M8 17h.01"/>'
+    ),
+    undo = '<path d="M9 7L4 12l5 5"/><path d="M4 12h9a6 6 0 0 1 6 6"/>',
     search = '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/>',
     plus = '<path d="M12 5v14M5 12h14"/>',
     minus = '<path d="M5 12h14"/>'

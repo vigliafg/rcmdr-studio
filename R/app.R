@@ -2452,16 +2452,13 @@ app_server <- function(env = globalenv()) {
         class = "text-muted",
         data_view_shape(state, data_view_frame(), filter, long = TRUE),
         if (!isTRUE(plan$editable)) {
-          htmltools::tags$span(
-            class = "text-warning",
-            tr(" (editing disabled: threshold exceeded)")
+          context_chip(
+            tr("editing disabled: threshold exceeded"),
+            icon = "lock", tone = "warning"
           )
         },
         if (isTRUE(plan$server)) {
-          htmltools::tags$span(
-            class = "text-muted",
-            tr(" (server-side paging)")
-          )
+          context_chip(tr("server-side paging"), icon = "server")
         }
       )
     })
@@ -3801,7 +3798,8 @@ app_server <- function(env = globalenv()) {
         if (nzchar(filter_label)) {
           htmltools::tags$span(
             class = "rcmdr-status-item rcmdr-status-filter",
-            sprintf(tr("filter: %s"), filter_label)
+            context_chip(sprintf(tr("filter: %s"), filter_label),
+                         icon = "funnel")
           )
         },
         htmltools::tags$span(
