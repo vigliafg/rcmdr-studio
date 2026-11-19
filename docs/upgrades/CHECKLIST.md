@@ -561,7 +561,7 @@ Stato: chiusa — 12 step in 4 lotti (S1–S12), versione 3.0.0; ADR-018.
 ## Onda 19 — Orientamento
 
 Documento di settore: [`19-orientation.md`](19-orientation.md).
-Stato: pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
+Stato: chiusa — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
@@ -571,9 +571,9 @@ Stato: pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
 | O4 | Status bar a priorità | [x] | `161f128`; tre gruppi, ≤ 6 voci, conteggi nelle viste |
 | O5 | Intestazioni dei due slot | [x] | `54e3f8a`; ruolo + vista, bordo accent/border |
 | O6 | Ritorno prevedibile | [x] | `51593fc`; `Esc` a un livello, focus al trigger, reset chiude |
-| O7 | Home in stato Avvio | [ ] | quattro porte, "continua senza dati" |
-| O8 | Stati vuoti azionabili | [ ] | sei viste, annunci |
-| O9 | Chiusura | [ ] | NEWS 3.1.0, topic, diario, push |
+| O7 | Home in stato Avvio | [x] | `5abf133`; quattro porte, "continua senza dati" |
+| O8 | Stati vuoti azionabili | [x] | `a00d116`; sei viste, annunci, errore breve |
+| O9 | Chiusura | [x] | 3.1.0; NEWS, README, topic, diario, push |
 
 ---
 

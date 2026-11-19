@@ -1,3 +1,42 @@
+# RcmdrShiny Studio 3.1.0
+
+## Orientation
+
+- **One truth for the grid.** With a filter on, the status bar, the data info
+  line and the grid all describe the visible frame ("12 of 5,000 x 5"), and a
+  neutral funnel chip names the filter. Clearing the filter restores the
+  totals; the filter remains a view, never a change to the data.
+- **A visual grammar.** Four meanings, always colour plus icon plus text:
+  accent for "you are here", warning for a limit, danger for a failure and
+  selection for the current selection. `context_chip()` is a thin wrapper over
+  the existing badge, so there is one badge system.
+- **A context line in every Studio view.** View, data set, filter and
+  Rows/Cells mode in one static line; it is text, not another control, so it
+  adds no tab stop. Classic keeps its tabs and `data-value` attributes.
+- **A status bar with priorities.** Identity (data set, visible shape, filter),
+  selection and last action, in three named groups. The version moved to
+  **Help > About**, the counts to Console, History and Chart Studio, and the
+  compact bar drops only the shape, which stays in the data info line.
+- **Labeled slots.** When the workspace is split, each slot names its role and
+  its view (`Primary · Data Studio`) and carries an accent or strong border.
+  The accessible name is `Primary view: <view>` / `Secondary view: <view>`;
+  `F6` is unchanged.
+- **Predictable return.** `Esc` closes one layer per press: an inner layer
+  (tooltip, menu, cell selection) that claims the key wins; a dialog closes
+  before the modeless panel underneath. Button and `Esc` share the same
+  focus-return path; **Reset layout** closes the modeless panel and leaves the
+  focus on the workspace.
+- **A start page that tells the truth.** With no data set, no open project and
+  no recent project, Home shows four doors: import a file, create a new data
+  set, open a project, or continue without data. It is a Home state, not a
+  modal, and the normal Home returns as soon as there is something to
+  continue.
+- **No dead ends.** The six empty states (Data Studio, Environment, Charts,
+  Report, Console, Help) each name the next action with the existing dialog.
+  Filters and their visible shape are announced politely; the status bar keeps
+  a long error to one readable line, with the full text in Output and in the
+  `title`.
+
 # RcmdrShiny Studio 3.0.0
 
 ## Desktop workspace

@@ -13,21 +13,25 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 3.0 Wave 18 (Desktop workspace).** The Studio shell is menu-first:
-> one horizontal menubar (`Alt`/`F10`), one workspace view at a time with an
+> **Status: 3.1 Wave 19 (Orientation).** The Studio shell is menu-first: one
+> horizontal menubar (`Alt`/`F10`), one workspace view at a time with an
 > optional second slot, hideable Inspector/Preview panels, application undo and
 > redo, row and cell-range selection with TSV copy, resizable dialogs and
-> modeless Help/Console/Output. The desktop chrome is denser (40/28/40 px,
-> 4/6/8 px radii, flat cards), Home is a two-column start page, and theme,
-> language and density live in **View > Preferences...**. The layout — last
-> view, sidebar, DT column widths, dialog sizes — survives a restart and resets
-> without touching the data. The status bar names the data set, model,
-> selection and last action, and `F6` cycles the workspace regions. Large data
-> is honest: above 5,000 rows the grid pages on the server (measured in
-> `docs/upgrades/QA-DATA.md`), above 10,000 cells the browser editor is
-> disabled, and both limits say why. Classic keeps its original tabbed layout.
-> Commands, dialog ids, generated R code and existing i18n strings are
-> unchanged.
+> modeless Help/Console/Output. Orientation is the through-line: every Studio
+> view carries a context line (view, data set, filter, Rows/Cells), the status
+> bar has three priority groups instead of a row of equivalent facts, split
+> slots name their role and view, and the filter describes the visible frame
+> rather than the total. With nothing to continue, Home starts from four doors
+> — import, new data set, open a project, or continue without data — and every
+> empty state names its next action. `Esc` closes one layer per press. The
+> desktop chrome is denser (40/28/40 px, 4/6/8 px radii, flat cards), and
+> theme, language and density live in **View > Preferences...**. The layout —
+> last view, sidebar, DT column widths, dialog sizes — survives a restart and
+> resets without touching the data. Large data is honest: above 5,000 rows the
+> grid pages on the server (measured in `docs/upgrades/QA-DATA.md`), above
+> 10,000 cells the browser editor is disabled, and both limits say why. Classic
+> keeps its original tabbed layout. Commands, dialog ids, generated R code and
+> existing i18n strings are unchanged.
 
 
 ## Requirements

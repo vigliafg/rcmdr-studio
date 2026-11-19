@@ -1,7 +1,7 @@
 # Onda 19 — Orientamento
 
 **Data:** 2026-11-18  
-**Stato:** pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0  
+**Stato:** chiusa — 9 step in 3 lotti (O1–O9), versione 3.1.0  
 **Baseline:** RcmdrShiny Studio 3.0.0 (Onda 18)  
 **Dipende da:** Onda 18 (workspace, status bar, geometria, soglie dati),
 Onda 16 (token e widget), Onda 6.5 (menu-first)  
@@ -435,17 +435,17 @@ resta manuale, come per le onde 16–18.
 
 ## 9. Criteri di chiusura
 
-- [ ] 9 step verdi, 3 handoff (O3, O6, O9).
-- [ ] Forma visibile e totale coerenti in griglia, `data_info` e status bar.
-- [ ] Riga di contesto in tutte le viste Studio; Classica invariata.
-- [ ] Grammatica visiva con quattro significati, icone e test di contrasto.
-- [ ] Status bar a priorità, senza informazioni perse.
-- [ ] Slot etichettati; `F6` invariato.
-- [ ] `Esc` a un livello; reset chiude il modeless.
-- [ ] Home Avvio con quattro porte e "continua senza dati".
-- [ ] Sei stati vuoti azionabili.
-- [ ] Suite completa `EXIT=0`; `node --check`; app HTTP 200; push.
-- [ ] Limite browser e verifica manuale scritti nel diario.
+- [x] 9 step verdi, 3 handoff (O3, O6, O9).
+- [x] Forma visibile e totale coerenti in griglia, `data_info` e status bar.
+- [x] Riga di contesto in tutte le viste Studio; Classica invariata.
+- [x] Grammatica visiva con quattro significati, icone e test di contrasto.
+- [x] Status bar a priorità, senza informazioni perse.
+- [x] Slot etichettati; `F6` invariato.
+- [x] `Esc` a un livello; reset chiude il modeless.
+- [x] Home Avvio con quattro porte e "continua senza dati".
+- [x] Sei stati vuoti azionabili.
+- [x] Suite completa `EXIT=0`; `node --check`; app HTTP 200; push.
+- [x] Limite browser e verifica manuale scritti nel diario.
 
 ---
 
@@ -466,8 +466,9 @@ il prossimo lotto.
 
 ## 11. Domande aperte
 
-- [ ] La Home Avvio deve essere lo stato della Home o una modale una-tantum?
-      (proposta: stato della Home, modale solo come preferenza futura)
+- [x] La Home Avvio è uno **stato della Home**, non una modale: compare solo
+      senza dataset, senza progetto aperto e senza progetti recenti. Il pattern
+      modale resta una preferenza futura (`show_start`), non implementata.
 - [ ] "Continua senza dati" è un'azione primaria o secondaria?
 - [ ] Quali conteggi meritano di restare in status bar: nessuno, o solo i
       comandi?

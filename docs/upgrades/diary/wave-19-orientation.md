@@ -189,3 +189,85 @@ Lotto 2: **O4** status bar a priorità, **O5** intestazioni degli slot,
 
 Lotto 3: **O7** Home in stato Avvio (quattro porte, “Continua senza dati”),
 **O8** stati vuoti azionabili e annunci, **O9** chiusura a 3.1.0 con ADR-019.
+
+---
+
+## Lotto 3 — Avvio e chiusura (O7–O9)
+
+**Data:** 2026-11-19 · suite verde, `node --check` verde, app HTTP 200.
+
+### O7 — Home in stato Avvio · `5abf133`
+
+**File:** `R/app.R`, `R/workspace.R`, `inst/www/css/60-views.css`,
+`inst/i18n/it.tsv`, test.
+
+- `home_start_state(state)` è la regola esplicita: nessun dataset attivo,
+  nessun progetto aperto e nessun progetto recente. `home_pane_ui(state)` è la
+  Home normale in ogni altro caso; Classica continua a chiamarla senza stato.
+- `home_start_ui()` mostra **quattro porte**: *Import a file* (wizard
+  `dataImportWizard`), *New data set* (`newDataSet`, unica azione primaria),
+  *Open a project* (`projectOpen`) e *Continue without data*.
+- *Continue without data* porta a **Script** e annuncia «You can work without
+  data.»; la pagina dice già che script e console sono sempre disponibili.
+- Nessuna modale all'avvio. Lo stato Avvio è uno stato della Home; la variante
+  modale (`show_start`) resta una preferenza futura, non implementata.
+- La vista Home è l'unica che si aggiorna anche su `tick()`: il resto del
+  workspace non paga la dipendenza.
+- Test: quattro porte, nessuna card *Continue* nello stato Avvio; dataset o
+  progetto recente riportano la Home normale; la pagina nomina il lavoro senza
+  dati.
+
+### O8 — Stati vuoti azionabili · `a00d116`
+
+**File:** `R/app.R`, `R/environment-studio.R`, `R/chart-studio.R`,
+`R/report-studio.R`, `R/help-server.R`, test.
+
+| Vista | Prima | Ora |
+|---|---|---|
+| Data Studio | solo testo | *Import...* (`dataImportWizard`) e *New data set* (`newDataSet`) |
+| Environment | solo testo | *Import data* e *Open script* |
+| Charts (gallery e dettaglio) | solo testo | *Build a chart* → `chart_mode = build` |
+| Report | solo testo | *New document* (`newRmd`) e *Open* (`loadRmd`/`loadRnw`) |
+| Console | solo testo | *Open script* |
+| Help (ricerca e filtri) | solo testo | *Clear search* → stesso percorso di *Clear filters* |
+
+- Gli stati vuoti usano `empty_state(action = ...)` e gli ID già esistenti;
+  nessun comando nuovo. Le sei viste della tabella 5.9 hanno un'azione.
+- Il filtro annuncia la forma visibile quando si applica
+  («Filter applied: a 2 (1 of 4 rows x 2 columns, 2 cells)») e quando si
+  pulisce («Filter cleared (4 x 2)»); il valore è debounced, quindi la digitazione
+  non produce un annuncio per tasto.
+- La status bar tiene l'errore a una riga leggibile (massimo 120 caratteri,
+  prima riga); il testo completo resta nel `title` e nel pannello Output.
+- `help_empty_clear` e `help_clear_filters` condividono `clear_help_filters()`,
+  così il comportamento è uno solo.
+
+### O9 — Chiusura · `docs: close wave 19`
+
+- `DESCRIPTION` 3.1.0; NEWS con la sezione *Orientation*; README con lo stato
+  3.1 e il riassunto dell'onda; topic About invariato (legge la versione dal
+  pacchetto); piano Onda 19 segnato chiuso; checklist O7–O9 completata.
+- Nessun comando, dialogo, ID o stringa esistente è cambiato.
+
+### Verifica lotto 3 e chiusura
+
+| Controllo | Esito |
+|---|---|
+| Suite completa | `EXIT=0`; 0 failure; 29 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w19-lotto3-pre.log`) |
+| `node --check` | verde sul JS composto (`/tmp/opencode/app-w19.js`) |
+| App HTTP | `200` su `http://127.0.0.1:3841/` con `RCMDRSHINY_BROWSER=FALSE` |
+| Home Avvio | quattro porte, una primaria, nessuna modale; Home normale con dataset o progetto recente |
+| Stati vuoti | 6 su 6 con azione; nessun nuovo comando |
+| Annunci | filtro applicato/pulito e «lavoro senza dati» su live region `polite` |
+| Errore | una riga in status bar, testo completo altrove |
+| Classic | `tabsetPanel` e `data-value` invariati; nessun test Classic modificato |
+
+### Limiti e rinvii
+
+| Problema | Impatto | Rinvio |
+|---|---|---|
+| Browser non navigabile (Chrome 157) | resa visiva, focus return e zoom 200% non provati a schermo; 29 e2e saltati | verifica manuale desktop prima della release |
+| Test a cinque compiti con utenti SPSS/Minitab | misura di successo non raccolta | manuale, come onde 16–18 |
+| `show_start` (`auto`/`always`/`never`) | pattern modale non disponibile | preferenza futura, fuori onda |
+
+**Stato onda:** chiusa a 3.1.0. Nove step verdi, tre handoff (O3, O6, O9).
