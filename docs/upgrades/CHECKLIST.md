@@ -568,9 +568,9 @@ Stato: pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
 | O1 | Verità sul filtro | [x] | `1184e0e`; forma visibile/totale, `data_view_state()` |
 | O2 | Grammatica visiva dello stato | [x] | `2fe2d57`; `context_chip()`, 7 icone, tono accent |
 | O3 | Riga di contesto nelle viste | [x] | `1f520a4`; luogo, dataset, filtro, Rows/Cells |
-| O4 | Status bar a priorità | [ ] | 12 voci → ≤ 6, conteggi nelle viste |
-| O5 | Intestazioni dei due slot | [ ] | primario/secondario riconoscibili |
-| O6 | Ritorno prevedibile | [ ] | `Esc` a un livello, reset chiude il modeless |
+| O4 | Status bar a priorità | [x] | `161f128`; tre gruppi, ≤ 6 voci, conteggi nelle viste |
+| O5 | Intestazioni dei due slot | [x] | `54e3f8a`; ruolo + vista, bordo accent/border |
+| O6 | Ritorno prevedibile | [x] | `51593fc`; `Esc` a un livello, focus al trigger, reset chiude |
 | O7 | Home in stato Avvio | [ ] | quattro porte, "continua senza dati" |
 | O8 | Stati vuoti azionabili | [ ] | sei viste, annunci |
 | O9 | Chiusura | [ ] | NEWS 3.1.0, topic, diario, push |

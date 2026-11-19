@@ -109,3 +109,83 @@ filter** nel posto in cui l'utente lo cerca.
 
 Lotto 2: **O4** status bar a priorità, **O5** intestazioni degli slot,
 **O6** ritorno prevedibile. Handoff dopo O6.
+
+---
+
+## Lotto 2 — Gerarchia e ritorno (O4–O6)
+
+**Data:** 2026-11-19 · suite verde, `node --check` verde.
+
+### O4 — Status bar a priorità · `161f128`
+
+**File:** `R/app.R`, `R/console-studio.R`, `R/history-ui.R`,
+`R/chart-studio.R`, `inst/www/css/10-shell.css`, test.
+
+- La status bar ha tre gruppi con nome accessibile: **Identity** (dataset,
+  forma visibile, filtro), **Selection**, **Last action**. Busy ed errore
+  restano un quarto gruppo presente solo quando servono.
+- A 1280 px si vedono al massimo cinque fatti (dataset, forma, filtro,
+  selezione, ultima azione), entro il limite di sei.
+- Versione → **Help > About** (già presente). Conteggi spostati dove servono:
+  `%d command(s)` in Console, `%d history step(s)` in History,
+  `%d plot(s)` nella Gallery di Chart Studio. Model e badge di modalità non
+  sono più fatti di stato: il model badge è nel topbar, la modalità nel suo
+  interruttore.
+- Sotto 992 px la forma visibile è nascosta (`rcmdr-status-optional`): resta
+  in `data_info`, quindi non si perde; separatori rimossi e spaziatura ridotta.
+- `aria-live="polite"`, `role="status"`, `aria-atomic="false"` invariati.
+
+### O5 — Intestazioni dei due slot · `54e3f8a`
+
+**File:** `R/workspace.R`, `R/app.R`, `inst/www/css/60-views.css`,
+`inst/i18n/it.tsv`, test.
+
+- `workspace_slot_header(role, view)` produce `Primary · Data Studio` /
+  `Secondary · Help centre`; bordo sinistro `accent` per il primario,
+  `border-strong` per il secondario. Il colore non è mai solo: c'è la parola.
+- `workspace_slot_label(role, view)` dà il nome accessibile
+  `Primary view: <vista>` / `Secondary view: <vista>` alla regione.
+- L'intestazione compare solo quando c'è lo split (o il focus su uno dei due
+  slot); la vista singola resta senza header ridondante.
+- `data-rcmdr-focus-region` e `tabindex="-1"` invariati: `F6` non cambia.
+- Sotto 992 px restano il nome della vista; ruolo e separatore si nascondono.
+
+### O6 — Ritorno prevedibile · `51593fc`
+
+**File:** `inst/www/js/66-modeless.js`, `R/app.R`,
+`docs/upgrades/ACCESSIBILITY.md`, test.
+
+- Un solo gestore `Esc` per il pannello modeless, in cattura, con la regola
+  **un tasto = un livello**: se un livello interno (tooltip, menu, selezione
+  celle) ha già chiamato `preventDefault`, il pannello resta aperto. Con una
+  modale aperta, `Esc` chiude la modale e non il pannello sotto.
+- Chiusura con pulsante o con `Esc` passano dalla stessa funzione
+  `closeAndReturn()`, che riporta il focus al trigger.
+- **Reset layout** chiude il modeless e manda il focus a `workspace-primary`
+  (il menu che ha lanciato il comando è già chiuso). Non tocca dati, undo,
+  history: il test lo verifica.
+- `ACCESSIBILITY.md` aggiornato con la regola dei livelli e il focus return.
+
+### Verifica lotto 2
+
+| Controllo | Esito |
+|---|---|
+| Suite completa | `EXIT=0`; 0 failure; 29 e2e saltati; 3 warning noti (`/tmp/opencode/tests-w19-lotto2.log`) |
+| `node --check` | verde sul JS composto (`/tmp/opencode/app-o6.js`) |
+| Status bar | 3 gruppi + stato; ≤ 6 fatti a 1280 px; nessuna informazione persa |
+| Slot | intestazione e nome accessibile solo con split; F6 invariato |
+| `Esc` | livello interno vince; modale sopra il pannello; focus al trigger |
+| Reset | chiude il modeless; dati, undo e history invariati |
+
+### Problemi noti e rinvii
+
+| Problema | Impatto | Rinvio |
+|---|---|---|
+| Limiti ancora in `data_info` | duplicazione con le chip di stato | O8 |
+| Nessun browser | resa visiva e focus return non provati a schermo | test manuale desktop |
+| Focus del reset non verificabile senza DOM | dipende dal messaggio `rcmdr-focus` | e2e quando il browser torna |
+
+### Prossimo passo
+
+Lotto 3: **O7** Home in stato Avvio (quattro porte, “Continua senza dati”),
+**O8** stati vuoti azionabili e annunci, **O9** chiusura a 3.1.0 con ADR-019.
