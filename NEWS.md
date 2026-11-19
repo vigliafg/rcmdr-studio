@@ -1,3 +1,28 @@
+# RcmdrShiny Studio 3.2.0
+
+## Chart examples and new ggplot2 types
+
+- **Examples gallery.** The Chart Studio has a fourth mode, **Examples**: 26
+  curated recipes adapted from the R Graph Gallery, with local previews,
+  family and level filters, search, source links and a detail panel. **Open in
+  builder** fills type, options, theme and labels; it never loads data into the
+  session, never runs a command and never touches the log, history or personal
+  gallery.
+- **Offline by design.** Thumbnails are generated locally from the bundled
+  `datasets` with `tools/build_chart_examples.R`; no image or code is fetched
+  at runtime. `inst/www/chart-examples/NOTICE` records the inspiration and the
+  MIT licence of the R Graph Gallery repository.
+- **Six new types.** Lollipop, dumbbell, doughnut, stacked area, ridgeline
+  (`ggridges`) and beeswarm (`ggbeeswarm`) join the builder. The optional
+  packages are in `Suggests`; the types appear only when installed. No new
+  mandatory dependency.
+- **One recipe loader.** Models and Examples share the same loading path. A
+  mapping is carried over only when the active data set has columns with the
+  same name and kind; otherwise the builder asks for variables.
+- **One engine, documented.** The help topic now states the single ggplot2
+  engine and describes the extended types; the old base-engine narrative and
+  the engine selector are gone.
+
 # RcmdrShiny Studio 3.1.0
 
 ## Orientation

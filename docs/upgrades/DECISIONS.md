@@ -739,3 +739,58 @@ gli altri tre. L'orientamento è un problema di superficie, non di schermata.
   lo screen reader.
 - **Cronologia delle viste**: aggiunge un concetto e un comando; il view
   switcher copre il caso reale.
+
+## ADR-020 — Esempi offline e tipi ggplot2 mancanti
+
+**Stato:** accettata per l'Onda 20  
+**Data:** 2026-11-19  
+**Dipende da:** ADR-015 (dipendenze), ADR-016 (token e widget),
+Onda 9 (ggplot2), Onda 12 (tipi ggplot-only)
+
+### Contesto
+
+Il Chart Studio ha un solo motore, ggplot2, ma non ha un modo visuale per
+scoprire cosa sa fare. Models è una lista testuale di 32 ricette; Gallery
+contiene i grafici già applicati. Mancano anteprime, provenienza e un percorso
+"vedo un esempio, lo apro nel builder".
+
+L'R Graph Gallery è la fonte naturale: 400+ esempi, repository MIT, ma senza
+un'API e con immagini di provenienza non uniforme. Scraper o incorporare il
+sito a runtime romperebbe il requisito offline.
+
+### Decisione
+
+- **Galleria locale curata.** 26 esempi, non 400. Solo tipi riproducibili dal
+  builder; le altre categorie restano link esterni o plugin.
+- **Anteprime nostre.** I PNG sono generati dal renderer della preview su dati
+  di `datasets`; nessuna immagine del sito viene ridistribuita. `NOTICE`
+  attribuisce l'ispirazione e cita la licenza MIT del repository.
+- **Aprire non esegue.** L'esempio imposta tipo, opzioni, tema ed etichette;
+  non carica dati, non scrive log/history e non aggiunge plot.
+- **Mapping condizionale.** Le colonne si trasferiscono solo se nome e tipo
+  coincidono; altrimenti il builder chiede le variabili.
+- **Un loader.** Models ed Examples usano la stessa funzione; niente seconda
+  logica di caricamento.
+- **Tipi senza secondo motore.** Lollipop, dumbbell, doughnut, area impilata,
+  ridgeline e beeswarm sono ggplot2. I package opzionali stanno in `Suggests`
+  e i tipi sono gated.
+
+### Conseguenze
+
+- Due file nuovi di dominio (`chart-examples.R`, `chart-types-extra.R`) e uno
+  di UI; il resto è riuso.
+- `chart_option_input_id()` è stato corretto: le opzioni fuori dalla mappa
+  comune non devono più far fallire il loader.
+- Il catalogo è un registro: aggiungere un esempio richiede metadati, dati e
+  un PNG, non una nuova schermata.
+- La verifica visiva resta manuale finché il browser non torna disponibile.
+
+### Alternative scartate
+
+- **Scaricare le immagini a runtime**: rompe offline, privacy e licenza.
+- **Incorporare il sito in un iframe**: non è una galleria, è un browser.
+- **400 schede**: costo di manutenzione e di asset senza un vantaggio reale.
+- **Reintrodurre l'engine base per gli esempi base-only**: un secondo motore
+  per una nicchia; meglio l'equivalente ggplot o il link esterno.
+- **Spostare Examples dentro Models**: Models è una lista di ricette, Examples
+  è una galleria visuale con provenienza; mescolarle confonde due intenti.

@@ -21,6 +21,12 @@ wave-11-remaining-types.md
 wave-12-ggplot-only-types.md
 wave-13-interactive-builder.md
 wave-14-dependencies.md
+wave-15-ui-refresh.md
+wave-16-bslib-widgets.md
+wave-17-desktop-completion.md
+wave-18-desktop-workspace.md
+wave-19-orientation.md
+wave-20-chart-examples.md
 ```
 
 ## Regole

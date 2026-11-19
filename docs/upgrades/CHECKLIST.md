@@ -577,9 +577,27 @@ Stato: chiusa — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
 
 ---
 
+## Onda 20 — Esempi e tipi mancanti
+
+Documento di settore: [`20-chart-examples.md`](20-chart-examples.md).
+Stato: chiusa — 8 step in 3 lotti (E1–E8), versione 3.2.0; ADR-020.
+
+| ID | Task | Stato | Note |
+|---|---|---|---|
+| E1 | Registro esempi | [x] | `9935d48`; 26 metadati, filtri, spec, codice |
+| E2 | Anteprime locali | [x] | `tools/build_chart_examples.R`, 26 PNG, manifest, NOTICE |
+| E3 | Modalità Examples | [x] | quarta modalità, griglia, card, stato vuoto |
+| E4 | Dettaglio e filtri | [x] | famiglia, livello, ricerca, fonte, copia codice |
+| E5 | Apri nel builder | [x] | loader condiviso, mapping condizionale, no side effect |
+| E6 | Tipi nuovi | [x] | lollipop, dumbbell, doughnut, area, ridgeline, beeswarm |
+| E7 | Contenuto curated | [x] | 26 esempi, 6 famiglie, fonti, livelli |
+| E8 | Chiusura | [x] | 3.2.0; NEWS, README, help, ADR-020, diario, push |
+
+---
+
 ## Test e verifica continua
 
-- [x] `testthat::test_local()` verde (3330 pass).
+- [x] `testthat::test_local()` verde (Onda 20, 29 e2e saltati).
 - [x] `R CMD check` core pulito (2.0.0).
 - [x] `R CMD check` 15 plugin pulito (15/15 OK).
 - [x] `tools/inventory_help.R --plugins all` senza missing/draft (649 documented, 58 extra).

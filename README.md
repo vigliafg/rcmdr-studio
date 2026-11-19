@@ -13,25 +13,27 @@ still produces a visible R command — but replaces the desktop/Tk metaphor with
 a browser-native Studio: command palette, structured history, data, chart and
 report workspaces, and a Classic mode for compatibility.
 
-> **Status: 3.1 Wave 19 (Orientation).** The Studio shell is menu-first: one
-> horizontal menubar (`Alt`/`F10`), one workspace view at a time with an
-> optional second slot, hideable Inspector/Preview panels, application undo and
-> redo, row and cell-range selection with TSV copy, resizable dialogs and
-> modeless Help/Console/Output. Orientation is the through-line: every Studio
-> view carries a context line (view, data set, filter, Rows/Cells), the status
-> bar has three priority groups instead of a row of equivalent facts, split
-> slots name their role and view, and the filter describes the visible frame
-> rather than the total. With nothing to continue, Home starts from four doors
-> — import, new data set, open a project, or continue without data — and every
-> empty state names its next action. `Esc` closes one layer per press. The
-> desktop chrome is denser (40/28/40 px, 4/6/8 px radii, flat cards), and
-> theme, language and density live in **View > Preferences...**. The layout —
-> last view, sidebar, DT column widths, dialog sizes — survives a restart and
-> resets without touching the data. Large data is honest: above 5,000 rows the
-> grid pages on the server (measured in `docs/upgrades/QA-DATA.md`), above
-> 10,000 cells the browser editor is disabled, and both limits say why. Classic
-> keeps its original tabbed layout. Commands, dialog ids, generated R code and
-> existing i18n strings are unchanged.
+> **Status: 3.2 Wave 20 (Examples and extra charts).** The Studio shell is
+> menu-first: one horizontal menubar (`Alt`/`F10`), one workspace view at a
+> time with an optional second slot, hideable Inspector/Preview panels,
+> application undo and redo, row and cell-range selection with TSV copy,
+> resizable dialogs and modeless Help/Console/Output. The Chart Studio has a
+> single ggplot2 engine and an offline **Examples** gallery of 26 recipes
+> adapted from the R Graph Gallery; six additional types — lollipop, dumbbell,
+> doughnut, stacked area, ridgeline and beeswarm — extend the builder.
+> Orientation remains the through-line: every Studio view carries a context
+> line, the status bar has three priority groups, split slots name their role
+> and view, and the filter describes the visible frame rather than the total.
+> With nothing to continue, Home starts from four doors and every empty state
+> names its next action. `Esc` closes one layer per press. The desktop chrome is
+> denser (40/28/40 px, 4/6/8 px radii, flat cards), and theme, language and
+> density live in **View > Preferences...**. The layout — last view, sidebar,
+> DT column widths, dialog sizes — survives a restart and resets without
+> touching the data. Large data is honest: above 5,000 rows the grid pages on
+> the server (measured in `docs/upgrades/QA-DATA.md`), above 10,000 cells the
+> browser editor is disabled, and both limits say why. Classic keeps its
+> original tabbed layout. Commands, dialog ids, generated R code and existing
+> i18n strings are unchanged.
 
 
 ## Requirements
@@ -42,8 +44,8 @@ report workspaces, and a Classic mode for compatibility.
   `rhandsontable`, `RcmdrMisc`, `ggplot2`, `plotly` (plus their dependencies)
 - Optional: `rgl` for the 3D plot pane, `svglite` for SVG export, `rmarkdown`,
   `knitr` and Pandoc for report previews and knits, `commonmark` for the fast
-  Markdown preview, `yaml` for front matter parsing and `styler` for script
-  formatting
+  Markdown preview, `yaml` for front matter parsing, `styler` for script
+  formatting, `ggridges` for ridgelines and `ggbeeswarm` for beeswarms
 
 ## Install
 
@@ -90,10 +92,11 @@ RcmdrShiny::run(env = env)
 | Targeted mode for data sets above the editing threshold | done |
 | Chart builder with per-type mappings and options | done |
 | Isolated live preview with debounce and cache | done |
-| Typed chart specification and eleven chart types | done |
-| Theme/palette panel and opt-in ggplot2 engine | done |
+| Typed chart specification and seventeen chart types | done |
+| Theme/palette panel and single ggplot2 engine | done |
 | Gallery with search, type filter, pin, rename, detail and compare | done |
 | Round-trip: reopen a chart in the builder | done |
+| Offline example gallery adapted from the R Graph Gallery | done |
 | PNG/PDF/SVG export, HTML export for interactive plots | done |
 | Plotly selection and subset from selected points | done |
 | Report document registry with multiple open documents | done |
