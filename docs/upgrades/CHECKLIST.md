@@ -565,9 +565,9 @@ Stato: pianificata — 9 step in 3 lotti (O1–O9), versione 3.1.0; ADR-019.
 
 | ID | Task | Stato | Note |
 |---|---|---|---|
-| O1 | Verità sul filtro | [ ] | forma visibile e totale, chip filtro |
-| O2 | Grammatica visiva dello stato | [ ] | colore + icona + testo, 4 significati |
-| O3 | Riga di contesto nelle viste | [ ] | breadcrumb generalizzato |
+| O1 | Verità sul filtro | [x] | `1184e0e`; forma visibile/totale, `data_view_state()` |
+| O2 | Grammatica visiva dello stato | [x] | `2fe2d57`; `context_chip()`, 7 icone, tono accent |
+| O3 | Riga di contesto nelle viste | [x] | `1f520a4`; luogo, dataset, filtro, Rows/Cells |
 | O4 | Status bar a priorità | [ ] | 12 voci → ≤ 6, conteggi nelle viste |
 | O5 | Intestazioni dei due slot | [ ] | primario/secondario riconoscibili |
 | O6 | Ritorno prevedibile | [ ] | `Esc` a un livello, reset chiude il modeless |
